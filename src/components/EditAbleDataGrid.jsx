@@ -167,13 +167,33 @@ export default function FullFeaturedCrudGrid({ initialRows, ncolumns }) {
               className="textPrimary"
               onClick={handleCancelClick(id)}
               color="inherit"
+              sx={{
+                color: 'error.dark'
+              }}
             />
           ];
         }
 
         return [
-          <GridActionsCellItem icon={<EditIcon />} label="Edit" className="textPrimary" onClick={handleEditClick(id)} color="inherit" />,
-          <GridActionsCellItem icon={<DeleteIcon />} label="Delete" onClick={handleDeleteClick(id)} color="inherit" />
+          <GridActionsCellItem
+            icon={<EditIcon />}
+            label="Edit"
+            className="textPrimary"
+            onClick={handleEditClick(id)}
+            color="inherit"
+            sx={{
+              color: 'secondary.dark'
+            }}
+          />,
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            label="Delete"
+            onClick={handleDeleteClick(id)}
+            color="inherit"
+            sx={{
+              color: 'error.dark'
+            }}
+          />
         ];
       }
     }

@@ -55,12 +55,12 @@ const SamplePage = () => {
   ];
 
   const columns = [
-    { field: 'name', headerName: 'Name', width: 180, editable: true },
+    { field: 'name', headerName: 'Name', editable: true, flex: 1 },
     {
       field: 'age',
       headerName: 'Age',
       type: 'number',
-      width: 80,
+      flex: 1,
       align: 'left',
       headerAlign: 'left',
       editable: true
@@ -69,13 +69,13 @@ const SamplePage = () => {
       field: 'joinDate',
       headerName: 'Join date',
       type: 'date',
-      width: 180,
+      flex: 1,
       editable: true
     },
     {
       field: 'role',
       headerName: 'Department',
-      width: 220,
+      flex: 1,
       editable: true,
       type: 'singleSelect',
       valueOptions: ['Market', 'Finance', 'Development']
@@ -156,11 +156,11 @@ const SamplePage = () => {
               Save
             </Button>
           </Grid>
+          <Grid item xs={12} paddingTop={1}>
+            <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} />
+          </Grid>
         </Grid>
       </FormControl>
-      <Grid item xs={12} paddingTop={1}>
-        <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} />
-      </Grid>
     </MainCard>
   );
 };
