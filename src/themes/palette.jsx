@@ -68,6 +68,18 @@ export default function themePalette(theme) {
     background: {
       paper: theme.paper,
       default: theme.backgroundDefault
-    }
+    },
+    red:{
+primary:theme.colors?.red,
+dark:theme.colors?.redDark,
+light:theme.colors?.redLight,
+    },
+    primary1: {
+      light: theme.colors?.primaryLight,
+      main: theme.colors?.red,
+      dark: theme.colors?.primaryDark,
+      200: theme.colors?.primary200,
+      800: theme.colors?.primary800
+    },
   };
 }
