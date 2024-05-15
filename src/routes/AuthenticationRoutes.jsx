@@ -9,7 +9,7 @@ const AuthLogin3 = Loadable(lazy(() => import('views/pages/authentication3/Login
 const AuthRegister3 = Loadable(lazy(() => import('views/pages/authentication3/Register3')));
 
 // ==============================|| AUTHENTICATION ROUTING ||============================== //
-
+//
 const AuthenticationRoutes = {
   path: '/',
   element: <MinimalLayout />,
