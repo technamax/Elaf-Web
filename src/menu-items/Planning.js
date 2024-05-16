@@ -19,7 +19,7 @@ const Planning = {
   children: [
     {
       id: 'NewCollection',
-      title: 'Add New Collection ',
+      title: 'Collections ',
       type: 'item',
       url: '/Planning/NewCollection', // Relative URL
       icon: icons.IconBrandChrome,
@@ -27,7 +27,7 @@ const Planning = {
     },
     {
       id: 'NewDesign',
-      title: 'Add New Design ',
+      title: 'Planning Process ',
       type: 'item',
       url: '/Planning/NewDesign', // Relative URL
       icon: icons.IconBrandChrome,

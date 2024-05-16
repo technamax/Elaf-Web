@@ -7,7 +7,7 @@ import Planning from './Planning';
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-  items: [dashboard, pages, utilities, other, Planning]
+  items: [dashboard, Planning]
 };
 
 export default menuItems;
