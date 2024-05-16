@@ -12,9 +12,9 @@ import Elogo from 'assets//images/elogocropped.png';
 // ==============================|| LOGO SVG ||============================== //
 
 const Logo = () => {
-  const theme = useTheme();
+    const theme = useTheme();
 
-  return <img src={Elogo} alt="Berry" width="100" />;
+    return <img src={Elogo} alt="Berry" width="100" />;
 };
 
 export default Logo;

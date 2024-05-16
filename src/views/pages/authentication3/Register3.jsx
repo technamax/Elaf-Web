@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Link } from 'react-router-dom';
 
 // material-ui
@@ -34,6 +35,7 @@ const Register = () => {
                       <Logo />
                     </Link>
                   </Grid>
+
                   <Grid item xs={12}>
                     <Grid container direction={{ xs: 'column-reverse', md: 'row' }} alignItems="center" justifyContent="center">
                       <Grid item>
