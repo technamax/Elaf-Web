@@ -21,7 +21,15 @@ const Planning = {
       id: 'NewCollection',
       title: 'Add New Collection ',
       type: 'item',
-      url: '/NewCollection',
+      url: '/Planning/NewCollection', // Relative URL
+      icon: icons.IconBrandChrome,
+      breadcrumbs: false
+    },
+    {
+      id: 'NewDesign',
+      title: 'Add New Design ',
+      type: 'item',
+      url: '/Planning/NewDesign', // Relative URL
       icon: icons.IconBrandChrome,
       breadcrumbs: false
     }
