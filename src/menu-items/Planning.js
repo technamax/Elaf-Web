@@ -27,9 +27,17 @@ const Planning = {
     },
     {
       id: 'NewDesign',
-      title: 'Planning Process ',
+      title: 'Create New Design ',
       type: 'item',
       url: '/Planning/NewDesign', // Relative URL
+      icon: icons.IconBrandChrome,
+      breadcrumbs: false
+    },
+    {
+      id: 'PlanningProcess',
+      title: 'Create New Process ',
+      type: 'item',
+      url: '/Planning/PlanningProcess', // Relative URL
       icon: icons.IconBrandChrome,
       breadcrumbs: false
     }

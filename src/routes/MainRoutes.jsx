@@ -17,6 +17,8 @@ const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
 // const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons')));
 const PlanningNewCollection = Loadable(lazy(() => import('views/Planning/NewCollection')));
 const PlanningNewDesign = Loadable(lazy(() => import('views/Planning/NewDesign')));
+const PlanningProcess = Loadable(lazy(() => import('views/Planning/PlanningProcess')));
+
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
@@ -50,6 +52,10 @@ const MainRoutes = {
         {
           path: 'NewDesign', // Relative path
           element: <PlanningNewDesign />
+        },
+        {
+          path: 'PlanningProcess', // Relative path
+          element: <PlanningProcess />
         }
       ]
     },

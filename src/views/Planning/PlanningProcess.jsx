@@ -16,11 +16,7 @@ const steps = [
   'Schiffli',
   'name6',
   'name7',
-  'name8',
-  'name9',
-  'name10',
-  'name11',
-  'name12'
+  'name8'
 ];
 
 export default function PlanningProcess() {
@@ -84,8 +80,8 @@ export default function PlanningProcess() {
             select
             label="Select Collection"
             defaultValue=""
-            helperText="Please Select Collection"
             size="small"
+            helperText="Please Select Collection"
           ></TextField>
         </Grid>
       </Grid>
