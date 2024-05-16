@@ -14,7 +14,7 @@ import MainCard from 'ui-component/cards/MainCard';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
-const NewCollection = () => {
+const Fabrication = () => {
   const initialRows = [
     {
       id: 1,
@@ -86,15 +86,27 @@ const NewCollection = () => {
   const volume = [
     {
       value: 'Vol',
-      label: 'Volume 1'
+      label: 'Collection 1'
+    },
+    {
+      value: 'Vol',
+      label: 'Collection 2'
+    },
+    {
+      value: 'Vol',
+      label: 'Collection 3'
     }
   ];
-  const enabled = [
+  const colors = [
     {
-      value: 'Yes',
-      label: 'Y'
+      value: '1',
+      label: 'Red'
     },
-    { value: 'No', label: 'N' }
+    { value: '2', label: 'Blue' },
+    {
+      value: '3',
+      label: 'Green'
+    }
   ];
   return (
     <MainCard>
@@ -102,7 +114,7 @@ const NewCollection = () => {
         <Grid container spacing={2} width="Inherit">
           <Grid item sm={9}>
             <Typography variant="h3" gutterBottom>
-              Create New Collection
+              Fabrication
             </Typography>
           </Grid>
           <Grid item sm={3} textAlign="right">
@@ -110,20 +122,14 @@ const NewCollection = () => {
               Save
             </Button>
           </Grid>
-          <Grid item sm={3}>
-            <TextField label="Collection Order #" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={9}>
-            <TextField label="Collection Name" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={4}>
             <TextField
               fullWidth
               id="outlined-select-currency"
               select
-              label="Volume"
-              defaultValue="Vol"
-              helperText="Please select volume"
+              label="Select Design"
+              defaultValue=""
+              //   helperText="Please Select Collection"
               size="small"
             >
               {volume.map((option) => (
@@ -131,33 +137,38 @@ const NewCollection = () => {
                   {option.label}
                 </MenuItem>
               ))}
-            </TextField>
+            </TextField>{' '}
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={4}>
+            <TextField label="Design" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={4}>
+            <TextField label="Designer Name" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={4}>
             <TextField size="small" type="date" label="Planning Date" name="planningDate" fullWidth focused />
           </Grid>
-          <Grid item sm={3}>
-            <TextField size="small" type="date" label="Launch Date" name="launchDate" fullWidth focused />
+          <Grid item sm={4}>
+            <TextField label="Po PCs" fullWidth size="small" />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={4}>
             <TextField
               fullWidth
               id="outlined-select-currency"
               select
-              label="Enabled"
+              label="Color"
               defaultValue="EUR"
-              helperText="Please select"
+              helperText="Please select color"
               size="small"
             >
-              {enabled.map((option) => (
+              {colors.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
-          <Divider />
-
+          <Divider></Divider>
           <Grid item sm={12} paddingTop={1}>
             <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} />
           </Grid>
@@ -167,4 +178,4 @@ const NewCollection = () => {
   );
 };
 
-export default NewCollection;
+export default Fabrication;
