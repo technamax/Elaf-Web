@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 // material-ui
 import { Grid, TextField, Button, MenuItem, FormControl, Typography, Divider } from '@mui/material';
-// import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // import dayjs from 'dayjs';
 // import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -11,73 +11,130 @@ import EditAbleDataGrid from 'components/EditAbleDataGrid';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 // import Edit from '@mui/icons-material/Edit';
-
+import { GetCollectionList } from 'api/apis';
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const NewCollection = () => {
-  const initialRows = [
-    {
-      id: 1,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 2,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 3,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 4,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 5,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
+  const [collectionList, setCollectionList] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const data = await GetCollectionList();
+
+      const rowsWithId = data.map((row, index) => ({
+        ...row,
+        id: index + 1,
+        planningDate: new Date(row.planningDate),
+        launchDate: new Date(row.launchDate)
+      }));
+
+      setCollectionList(rowsWithId);
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
-  ];
+    // setLoading(false);
+  };
+
+  useEffect(() => {
+    // setLoading(true);
+    fetchData();
+  }, []);
+  console.log(collectionList);
+  const initialRows = collectionList;
+  console.log(initialRows);
+  //   {
+  //     id: 1,
+  //     name: 'jhon',
+  //     age: 25,
+  //     joinDate: new Date('2024-05-25'),
+  //     role: 'developer'
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'jhon',
+  //     age: 25,
+  //     joinDate: new Date('2024-05-25'),
+  //     role: 'developer'
+  //   },
+  //   {
+  //     id: 3,
+  //     name: 'jhon',
+  //     age: 25,
+  //     joinDate: new Date('2024-05-25'),
+  //     role: 'developer'
+  //   },
+  //   {
+  //     id: 4,
+  //     name: 'jhon',
+  //     age: 25,
+  //     joinDate: new Date('2024-05-25'),
+  //     role: 'developer'
+  //   },
+  //   {
+  //     id: 5,
+  //     name: 'jhon',
+  //     age: 25,
+  //     joinDate: new Date('2024-05-25'),
+  //     role: 'developer'
+  //   }
+  // ];
 
   const columns = [
-    { field: 'name', headerName: 'Name', editable: true, flex: 2 },
+    { field: 'collectionName', headerName: 'Collection', editable: true, flex: 2 },
+    // {
+    //   field: 'volume',
+    //   headerName: 'Volume',
+    //   type: 'number',
+    //   flex: 1,
+    //   align: 'left',
+    //   headerAlign: 'left',
+    //   editable: true
+    // },
     {
-      field: 'age',
-      headerName: 'Age',
-      type: 'number',
-      flex: 1,
-      align: 'left',
-      headerAlign: 'left',
-      editable: true
-    },
-    {
-      field: 'joinDate',
-      headerName: 'Join date',
-      type: 'date',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'role',
-      headerName: 'Department',
+      field: 'volume',
+      headerName: 'volume',
       flex: 1,
       editable: true,
       type: 'singleSelect',
-      valueOptions: ['Market', 'Finance', 'Development']
+      valueOptions: ['Volume 1', 'Volume 2', 'Volume 3', 'Volume4', 'Volume 5']
+    },
+    {
+      field: 'planningDate',
+      headerName: 'Planning Date',
+      type: 'date',
+      flex: 1,
+      editable: true
+      // valueGetter: (params) => {
+      //   const date = new Date(params);
+      //   return date.toLocaleDateString('en-GB', {
+      //     day: 'numeric',
+      //     month: 'short',
+      //     year: '2-digit'
+      //   });
+      // }
+    },
+    {
+      field: 'launchDate',
+      headerName: 'Launch Date',
+      type: 'date',
+      flex: 1,
+      editable: true
+      // valueGetter: (params) => {
+      //   const date = new Date(params);
+      //   return date.toLocaleDateString('en-GB', {
+      //     day: 'numeric',
+      //     month: 'short',
+      //     year: '2-digit'
+      //   });
+      // }
+    },
+    {
+      field: 'isReapetCollection',
+      headerName: 'repeat',
+      flex: 1,
+      editable: true,
+      type: 'singleSelect',
+      valueOptions: ['No', 'Yes']
     }
   ];
 
@@ -85,16 +142,32 @@ const NewCollection = () => {
   // };
   const volume = [
     {
-      value: 'Vol',
+      value: 'Volume 1',
       label: 'Volume 1'
+    },
+    {
+      value: 'Volume 2',
+      label: 'Volume 2'
+    },
+    {
+      value: 'Volume 3',
+      label: 'Volume 3'
+    },
+    {
+      value: 'Volume 4',
+      label: 'Volume 4'
+    },
+    {
+      value: 'Volume 5',
+      label: 'Volume 5'
     }
   ];
   const enabled = [
     {
-      value: 'Yes',
-      label: 'Y'
+      value: 'Y',
+      label: 'Yes'
     },
-    { value: 'No', label: 'N' }
+    { value: 'N', label: 'No' }
   ];
   return (
     <MainCard>
@@ -144,8 +217,8 @@ const NewCollection = () => {
               fullWidth
               id="outlined-select-currency"
               select
-              label="Enabled"
-              defaultValue="EUR"
+              label="Repeat Collection?"
+              defaultValue=""
               helperText="Please select"
               size="small"
             >
