@@ -1,76 +1,61 @@
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
+// import { useTheme } from '@mui/material/styles';
+import * as React from 'react';
 
-// material-ui
-import { useTheme } from '@mui/material/styles';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import ButtonBase from '@mui/material/ButtonBase';
-
-// project imports
 import LogoSection from '../LogoSection';
-import SearchSection from './SearchSection';
-import NotificationSection from './NotificationSection';
+// import NotificationSection from './NotificationSection';
 import ProfileSection from './ProfileSection';
+import Sidebar from '../Sidebar';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import Container from '@mui/material/Container';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import MenuItem from '@mui/material/MenuItem';
+import AdbIcon from '@mui/icons-material/Adb';
+const pages = ['Products', 'Pricing', 'Blog'];
+const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-// assets
-import { IconMenu2 } from '@tabler/icons-react';
+function Header() {
+  //   const [anchorElNav, setAnchorElNav] = React.useState(null);
+  //   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
-// ==============================|| MAIN NAVBAR / HEADER ||============================== //
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
 
-const Header = ({ handleLeftDrawerToggle }) => {
-    const theme = useTheme();
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
 
-    return (
-        <>
-            {/* logo & toggler button */}
-            <Box
-                sx={{
-                    width: 228,
-                    display: 'flex',
-                    [theme.breakpoints.down('md')]: {
-                        width: 'auto'
-                    }
-                }}
-            >
-                <Box component="span" sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
-                    <LogoSection />
-                </Box>
-                <ButtonBase sx={{ borderRadius: '8px', overflow: 'hidden' }}>
-                    <Avatar
-                        variant="rounded"
-                        sx={{
-                            ...theme.typography.commonAvatar,
-                            ...theme.typography.mediumAvatar,
-                            transition: 'all .2s ease-in-out',
-                            background: theme.palette.secondary.light,
-                            color: theme.palette.secondary.dark,
-                            '&:hover': {
-                                background: theme.palette.secondary.dark,
-                                color: theme.palette.secondary.light
-                            }
-                        }}
-                        onClick={handleLeftDrawerToggle}
-                        color="inherit"
-                    >
-                        <IconMenu2 stroke={1.5} size="1.3rem" />
-                    </Avatar>
-                </ButtonBase>
-            </Box>
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
 
-            {/* header search */}
-            <SearchSection />
-            <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ flexGrow: 1 }} />
+  return (
+    <AppBar position="fixed" sx={{ bgcolor: '#7c7c7c', top: '-15px' }}>
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          <LogoSection></LogoSection>
 
-            {/* notification & profile */}
-            <NotificationSection />
-            <ProfileSection />
-        </>
-    );
-};
-
-Header.propTypes = {
-    handleLeftDrawerToggle: PropTypes.func
-};
-
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            <Sidebar />
+          </Box>
+          <Box sx={{ flexGrow: 0 }}>
+            <ProfileSection></ProfileSection>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
+  );
+}
 export default Header;
