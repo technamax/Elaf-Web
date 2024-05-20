@@ -1,5 +1,4 @@
-/* eslint-disable prettier/prettier */
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
@@ -7,25 +6,33 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
-import { GridRowModes, DataGrid, GridToolbarContainer, GridActionsCellItem, GridRowEditStopReasons } from '@mui/x-data-grid';
+import { DataGrid, GridToolbarContainer, GridActionsCellItem, GridRowEditStopReasons, GridRowModes } from '@mui/x-data-grid';
+import axios from 'axios';
+import dayjs from 'dayjs';
 
-export default function FullFeaturedCrudGrid({ initialRows, ncolumns }) {
-  const [rows, setRows] = React.useState(initialRows);
-  const [rowModesModel, setRowModesModel] = React.useState({});
-  //   const roles = ['Market', 'Finance', 'Development'];
+export default function FullFeaturedCrudGrid({ initialRows, ncolumns, fetchData, formData, deleteApi, editAPi }) {
+  const [rows, setRows] = useState(initialRows);
+  const [rowModesModel, setRowModesModel] = useState({});
 
-  console.log(initialRows);
-  console.log(rows);
+  useEffect(() => {
+    setRows(initialRows);
+  }, [initialRows]);
 
   function EditToolbar(props) {
     const { setRows, setRowModesModel } = props;
 
     const handleClick = () => {
-      const id = initialRows.length + 1;
-      setRows((oldRows) => [...oldRows, { id, name: '', age: '', isNew: true }]);
+      const id = rows.length + 1;
+      const newRow = {
+        id,
+        ...formData,
+        isNew: true
+      };
+
+      setRows((oldRows) => [...oldRows, newRow]);
       setRowModesModel((oldModel) => ({
         ...oldModel,
-        [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' }
+        [id]: { mode: GridRowModes.Edit, fieldToFocus: 'collectionName' }
       }));
     };
 
@@ -48,12 +55,14 @@ export default function FullFeaturedCrudGrid({ initialRows, ncolumns }) {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
   };
 
-  const handleSaveClick = (id) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
-
-  const handleDeleteClick = (id) => () => {
-    setRows(rows.filter((row) => row.id !== id));
+  const handleDeleteClick = (id) => async () => {
+    const rowToDelete = rows.find((row) => row.id === id);
+    try {
+      await axios.delete(`${deleteApi}${rowToDelete.collectionId}`);
+      setRows(rows.filter((row) => row.id !== id));
+    } catch (error) {
+      console.error('Error deleting data:', error);
+    }
   };
 
   const handleCancelClick = (id) => () => {
@@ -68,20 +77,43 @@ export default function FullFeaturedCrudGrid({ initialRows, ncolumns }) {
     }
   };
 
-  const processRowUpdate = (newRow) => {
-    const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-    return updatedRow;
-  };
+  const processRowUpdate = async (newRow, oldRow) => {
+    console.log(newRow);
+    try {
+      const { id, ...formattedRow } = newRow;
 
+      // Format date fields if necessary
+      const formattedDates = {
+        planningDate: formattedRow.planningDate ? dayjs(formattedRow.planningDate).format('YYYY-MM-DD') : null,
+        launchDate: formattedRow.launchDate ? dayjs(formattedRow.launchDate).format('YYYY-MM-DD') : null
+      };
+      const formattedData = { ...formattedRow, ...formattedDates };
+
+      const response = await axios.post(editAPi, formattedData);
+
+      const responseData = { ...response.data, id: newRow.id };
+      setRows((prevRows) => prevRows.map((row) => (row.id === newRow.id ? responseData : row)));
+      console.log('response.data:', response.data);
+
+      return responseData; // Return the updated row
+    } catch (error) {
+      console.error('Error updating data:', error);
+      throw error; // Propagate the error for error handling
+    }
+  };
   const handleRowModesModelChange = (newRowModesModel) => {
     setRowModesModel(newRowModesModel);
   };
 
-  console.log([...ncolumns]);
+  const handleSaveClick = (id) => async () => {
+    setRowModesModel((prevModel) => ({
+      ...prevModel,
+      [id]: { mode: GridRowModes.View }
+    }));
+  };
+
   const columns = [
     ...ncolumns,
-
     {
       field: 'actions',
       type: 'actions',
@@ -93,23 +125,14 @@ export default function FullFeaturedCrudGrid({ initialRows, ncolumns }) {
 
         if (isInEditMode) {
           return [
-            <GridActionsCellItem
-              icon={<SaveIcon />}
-              label="Save"
-              sx={{
-                color: 'primary.main'
-              }}
-              onClick={handleSaveClick(id)}
-            />,
+            <GridActionsCellItem icon={<SaveIcon />} label="Save" sx={{ color: 'primary.main' }} onClick={handleSaveClick(id)} />,
             <GridActionsCellItem
               icon={<CancelIcon />}
               label="Cancel"
               className="textPrimary"
               onClick={handleCancelClick(id)}
               color="inherit"
-              sx={{
-                color: 'error.dark'
-              }}
+              sx={{ color: 'error.dark' }}
             />
           ];
         }
@@ -121,29 +144,25 @@ export default function FullFeaturedCrudGrid({ initialRows, ncolumns }) {
             className="textPrimary"
             onClick={handleEditClick(id)}
             color="inherit"
-            sx={{
-              color: 'secondary.dark'
-            }}
+            sx={{ color: 'secondary.dark' }}
           />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
             label="Delete"
             onClick={handleDeleteClick(id)}
             color="inherit"
-            sx={{
-              color: 'error.dark'
-            }}
+            sx={{ color: 'error.dark' }}
           />
         ];
       }
     }
   ];
-  console.log(columns);
+
   return (
     <Box
       sx={{
         height: 500,
-        width: 'Inherit',
+        width: 'inherit',
         '& .actions': {
           color: 'text.secondary'
         },
@@ -160,14 +179,10 @@ export default function FullFeaturedCrudGrid({ initialRows, ncolumns }) {
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
-        slots={{
-          toolbar: EditToolbar
-        }}
-        slotProps={{
-          toolbar: { setRows, setRowModesModel }
-        }}
+        slots={{ toolbar: EditToolbar }}
+        slotProps={{ toolbar: { setRows, setRowModesModel } }}
+        getRowId={(row) => row.id}
       />
-         
     </Box>
   );
 }
