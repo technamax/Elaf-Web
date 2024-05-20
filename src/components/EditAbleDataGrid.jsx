@@ -6,14 +6,29 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
-import { DataGrid, GridToolbarContainer, GridActionsCellItem, GridRowEditStopReasons, GridRowModes } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridActionsCellItem,
+  GridRowEditStopReasons,
+  GridRowModes
+} from '@mui/x-data-grid';
 import axios from 'axios';
 import dayjs from 'dayjs';
 
-export default function FullFeaturedCrudGrid({ initialRows, ncolumns, fetchData, formData, deleteApi, editAPi }) {
+import { TextField, Grid } from '@mui/material';
+
+export default function FullFeaturedCrudGrid({
+  initialRows,
+  ncolumns,
+  fetchData,
+  formData,
+  deleteApi,
+  editAPi
+}) {
   const [rows, setRows] = useState(initialRows);
   const [rowModesModel, setRowModesModel] = useState({});
-
+  console.log(initialRows);
   useEffect(() => {
     setRows(initialRows);
   }, [initialRows]);
@@ -84,15 +99,21 @@ export default function FullFeaturedCrudGrid({ initialRows, ncolumns, fetchData,
 
       // Format date fields if necessary
       const formattedDates = {
-        planningDate: formattedRow.planningDate ? dayjs(formattedRow.planningDate).format('YYYY-MM-DD') : null,
-        launchDate: formattedRow.launchDate ? dayjs(formattedRow.launchDate).format('YYYY-MM-DD') : null
+        planningDate: formattedRow.planningDate
+          ? dayjs(formattedRow.planningDate).format('YYYY-MM-DD')
+          : null,
+        launchDate: formattedRow.launchDate
+          ? dayjs(formattedRow.launchDate).format('YYYY-MM-DD')
+          : null
       };
       const formattedData = { ...formattedRow, ...formattedDates };
 
       const response = await axios.post(editAPi, formattedData);
 
       const responseData = { ...response.data, id: newRow.id };
-      setRows((prevRows) => prevRows.map((row) => (row.id === newRow.id ? responseData : row)));
+      setRows((prevRows) =>
+        prevRows.map((row) => (row.id === newRow.id ? responseData : row))
+      );
       console.log('response.data:', response.data);
 
       return responseData; // Return the updated row
@@ -125,7 +146,12 @@ export default function FullFeaturedCrudGrid({ initialRows, ncolumns, fetchData,
 
         if (isInEditMode) {
           return [
-            <GridActionsCellItem icon={<SaveIcon />} label="Save" sx={{ color: 'primary.main' }} onClick={handleSaveClick(id)} />,
+            <GridActionsCellItem
+              icon={<SaveIcon />}
+              label="Save"
+              sx={{ color: 'primary.main' }}
+              onClick={handleSaveClick(id)}
+            />,
             <GridActionsCellItem
               icon={<CancelIcon />}
               label="Cancel"
@@ -136,7 +162,6 @@ export default function FullFeaturedCrudGrid({ initialRows, ncolumns, fetchData,
             />
           ];
         }
-
         return [
           <GridActionsCellItem
             icon={<EditIcon />}

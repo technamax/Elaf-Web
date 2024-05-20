@@ -1,12 +1,22 @@
 /* eslint-disable prettier/prettier */
 // material-ui
-import { Grid, TextField, Button, MenuItem, FormControl, Typography, Divider } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Button,
+  MenuItem,
+  FormControl,
+  Typography,
+  Divider,
+  colors
+} from '@mui/material';
 // import { useState } from 'react';
 // import dayjs from 'dayjs';
 // import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
+import { color } from 'framer-motion';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -18,35 +28,7 @@ const Fabrication = () => {
   const initialRows = [
     {
       id: 1,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 2,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 3,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 4,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 5,
-      name: 'jhon',
+      name: 'Fabrication',
       age: 25,
       joinDate: new Date('2024-05-25'),
       role: 'developer'
@@ -83,21 +65,21 @@ const Fabrication = () => {
 
   // const handleSave = () => {
   // };
-  const volume = [
+  const design = [
     {
       value: 'Vol',
-      label: 'Collection 1'
+      label: 'D 1'
     },
     {
       value: 'Vol',
-      label: 'Collection 2'
+      label: 'D 2'
     },
     {
       value: 'Vol',
-      label: 'Collection 3'
+      label: 'D 3'
     }
   ];
-  const colors = [
+  const fQuality = [
     {
       value: '1',
       label: 'Red'
@@ -109,7 +91,14 @@ const Fabrication = () => {
     }
   ];
   return (
-    <MainCard>
+    <MainCard
+      style={{
+        // backgroundColor: '#650D1B',
+        borderWidth: 2,
+        borderStyle: 'dashed',
+        borderColor: '#a11f23'
+      }}
+    >
       <FormControl>
         <Grid container spacing={2} width="Inherit">
           <Grid item sm={9}>
@@ -122,7 +111,7 @@ const Fabrication = () => {
               Save
             </Button>
           </Grid>
-          <Grid item sm={4}>
+          <Grid item sm={6}>
             <TextField
               fullWidth
               id="outlined-select-currency"
@@ -132,41 +121,54 @@ const Fabrication = () => {
               //   helperText="Please Select Collection"
               size="small"
             >
-              {volume.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>{' '}
-          </Grid>
-          <Grid item sm={4}>
-            <TextField label="Design" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField label="Designer Name" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField size="small" type="date" label="Planning Date" name="planningDate" fullWidth focused />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField label="Po PCs" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              fullWidth
-              id="outlined-select-currency"
-              select
-              label="Color"
-              defaultValue="EUR"
-              helperText="Please select color"
-              size="small"
-            >
-              {colors.map((option) => (
+              {design.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
               ))}
             </TextField>
+          </Grid>
+          <Grid item sm={6}>
+            <TextField
+              fullWidth
+              id="outlined-select-currency"
+              select
+              label="Fabric "
+              defaultValue="EUR"
+              //   helperText="Fabric Quality"
+              size="small"
+            >
+              {fQuality.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Po PCs " fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Quantity " fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Uom" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Rate/Uom" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Total(Qty*Rate)" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Unit Price Total/PoPcs" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={8}></Grid>
+          <Grid item sm={2}>
+            <TextField label="GST" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Total Incl GST" fullWidth size="small" />
           </Grid>
           <Divider></Divider>
           <Grid item sm={12} paddingTop={1}>

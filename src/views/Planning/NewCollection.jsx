@@ -1,8 +1,17 @@
 /* eslint-disable prettier/prettier */
 // material-ui
-import { Grid, TextField, Button, MenuItem, FormControl, Typography, Divider } from '@mui/material';
+//
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import {
+  Button,
+  MenuItem,
+  FormControl,
+  Typography,
+  Divider,
+  Grid,
+  TextField
+} from '@mui/material';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 
@@ -51,7 +60,12 @@ const NewCollection = () => {
   const initialRows = collectionList;
 
   const columns = [
-    { field: 'collectionName', headerName: 'Collection', editable: true, flex: 2 },
+    {
+      field: 'collectionName',
+      headerName: 'Collection',
+      editable: true,
+      flex: 2
+    },
     {
       field: 'volume',
       headerName: 'Volume',
@@ -107,7 +121,10 @@ const NewCollection = () => {
   const handleSave = async () => {
     console.log(formData);
     try {
-      const response = await axios.post('https://gecxc.com:4041/API/CollectionRegistration/SaveCollection', formData);
+      const response = await axios.post(
+        'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection',
+        formData
+      );
       console.log('Form data saved:', response.data);
       setFormData({
         collectionName: '',
@@ -121,11 +138,19 @@ const NewCollection = () => {
       console.error('Error saving data:', error);
     }
   };
-  const deleteApi = 'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
-  const editAPi = 'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection';
+  const deleteApi =
+    'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
+  const editAPi =
+    'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection';
 
   return (
-    <MainCard>
+    <MainCard
+      style={{
+        borderWidth: 2,
+        borderStyle: 'dashed',
+        borderColor: '#a11f23'
+      }}
+    >
       <FormControl>
         <Grid container spacing={2} width="inherit">
           <Grid item sm={9}>

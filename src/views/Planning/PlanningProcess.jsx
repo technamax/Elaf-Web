@@ -8,19 +8,18 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Fabrication from 'views/Planning/Fabrication';
 import { Grid, TextField } from '@mui/material';
+import PrePlanning from './PrePlanning';
+import Dyeing from './Dyeing';
 // import { color } from '@mui/system';
 const steps = [
+  'Pre Planning',
   'Fabrication',
   'Dyeing/Printing  ',
   'MultiHead ',
   'Schiffli',
   'name6',
   'name7',
-  'name8',
-  'name9',
-  'name10',
-  'name11',
-  'name12'
+  'name8'
 ];
 
 export default function PlanningProcess() {
@@ -84,8 +83,8 @@ export default function PlanningProcess() {
             select
             label="Select Collection"
             defaultValue=""
-            helperText="Please Select Collection"
             size="small"
+            helperText="Please Select Collection"
           ></TextField>
         </Grid>
       </Grid>
@@ -109,6 +108,28 @@ export default function PlanningProcess() {
           );
         })}
       </Stepper>
+      {/* if need buttons on top of page */}
+      <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+        <Button
+          color="inherit"
+          disabled={activeStep === 0}
+          onClick={handleBack}
+          sx={{ mr: 1 }}
+        >
+          Back
+        </Button>
+        <Box sx={{ flex: '1 1 auto' }} />
+        {isStepOptional(activeStep) && (
+          <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+            Skip
+          </Button>
+        )}
+
+        <Button onClick={handleNext}>
+          {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+        </Button>
+      </Box>
+      {/*//////////////////////////////////////////////////////////////////////////////////////////*/}
       {activeStep === steps.length ? (
         <React.Fragment>
           <Typography sx={{ mt: 2, mb: 1 }}>
@@ -122,8 +143,11 @@ export default function PlanningProcess() {
       ) : (
         <React.Fragment>
           <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
-          {activeStep === 0 && <Fabrication />}
+
+          {activeStep === 0 && <PrePlanning />}
           {activeStep === 1 && <Fabrication />}
+
+          {activeStep === 2 && <Dyeing />}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"

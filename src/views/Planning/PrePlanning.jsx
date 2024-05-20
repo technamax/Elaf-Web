@@ -7,7 +7,8 @@ import {
   MenuItem,
   FormControl,
   Typography,
-  Divider
+  Divider,
+  colors
 } from '@mui/material';
 // import { useState } from 'react';
 // import dayjs from 'dayjs';
@@ -15,47 +16,19 @@ import {
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
+import { color } from 'framer-motion';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-// import Fabrication from './Fabrication';
 // import Edit from '@mui/icons-material/Edit';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
-const NewDesign = () => {
+const PrePlanning = () => {
   const initialRows = [
     {
       id: 1,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 2,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 3,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 4,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 5,
-      name: 'jhon',
+      name: 'Pre Planning',
       age: 25,
       joinDate: new Date('2024-05-25'),
       role: 'developer'
@@ -90,22 +63,23 @@ const NewDesign = () => {
     }
   ];
 
-  const handleSave = () => {};
-  const volume = [
+  // const handleSave = () => {
+  // };
+  const design = [
     {
       value: 'Vol',
-      label: 'Collection 1'
+      label: 'D 1'
     },
     {
       value: 'Vol',
-      label: 'Collection 2'
+      label: 'D 2'
     },
     {
       value: 'Vol',
-      label: 'Collection 3'
+      label: 'D 3'
     }
   ];
-  const colors = [
+  const fQuality = [
     {
       value: '1',
       label: 'Red'
@@ -119,6 +93,7 @@ const NewDesign = () => {
   return (
     <MainCard
       style={{
+        // backgroundColor: '#650D1B',
         borderWidth: 2,
         borderStyle: 'dashed',
         borderColor: '#a11f23'
@@ -128,7 +103,7 @@ const NewDesign = () => {
         <Grid container spacing={2} width="Inherit">
           <Grid item sm={9}>
             <Typography variant="h3" gutterBottom>
-              Create New Design
+              Pre Planning
             </Typography>
           </Grid>
           <Grid item sm={3} textAlign="right">
@@ -136,58 +111,106 @@ const NewDesign = () => {
               Save
             </Button>
           </Grid>
-          <Grid item sm={4}>
+          <Grid item sm={3}>
             <TextField
               fullWidth
               id="outlined-select-currency"
               select
-              label="Select Collection"
+              label="Select Design"
               defaultValue=""
               //   helperText="Please Select Collection"
               size="small"
             >
-              {volume.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>{' '}
-          </Grid>
-          <Grid item sm={4}>
-            <TextField label="Design" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField label="Designer Name" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              size="small"
-              type="date"
-              label="Planning Date"
-              name="planningDate"
-              fullWidth
-              focused
-            />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField label="Po PCs" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              fullWidth
-              id="outlined-select-currency"
-              select
-              label="Color"
-              defaultValue="EUR"
-              helperText="Please select color"
-              size="small"
-            >
-              {colors.map((option) => (
+              {design.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
               ))}
             </TextField>
+          </Grid>
+          <Grid item sm={3}>
+            <TextField label="No of Design" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={3}>
+            <TextField label="No of Color" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={3}>
+            <TextField
+              fullWidth
+              id="outlined-select-currency"
+              select
+              label="Select Component"
+              defaultValue=""
+              //   helperText="Please Select Collection"
+              size="small"
+            >
+              {design.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item sm={3}>
+            <TextField label="Color" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={3}>
+            <TextField label="Cutting Size" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={3}>
+            <TextField
+              fullWidth
+              id="outlined-select-currency"
+              select
+              label="Fabrication"
+              defaultValue=""
+              //   helperText="Please Select Collection"
+              size="small"
+            >
+              {design.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item sm={3}>
+            <TextField
+              fullWidth
+              id="outlined-select-currency"
+              select
+              label="No of Heads"
+              defaultValue=""
+              //   helperText="Please Select Collection"
+              size="small"
+            >
+              {design.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item sm={3}>
+            <TextField label="Repeats " fullWidth size="small" />
+          </Grid>
+          <Grid item sm={3}>
+            <TextField label="Repeat Size" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={3}>
+            <TextField label="UOM " fullWidth size="small" />
+          </Grid>
+          <Grid item sm={3}>
+            <TextField label="Total Fabric" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={3}>
+            <TextField label="Shrinkage% " fullWidth size="small" />
+          </Grid>
+          <Grid item sm={3}>
+            <TextField label="Wastage% " fullWidth size="small" />
+          </Grid>
+          <Grid item sm={3}>
+            <TextField label="Total " fullWidth size="small" />
           </Grid>
           <Divider></Divider>
           <Grid item sm={12} paddingTop={1}>
@@ -199,4 +222,4 @@ const NewDesign = () => {
   );
 };
 
-export default NewDesign;
+export default PrePlanning;

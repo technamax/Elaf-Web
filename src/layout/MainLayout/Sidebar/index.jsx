@@ -19,13 +19,13 @@ import LogoSection from '../LogoSection';
 import Chip from 'ui-component/extended/Chip';
 
 import { drawerWidth } from 'store/constant';
+import { CatchingPokemonSharp } from '@mui/icons-material';
 
 // ==============================|| SIDEBAR DRAWER ||============================== //
-
-const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
+const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
   const theme = useTheme();
   const matchUpMd = useMediaQuery(theme.breakpoints.up('md'));
-
+  console.log(token);
   const drawer = (
     <>
       <Box sx={{ display: { xs: 'block', md: 'none' } }}>
@@ -42,29 +42,44 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
             paddingRight: '16px'
           }}
         >
-          <MenuList />
-          {/* <MenuCard /> */}
+          <MenuList empId={empId} token={token} />
           <Stack direction="row" justifyContent="center" sx={{ mb: 2 }}>
-            <Chip label={import.meta.env.VITE_APP_VERSION} disabled chipcolor="secondary" size="small" sx={{ cursor: 'pointer' }} />
+            <Chip
+              label={import.meta.env.VITE_APP_VERSION}
+              disabled
+              chipcolor="secondary"
+              size="small"
+              sx={{ cursor: 'pointer' }}
+            />
           </Stack>
         </PerfectScrollbar>
       </BrowserView>
       <MobileView>
         <Box sx={{ px: 2 }}>
-          <MenuList />
-          {/* <MenuCard /> */}
+          <MenuList empId={empId} token={token} />
           <Stack direction="row" justifyContent="center" sx={{ mb: 2 }}>
-            <Chip label={import.meta.env.VITE_APP_VERSION} disabled chipcolor="secondary" size="small" sx={{ cursor: 'pointer' }} />
+            <Chip
+              label={import.meta.env.VITE_APP_VERSION}
+              disabled
+              chipcolor="secondary"
+              size="small"
+              sx={{ cursor: 'pointer' }}
+            />
           </Stack>
         </Box>
       </MobileView>
     </>
   );
 
-  const container = window !== undefined ? () => window.document.body : undefined;
+  const container =
+    window !== undefined ? () => window.document.body : undefined;
 
   return (
-    <Box component="nav" sx={{ flexShrink: { md: 0 }, width: matchUpMd ? drawerWidth : 'auto' }} aria-label="mailbox folders">
+    <Box
+      component="nav"
+      sx={{ flexShrink: { md: 0 }, width: matchUpMd ? drawerWidth : 'auto' }}
+      aria-label="mailbox folders"
+    >
       <Drawer
         container={container}
         variant={matchUpMd ? 'persistent' : 'temporary'}
@@ -94,7 +109,9 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
 Sidebar.propTypes = {
   drawerOpen: PropTypes.bool,
   drawerToggle: PropTypes.func,
-  window: PropTypes.object
+  window: PropTypes.object,
+  empId: PropTypes.string.isRequired,
+  token: PropTypes.string.isRequired
 };
 
 export default Sidebar;

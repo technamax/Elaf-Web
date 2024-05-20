@@ -1,154 +1,145 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-
-// material-ui
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import Divider from '@mui/material/Divider';
-import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormHelperText from '@mui/material/FormHelperText';
-import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import InputLabel from '@mui/material/InputLabel';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import UIColor from 'views/utilities/Color';
-// third party
-import * as Yup from 'yup';
-import { Formik } from 'formik';
-
-// project imports
+import TextField from '@mui/material/TextField';
+import axios from 'axios';
 import AnimateButton from 'ui-component/extended/AnimateButton';
-import themePalette from 'themes/palette';
-// assets
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import InputAdornment from '@mui/material/InputAdornment';
+import { IconButton } from '@mui/material';
+import { Visibility } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
-import Google from 'assets/images/icons/social-google.svg';
-
-// ============================|| FIREBASE - LOGIN ||============================ //
-
+import loading from '../../../../assets/images/eloading.gif';
 const AuthLogin = ({ ...others }) => {
-    const theme = useTheme();
-    const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
-    const customization = useSelector((state) => state.customization);
-    const [checked, setChecked] = useState(true);
+  const theme = useTheme();
+  const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
+  const customization = useSelector((state) => state.customization);
+  const [checked, setChecked] = useState(true);
+  const [error, setError] = useState('');
+  const navigate = useNavigate(); // Use useNavigate hook
+  const { enqueueSnackbar } = useSnackbar();
 
-    const googleHandler = async () => {
-        console.error('Login');
-    };
+  const [showPassword, setShowPassword] = useState(false);
+  const [formValues, setFormValues] = useState({
+    username: '',
+    password: ''
+  });
 
-    const [showPassword, setShowPassword] = useState(false);
-    const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
+  const handleChange = (event) => {
+    setFormValues({
+      ...formValues,
+      [event.target.name]: event.target.value
+    });
+  };
 
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault();
-    };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    console.log('Submitting form with values:', formValues);
 
-    return (
-        <>
-            <Formik
-                initialValues={{
-                    email: '',
-                    password: '',
-                    submit: null
-                }}
-                validationSchema={Yup.object().shape({
-                    email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-                    password: Yup.string().max(255).required('Password is required')
-                })}
+    try {
+      const response = await axios.post(
+        'https://gecxc.com:4041/api/Users/authenticate',
+        {
+          username: formValues.username,
+          password: formValues.password
+        }
+      );
+      enqueueSnackbar('Login successful!', {
+        variant: 'success',
+        autoHideDuration: 5000
+      });
+      navigate('/');
+
+      console.log('Authentication successful', response.data);
+    } catch (error) {
+      console.error('Authentication failed', error.response.data);
+      setError('Authentication failed. Please check your credentials.');
+      enqueueSnackbar('Login Failed!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+    }
+  };
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  return (
+    <Box
+      sx={{
+        marginTop: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+      }}
+    >
+      <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}>
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          id="username"
+          label="Username"
+          name="username"
+          autoComplete="username"
+          autoFocus
+          //   size="small"
+          value={formValues.username}
+          onChange={handleChange}
+        />
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          name="password"
+          label="Password"
+          type={showPassword ? 'text' : 'password'}
+          id="password"
+          autoComplete="current-password"
+          //   size="small"
+          value={formValues.password}
+          onChange={handleChange}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {/* {showPassword ? <VisibilityOff /> : <Visibility />} */}
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
+        />
+        {/* {error && <FormHelperText error>{error}</FormHelperText>} */}
+        <Box sx={{ mt: 2 }}>
+          <AnimateButton>
+            <Button
+              sx={{ borderRadius: 10 }}
+              disableElevation
+              fullWidth
+              type="submit"
+              variant="contained"
+              color="error"
             >
-                {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
-                    <form noValidate onSubmit={handleSubmit} {...others}>
-                        <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                            <InputLabel htmlFor="outlined-adornment-email-login">Email Address / Username</InputLabel>
-                            <OutlinedInput
-                                id="outlined-adornment-email-login"
-                                type="email"
-                                value={values.email}
-                                name="email"
-                                onBlur={handleBlur}
-                                onChange={handleChange}
-                                label="Email Address / Username"
-                                inputProps={{}}
-                            />
-                            {touched.email && errors.email && (
-                                <FormHelperText error id="standard-weight-helper-text-email-login">
-                                    {errors.email}
-                                </FormHelperText>
-                            )}
-                        </FormControl>
-
-                        <FormControl
-                            fullWidth
-                            error={Boolean(touched.password && errors.password)}
-                            sx={{ ...theme.typography.customInput }}
-                        >
-                            <InputLabel htmlFor="outlined-adornment-password-login">Password</InputLabel>
-                            <OutlinedInput
-                                id="outlined-adornment-password-login"
-                                type={showPassword ? 'text' : 'password'}
-                                value={values.password}
-                                name="password"
-                                onBlur={handleBlur}
-                                onChange={handleChange}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
-                                            edge="end"
-                                            size="large"
-                                        >
-                                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                                label="Password"
-                                inputProps={{}}
-                            />
-                            {touched.password && errors.password && (
-                                <FormHelperText error id="standard-weight-helper-text-password-login">
-                                    {errors.password}
-                                </FormHelperText>
-                            )}
-                        </FormControl>
-
-                        {errors.submit && (
-                            <Box sx={{ mt: 3 }}>
-                                <FormHelperText error>{errors.submit}</FormHelperText>
-                            </Box>
-                        )}
-
-                        <Box sx={{ mt: 2 }}>
-                            <AnimateButton>
-                                <Button
-                                    disableElevation
-                                    disabled={isSubmitting}
-                                    fullWidth
-                                    size="large"
-                                    type="submit"
-                                    variant="contained"
-                                    color="error"
-                                >
-                                    Sign in
-                                </Button>
-                            </AnimateButton>
-                        </Box>
-                    </form>
-                )}
-            </Formik>
-        </>
-    );
+              Sign in
+            </Button>
+          </AnimateButton>
+        </Box>
+      </Box>
+    </Box>
+  );
 };
 
 export default AuthLogin;
