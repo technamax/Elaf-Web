@@ -7,7 +7,8 @@ import {
   MenuItem,
   FormControl,
   Typography,
-  Divider
+  Divider,
+  colors
 } from '@mui/material';
 // import { useState } from 'react';
 // import dayjs from 'dayjs';
@@ -15,6 +16,7 @@ import {
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
+import { color } from 'framer-motion';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -26,35 +28,7 @@ const Fabrication = () => {
   const initialRows = [
     {
       id: 1,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 2,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 3,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 4,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 5,
-      name: 'jhon',
+      name: 'Fabrication',
       age: 25,
       joinDate: new Date('2024-05-25'),
       role: 'developer'
@@ -117,7 +91,14 @@ const Fabrication = () => {
     }
   ];
   return (
-    <MainCard>
+    <MainCard
+      style={{
+        // backgroundColor: '#650D1B',
+        borderWidth: 2,
+        borderStyle: 'dashed',
+        borderColor: '#a11f23'
+      }}
+    >
       <FormControl>
         <Grid container spacing={2} width="Inherit">
           <Grid item sm={9}>
@@ -181,6 +162,13 @@ const Fabrication = () => {
           </Grid>
           <Grid item sm={2}>
             <TextField label="Unit Price Total/PoPcs" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={8}></Grid>
+          <Grid item sm={2}>
+            <TextField label="GST" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Total Incl GST" fullWidth size="small" />
           </Grid>
           <Divider></Divider>
           <Grid item sm={12} paddingTop={1}>

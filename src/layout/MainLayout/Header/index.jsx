@@ -20,6 +20,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import MenuList from '../Sidebar/MenuList';
+import { Divider } from '@mui/material';
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
@@ -46,20 +47,23 @@ function Header() {
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYmYiOjE3MTYxODIzODUsImV4cCI6MTcxNjc4NzE4NSwiaWF0IjoxNzE2MTgyMzg1fQ.H5ZS9FG0yZEyTMSkxBB3Qdcq1PYSSOeTpJjv7jvg0Ow'; // Replace this with the actual token from your auth response
   console.log(token);
   return (
-    <AppBar position="fixed" sx={{ bgcolor: '#7c7c7c', top: '-15px' }}>
+    <AppBar position="absolute" sx={{ bgcolor: '#7c7c7c', top: '-27px' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <LogoSection></LogoSection>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {/* <Sidebar empId={empId} token={token} /> */}
-            <MenuList empId={empId} token={token} />
+            <Sidebar empId={empId} token={token} />
+            {/* <MenuList empId={empId} token={token} /> */}
           </Box>
           <Box sx={{ flexGrow: 0 }}>
             <ProfileSection></ProfileSection>
           </Box>
         </Toolbar>
+
+        <Divider></Divider>
       </Container>
+      {/* <MenuList empId={empId} token={token} /> */}
     </AppBar>
   );
 }

@@ -1,6 +1,14 @@
 /* eslint-disable prettier/prettier */
 // material-ui
-import { Grid, TextField, Button, MenuItem, FormControl, Typography, Divider } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Button,
+  MenuItem,
+  FormControl,
+  Typography,
+  Divider
+} from '@mui/material';
 // import { useState } from 'react';
 // import dayjs from 'dayjs';
 // import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
@@ -97,7 +105,13 @@ const NewCollection = () => {
     { value: 'No', label: 'N' }
   ];
   return (
-    <MainCard>
+    <MainCard
+      style={{
+        borderWidth: 2,
+        borderStyle: 'dashed',
+        borderColor: '#a11f23'
+      }}
+    >
       <FormControl>
         <Grid container spacing={2} width="Inherit">
           <Grid item sm={9}>
@@ -134,10 +148,24 @@ const NewCollection = () => {
             </TextField>
           </Grid>
           <Grid item sm={3}>
-            <TextField size="small" type="date" label="Planning Date" name="planningDate" fullWidth focused />
+            <TextField
+              size="small"
+              type="date"
+              label="Planning Date"
+              name="planningDate"
+              fullWidth
+              focused
+            />
           </Grid>
           <Grid item sm={3}>
-            <TextField size="small" type="date" label="Launch Date" name="launchDate" fullWidth focused />
+            <TextField
+              size="small"
+              type="date"
+              label="Launch Date"
+              name="launchDate"
+              fullWidth
+              focused
+            />
           </Grid>
           <Grid item sm={3}>
             <TextField

@@ -14,7 +14,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, empId, token }) => {
       sx={{
         display: 'flex',
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         width: '100%'
       }}
     >
@@ -24,7 +24,6 @@ const Sidebar = ({ drawerOpen, drawerToggle, empId, token }) => {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'flex-start',
-          // width: drawerWidth, // Add this line
           paddingLeft: '16px',
           paddingRight: '16px',
           overflow: 'hidden'

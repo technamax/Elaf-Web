@@ -7,7 +7,8 @@ import {
   MenuItem,
   FormControl,
   Typography,
-  Divider
+  Divider,
+  colors
 } from '@mui/material';
 // import { useState } from 'react';
 // import dayjs from 'dayjs';
@@ -15,47 +16,19 @@ import {
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
+import { color } from 'framer-motion';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-// import Fabrication from './Fabrication';
 // import Edit from '@mui/icons-material/Edit';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
-const NewDesign = () => {
+const Dyeing = () => {
   const initialRows = [
     {
       id: 1,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 2,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 3,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 4,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 5,
-      name: 'jhon',
+      name: 'Dyeing',
       age: 25,
       joinDate: new Date('2024-05-25'),
       role: 'developer'
@@ -90,22 +63,23 @@ const NewDesign = () => {
     }
   ];
 
-  const handleSave = () => {};
-  const volume = [
+  // const handleSave = () => {
+  // };
+  const design = [
     {
       value: 'Vol',
-      label: 'Collection 1'
+      label: 'D 1'
     },
     {
       value: 'Vol',
-      label: 'Collection 2'
+      label: 'D 2'
     },
     {
       value: 'Vol',
-      label: 'Collection 3'
+      label: 'D 3'
     }
   ];
-  const colors = [
+  const fQuality = [
     {
       value: '1',
       label: 'Red'
@@ -119,6 +93,7 @@ const NewDesign = () => {
   return (
     <MainCard
       style={{
+        // backgroundColor: '#650D1B',
         borderWidth: 2,
         borderStyle: 'dashed',
         borderColor: '#a11f23'
@@ -128,7 +103,7 @@ const NewDesign = () => {
         <Grid container spacing={2} width="Inherit">
           <Grid item sm={9}>
             <Typography variant="h3" gutterBottom>
-              Create New Design
+              Dyeing/Printing
             </Typography>
           </Grid>
           <Grid item sm={3} textAlign="right">
@@ -141,53 +116,120 @@ const NewDesign = () => {
               fullWidth
               id="outlined-select-currency"
               select
-              label="Select Collection"
+              label="Select Design"
               defaultValue=""
               //   helperText="Please Select Collection"
               size="small"
             >
-              {volume.map((option) => (
+              {design.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
               ))}
-            </TextField>{' '}
-          </Grid>
-          <Grid item sm={4}>
-            <TextField label="Design" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField label="Designer Name" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              size="small"
-              type="date"
-              label="Planning Date"
-              name="planningDate"
-              fullWidth
-              focused
-            />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField label="Po PCs" fullWidth size="small" />
+            </TextField>
           </Grid>
           <Grid item sm={4}>
             <TextField
               fullWidth
               id="outlined-select-currency"
               select
-              label="Color"
-              defaultValue="EUR"
-              helperText="Please select color"
+              label="Fabric "
+              //   helperText="Fabric Quality"
               size="small"
             >
-              {colors.map((option) => (
+              {fQuality.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
               ))}
             </TextField>
+          </Grid>
+          <Grid item sm={4}>
+            <TextField
+              fullWidth
+              id="outlined-select-currency"
+              select
+              label="Color "
+              //   helperText="Fabric Quality"
+              size="small"
+            >
+              {fQuality.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item sm={4}>
+            <TextField
+              fullWidth
+              id="outlined-select-currency"
+              select
+              label="Vendor Name "
+              //   defaultValue="EUR"
+              //   helperText="Fabric Quality"
+              size="small"
+            >
+              {fQuality.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+
+          <Grid item sm={4}>
+            <TextField
+              fullWidth
+              id="outlined-select-currency"
+              select
+              label="Process Type "
+              //   defaultValue="EUR"
+              //   helperText="Fabric Quality"
+              size="small"
+            >
+              {fQuality.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item sm={4}>
+            <TextField label="Po PC's" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="UOM" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Qty" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Shrinkage%" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Wastage%" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Output Qty" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Rate/UOM" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="GST" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Total Incl GST" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="GST Amount" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Total:Including Gst" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Unit P: T/Po PC's" fullWidth size="small" />
           </Grid>
           <Divider></Divider>
           <Grid item sm={12} paddingTop={1}>
@@ -199,4 +241,4 @@ const NewDesign = () => {
   );
 };
 
-export default NewDesign;
+export default Dyeing;
