@@ -6,7 +6,7 @@ import MenuList from './MenuList';
 import Chip from 'ui-component/extended/Chip';
 import { drawerWidth } from 'store/constant';
 
-const Sidebar = ({ drawerOpen, drawerToggle }) => {
+const Sidebar = ({ drawerOpen, drawerToggle, empId, token }) => {
   const theme = useTheme();
 
   return (
@@ -24,13 +24,13 @@ const Sidebar = ({ drawerOpen, drawerToggle }) => {
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'flex-start',
-          width: '100%',
+          // width: drawerWidth, // Add this line
           paddingLeft: '16px',
           paddingRight: '16px',
           overflow: 'hidden'
         }}
       >
-        <MenuList />
+        <MenuList empId={empId} token={token} />
       </PerfectScrollbar>
     </Box>
   );

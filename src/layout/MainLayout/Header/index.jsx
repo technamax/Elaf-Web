@@ -19,6 +19,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import MenuList from '../Sidebar/MenuList';
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
@@ -40,7 +41,10 @@ function Header() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
+  const empId = '10014'; // Or fetch this dynamically based on logged-in user
+  const token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYmYiOjE3MTYxODIzODUsImV4cCI6MTcxNjc4NzE4NSwiaWF0IjoxNzE2MTgyMzg1fQ.H5ZS9FG0yZEyTMSkxBB3Qdcq1PYSSOeTpJjv7jvg0Ow'; // Replace this with the actual token from your auth response
+  console.log(token);
   return (
     <AppBar position="fixed" sx={{ bgcolor: '#7c7c7c', top: '-15px' }}>
       <Container maxWidth="xl">
@@ -48,7 +52,8 @@ function Header() {
           <LogoSection></LogoSection>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            <Sidebar />
+            {/* <Sidebar empId={empId} token={token} /> */}
+            <MenuList empId={empId} token={token} />
           </Box>
           <Box sx={{ flexGrow: 0 }}>
             <ProfileSection></ProfileSection>

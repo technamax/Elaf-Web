@@ -145,13 +145,13 @@ const NavCollapse = ({ menu, level }) => {
         {open ? (
           <IconChevronUp
             stroke={1.5}
-            size="1rem"
+            size="small"
             style={{ marginTop: 'auto', marginBottom: 'auto' }}
           />
         ) : (
           <IconChevronDown
             stroke={1.5}
-            size="1rem"
+            size="small"
             style={{ marginTop: 'auto', marginBottom: 'auto' }}
           />
         )}
