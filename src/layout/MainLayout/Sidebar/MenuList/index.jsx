@@ -58,7 +58,7 @@ const MenuList = ({ empId, token }) => {
       id: mainMenu.mainMenuId,
       title: mainMenu.mainMenuDesc,
       type: 'group',
-      // icon: mainMenu.icon,
+      icon: mainMenu.icon,
       children: subMenuItems
     };
 

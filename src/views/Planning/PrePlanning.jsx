@@ -107,11 +107,11 @@ const PrePlanning = () => {
             </Typography>
           </Grid>
           <Grid item sm={3} textAlign="right">
-            <Button variant="contained" size="small">
+            <Button variant="contained" size="small" color="error">
               Save
             </Button>
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={4}>
             <TextField
               fullWidth
               id="outlined-select-currency"
@@ -128,13 +128,13 @@ const PrePlanning = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={2}>
             <TextField label="No of Design" fullWidth size="small" />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={2}>
             <TextField label="No of Color" fullWidth size="small" />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={4}>
             <TextField
               fullWidth
               id="outlined-select-currency"
@@ -151,13 +151,13 @@ const PrePlanning = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={2}>
             <TextField label="Color" fullWidth size="small" />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={2}>
             <TextField label="Cutting Size" fullWidth size="small" />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={2}>
             <TextField
               fullWidth
               id="outlined-select-currency"
@@ -174,7 +174,7 @@ const PrePlanning = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={2}>
             <TextField
               fullWidth
               id="outlined-select-currency"
@@ -191,25 +191,25 @@ const PrePlanning = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={2}>
             <TextField label="Repeats " fullWidth size="small" />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={2}>
             <TextField label="Repeat Size" fullWidth size="small" />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={2}>
             <TextField label="UOM " fullWidth size="small" />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={2}>
             <TextField label="Total Fabric" fullWidth size="small" />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={2}>
             <TextField label="Shrinkage% " fullWidth size="small" />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={2}>
             <TextField label="Wastage% " fullWidth size="small" />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={2}>
             <TextField label="Total " fullWidth size="small" />
           </Grid>
           <Divider></Divider>
