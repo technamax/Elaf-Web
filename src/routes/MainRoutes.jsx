@@ -19,6 +19,13 @@ const PlanningProcess = Loadable(
   lazy(() => import('views/Planning/PlanningProcess'))
 );
 
+const UserManagementRoles = Loadable(
+  lazy(() => import('views/UserManagement/Roles'))
+);
+const UserManagementApplication = Loadable(
+  lazy(() => import('views/UserManagement/Application'))
+);
+
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
@@ -42,6 +49,19 @@ const MainRoutes = {
       //     element: <DashboardDefault />
       //   }
       // ]
+    },
+    {
+      path: 'UserManagement',
+      children: [
+        {
+          path: 'Role', // Relative path
+          element: <UserManagementRoles />
+        },
+        {
+          path: 'Application', // Relative path
+          element: <UserManagementApplication />
+        }
+      ]
     },
 
     {
