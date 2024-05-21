@@ -108,7 +108,7 @@ const Fabrication = () => {
             </Typography>
           </Grid>
           <Grid item sm={3} textAlign="right">
-            <Button variant="contained" size="small">
+            <Button variant="contained" size="small" color="error">
               Save
             </Button>
           </Grid>

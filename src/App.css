@@ -9,8 +9,8 @@
 
 .css-1pxvvms-MuiButtonBase-root-MuiListItemButton-root:hover,
 .css-e5rpmv-MuiButtonBase-root-MuiListItemButton-root:hover {
-  background-color: #9f1d22;
-  color: white;
+  /* background-color: #9f1d22; */
+  /* color: white; */
   border-radius: 7px;
   /* opacity: ; */
 }
@@ -18,9 +18,9 @@
 .css-1pxvvms-MuiButtonBase-root-MuiListItemButton-root:hover,
 .css-e5rpmv-MuiButtonBase-root-MuiListItemButton-root:hover,
 .css-e5rpmv-MuiButtonBase-root-MuiListItemButton-root.Mui-selected {
-  background-color: #9f1d22;
+  /* background-color: #9f1d22; */
   opacity: 0.85;
-  color: white;
+  /* color: white; */
   border-radius: 7px;
 }
 .css-pxzkdk-MuiDrawer-docked .MuiDrawer-paper {
@@ -31,6 +31,6 @@
 /* avatar hover */
 .css-6zypyp-MuiButtonBase-root-MuiChip-root[aria-controls='menu-list-grow'],
 .css-6zypyp-MuiButtonBase-root-MuiChip-root:hover {
-  border-color: #9f1d22;
-  background: #9f1d22 !important;
+  /* border-color: #9f1d22; */
+  /* background: #9f1d22 !important; */
 }
