@@ -1,109 +1,157 @@
-/* eslint-disable prettier/prettier */
-// material-ui
+import { useState, useEffect, useCallback } from 'react';
+import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
+import axios from 'axios';
 import {
-  Grid,
-  TextField,
   Button,
   MenuItem,
   FormControl,
   Typography,
-  Divider
+  Divider,
+  Grid,
+  TextField
 } from '@mui/material';
-// import { useState } from 'react';
-// import dayjs from 'dayjs';
-// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-// import Edit from '@mui/icons-material/Edit';
+import { GetCollectionList } from 'api/apis';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const NewCollection = () => {
-  const initialRows = [
-    {
-      id: 1,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 2,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 3,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 4,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    },
-    {
-      id: 5,
-      name: 'jhon',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
+  const { data, error, isLoading, refetch } = useGetCollectionListQuery();
+  const [formData, setFormData] = useState({
+    collectionName: '',
+    volume: '',
+    planningDate: '',
+    launchDate: '',
+    isReapetCollection: '',
+    createdBy: 0,
+    createdOn: new Date().toISOString(),
+    lastUpdatedBy: 0,
+    lastUpdatedOn: new Date().toISOString()
+  });
+  console.log('formData', formData);
+  const [collectionList, setCollectionList] = useState([]);
+
+  // const fetchData = useCallback(async () => {
+  //   try {
+  //     const data = await GetCollectionList();
+
+  //     const rowsWithId = data.map((row, index) => ({
+  //       ...row,
+  //       id: index + 1,
+  //       planningDate: new Date(row.planningDate),
+  //       launchDate: new Date(row.launchDate)
+  //     }));
+
+  //     setCollectionList(rowsWithId);
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    // fetchData();
+    if (data) {
+      const rowsWithId = data.map((row, index) => ({
+        ...row,
+        id: index + 1,
+        planningDate: new Date(row.planningDate),
+        launchDate: new Date(row.launchDate)
+      }));
+      setCollectionList(rowsWithId);
     }
-  ];
+  }, [data]);
+
+  const initialRows = collectionList;
 
   const columns = [
-    { field: 'name', headerName: 'Name', editable: true, flex: 2 },
     {
-      field: 'age',
-      headerName: 'Age',
-      type: 'number',
-      flex: 1,
-      align: 'left',
-      headerAlign: 'left',
-      editable: true
+      field: 'collectionName',
+      headerName: 'Collection',
+      editable: true,
+      flex: 2
     },
     {
-      field: 'joinDate',
-      headerName: 'Join date',
-      type: 'date',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'role',
-      headerName: 'Department',
+      field: 'volume',
+      headerName: 'Volume',
       flex: 1,
       editable: true,
       type: 'singleSelect',
-      valueOptions: ['Market', 'Finance', 'Development']
+      valueOptions: ['Volume 1', 'Volume 2', 'Volume 3', 'Volume 4', 'Volume 5']
+    },
+    {
+      field: 'planningDate',
+      headerName: 'Planning Date',
+      type: 'date',
+      flex: 1,
+      editable: true,
+      valueGetter: (params) => (params ? new Date(params) : null) // Ensure date is parsed correctly
+    },
+    {
+      field: 'launchDate',
+      headerName: 'Launch Date',
+      type: 'date',
+      flex: 1,
+      editable: true,
+      valueGetter: (params) => (params ? new Date(params) : null) // Ensure date is parsed correctly
+    },
+    {
+      field: 'isReapetCollection',
+      headerName: 'Repeat',
+      flex: 1,
+      editable: true,
+      type: 'singleSelect',
+      valueOptions: ['No', 'Yes']
     }
   ];
 
-  // const handleSave = () => {
-  // };
   const volume = [
-    {
-      value: 'Vol',
-      label: 'Volume 1'
-    }
+    { value: 'Volume 1', label: 'Volume 1' },
+    { value: 'Volume 2', label: 'Volume 2' },
+    { value: 'Volume 3', label: 'Volume 3' },
+    { value: 'Volume 4', label: 'Volume 4' },
+    { value: 'Volume 5', label: 'Volume 5' }
   ];
+
   const enabled = [
-    {
-      value: 'Yes',
-      label: 'Y'
-    },
-    { value: 'No', label: 'N' }
+    { value: 'Yes', label: 'Yes' },
+    { value: 'No', label: 'No' }
   ];
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSave = async () => {
+    console.log(formData);
+    try {
+      const response = await axios.post(
+        'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection',
+        formData
+      );
+      console.log('Form data saved:', response.data);
+      setFormData({
+        collectionName: '',
+        volume: '',
+        planningDate: '',
+        launchDate: '',
+        isReapetCollection: ''
+      });
+      // fetchData();
+      refetch();
+    } catch (error) {
+      console.error('Error saving data:', error);
+    }
+  };
+  const deleteApi =
+    'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
+  const editAPi =
+    'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection';
+
   return (
     <MainCard
       style={{
@@ -113,30 +161,36 @@ const NewCollection = () => {
       }}
     >
       <FormControl>
-        <Grid container spacing={2} width="Inherit">
+        <Grid container spacing={2} width="inherit">
           <Grid item sm={9}>
             <Typography variant="h3" gutterBottom>
               Create New Collection
             </Typography>
           </Grid>
           <Grid item sm={3} textAlign="right">
-            <Button variant="contained" size="small" color="error">
+            <Button variant="contained" size="small" onClick={handleSave}>
               Save
             </Button>
           </Grid>
-          <Grid item sm={3}>
-            <TextField label="Collection Order #" fullWidth size="small" />
+          <Grid item sm={8}>
+            <TextField
+              label="Collection Name"
+              fullWidth
+              size="small"
+              name="collectionName"
+              onChange={handleChange}
+              value={formData.collectionName}
+            />
           </Grid>
-          <Grid item sm={9}>
-            <TextField label="Collection Name" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={4}>
             <TextField
               fullWidth
-              id="outlined-select-currency"
+              // id="outlined-select-currency"
               select
               label="Volume"
-              defaultValue="Vol"
+              name="volume"
+              value={formData.volume}
+              onChange={handleChange}
               helperText="Please select volume"
               size="small"
             >
@@ -147,33 +201,38 @@ const NewCollection = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={4}>
             <TextField
               size="small"
               type="date"
               label="Planning Date"
               name="planningDate"
+              value={formData.planningDate}
+              onChange={handleChange}
               fullWidth
               focused
             />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={4}>
             <TextField
               size="small"
               type="date"
               label="Launch Date"
               name="launchDate"
+              value={formData.launchDate}
+              onChange={handleChange}
               fullWidth
               focused
             />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={4}>
             <TextField
               fullWidth
-              id="outlined-select-currency"
               select
-              label="Enabled"
-              defaultValue="EUR"
+              label="Repeat Collection?"
+              name="isReapetCollection"
+              value={formData.isReapetCollection}
+              onChange={handleChange}
               helperText="Please select"
               size="small"
             >
@@ -185,9 +244,15 @@ const NewCollection = () => {
             </TextField>
           </Grid>
           <Divider />
-
           <Grid item sm={12} paddingTop={1}>
-            <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} />
+            <EditAbleDataGrid
+              initialRows={initialRows}
+              ncolumns={columns}
+              // fetchData={fetchData}
+              formData={formData}
+              deleteApi={deleteApi}
+              editAPi={editAPi}
+            />
           </Grid>
         </Grid>
       </FormControl>
