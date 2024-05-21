@@ -1,7 +1,5 @@
-/* eslint-disable prettier/prettier */
-// material-ui
-//
 import { useState, useEffect, useCallback } from 'react';
+import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 import axios from 'axios';
 import {
   Button,
@@ -22,6 +20,7 @@ import { GetCollectionList } from 'api/apis';
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const NewCollection = () => {
+  const { data, error, isLoading, refetch } = useGetCollectionListQuery();
   const [formData, setFormData] = useState({
     collectionName: '',
     volume: '',
@@ -36,26 +35,35 @@ const NewCollection = () => {
   console.log('formData', formData);
   const [collectionList, setCollectionList] = useState([]);
 
-  const fetchData = useCallback(async () => {
-    try {
-      const data = await GetCollectionList();
+  // const fetchData = useCallback(async () => {
+  //   try {
+  //     const data = await GetCollectionList();
 
+  //     const rowsWithId = data.map((row, index) => ({
+  //       ...row,
+  //       id: index + 1,
+  //       planningDate: new Date(row.planningDate),
+  //       launchDate: new Date(row.launchDate)
+  //     }));
+
+  //     setCollectionList(rowsWithId);
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    // fetchData();
+    if (data) {
       const rowsWithId = data.map((row, index) => ({
         ...row,
         id: index + 1,
         planningDate: new Date(row.planningDate),
         launchDate: new Date(row.launchDate)
       }));
-
       setCollectionList(rowsWithId);
-    } catch (error) {
-      console.error('Error fetching data:', error);
     }
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  }, [data]);
 
   const initialRows = collectionList;
 
@@ -133,7 +141,8 @@ const NewCollection = () => {
         launchDate: '',
         isReapetCollection: ''
       });
-      fetchData();
+      // fetchData();
+      refetch();
     } catch (error) {
       console.error('Error saving data:', error);
     }
@@ -169,14 +178,14 @@ const NewCollection = () => {
               fullWidth
               size="small"
               name="collectionName"
-              value={formData.collectionName}
               onChange={handleChange}
+              value={formData.collectionName}
             />
           </Grid>
           <Grid item sm={4}>
             <TextField
               fullWidth
-              id="outlined-select-currency"
+              // id="outlined-select-currency"
               select
               label="Volume"
               name="volume"
@@ -239,7 +248,7 @@ const NewCollection = () => {
             <EditAbleDataGrid
               initialRows={initialRows}
               ncolumns={columns}
-              fetchData={fetchData}
+              // fetchData={fetchData}
               formData={formData}
               deleteApi={deleteApi}
               editAPi={editAPi}

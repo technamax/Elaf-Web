@@ -21,7 +21,7 @@ import { TextField, Grid } from '@mui/material';
 export default function FullFeaturedCrudGrid({
   initialRows,
   ncolumns,
-  fetchData,
+  // fetchData,
   formData,
   deleteApi,
   editAPi

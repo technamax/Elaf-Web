@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 // third party
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
+import store from './api/store/store';
 
 // project imports
 import App from './App';
@@ -31,7 +32,7 @@ import { SnackbarProvider } from 'notistack';
 
 const container = document.getElementById('root');
 const root = createRoot(container); // createRoot(container!) if you use TypeScript
-const store = configureStore({ reducer });
+// const store = configureStore({ reducer });
 
 // ==============================|| REACT DOM RENDER  ||============================== //
 
