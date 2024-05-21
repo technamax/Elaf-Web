@@ -27,6 +27,8 @@ import '@fontsource/poppins/700.css';
 // style + assets
 import 'assets/scss/style.scss';
 import reportWebVitals from 'reportWebVitals';
+import './App.css';
+
 import { SnackbarProvider } from 'notistack';
 
 const container = document.getElementById('root');

@@ -43,21 +43,12 @@ const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
           }}
         >
           <MenuList empId={empId} token={token} />
-          <Stack direction="row" justifyContent="center" sx={{ mb: 2 }}>
-            <Chip
-              label={import.meta.env.VITE_APP_VERSION}
-              disabled
-              chipcolor="secondary"
-              size="small"
-              sx={{ cursor: 'pointer' }}
-            />
-          </Stack>
         </PerfectScrollbar>
       </BrowserView>
       <MobileView>
         <Box sx={{ px: 2 }}>
           <MenuList empId={empId} token={token} />
-          <Stack direction="row" justifyContent="center" sx={{ mb: 2 }}>
+          {/* <Stack direction="row" justifyContent="center" sx={{ mb: 2 }}>
             <Chip
               label={import.meta.env.VITE_APP_VERSION}
               disabled
@@ -65,7 +56,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
               size="small"
               sx={{ cursor: 'pointer' }}
             />
-          </Stack>
+          </Stack> */}
         </Box>
       </MobileView>
     </>
@@ -90,10 +81,12 @@ const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             background: theme.palette.background.default,
-            color: theme.palette.text.primary,
+            color: theme.palette.text.white,
+            backgroundColor: 'lightgrey',
+            // to change sidebar background color
             borderRight: 'none',
             [theme.breakpoints.up('md')]: {
-              top: '88px'
+              top: '84px'
             }
           }
         }}

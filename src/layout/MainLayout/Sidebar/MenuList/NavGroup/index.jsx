@@ -73,7 +73,7 @@ const NavGroup = ({ item }) => {
           <ListItemButton onClick={handleClick}>
             <Typography
               variant="body1"
-              sx={{ ...theme.typography.menuCaption }}
+              // sx={{ ...theme.typography.menuCaption }}
             >
               {item.title}
             </Typography>
@@ -94,7 +94,7 @@ const NavGroup = ({ item }) => {
       </List>
 
       {/* group divider */}
-      <Divider sx={{ mt: 0.25, mb: 1.25 }} />
+      {/* <Divider sx={{ mt: 0.25, mb: 1.25 }} /> */}
     </>
   );
 };

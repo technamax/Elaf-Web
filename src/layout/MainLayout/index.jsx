@@ -74,12 +74,14 @@ const MainLayout = () => {
       {/* header */}
 
       <AppBar
-        enableColorOnDark
+        className=".css-h4y409-MuiList-root "
+        // enableColorOnDark
         position="absolute"
-        color="inherit"
+        color="dark"
+        // To change Appbar Color/
         elevation={0}
         sx={{
-          bgcolor: theme.palette.background.default,
+          bgcolor: theme.palette.background.error,
           transition: leftDrawerOpened
             ? theme.transitions.create('width')
             : 'none'

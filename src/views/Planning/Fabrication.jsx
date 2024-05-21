@@ -14,7 +14,7 @@ import {
 // import dayjs from 'dayjs';
 // import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-
+import Elogo from '../../assets/images/ELogo.png';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import { color } from 'framer-motion';
 
@@ -93,12 +93,13 @@ const Fabrication = () => {
   return (
     <MainCard
       style={{
-        // backgroundColor: '#650D1B',
+        backgroundColor: 'lightgrey',
         borderWidth: 2,
         borderStyle: 'dashed',
         borderColor: '#a11f23'
       }}
     >
+      {/* <img src={Elogo} a width="100%" /> */}
       <FormControl>
         <Grid container spacing={2} width="Inherit">
           <Grid item sm={9}>

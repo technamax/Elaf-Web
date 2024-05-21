@@ -51,12 +51,14 @@ const MenuList = ({ empId, token }) => {
       // title: mainMenu.mainMenuDesc,
       type: 'item',
       url: subMenu.link
+      // icon: subMenu.icon
     }));
 
     const navGroup = {
       id: mainMenu.mainMenuId,
       title: mainMenu.mainMenuDesc,
       type: 'group',
+      // icon: mainMenu.icon,
       children: subMenuItems
     };
 
