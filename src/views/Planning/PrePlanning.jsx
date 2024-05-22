@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
-// material-ui
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Grid,
   TextField,
@@ -7,93 +8,137 @@ import {
   MenuItem,
   FormControl,
   Typography,
-  Divider,
-  colors
+  Divider
 } from '@mui/material';
-// import { useState } from 'react';
-// import dayjs from 'dayjs';
-// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-
+import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
+import { useGetDesignListQuery } from 'api/store/Apis/designApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
-import { color } from 'framer-motion';
-
-// project imports
 import MainCard from 'ui-component/cards/MainCard';
-// import Edit from '@mui/icons-material/Edit';
-
-// ==============================|| SAMPLE PAGE ||============================== //
 
 const PrePlanning = () => {
-  const initialRows = [
-    {
-      id: 1,
-      name: 'Pre Planning',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    }
-  ];
+  const { data: collectionData } = useGetCollectionListQuery();
+  const { data: designData } = useGetDesignListQuery();
+
+  const collectionList = collectionData || [];
+  const designList = designData || [];
+
+  const [components, setComponents] = useState([]);
+  const [Fabrications, setFabrications] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [uoms, setUoms] = useState([]);
+  const [heads, setHeads] = useState([]);
+  console.log('components:', components);
+  console.log('Fabrications:', Fabrications);
+  console.log('colors:', colors);
+  console.log('uoms:', uoms);
+  console.log('heads:', heads);
+
+  const [formData, setFormData] = useState({
+    collectionId: '',
+    baseColorId: '', // not in api
+    noOfDesigns: '', // not in apis
+    noOfColors: '', // not in api
+    designId: '',
+    componentId: '',
+    cuttingSize: '', // not in api
+    colorId: '',
+    fabricId: '',
+    noOfHeads: '',
+    repeats: '',
+    repeatSize: '',
+    uomId: '',
+    totalFabric: '',
+    shrinkage: '',
+    wastage: '',
+    total: '',
+    appId: 1,
+    createdOn: new Date().toISOString(),
+    createdBy: 0,
+    lastUpdatedBy: 0,
+    lastUpdatedOn: new Date().toISOString()
+  });
+
+  useEffect(() => {
+    const fetchPrePlanningLookUp = async () => {
+      try {
+        const response = await axios.get(
+          'https://gecxc.com:4041/API/Common/GetPrePlanningLookUp?appID=1'
+        );
+        const data = response.data[0];
+        setComponents(data.componentList);
+        setColors(data.colorList);
+        setFabrications(data.fabricList);
+        setHeads(data.noOfHeadsList);
+        setUoms(data.uom);
+      } catch (error) {
+        console.error('Error fetching pre-planning lookup data:', error);
+      }
+    };
+
+    fetchPrePlanningLookUp();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const initialRows = [];
 
   const columns = [
-    { field: 'name', headerName: 'Name', editable: true, flex: 2 },
     {
-      field: 'age',
-      headerName: 'Age',
-      type: 'number',
+      field: 'collectionId',
+      headerName: 'Collection ID',
+      editable: true,
+      flex: 2,
+      type: 'singleSelect',
+      valueOptions: collectionList.map((collection) => ({
+        value: collection.collectionId,
+        label: collection.collectionName
+      }))
+    },
+    {
+      field: 'designNo',
+      headerName: 'Design No',
       flex: 1,
-      align: 'left',
-      headerAlign: 'left',
       editable: true
     },
     {
-      field: 'joinDate',
-      headerName: 'Join date',
+      field: 'designerName',
+      headerName: 'Designer Name',
+      flex: 1,
+      editable: true
+    },
+    {
+      field: 'poPcs',
+      headerName: 'Po PCs',
+      flex: 1,
+      editable: true
+    },
+    {
+      field: 'dateOfPlanning',
+      headerName: 'Date of Planning',
       type: 'date',
       flex: 1,
-      editable: true
+      editable: true,
+      valueGetter: (params) => (params ? new Date(params) : null) // Ensure date is parsed correctly
     },
     {
-      field: 'role',
-      headerName: 'Department',
+      field: 'colorId',
+      headerName: 'Color',
       flex: 1,
       editable: true,
-      type: 'singleSelect',
-      valueOptions: ['Market', 'Finance', 'Development']
+      type: 'singleSelect'
+      // valueOptions: colors.map((color) => ({
+      //   value: color.value,
+      //   label: color.label
+      // }))
     }
   ];
 
-  // const handleSave = () => {
-  // };
-  const design = [
-    {
-      value: 'Vol',
-      label: 'D 1'
-    },
-    {
-      value: 'Vol',
-      label: 'D 2'
-    },
-    {
-      value: 'Vol',
-      label: 'D 3'
-    }
-  ];
-  const fQuality = [
-    {
-      value: '1',
-      label: 'Red'
-    },
-    { value: '2', label: 'Blue' },
-    {
-      value: '3',
-      label: 'Green'
-    }
-  ];
   return (
     <MainCard
       style={{
-        // backgroundColor: '#650D1B',
         borderWidth: 2,
         borderStyle: 'dashed',
         borderColor: '#a11f23'
@@ -111,65 +156,106 @@ const PrePlanning = () => {
               Save
             </Button>
           </Grid>
-          <Grid item sm={3}>
+          <Grid item sm={4}>
             <TextField
               fullWidth
-              id="outlined-select-currency"
               select
               label="Select Design"
-              defaultValue=""
-              //   helperText="Please Select Collection"
+              name="designId"
+              value={formData.designId}
+              onChange={handleChange}
               size="small"
             >
-              {design.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+              {designList.map((option) => (
+                <MenuItem key={option.designId} value={option.designId}>
+                  {option.designerName}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={3}>
-            <TextField label="No of Design" fullWidth size="small" />
+          <Grid item sm={4}>
+            <TextField
+              label="No of Design"
+              fullWidth
+              size="small"
+              name="noOfDesigns"
+              value={formData.noOfDesigns}
+              onChange={handleChange}
+            />
           </Grid>
-          <Grid item sm={3}>
-            <TextField label="No of Color" fullWidth size="small" />
+          <Grid item sm={4}>
+            <TextField
+              label="No of Color"
+              fullWidth
+              size="small"
+              name="noOfColors"
+              value={formData.noOfColors}
+              onChange={handleChange}
+            />
           </Grid>
+          <Grid item sm={12}>
+            <Divider></Divider>
+          </Grid>
+
           <Grid item sm={3}>
             <TextField
               fullWidth
-              id="outlined-select-currency"
               select
               label="Select Component"
               defaultValue=""
-              //   helperText="Please Select Collection"
               size="small"
+              name="componentId"
+              value={formData.componentId}
+              onChange={handleChange}
             >
-              {design.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+              {components.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
           <Grid item sm={3}>
-            <TextField label="Color" fullWidth size="small" />
+            <TextField
+              label="Color"
+              fullWidth
+              select
+              size="small"
+              name="colorId"
+              value={formData.colorId}
+              onChange={handleChange}
+            >
+              {colors.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
           </Grid>
           <Grid item sm={3}>
-            <TextField label="Cutting Size" fullWidth size="small" />
+            <TextField
+              label="Cutting Size"
+              fullWidth
+              size="small"
+              name="cuttingSize"
+              value={formData.cuttingSize}
+              onChange={handleChange}
+            />
           </Grid>
           <Grid item sm={3}>
             <TextField
               fullWidth
-              id="outlined-select-currency"
               select
               label="Fabrication"
               defaultValue=""
-              //   helperText="Please Select Collection"
               size="small"
+              name="fabricId"
+              value={formData.fabricId}
+              onChange={handleChange}
             >
-              {design.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+              {Fabrications.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
                 </MenuItem>
               ))}
             </TextField>
@@ -177,47 +263,103 @@ const PrePlanning = () => {
           <Grid item sm={3}>
             <TextField
               fullWidth
-              id="outlined-select-currency"
               select
               label="No of Heads"
               defaultValue=""
-              //   helperText="Please Select Collection"
               size="small"
+              name="noOfHeads"
+              value={formData.noOfHeads}
+              onChange={handleChange}
             >
-              {design.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+              {heads.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
           <Grid item sm={3}>
-            <TextField label="Repeats " fullWidth size="small" />
+            <TextField
+              label="Repeats "
+              fullWidth
+              size="small"
+              name="repeats"
+              value={formData.repeats}
+              onChange={handleChange}
+            />
           </Grid>
           <Grid item sm={3}>
-            <TextField label="Repeat Size" fullWidth size="small" />
+            <TextField
+              label="Repeat Size"
+              fullWidth
+              size="small"
+              name="repeatSize"
+              value={formData.repeatSize}
+              onChange={handleChange}
+            />
           </Grid>
           <Grid item sm={3}>
-            <TextField label="UOM " fullWidth size="small" />
+            <TextField
+              label="UOM "
+              fullWidth
+              select
+              size="small"
+              name="uomId"
+              value={formData.uomId}
+              onChange={handleChange}
+            >
+              {uoms.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
           </Grid>
           <Grid item sm={3}>
-            <TextField label="Total Fabric" fullWidth size="small" />
+            <TextField
+              label="Total Fabric"
+              fullWidth
+              size="small"
+              name="totalFabric"
+              value={formData.totalFabric}
+              onChange={handleChange}
+            />
           </Grid>
           <Grid item sm={3}>
-            <TextField label="Shrinkage% " fullWidth size="small" />
+            <TextField
+              label="Shrinkage"
+              fullWidth
+              size="small"
+              name="shrinkage"
+              value={formData.shrinkage}
+              onChange={handleChange}
+            />
           </Grid>
           <Grid item sm={3}>
-            <TextField label="Wastage% " fullWidth size="small" />
+            <TextField
+              label="Wastage"
+              fullWidth
+              size="small"
+              name="wastage"
+              value={formData.wastage}
+              onChange={handleChange}
+            />
           </Grid>
           <Grid item sm={3}>
-            <TextField label="Total " fullWidth size="small" />
-          </Grid>
-          <Divider></Divider>
-          <Grid item sm={12} paddingTop={1}>
-            <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} />
+            <TextField
+              label="Total"
+              fullWidth
+              size="small"
+              name="total"
+              value={formData.total}
+              onChange={handleChange}
+            />
           </Grid>
         </Grid>
       </FormControl>
+      <Grid item sm={12} mt={3}>
+        <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} />
+      </Grid>
     </MainCard>
   );
 };
