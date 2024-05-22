@@ -425,8 +425,8 @@ const NewDesign = () => {
     }
   };
 
-  const deleteApi =
-    'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
+  // const deleteApi =
+  //   'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
   const editAPi = 'https://gecxc.com:4041/API/DesignRegistration/SaveDesign';
 
   return (
