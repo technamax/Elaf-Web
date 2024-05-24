@@ -57,7 +57,7 @@ const Main = styled('main', {
 const MainLayout = () => {
   const empId = '10014';
   const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYmYiOjE3MTYyMDY5NjAsImV4cCI6MTcxNjI5MzM2MCwiaWF0IjoxNzE2MjA2OTYwfQ.mjJ73RGAN9r-jn8tu17XMqsOCwySNAxQ-5dyxcxgYqI';
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYmYiOjE3MTY1Mjg5MzYsImV4cCI6MTcxNjYxNTMzNiwiaWF0IjoxNzE2NTI4OTM2fQ.Ku5x42gHE3JXLqHQVQaV_Qoh-lK2lc5LnBfdshPGPiU';
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
   // Handle left drawer
