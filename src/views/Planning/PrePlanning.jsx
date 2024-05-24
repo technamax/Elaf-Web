@@ -40,6 +40,7 @@ const PrePlanning = () => {
     baseColorName: '', // not in api
     noOfDesigns: '', // not in apis
     noOfColors: '', // not in api
+    planningHeaderId: '',
     designId: '',
     batchNo: '',
     componentId: '',
@@ -150,69 +151,227 @@ const PrePlanning = () => {
         baseColorId: selectedDesign ? selectedDesign.colorId : '',
         baseColorName: selectedDesign ? selectedDesign.colorName : ''
       });
+    } else if (name === 'batchNo') {
+      const selectedBatch = batchList.find((batch) => batch.batchNo === value);
+      setFormData({
+        ...formData,
+        batchNo: value,
+        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
+      });
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
   // console.log('noOfDesigns', formData.noOfDesigns); colorId
 
-  const initialRows = [];
+  const handleSave = async () => {
+    try {
+      const response = await axios.post(
+        'https://gecxc.com:4041/api/PrePlanning/SavePrePlanning',
+        {
+          designId: parseInt(formData.designId),
+          planningHeaderId: parseInt(formData.planningHeaderId),
+          componentId: parseInt(formData.componentId),
+          colorId: parseInt(formData.colorId),
+          batchNo: formData.batchNo,
+          baseColorId: parseInt(formData.baseColorId),
+          cuttingSize: parseFloat(formData.cuttingSize),
+          fabricId: parseInt(formData.fabricId),
+          noOfHeads: parseInt(formData.noOfHeads),
+          repeats: parseFloat(formData.repeats),
+          repeatSize: parseFloat(formData.repeatSize),
+          uomId: parseInt(formData.uomId),
+          totalFabric: parseFloat(formData.totalFabric),
+          shrinkage: parseFloat(formData.shrinkage),
+          wastage: parseFloat(formData.wastage),
+          total: parseFloat(formData.total),
+          appId: formData.appId,
+          createdOn: formData.createdOn,
+          createdBy: formData.createdBy,
+          lastUpdatedBy: formData.lastUpdatedBy,
+          lastUpdatedOn: formData.lastUpdatedOn
+        }
+      );
+      console.log('Data saved successfully:', response.data);
+    } catch (error) {
+      console.error('Error saving data:', error);
+    }
+  };
+
+  const initialRows = [
+    {
+      id: 1,
+      planningId: 6,
+      designId: 1,
+      planningHeaderId: 1,
+      batchNo: '1',
+      componentId: 81,
+      baseColorId: 45,
+      colorId: 45,
+      cuttingSize: 4.0,
+      fabricId: 1,
+      noOfHeads: 141,
+      repeats: 3,
+      repeatSize: 43.0,
+      uomId: 139,
+      totalFabric: 129.0,
+      shrinkage: 2.0,
+      wastage: 10.0,
+      total: 114,
+      appId: 1,
+      createdOn: '2024-05-24T07:07:43.177',
+      createdBy: 0,
+      lastUpdatedBy: 0,
+      lastUpdatedOn: '2024-05-24T07:07:43.177',
+      componentName: 'Front',
+      color: 'APPLE GREEN',
+      fabric: 'Lawn-80x80/102x88-62',
+      noOfHeadName: '24',
+      uom: 'Meters'
+    },
+    {
+      id: 2,
+      planningId: 7,
+      designId: 1,
+      planningHeaderId: 1,
+      batchNo: 'D-01-5-24-1',
+      componentId: 82,
+      baseColorId: 45,
+      colorId: 46,
+      cuttingSize: 4.0,
+      fabricId: 3,
+      noOfHeads: 141,
+      repeats: 2,
+      repeatSize: 2.0,
+      uomId: 139,
+      totalFabric: 4.0,
+      shrinkage: 2.0,
+      wastage: 2.0,
+      total: 4,
+      appId: 1,
+      createdOn: '2024-05-24T10:15:08.74',
+      createdBy: 0,
+      lastUpdatedBy: 0,
+      lastUpdatedOn: '2024-05-24T10:15:08.74',
+      componentName: 'Front Body',
+      color: 'AQUA',
+      fabric: 'Lawn-80x80/102x88-69',
+      noOfHeadName: '24',
+      uom: 'Meters'
+    }
+  ];
 
   const columns = [
     {
-      field: 'collectionId',
-      headerName: 'Collection ID',
+      field: 'componentId',
+      headerName: 'Component',
       editable: true,
-      flex: 2,
+      flex: 1,
       type: 'singleSelect',
-      valueOptions: collectionList.map((collection) => ({
-        value: collection.collectionId,
-        label: collection.collectionName
+      valueOptions: components.map((collection) => ({
+        value: collection.lookUpId,
+        label: collection.lookUpName
       }))
-    },
-    {
-      field: 'designNo',
-      headerName: 'Design No',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'designerName',
-      headerName: 'Designer Name',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'poPcs',
-      headerName: 'Po PCs',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'dateOfPlanning',
-      headerName: 'Date of Planning',
-      type: 'date',
-      flex: 1,
-      editable: true,
-      valueGetter: (params) => (params ? new Date(params) : null) // Ensure date is parsed correctly
     },
     {
       field: 'colorId',
       headerName: 'Color',
+      editable: true,
+      flex: 1,
+      type: 'singleSelect',
+      valueOptions: colors.map((collection) => ({
+        value: collection.lookUpId,
+        label: collection.lookUpName
+      }))
+    },
+    {
+      field: 'cuttingSize',
+      headerName: 'Cutting Size',
+      flex: 1,
+      editable: true
+    },
+    {
+      field: 'fabricId',
+      headerName: 'Fabrication',
+      editable: true,
+      flex: 1,
+      type: 'singleSelect',
+      valueOptions: Fabrications.map((collection) => ({
+        value: collection.lookUpId,
+        label: collection.lookUpName
+      }))
+    },
+    {
+      field: 'noOfHeads',
+      headerName: 'No. Of Heads',
+      editable: true,
+      flex: 1,
+      type: 'singleSelect',
+      valueOptions: heads.map((collection) => ({
+        value: collection.lookUpId,
+        label: collection.lookUpName
+      }))
+    },
+    {
+      field: 'repeats',
+      headerName: 'Repeats',
+      flex: 1,
+      editable: true
+    },
+    {
+      field: 'repeatSize',
+      headerName: 'Repeat Size',
+      flex: 1,
+      editable: true
+    },
+
+    {
+      field: 'totalFabric',
+      headerName: 'Total Fabric',
       flex: 1,
       editable: true,
-      type: 'singleSelect'
-      // valueOptions: colors.map((color) => ({
-      //   value: color.value,
-      //   label: color.label
-      // }))
+
+      valueSetter: (params, row) => {
+        const repeats = row.repeats ?? 0;
+        const repeatSize = row.repeatSize ?? 0;
+        const totalFabric = repeats * repeatSize;
+        console.log('totalFabric', totalFabric);
+        return { ...row, totalFabric };
+      }
+    },
+
+    {
+      field: 'uomId',
+      headerName: 'UOM',
+      editable: true,
+      flex: 1,
+      type: 'singleSelect',
+      valueOptions: uoms.map((collection) => ({
+        value: collection.lookUpId,
+        label: collection.lookUpName
+      }))
+    },
+    {
+      field: 'shrinkage',
+      headerName: 'Shrinkage',
+      flex: 1,
+      editable: true
+    },
+    {
+      field: 'wastage',
+      headerName: 'Wastage',
+      flex: 1,
+      editable: true
+    },
+    {
+      field: 'total',
+      headerName: 'Total',
+      flex: 1,
+      editable: true
     }
   ];
-  console.log('designList:', designList);
-  const handleSave = () => {
-    console.log(formData);
-  };
-
+  console.log('batchList:', batchList);
+  const editAPi = `https://gecxc.com:4041/api/PrePlanning/SavePrePlanning`;
   return (
     <MainCard
       style={{
@@ -309,10 +468,7 @@ const PrePlanning = () => {
               size="small"
             >
               {batchList.map((option) => (
-                <MenuItem
-                  key={option.planningHeaderId}
-                  value={option.planningHeaderId}
-                >
+                <MenuItem key={option.batchNo} value={option.batchNo}>
                   {option.batchNo}
                 </MenuItem>
               ))}
@@ -484,7 +640,13 @@ const PrePlanning = () => {
           </Grid>
         </Grid>
       </FormControl>
-      <EditAbleDataGrid ncolumns={columns} initialRows={initialRows} />
+      <EditAbleDataGrid
+        ncolumns={columns}
+        initialRows={initialRows}
+        formData={formData}
+        editAPi={editAPi}
+        disableAddRecord={true}
+      />
     </MainCard>
   );
 };

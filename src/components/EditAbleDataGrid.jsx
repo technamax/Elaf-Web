@@ -24,11 +24,12 @@ export default function FullFeaturedCrudGrid({
   // fetchData,
   formData,
   deleteApi,
-  editAPi
+  editAPi,
+  disableAddRecord
 }) {
   const [rows, setRows] = useState(initialRows);
   const [rowModesModel, setRowModesModel] = useState({});
-  console.log(initialRows);
+  // console.log(initialRows);
   useEffect(() => {
     setRows(initialRows);
   }, [initialRows]);
@@ -53,7 +54,12 @@ export default function FullFeaturedCrudGrid({
 
     return (
       <GridToolbarContainer>
-        <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
+        <Button
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleClick}
+          disab
+        >
           Add record
         </Button>
       </GridToolbarContainer>
@@ -93,22 +99,23 @@ export default function FullFeaturedCrudGrid({
   };
 
   const processRowUpdate = async (newRow, oldRow) => {
-    console.log(newRow);
+    console.log('newRow', newRow);
     try {
       const { id, ...formattedRow } = newRow;
 
       // Format date fields if necessary
-      const formattedDates = {
-        planningDate: formattedRow.planningDate
-          ? dayjs(formattedRow.planningDate).format('YYYY-MM-DD')
-          : null,
-        launchDate: formattedRow.launchDate
-          ? dayjs(formattedRow.launchDate).format('YYYY-MM-DD')
-          : null
-      };
-      const formattedData = { ...formattedRow, ...formattedDates };
+      // const formattedDates = {
+      //   planningDate: formattedRow.planningDate
+      //     ? dayjs(formattedRow.planningDate).format('YYYY-MM-DD')
+      //     : null,
+      //   launchDate: formattedRow.launchDate
+      //     ? dayjs(formattedRow.launchDate).format('YYYY-MM-DD')
+      //     : null
+      // };
+      // const formattedData = { ...formattedRow, ...formattedDates };
 
-      const response = await axios.post(editAPi, formattedData);
+      // const response = await axios.post(editAPi, formattedData);
+      const response = await axios.post(editAPi, formattedRow);
 
       const responseData = { ...response.data, id: newRow.id };
       setRows((prevRows) =>
@@ -204,7 +211,7 @@ export default function FullFeaturedCrudGrid({
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
-        slots={{ toolbar: EditToolbar }}
+        slots={{ toolbar: !disableAddRecord ? EditToolbar : null }}
         slotProps={{ toolbar: { setRows, setRowModesModel } }}
         getRowId={(row) => row.id}
       />
