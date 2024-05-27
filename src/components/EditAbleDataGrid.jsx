@@ -24,6 +24,7 @@ export default function FullFeaturedCrudGrid({
   // fetchData,
   formData,
   deleteApi,
+  deleteBy,
   editAPi,
   disableAddRecord
 }) {
@@ -76,10 +77,21 @@ export default function FullFeaturedCrudGrid({
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
   };
 
+  // const handleDeleteClick = (id) => async () => {
+  //   const rowToDelete = rows.find((row) => row.id === id);
+  //   try {
+  //     // await axios.delete(`${deleteApi}${rowToDelete.collectionId}`);
+  //     await axios.delete(`${deleteApi}${rowToDelete.deleteBy}`);
+  //     setRows(rows.filter((row) => row.id !== id));
+  //   } catch (error) {
+  //     console.error('Error deleting data:', error);
+  //   }
+  // };
   const handleDeleteClick = (id) => async () => {
     const rowToDelete = rows.find((row) => row.id === id);
+    const deleteId = rowToDelete[deleteBy]; // Access the dynamic deleteBy ID
     try {
-      await axios.delete(`${deleteApi}${rowToDelete.collectionId}`);
+      await axios.delete(`${deleteApi}${deleteId}`);
       setRows(rows.filter((row) => row.id !== id));
     } catch (error) {
       console.error('Error deleting data:', error);
@@ -117,7 +129,7 @@ export default function FullFeaturedCrudGrid({
       // const response = await axios.post(editAPi, formattedData);
       const response = await axios.post(editAPi, formattedRow);
 
-      const responseData = { ...response.data, id: newRow.id };
+      const responseData = { ...response.data.result, id: newRow.id };
       setRows((prevRows) =>
         prevRows.map((row) => (row.id === newRow.id ? responseData : row))
       );

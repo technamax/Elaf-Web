@@ -33,6 +33,7 @@ const PrePlanning = () => {
   // console.log('colors:', colors);
   // console.log('uoms:', uoms);
   // console.log('heads:', heads);
+  const [initialRows, setInitialRows] = useState([]);
 
   const [formData, setFormData] = useState({
     collectionId: '',
@@ -95,9 +96,23 @@ const PrePlanning = () => {
       }
     };
 
+    const GetPrePlanningByPlanningHeaderId = async (id) => {
+      try {
+        const response = await axios.get(
+          `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
+        );
+        console.log(response.data);
+        setInitialRows(
+          response.data.map((item, index) => ({ ...item, id: index }))
+        );
+      } catch (error) {
+        console.error('Error fetching pre-planning lookup data:', error);
+      }
+    };
+
     GetPrePlanningHeaderByDesignId(formData.designId);
-  }, [formData.designId]);
-  console.log('batchList', batchList);
+    GetPrePlanningByPlanningHeaderId(formData.planningHeaderId);
+  }, [formData.designId, formData.planningHeaderId]);
 
   useEffect(() => {
     const calculateTotalFabric = () => {
@@ -197,69 +212,6 @@ const PrePlanning = () => {
       console.error('Error saving data:', error);
     }
   };
-
-  const initialRows = [
-    {
-      id: 1,
-      planningId: 6,
-      designId: 1,
-      planningHeaderId: 1,
-      batchNo: '1',
-      componentId: 81,
-      baseColorId: 45,
-      colorId: 45,
-      cuttingSize: 4.0,
-      fabricId: 1,
-      noOfHeads: 141,
-      repeats: 3,
-      repeatSize: 43.0,
-      uomId: 139,
-      totalFabric: 129.0,
-      shrinkage: 2.0,
-      wastage: 10.0,
-      total: 114,
-      appId: 1,
-      createdOn: '2024-05-24T07:07:43.177',
-      createdBy: 0,
-      lastUpdatedBy: 0,
-      lastUpdatedOn: '2024-05-24T07:07:43.177',
-      componentName: 'Front',
-      color: 'APPLE GREEN',
-      fabric: 'Lawn-80x80/102x88-62',
-      noOfHeadName: '24',
-      uom: 'Meters'
-    },
-    {
-      id: 2,
-      planningId: 7,
-      designId: 1,
-      planningHeaderId: 1,
-      batchNo: 'D-01-5-24-1',
-      componentId: 82,
-      baseColorId: 45,
-      colorId: 46,
-      cuttingSize: 4.0,
-      fabricId: 3,
-      noOfHeads: 141,
-      repeats: 2,
-      repeatSize: 2.0,
-      uomId: 139,
-      totalFabric: 4.0,
-      shrinkage: 2.0,
-      wastage: 2.0,
-      total: 4,
-      appId: 1,
-      createdOn: '2024-05-24T10:15:08.74',
-      createdBy: 0,
-      lastUpdatedBy: 0,
-      lastUpdatedOn: '2024-05-24T10:15:08.74',
-      componentName: 'Front Body',
-      color: 'AQUA',
-      fabric: 'Lawn-80x80/102x88-69',
-      noOfHeadName: '24',
-      uom: 'Meters'
-    }
-  ];
 
   const columns = [
     {
@@ -367,7 +319,16 @@ const PrePlanning = () => {
       field: 'total',
       headerName: 'Total',
       flex: 1,
-      editable: true
+      editable: true,
+      valueSetter: (params, row) => {
+        const shrinkage = row.shrinkage ?? 0;
+        const wastage = row.wastage ?? 0;
+        const totalFabric = row.totalFabric ?? 0;
+        const total = (totalFabric * (100 - (shrinkage + wastage))) / 100;
+
+        console.log('totalFabric', totalFabric);
+        return { ...row, total };
+      }
     }
   ];
   console.log('batchList:', batchList);
@@ -645,6 +606,7 @@ const PrePlanning = () => {
         initialRows={initialRows}
         formData={formData}
         editAPi={editAPi}
+        // deleteBy="collectionId"
         disableAddRecord={true}
       />
     </MainCard>
