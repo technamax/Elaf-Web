@@ -13,7 +13,7 @@ const fetchMenuItems = async (empId, token) => {
     throw new Error('Failed to fetch menu items');
   }
   const data = await response.json();
-  console.log('Fetched data:', data); // Log the fetched data
+  console.log('Fetched data:', data.result); // Log the fetched data
   return data.result;
 };
 

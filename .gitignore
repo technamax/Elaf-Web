@@ -30,3 +30,6 @@ package-lock.json.orig
 src/components/EditAbleDataGrid.jsx.orig
 src/views/Planning/NewCollection.jsx.orig
 src/views/Planning/PrePlanning.jsx.orig
+src/api/menuService.js.orig
+src/views/Planning/NewDesign.jsx.orig
+src/views/Planning/PrePlanningCreation.jsx.orig

@@ -10,7 +10,7 @@ import {
   TextField
 } from '@mui/material';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
-// import { useGetDesignListQuery } from 'api/store/Apis/designApi';
+import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
 import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 
@@ -258,9 +258,13 @@ const PrePlanningCreation = () => {
               onChange={handleChange}
             />
           </Grid>
-          <Divider color="#cc8587" sx={{ height: 2, width: '100%', mt: 2 }} />
 
           <Grid item sm={12}>
+            <Divider
+              color="#cc8587"
+              sx={{ height: 2, width: '100%', marginBottom: 2 }}
+            />
+
             <Typography variant="h4" gutterBottom>
               Search
             </Typography>

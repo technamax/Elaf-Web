@@ -386,7 +386,7 @@ const PrePlanning = () => {
     <MainCard
       style={{
         borderWidth: 2,
-        borderStyle: 'dashed',
+        borderStyle: 'dotted',
         borderColor: '#a11f23'
       }}
     >

@@ -189,11 +189,11 @@ const NewCollection = () => {
 
   return (
     <MainCard
-    style={{
-      borderWidth: 1,
-      borderStyle: 'dotted',
-      borderColor: '#a11f23'
-    }}
+      style={{
+        borderWidth: 1,
+        borderStyle: 'dotted',
+        borderColor: '#a11f23'
+      }}
     >
       <FormControl>
         <Grid container spacing={2} width="inherit">
