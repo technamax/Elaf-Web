@@ -15,12 +15,13 @@ import EditAbleDataGrid from 'components/EditAbleDataGrid';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-import { GetCollectionList } from 'api/apis';
+// import { GetCollectionList } from 'api/apis';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const NewCollection = () => {
   const { data, error, isLoading, refetch } = useGetCollectionListQuery();
+
   const [formData, setFormData] = useState({
     collectionName: '',
     volume: '',
@@ -32,7 +33,7 @@ const NewCollection = () => {
     lastUpdatedBy: 0,
     lastUpdatedOn: new Date().toISOString()
   });
-  console.log('formData', formData);
+  console.log('data', data);
   const [collectionList, setCollectionList] = useState([]);
 
   // const fetchData = useCallback(async () => {
@@ -55,7 +56,7 @@ const NewCollection = () => {
   useEffect(() => {
     // fetchData();
     if (data) {
-      const rowsWithId = data.map((row, index) => ({
+      const rowsWithId = data.result.map((row, index) => ({
         ...row,
         id: index + 1,
         planningDate: new Date(row.planningDate),

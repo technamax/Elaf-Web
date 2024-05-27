@@ -14,7 +14,7 @@ const fetchMenuItems = async (empId, token) => {
   }
   const data = await response.json();
   console.log('Fetched data:', data); // Log the fetched data
-  return data;
+  return data.result;
 };
 
 export default fetchMenuItems;

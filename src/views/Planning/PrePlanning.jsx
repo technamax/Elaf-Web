@@ -19,8 +19,8 @@ const PrePlanning = () => {
   const { data: collectionData } = useGetCollectionListQuery();
   const { data: designData } = useGetDesignListQuery();
 
-  const collectionList = collectionData || [];
-  const designList = designData || [];
+  const collectionList = collectionData?.result || [];
+  const designList = designData?.result || [];
 
   const [components, setComponents] = useState([]);
   const [Fabrications, setFabrications] = useState([]);
@@ -69,7 +69,7 @@ const PrePlanning = () => {
         const response = await axios.get(
           'https://gecxc.com:4041/API/Common/GetPrePlanningLookUp?appID=1'
         );
-        const data = response.data[0];
+        const data = response.data.result[0];
         setComponents(data.componentList);
         setColors(data.colorList);
         setFabrications(data.fabricList);
@@ -90,7 +90,7 @@ const PrePlanning = () => {
           `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningHeaderByDesignId?designId=${id}`
         );
         console.log(response.data);
-        setBatchList(response.data);
+        setBatchList(response.data.result);
       } catch (error) {
         console.error('Error fetching pre-planning lookup data:', error);
       }
@@ -101,9 +101,9 @@ const PrePlanning = () => {
         const response = await axios.get(
           `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
         );
-        console.log(response.data);
+        console.log('GetPrePlanningByPlanningHeaderI', response.data.result);
         setInitialRows(
-          response.data.map((item, index) => ({ ...item, id: index }))
+          response.data.result.map((item, index) => ({ ...item, id: index }))
         );
       } catch (error) {
         console.error('Error fetching pre-planning lookup data:', error);
@@ -132,7 +132,7 @@ const PrePlanning = () => {
       const totalFabric = parseFloat(formData.totalFabric) || 0;
       const shrinkage = parseFloat(formData.shrinkage) || 0;
       const wastage = parseFloat(formData.wastage) || 0;
-      return (totalFabric * (100 - (shrinkage + wastage))) / 100;
+      return (totalFabric * (100 + (shrinkage + wastage))) / 100;
     };
 
     setFormData((prevData) => ({
@@ -411,6 +411,7 @@ const PrePlanning = () => {
               name="noOfDesigns"
               value={formData.noOfDesigns}
               onChange={handleChange}
+              disabled
             />
           </Grid>
           <Grid item sm={4}>
@@ -421,6 +422,7 @@ const PrePlanning = () => {
               name="noOfColors"
               value={formData.noOfColors}
               onChange={handleChange}
+              disabled
             />
           </Grid>
           <Grid item sm={4}>
@@ -448,6 +450,7 @@ const PrePlanning = () => {
               name="baseColorName"
               value={formData.baseColorName}
               onChange={handleChange}
+              disabled
             />
           </Grid>
           <Grid item sm={4}>
@@ -469,7 +472,7 @@ const PrePlanning = () => {
           </Grid>
 
           <Grid item sm={12}>
-            <Divider></Divider>
+            <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
           </Grid>
 
           <Grid item sm={3}>
@@ -633,15 +636,19 @@ const PrePlanning = () => {
           </Grid>
         </Grid>
       </FormControl>
-      <EditAbleDataGrid
-        ncolumns={columns}
-        initialRows={initialRows}
-        formData={formData}
-        editAPi={editAPi}
-        deleteApi={deleteApi}
-        deleteBy="planningId"
-        disableAddRecord={true}
-      />
+      <Grid container spacing={2} width="Inherit">
+        <Grid sx={{ marginTop: 2 }} item sm={12}>
+          <EditAbleDataGrid
+            ncolumns={columns}
+            initialRows={initialRows}
+            formData={formData}
+            editAPi={editAPi}
+            deleteApi={deleteApi}
+            deleteBy="planningId"
+            disableAddRecord={true}
+          />
+        </Grid>
+      </Grid>
     </MainCard>
   );
 };
