@@ -4,10 +4,11 @@ export const designApi = createApi({
   reducerPath: 'designApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://gecxc.com:4041/api/' }),
   endpoints: (builder) => ({
-    getDesignList: builder.query({
-      query: () => 'DesignRegistration/GetDesignList'
+    getDesignListByCollectionId: builder.query({
+      query: (collectionId) =>
+        `DesignRegistration/GetDesignListByCollectionId?Collectionid=${collectionId}`
     })
   })
 });
 
-export const { useGetDesignListQuery } = designApi;
+export const { useGetDesignListByCollectionIdQuery } = designApi;
