@@ -29,3 +29,4 @@ package.json.orig
 package-lock.json.orig
 src/components/EditAbleDataGrid.jsx.orig
 src/views/Planning/NewCollection.jsx.orig
+src/views/Planning/PrePlanning.jsx.orig

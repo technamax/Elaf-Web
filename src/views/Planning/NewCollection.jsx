@@ -251,6 +251,7 @@ const NewCollection = () => {
               // fetchData={fetchData}
               formData={formData}
               deleteApi={deleteApi}
+              deleteBy="collectionId"
               editAPi={editAPi}
             />
           </Grid>
