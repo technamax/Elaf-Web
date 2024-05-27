@@ -77,7 +77,7 @@ export default function PlanningProcess() {
           </Typography>
           {/* <TextField fullWidth size="small"></TextField> */}
         </Grid>
-        <Grid item sm={6} textAlign="right">
+        {/* <Grid item sm={6} textAlign="right">
           <TextField
             fullWidth
             select
@@ -86,7 +86,7 @@ export default function PlanningProcess() {
             size="small"
             helperText="Please Select Collection"
           ></TextField>
-        </Grid>
+        </Grid> */}
       </Grid>
 
       <Stepper activeStep={activeStep}>

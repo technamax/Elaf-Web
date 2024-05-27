@@ -11,16 +11,32 @@ import {
   Divider
 } from '@mui/material';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
-import { useGetDesignListQuery } from 'api/store/Apis/designApi';
+// import { useGetDesignListQuery } from 'api/store/Apis/designApi';
+import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
 
 const PrePlanning = () => {
   const { data: collectionData } = useGetCollectionListQuery();
-  const { data: designData } = useGetDesignListQuery();
+  const [selectedCollectionId, setSelectedCollectionId] = useState('');
+  const { data: designData, refetch } = useGetDesignListByCollectionIdQuery(
+    selectedCollectionId,
+    {
+      skip: !selectedCollectionId // Skip the query if no collection is selected
+    }
+  );
 
-  const collectionList = collectionData || [];
-  const designList = designData || [];
+  const [designList, setDesignList] = useState([]);
+
+  useEffect(() => {
+    if (designData) {
+      setDesignList(designData.result);
+      refetch();
+    }
+  }, [designData]);
+
+  const collectionList = collectionData?.result || [];
+  // const designList = designData?.result || [];
 
   const [components, setComponents] = useState([]);
   const [Fabrications, setFabrications] = useState([]);
@@ -69,7 +85,7 @@ const PrePlanning = () => {
         const response = await axios.get(
           'https://gecxc.com:4041/API/Common/GetPrePlanningLookUp?appID=1'
         );
-        const data = response.data[0];
+        const data = response.data.result[0];
         setComponents(data.componentList);
         setColors(data.colorList);
         setFabrications(data.fabricList);
@@ -90,7 +106,7 @@ const PrePlanning = () => {
           `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningHeaderByDesignId?designId=${id}`
         );
         console.log(response.data);
-        setBatchList(response.data);
+        setBatchList(response.data.result);
       } catch (error) {
         console.error('Error fetching pre-planning lookup data:', error);
       }
@@ -101,9 +117,9 @@ const PrePlanning = () => {
         const response = await axios.get(
           `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
         );
-        console.log(response.data);
+        console.log('GetPrePlanningByPlanningHeaderI', response.data.result);
         setInitialRows(
-          response.data.map((item, index) => ({ ...item, id: index }))
+          response.data.result.map((item, index) => ({ ...item, id: index }))
         );
       } catch (error) {
         console.error('Error fetching pre-planning lookup data:', error);
@@ -132,7 +148,7 @@ const PrePlanning = () => {
       const totalFabric = parseFloat(formData.totalFabric) || 0;
       const shrinkage = parseFloat(formData.shrinkage) || 0;
       const wastage = parseFloat(formData.wastage) || 0;
-      return (totalFabric * (100 - (shrinkage + wastage))) / 100;
+      return (totalFabric * (100 + (shrinkage + wastage))) / 100;
     };
 
     setFormData((prevData) => ({
@@ -153,6 +169,7 @@ const PrePlanning = () => {
       const selectedCollection = collectionList.find(
         (collection) => collection.collectionId === parseInt(value)
       );
+      setSelectedCollectionId(value);
       setFormData({
         ...formData,
         collectionId: value,
@@ -211,6 +228,34 @@ const PrePlanning = () => {
         }
       );
       console.log('Data saved successfully:', response.data);
+      setFormData({
+        collectionId: '',
+        baseColorId: '', // not in api
+        baseColorName: '', // not in api
+        noOfDesigns: '', // not in apis
+        noOfColors: '', // not in api
+        planningHeaderId: '',
+        designId: '',
+        batchNo: '',
+        componentId: '',
+        cuttingSize: '', // not in api
+        colorId: '',
+        fabricId: '',
+        noOfHeads: '',
+        repeats: '',
+        repeatSize: '',
+        uomId: '',
+        totalFabric: '',
+        shrinkage: '',
+        wastage: '',
+        total: '',
+        appId: 1,
+        createdOn: new Date().toISOString(),
+        createdBy: 0,
+        lastUpdatedBy: 0,
+        lastUpdatedOn: new Date().toISOString()
+      });
+      setInitialRows([]);
     } catch (error) {
       console.error('Error saving data:', error);
     }
@@ -335,12 +380,13 @@ const PrePlanning = () => {
     }
   ];
   console.log('batchList:', batchList);
-  const editAPi = 'https://gecxc.com:4041/api/PrePlanning/SavePrePlanning';
+  const editAPi = `https://gecxc.com:4041/api/PrePlanning/SavePrePlanning`;
+  const deleteApi = `https://gecxc.com:4041/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
   return (
     <MainCard
       style={{
-        borderWidth: 1,
-        borderStyle: 'dotted',
+        borderWidth: 2,
+        borderStyle: 'dashed',
         borderColor: '#a11f23'
       }}
     >
@@ -382,6 +428,7 @@ const PrePlanning = () => {
               name="noOfDesigns"
               value={formData.noOfDesigns}
               onChange={handleChange}
+              disabled
             />
           </Grid>
           <Grid item sm={4}>
@@ -392,6 +439,7 @@ const PrePlanning = () => {
               name="noOfColors"
               value={formData.noOfColors}
               onChange={handleChange}
+              disabled
             />
           </Grid>
           <Grid item sm={4}>
@@ -419,6 +467,7 @@ const PrePlanning = () => {
               name="baseColorName"
               value={formData.baseColorName}
               onChange={handleChange}
+              disabled
             />
           </Grid>
           <Grid item sm={4}>
@@ -440,7 +489,7 @@ const PrePlanning = () => {
           </Grid>
 
           <Grid item sm={12}>
-            <Divider></Divider>
+            <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
           </Grid>
 
           <Grid item sm={3}>
@@ -604,14 +653,19 @@ const PrePlanning = () => {
           </Grid>
         </Grid>
       </FormControl>
-      <EditAbleDataGrid
-        ncolumns={columns}
-        initialRows={initialRows}
-        formData={formData}
-        editAPi={editAPi}
-        // deleteBy="collectionId"
-        disableAddRecord={true}
-      />
+      <Grid container spacing={2} width="Inherit">
+        <Grid sx={{ marginTop: 2 }} item sm={12}>
+          <EditAbleDataGrid
+            ncolumns={columns}
+            initialRows={initialRows}
+            formData={formData}
+            editAPi={editAPi}
+            deleteApi={deleteApi}
+            deleteBy="planningId"
+            disableAddRecord={true}
+          />
+        </Grid>
+      </Grid>
     </MainCard>
   );
 };

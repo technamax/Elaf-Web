@@ -7,9 +7,9 @@ import {
   Typography,
   Divider
 } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
-import { useGetDesignListQuery } from 'api/store/Apis/designApi';
+import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
 import axios from 'axios';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
@@ -17,11 +17,42 @@ import MainCard from 'ui-component/cards/MainCard';
 
 const NewDesign = () => {
   const { data: collectionData } = useGetCollectionListQuery();
-  const { data: designData } = useGetDesignListQuery();
+  const [selectedCollectionId, setSelectedCollectionId] = useState('');
+  const { data: designData, refetch } = useGetDesignListByCollectionIdQuery(
+    selectedCollectionId,
+    {
+      skip: !selectedCollectionId // Skip the query if no collection is selected
+    }
+  );
 
-  const collectionList = collectionData || [];
-  const designList = designData || [];
-  console.log('designList', designList);
+  const [designList, setDesignList] = useState([]);
+  const [colors, setColors] = useState([]);
+
+  useEffect(() => {
+    if (designData) {
+      setDesignList(designData.result);
+      refetch();
+    }
+  }, [designData]);
+
+  useEffect(() => {
+    const fetchColors = async () => {
+      try {
+        const response = await axios.get(
+          ' https://gecxc.com:4041/api/Common/GetLookUpByDomain?lookupDomain=COLOURS'
+        );
+        const data = response.data.result;
+
+        setColors(data);
+      } catch (error) {
+        console.error('Error fetching pre-planning lookup data:', error);
+      }
+    };
+
+    fetchColors();
+  }, []);
+
+  const collectionList = collectionData?.result || [];
 
   const [formData, setFormData] = useState({
     collectionId: '',
@@ -39,14 +70,11 @@ const NewDesign = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'collectionId') {
+      setSelectedCollectionId(value);
+    }
     setFormData({ ...formData, [name]: value });
   };
-
-  const colors = [
-    { value: 1, label: 'Red' },
-    { value: 2, label: 'Blue' },
-    { value: 3, label: 'Green' }
-  ];
 
   const initialRows = designList.map((design, index) => ({
     id: index + 1,
@@ -63,9 +91,7 @@ const NewDesign = () => {
     lastUpdatedBy: design.lastUpdatedBy,
     lastUpdatedOn: design.lastUpdatedOn
   }));
-
-  console.log(initialRows);
-
+  console.log('initialRows', initialRows);
   const columns = [
     {
       field: 'collectionId',
@@ -102,7 +128,16 @@ const NewDesign = () => {
       type: 'date',
       flex: 1,
       editable: true,
-      valueGetter: (params) => (params ? new Date(params) : null) // Ensure date is parsed correctly
+      valueGetter: (params) => (params ? new Date(params) : null),
+      valueFormatter: (params) => {
+        const date = params;
+        if (!date) return '';
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
     },
     {
       field: 'colorId',
@@ -110,9 +145,9 @@ const NewDesign = () => {
       flex: 1,
       editable: true,
       type: 'singleSelect',
-      valueOptions: colors.map((color) => ({
-        value: color.value,
-        label: color.label
+      valueOptions: colors.map((collection) => ({
+        value: collection.lookUpId,
+        label: collection.lookUpName
       }))
     }
   ];
@@ -125,6 +160,7 @@ const NewDesign = () => {
         formData
       );
       console.log('Form data saved:', response.data);
+      setDesignList([...designList, response.data]);
       setFormData({
         collectionId: '',
         designNo: '',
@@ -133,7 +169,7 @@ const NewDesign = () => {
         dateOfPlanning: '',
         colorId: ''
       });
-      console.log(response);
+      refetch();
     } catch (error) {
       console.error('Error saving data:', error);
     }
@@ -145,11 +181,11 @@ const NewDesign = () => {
 
   return (
     <MainCard
-    style={{
-      borderWidth: 1,
-      borderStyle: 'dotted',
-      borderColor: '#a11f23'
-    }}
+      style={{
+        borderWidth: 1,
+        borderStyle: 'dotted',
+        borderColor: '#a11f23'
+      }}
     >
       <FormControl>
         <Grid container spacing={2} width="Inherit">
@@ -233,8 +269,8 @@ const NewDesign = () => {
               onChange={handleChange}
             >
               {colors.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
                 </MenuItem>
               ))}
             </TextField>

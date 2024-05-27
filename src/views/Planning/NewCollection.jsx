@@ -15,24 +15,27 @@ import EditAbleDataGrid from 'components/EditAbleDataGrid';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-import { GetCollectionList } from 'api/apis';
+// import { GetCollectionList } from 'api/apis';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const NewCollection = () => {
   const { data, error, isLoading, refetch } = useGetCollectionListQuery();
+
   const [formData, setFormData] = useState({
     collectionName: '',
     volume: '',
     planningDate: '',
     launchDate: '',
     isReapetCollection: '',
+    noOfDesigns: '',
+    noOfColors: '',
     createdBy: 0,
     createdOn: new Date().toISOString(),
     lastUpdatedBy: 0,
     lastUpdatedOn: new Date().toISOString()
   });
-  console.log('formData', formData);
+  console.log('data', data);
   const [collectionList, setCollectionList] = useState([]);
 
   // const fetchData = useCallback(async () => {
@@ -55,7 +58,7 @@ const NewCollection = () => {
   useEffect(() => {
     // fetchData();
     if (data) {
-      const rowsWithId = data.map((row, index) => ({
+      const rowsWithId = data.result.map((row, index) => ({
         ...row,
         id: index + 1,
         planningDate: new Date(row.planningDate),
@@ -88,7 +91,16 @@ const NewCollection = () => {
       type: 'date',
       flex: 1,
       editable: true,
-      valueGetter: (params) => (params ? new Date(params) : null) // Ensure date is parsed correctly
+      valueGetter: (params) => (params ? new Date(params) : null),
+      valueFormatter: (params) => {
+        const date = params;
+        if (!date) return '';
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
     },
     {
       field: 'launchDate',
@@ -96,7 +108,16 @@ const NewCollection = () => {
       type: 'date',
       flex: 1,
       editable: true,
-      valueGetter: (params) => (params ? new Date(params) : null) // Ensure date is parsed correctly
+      valueGetter: (params) => (params ? new Date(params) : null),
+      valueFormatter: (params) => {
+        const date = params;
+        if (!date) return '';
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
     },
     {
       field: 'isReapetCollection',
@@ -105,6 +126,18 @@ const NewCollection = () => {
       editable: true,
       type: 'singleSelect',
       valueOptions: ['No', 'Yes']
+    },
+    {
+      field: 'noOfColors',
+      headerName: 'No. Of Colors',
+      editable: true,
+      flex: 1
+    },
+    {
+      field: 'noOfDesigns',
+      headerName: 'No Of Designs',
+      editable: true,
+      flex: 1
     }
   ];
 
@@ -139,7 +172,9 @@ const NewCollection = () => {
         volume: '',
         planningDate: '',
         launchDate: '',
-        isReapetCollection: ''
+        isReapetCollection: '',
+        noOfColors: '',
+        noOfDesigns: ''
       });
       // fetchData();
       refetch();
@@ -172,7 +207,7 @@ const NewCollection = () => {
               Save
             </Button>
           </Grid>
-          <Grid item sm={8}>
+          <Grid item sm={6}>
             <TextField
               label="Collection Name"
               fullWidth
@@ -182,26 +217,8 @@ const NewCollection = () => {
               value={formData.collectionName}
             />
           </Grid>
-          <Grid item sm={4}>
-            <TextField
-              fullWidth
-              // id="outlined-select-currency"
-              select
-              label="Volume"
-              name="volume"
-              value={formData.volume}
-              onChange={handleChange}
-              helperText="Please select volume"
-              size="small"
-            >
-              {volume.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item sm={4}>
+
+          <Grid item sm={3}>
             <TextField
               size="small"
               type="date"
@@ -213,7 +230,7 @@ const NewCollection = () => {
               focused
             />
           </Grid>
-          <Grid item sm={4}>
+          <Grid item sm={3}>
             <TextField
               size="small"
               type="date"
@@ -225,7 +242,24 @@ const NewCollection = () => {
               focused
             />
           </Grid>
-          <Grid item sm={4}>
+          <Grid item sm={3}>
+            <TextField
+              fullWidth
+              select
+              label="Volume"
+              name="volume"
+              value={formData.volume}
+              onChange={handleChange}
+              size="small"
+            >
+              {volume.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item sm={3}>
             <TextField
               fullWidth
               select
@@ -233,7 +267,6 @@ const NewCollection = () => {
               name="isReapetCollection"
               value={formData.isReapetCollection}
               onChange={handleChange}
-              helperText="Please select"
               size="small"
             >
               {enabled.map((option) => (
@@ -242,6 +275,26 @@ const NewCollection = () => {
                 </MenuItem>
               ))}
             </TextField>
+          </Grid>
+          <Grid item sm={3}>
+            <TextField
+              label="No. of Colors"
+              fullWidth
+              size="small"
+              name="noOfColors"
+              onChange={handleChange}
+              value={formData.noOfColors}
+            />
+          </Grid>
+          <Grid item sm={3}>
+            <TextField
+              label="No. of Designs"
+              fullWidth
+              size="small"
+              name="noOfDesigns"
+              onChange={handleChange}
+              value={formData.noOfDesigns}
+            />
           </Grid>
           <Divider />
           <Grid item sm={12} paddingTop={1}>
