@@ -28,6 +28,8 @@ const NewCollection = () => {
     planningDate: '',
     launchDate: '',
     isReapetCollection: '',
+    noOfDesigns: '',
+    noOfColors: '',
     createdBy: 0,
     createdOn: new Date().toISOString(),
     lastUpdatedBy: 0,
@@ -106,6 +108,18 @@ const NewCollection = () => {
       editable: true,
       type: 'singleSelect',
       valueOptions: ['No', 'Yes']
+    },
+    {
+      field: 'noOfColors',
+      headerName: 'No. Of Colors',
+      editable: true,
+      flex: 1
+    },
+    {
+      field: 'noOfDesigns',
+      headerName: 'No Of Designs',
+      editable: true,
+      flex: 1
     }
   ];
 
@@ -140,7 +154,9 @@ const NewCollection = () => {
         volume: '',
         planningDate: '',
         launchDate: '',
-        isReapetCollection: ''
+        isReapetCollection: '',
+        noOfColors: '',
+        noOfDesigns: ''
       });
       // fetchData();
       refetch();
@@ -173,7 +189,7 @@ const NewCollection = () => {
               Save
             </Button>
           </Grid>
-          <Grid item sm={8}>
+          <Grid item sm={6}>
             <TextField
               label="Collection Name"
               fullWidth
@@ -183,26 +199,8 @@ const NewCollection = () => {
               value={formData.collectionName}
             />
           </Grid>
-          <Grid item sm={4}>
-            <TextField
-              fullWidth
-              // id="outlined-select-currency"
-              select
-              label="Volume"
-              name="volume"
-              value={formData.volume}
-              onChange={handleChange}
-              helperText="Please select volume"
-              size="small"
-            >
-              {volume.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item sm={4}>
+
+          <Grid item sm={3}>
             <TextField
               size="small"
               type="date"
@@ -214,7 +212,7 @@ const NewCollection = () => {
               focused
             />
           </Grid>
-          <Grid item sm={4}>
+          <Grid item sm={3}>
             <TextField
               size="small"
               type="date"
@@ -226,7 +224,24 @@ const NewCollection = () => {
               focused
             />
           </Grid>
-          <Grid item sm={4}>
+          <Grid item sm={3}>
+            <TextField
+              fullWidth
+              select
+              label="Volume"
+              name="volume"
+              value={formData.volume}
+              onChange={handleChange}
+              size="small"
+            >
+              {volume.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item sm={3}>
             <TextField
               fullWidth
               select
@@ -234,7 +249,6 @@ const NewCollection = () => {
               name="isReapetCollection"
               value={formData.isReapetCollection}
               onChange={handleChange}
-              helperText="Please select"
               size="small"
             >
               {enabled.map((option) => (
@@ -243,6 +257,26 @@ const NewCollection = () => {
                 </MenuItem>
               ))}
             </TextField>
+          </Grid>
+          <Grid item sm={3}>
+            <TextField
+              label="No. of Colors"
+              fullWidth
+              size="small"
+              name="noOfColors"
+              onChange={handleChange}
+              value={formData.noOfColors}
+            />
+          </Grid>
+          <Grid item sm={3}>
+            <TextField
+              label="No. of Designs"
+              fullWidth
+              size="small"
+              name="noOfDesigns"
+              onChange={handleChange}
+              value={formData.noOfDesigns}
+            />
           </Grid>
           <Divider />
           <Grid item sm={12} paddingTop={1}>
