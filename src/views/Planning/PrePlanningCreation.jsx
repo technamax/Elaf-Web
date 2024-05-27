@@ -10,7 +10,8 @@ import {
   TextField
 } from '@mui/material';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
-import { useGetDesignListQuery } from 'api/store/Apis/designApi';
+// import { useGetDesignListQuery } from 'api/store/Apis/designApi';
+import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 
 // project imports
@@ -20,12 +21,12 @@ import { GetCollectionList } from 'api/apis';
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const PrePlanningCreation = () => {
-  const { data, error, isLoading, refetch } = useGetCollectionListQuery();
+  // const { data, error, isLoading, refetch } = useGetCollectionListQuery();
   const { data: collectionData } = useGetCollectionListQuery();
-  const { data: designData } = useGetDesignListQuery();
+  const { data: designData } = useGetDesignListByCollectionIdQuery();
   const [loading, setLoading] = useState(true);
 
-  const collectionList = collectionData || [];
+  const collectionList = collectionData?.result || [];
   const designList = designData || [];
   const [formData, setFormData] = useState({
     collectionName: '',
@@ -151,7 +152,7 @@ const PrePlanningCreation = () => {
           );
           console.log(formData.collectionId);
           console.log(response);
-          setDesignOptions(response.data);
+          setDesignOptions(response.data.result);
         } catch (error) {
           console.error('Error fetching design options:', error);
         }
