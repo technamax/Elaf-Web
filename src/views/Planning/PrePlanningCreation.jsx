@@ -10,7 +10,7 @@ import {
   TextField
 } from '@mui/material';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
-import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
+
 import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 
