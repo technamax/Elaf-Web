@@ -11,16 +11,32 @@ import {
   Divider
 } from '@mui/material';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
-import { useGetDesignListQuery } from 'api/store/Apis/designApi';
+// import { useGetDesignListQuery } from 'api/store/Apis/designApi';
+import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
 
 const PrePlanning = () => {
   const { data: collectionData } = useGetCollectionListQuery();
-  const { data: designData } = useGetDesignListQuery();
+  const [selectedCollectionId, setSelectedCollectionId] = useState('');
+  const { data: designData, refetch } = useGetDesignListByCollectionIdQuery(
+    selectedCollectionId,
+    {
+      skip: !selectedCollectionId // Skip the query if no collection is selected
+    }
+  );
+
+  const [designList, setDesignList] = useState([]);
+
+  useEffect(() => {
+    if (designData) {
+      setDesignList(designData.result);
+      refetch();
+    }
+  }, [designData]);
 
   const collectionList = collectionData?.result || [];
-  const designList = designData?.result || [];
+  // const designList = designData?.result || [];
 
   const [components, setComponents] = useState([]);
   const [Fabrications, setFabrications] = useState([]);
@@ -153,6 +169,7 @@ const PrePlanning = () => {
       const selectedCollection = collectionList.find(
         (collection) => collection.collectionId === parseInt(value)
       );
+      setSelectedCollectionId(value);
       setFormData({
         ...formData,
         collectionId: value,

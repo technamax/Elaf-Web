@@ -91,7 +91,16 @@ const NewCollection = () => {
       type: 'date',
       flex: 1,
       editable: true,
-      valueGetter: (params) => (params ? new Date(params) : null) // Ensure date is parsed correctly
+      valueGetter: (params) => (params ? new Date(params) : null),
+      valueFormatter: (params) => {
+        const date = params;
+        if (!date) return '';
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
     },
     {
       field: 'launchDate',
@@ -99,7 +108,16 @@ const NewCollection = () => {
       type: 'date',
       flex: 1,
       editable: true,
-      valueGetter: (params) => (params ? new Date(params) : null) // Ensure date is parsed correctly
+      valueGetter: (params) => (params ? new Date(params) : null),
+      valueFormatter: (params) => {
+        const date = params;
+        if (!date) return '';
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
     },
     {
       field: 'isReapetCollection',
