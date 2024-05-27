@@ -77,6 +77,8 @@ export default function PlanningProcess() {
           </Typography>
           {/* <TextField fullWidth size="small"></TextField> */}
         </Grid>
+        {/* <Grid item sm={6} textAlign="right">
+        </Grid> */}
       </Grid>
 
       <Stepper activeStep={activeStep}>

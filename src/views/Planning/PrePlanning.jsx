@@ -211,6 +211,34 @@ const PrePlanning = () => {
         }
       );
       console.log('Data saved successfully:', response.data);
+      setFormData({
+        collectionId: '',
+        baseColorId: '', // not in api
+        baseColorName: '', // not in api
+        noOfDesigns: '', // not in apis
+        noOfColors: '', // not in api
+        planningHeaderId: '',
+        designId: '',
+        batchNo: '',
+        componentId: '',
+        cuttingSize: '', // not in api
+        colorId: '',
+        fabricId: '',
+        noOfHeads: '',
+        repeats: '',
+        repeatSize: '',
+        uomId: '',
+        totalFabric: '',
+        shrinkage: '',
+        wastage: '',
+        total: '',
+        appId: 1,
+        createdOn: new Date().toISOString(),
+        createdBy: 0,
+        lastUpdatedBy: 0,
+        lastUpdatedOn: new Date().toISOString()
+      });
+      setInitialRows([]);
     } catch (error) {
       console.error('Error saving data:', error);
     }
@@ -336,6 +364,7 @@ const PrePlanning = () => {
   ];
   console.log('batchList:', batchList);
   const editAPi = 'https://gecxc.com:4041/api/PrePlanning/SavePrePlanning';
+  const deleteApi = `https://gecxc.com:4041/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
   return (
     <MainCard
       style={{
@@ -609,7 +638,8 @@ const PrePlanning = () => {
         initialRows={initialRows}
         formData={formData}
         editAPi={editAPi}
-        // deleteBy="collectionId"
+        deleteApi={deleteApi}
+        deleteBy="planningId"
         disableAddRecord={true}
       />
     </MainCard>
