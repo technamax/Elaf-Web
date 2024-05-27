@@ -77,16 +77,6 @@ export default function PlanningProcess() {
           </Typography>
           {/* <TextField fullWidth size="small"></TextField> */}
         </Grid>
-        <Grid item sm={6} textAlign="right">
-          <TextField
-            fullWidth
-            select
-            label="Select Collection"
-            defaultValue=""
-            size="small"
-            helperText="Please Select Collection"
-          ></TextField>
-        </Grid>
       </Grid>
 
       <Stepper activeStep={activeStep}>

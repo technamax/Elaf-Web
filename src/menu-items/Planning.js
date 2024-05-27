@@ -37,7 +37,7 @@ const Planning = {
           type: 'item',
           url: '/Planning/NewCollection', // Relative URL
           // icon: icons.IconBrandChrome,
-          breadcrumbs: true
+          breadcrumbs: false
         },
         {
           id: 'NewDesign',
