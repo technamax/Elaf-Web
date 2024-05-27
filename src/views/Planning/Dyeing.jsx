@@ -93,9 +93,8 @@ const Dyeing = () => {
   return (
     <MainCard
       style={{
-        // backgroundColor: '#650D1B',
-        borderWidth: 2,
-        borderStyle: 'dashed',
+        borderWidth: 1,
+        borderStyle: 'dotted',
         borderColor: '#a11f23'
       }}
     >

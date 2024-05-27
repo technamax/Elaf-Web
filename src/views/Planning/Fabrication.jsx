@@ -93,9 +93,8 @@ const Fabrication = () => {
   return (
     <MainCard
       style={{
-        backgroundColor: 'lightgrey',
-        borderWidth: 2,
-        borderStyle: 'dashed',
+        borderWidth: 1,
+        borderStyle: 'dotted',
         borderColor: '#a11f23'
       }}
     >

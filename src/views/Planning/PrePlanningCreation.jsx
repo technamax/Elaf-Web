@@ -39,6 +39,7 @@ const PrePlanningCreation = () => {
     createdBy: 0,
     createdOn: new Date().toISOString()
   });
+  const [designOptions, setDesignOptions] = useState([]);
 
   //   const [collectionList, setCollectionList] = useState([]);
   const [plannedCollection, setPlannedCollection] = useState([]);
@@ -46,22 +47,10 @@ const PrePlanningCreation = () => {
   const [plannedDesign, setPlannedDesign] = useState([]);
   const [gridData, setGridData] = useState([]);
 
-  //   useEffect(() => {
-  //     if (collectionData) {
-  //       const rowsWithId = collectionData.map((row, index) => ({
-  //         ...row,
-  //         id: index + 1,
-  //         planningDate: new Date(row.planningDate),
-  //         launchDate: new Date(row.launchDate)
-  //       }));
-  //       setPlannedCollection(rowsWithId);
-  //     }
-  //   }, [collectionData]);
-
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(
-        `https://gecxc.com:4041/api/PrePlanning/GetPlanningHeaderListByDesignId?designId=${formData.designId}`
+        `https://gecxc.com:4041/api/PrePlanning/GetPlanningHeaderListByDesignId?designId=${formData.plannedDesignedId}`
       );
       console.log('DataGridResponse', response);
       const rowsWithId = response.data.map((row, index) => ({
@@ -74,7 +63,7 @@ const PrePlanningCreation = () => {
       console.error('Error fetching data:', error);
       setGridData([]); // Ensure gridData is an array even in case of error
     }
-  }, [formData.designId]);
+  }, [formData.plannedDesignedId]);
 
   useEffect(() => {
     fetchData();
@@ -148,23 +137,27 @@ const PrePlanningCreation = () => {
     }
   };
 
-  const deleteApi =
-    'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
-  const editAPi =
-    'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection';
+  // const deleteApi =
+  //   'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
+  // const editAPi =
+  //   'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection';
 
   useEffect(() => {
-    const GetDesignListByCollectionId = async () => {
-      try {
-        const response = await axios.get(
-          `https://gecxc.com:4041/API/DesignRegistration/GetDesignListByCollectionId?CollectionId=${formData.collectionId}`
-        );
-        setDesignOptions(response.data);
-      } catch (error) {
-        console.error('Error fetching design options:', error);
+    const getDesignListByCollectionId = async () => {
+      if (formData.collectionId) {
+        try {
+          const response = await axios.get(
+            `https://gecxc.com:4041/API/DesignRegistration/GetDesignListByCollectionId?CollectionId=${formData.collectionId}`
+          );
+          console.log(formData.collectionId);
+          console.log(response);
+          setDesignOptions(response.data);
+        } catch (error) {
+          console.error('Error fetching design options:', error);
+        }
       }
     };
-    GetDesignListByCollectionId();
+    getDesignListByCollectionId();
   }, [formData.collectionId]);
 
   useEffect(() => {
@@ -247,7 +240,7 @@ const PrePlanningCreation = () => {
               onChange={handleChange}
               size="small"
             >
-              {designList.map((option) => (
+              {designOptions.map((option) => (
                 <MenuItem key={option.designId} value={option.designId}>
                   {option.designNo}
                 </MenuItem>
@@ -318,7 +311,8 @@ const PrePlanningCreation = () => {
               initialRows={gridData}
               ncolumns={columns}
               formData={formData}
-              deleteApi={deleteApi}
+              fetchData={fetchData}
+              // deleteApi={deleteApi}
               //   editApi={editApi}
             />
           </Grid>

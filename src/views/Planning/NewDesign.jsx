@@ -431,11 +431,11 @@ const NewDesign = () => {
 
   return (
     <MainCard
-      style={{
-        borderWidth: 2,
-        borderStyle: 'dashed',
-        borderColor: '#a11f23'
-      }}
+    style={{
+      borderWidth: 1,
+      borderStyle: 'dotted',
+      borderColor: '#a11f23'
+    }}
     >
       <FormControl>
         <Grid container spacing={2} width="Inherit">
