@@ -19,9 +19,10 @@ const NewDesign = () => {
   const { data: collectionData } = useGetCollectionListQuery();
   const { data: designData } = useGetDesignListQuery();
 
-  const collectionList = collectionData || [];
-  const designList = designData || [];
+  const collectionList = collectionData?.result || [];
+  const designList = designData?.result || [];
   console.log('designList', designList);
+  console.log('collectionList', collectionList);
 
   const [formData, setFormData] = useState({
     collectionId: '',
@@ -145,11 +146,11 @@ const NewDesign = () => {
 
   return (
     <MainCard
-    style={{
-      borderWidth: 1,
-      borderStyle: 'dotted',
-      borderColor: '#a11f23'
-    }}
+      style={{
+        borderWidth: 1,
+        borderStyle: 'dotted',
+        borderColor: '#a11f23'
+      }}
     >
       <FormControl>
         <Grid container spacing={2} width="Inherit">

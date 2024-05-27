@@ -32,7 +32,7 @@ const NewCollection = () => {
     lastUpdatedBy: 0,
     lastUpdatedOn: new Date().toISOString()
   });
-  console.log('formData', formData);
+  console.log('data', data);
   const [collectionList, setCollectionList] = useState([]);
 
   // const fetchData = useCallback(async () => {
@@ -55,7 +55,7 @@ const NewCollection = () => {
   useEffect(() => {
     // fetchData();
     if (data) {
-      const rowsWithId = data.map((row, index) => ({
+      const rowsWithId = data.result.map((row, index) => ({
         ...row,
         id: index + 1,
         planningDate: new Date(row.planningDate),
@@ -154,11 +154,11 @@ const NewCollection = () => {
 
   return (
     <MainCard
-    style={{
-      borderWidth: 1,
-      borderStyle: 'dotted',
-      borderColor: '#a11f23'
-    }}
+      style={{
+        borderWidth: 1,
+        borderStyle: 'dotted',
+        borderColor: '#a11f23'
+      }}
     >
       <FormControl>
         <Grid container spacing={2} width="inherit">

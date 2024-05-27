@@ -25,7 +25,7 @@ const PrePlanningCreation = () => {
   const { data: designData } = useGetDesignListQuery();
   const [loading, setLoading] = useState(true);
 
-  const collectionList = collectionData || [];
+  const collectionList = collectionData?.result || [];
   const designList = designData || [];
   const [formData, setFormData] = useState({
     collectionName: '',
@@ -151,7 +151,7 @@ const PrePlanningCreation = () => {
           );
           console.log(formData.collectionId);
           console.log(response);
-          setDesignOptions(response.data);
+          setDesignOptions(response.data.result);
         } catch (error) {
           console.error('Error fetching design options:', error);
         }
