@@ -2,6 +2,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { collectionApi } from './Apis/collectionApi';
 import { designApi } from './Apis/designApi';
+import { lookupApi } from './Apis/lookupApi';
 import rootReducer from '../../store/reducer';
 
 const store = configureStore({
@@ -9,7 +10,8 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(collectionApi.middleware)
-      .concat(designApi.middleware) // Include the API middleware
+      .concat(designApi.middleware)
+      .concat(lookupApi.middleware) // Include the API middleware
 });
 
 export default store;
