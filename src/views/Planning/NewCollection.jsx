@@ -66,6 +66,7 @@ const NewCollection = () => {
       }));
       setCollectionList(rowsWithId);
     }
+    refetch();
   }, [data]);
 
   const initialRows = collectionList;

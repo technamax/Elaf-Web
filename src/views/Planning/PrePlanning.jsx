@@ -34,6 +34,8 @@ const PrePlanning = () => {
       refetch();
     }
   }, [designData]);
+  console.log('designList', designList);
+  console.log('selectedCollectionId', selectedCollectionId);
 
   const collectionList = collectionData?.result || [];
   // const designList = designData?.result || [];
