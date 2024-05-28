@@ -12,6 +12,12 @@ import {
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import CardContent from '@mui/material/CardContent';
+import CardActions from '@mui/material/CardActions';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -194,135 +200,168 @@ const PrePlanningCreation = () => {
   console.log('formData', formData);
 
   return (
-    <MainCard
-      style={{
-        borderWidth: 1,
-        borderStyle: 'dotted',
-        borderColor: '#a11f23'
-      }}
-    >
-      <FormControl>
-        <Grid container spacing={2} width="inherit">
-          <Grid item sm={9}>
-            <Typography variant="h3" gutterBottom>
+    <>
+      {/* <MainCard
+        style={{
+          borderWidth: 1,
+          borderStyle: 'dotted',
+          borderColor: '#a11f23',
+          marginBottom: 5
+        }}
+      > */}
+      {/* <FormControl> */}
+      <div style={{ marginBottom: 5 }}>
+        <Card style={{ backgroundColor: 'red' }} variant="outlined">
+          <Grid container spacing={2} width="inherit">
+            <Grid item sm={12}>
+              {/* <Typography
+              gutterBottom
+              variant="h3"
+              component="div"
+          
+            >
               Pre Planning Creation
-            </Typography>
-          </Grid>
-          <Grid item sm={3} textAlign="right">
-            <Button variant="contained" size="small" onClick={handleSave}>
-              Save
-            </Button>
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              fullWidth
-              select
-              label="Select Collection"
-              name="collectionId"
-              value={formData.collectionId}
-              onChange={handleChange}
-              size="small"
-            >
-              {collectionList.map((option) => (
-                <MenuItem key={option.collectionId} value={option.collectionId}>
-                  {option.collectionName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              fullWidth
-              select
-              label="Select Design"
-              name="designId"
-              value={formData.designId}
-              onChange={handleChange}
-              size="small"
-            >
-              {designOptions.map((option) => (
-                <MenuItem key={option.designId} value={option.designId}>
-                  {option.designNo}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              label="Po PCs"
-              fullWidth
-              size="small"
-              name="poPcs"
-              value={formData.poPcs}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item sm={12}>
-            <Divider
-              color="#cc8587"
-              sx={{ height: 2, width: '100%', marginBottom: 2 }}
-            />
-
-            <Typography variant="h4" gutterBottom>
-              Search
-            </Typography>
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              fullWidth
-              select
-              label="Select Collection"
-              name="plannedCollectionId"
-              value={formData.plannedCollectionId}
-              onChange={handleChange}
-              size="small"
-            >
-              {plannedCollection.length > 0 ? (
-                plannedCollection.map((option) => (
+            </Typography> */}
+              <CardContent>
+                <Typography variant="h3" gutterBottom>
+                  An Outlined Material UI Card
+                </Typography>
+              </CardContent>
+            </Grid>
+            <Grid item sm={12} textAlign="right">
+              <Button variant="contained" size="small" onClick={handleSave}>
+                Save
+              </Button>
+            </Grid>
+            <Grid item sm={4}>
+              <TextField
+                fullWidth
+                select
+                label="Select Collection"
+                name="collectionId"
+                value={formData.collectionId}
+                onChange={handleChange}
+                size="small"
+              >
+                {collectionList.map((option) => (
                   <MenuItem
-                    id="ddlCollection"
-                    key={option.planningHeaderId}
+                    key={option.collectionId}
                     value={option.collectionId}
                   >
                     {option.collectionName}
                   </MenuItem>
-                ))
-              ) : (
-                <MenuItem disabled>No Collections Available</MenuItem>
-              )}
-            </TextField>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item sm={4}>
+              <TextField
+                fullWidth
+                select
+                label="Select Design"
+                name="designId"
+                value={formData.designId}
+                onChange={handleChange}
+                size="small"
+              >
+                {designOptions.map((option) => (
+                  <MenuItem key={option.designId} value={option.designId}>
+                    {option.designNo}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item sm={4}>
+              <TextField
+                label="Po PCs"
+                fullWidth
+                size="small"
+                name="poPcs"
+                value={formData.poPcs}
+                onChange={handleChange}
+              />
+            </Grid>
           </Grid>
-          <Grid item sm={4}>
-            <TextField
-              fullWidth
-              select
-              label="Design"
-              name="plannedDesignedId"
-              value={formData.plannedDesignedId}
-              onChange={handleChange}
-              size="small"
-            >
-              {plannedDesign.map((option) => (
-                <MenuItem key={option.planningHeaderId} value={option.designId}>
-                  {option.designNo}
-                </MenuItem>
-              ))}
-            </TextField>
+        </Card>
+      </div>
+      {/* </FormControl> */}
+      {/* </MainCard> */}
+      {/* <Divider
+        color="#cc8587"
+        sx={{ height: 2, width: '100%', marginBottom: 2, marginTop: 2 }}
+      /> */}
+      <MainCard
+        style={{
+          borderWidth: 1,
+          borderStyle: 'dotted',
+          borderColor: '#a11f23'
+        }}
+      >
+        <FormControl>
+          <Grid container spacing={2} width="inherit">
+            <Grid item sm={12}>
+              <Typography variant="h4" gutterBottom>
+                Search
+              </Typography>
+            </Grid>
+            <Grid item sm={4}>
+              <TextField
+                fullWidth
+                select
+                label="Select Collection"
+                name="plannedCollectionId"
+                value={formData.plannedCollectionId}
+                onChange={handleChange}
+                size="small"
+              >
+                {plannedCollection.length > 0 ? (
+                  plannedCollection.map((option) => (
+                    <MenuItem
+                      id="ddlCollection"
+                      key={option.planningHeaderId}
+                      value={option.collectionId}
+                    >
+                      {option.collectionName}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>No Collections Available</MenuItem>
+                )}
+              </TextField>
+            </Grid>
+            <Grid item sm={4}>
+              <TextField
+                fullWidth
+                select
+                label="Design"
+                name="plannedDesignedId"
+                value={formData.plannedDesignedId}
+                onChange={handleChange}
+                size="small"
+              >
+                {plannedDesign.map((option) => (
+                  <MenuItem
+                    key={option.planningHeaderId}
+                    value={option.designId}
+                  >
+                    {option.designNo}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item sm={12} paddingTop={1}>
+              <EditAbleDataGrid
+                initialRows={gridData}
+                ncolumns={columns}
+                formData={formData}
+                fetchData={fetchData}
+                // deleteApi={deleteApi}
+                //   editApi={editApi}
+              />
+            </Grid>
           </Grid>
-          <Grid item sm={12} paddingTop={1}>
-            <EditAbleDataGrid
-              initialRows={gridData}
-              ncolumns={columns}
-              formData={formData}
-              fetchData={fetchData}
-              // deleteApi={deleteApi}
-              //   editApi={editApi}
-            />
-          </Grid>
-        </Grid>
-      </FormControl>
-    </MainCard>
+        </FormControl>
+      </MainCard>
+    </>
   );
 };
 

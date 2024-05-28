@@ -529,12 +529,14 @@ const PrePlanning = () => {
                   label="Select Component"
                   variant="outlined"
                   size="small"
+                  name="componentId"
+                  value={formData.componentId}
                 />
               )}
             />
           </Grid>
           <Grid item sm={3}>
-            <TextField
+            {/* <TextField
               label="Color"
               fullWidth
               select
@@ -548,7 +550,25 @@ const PrePlanning = () => {
                   {option.lookUpName}
                 </MenuItem>
               ))}
-            </TextField>
+            </TextField> */}
+            <Autocomplete
+              fullWidth
+              options={colors}
+              getOptionLabel={(option) => option.lookUpName}
+              onChange={(event, newValue) =>
+                handleChange({ target: { name: 'colorId', value: newValue } })
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Color"
+                  variant="outlined"
+                  size="small"
+                  name="colorId"
+                  value={formData.colorId}
+                />
+              )}
+            />
           </Grid>
           <Grid item sm={3}>
             <TextField
@@ -561,7 +581,7 @@ const PrePlanning = () => {
             />
           </Grid>
           <Grid item sm={3}>
-            <TextField
+            {/* <TextField
               fullWidth
               select
               label="Fabrication"
@@ -576,7 +596,25 @@ const PrePlanning = () => {
                   {option.lookUpName}
                 </MenuItem>
               ))}
-            </TextField>
+            </TextField> */}
+            <Autocomplete
+              fullWidth
+              options={Fabrications}
+              getOptionLabel={(option) => option.lookUpName}
+              onChange={(event, newValue) =>
+                handleChange({ target: { name: 'fabricId', value: newValue } })
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Fabrication"
+                  variant="outlined"
+                  size="small"
+                  name="fabricId"
+                  value={formData.fabricId}
+                />
+              )}
+            />
           </Grid>
           <Grid item sm={3}>
             <TextField
