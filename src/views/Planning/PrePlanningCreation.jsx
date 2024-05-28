@@ -53,7 +53,7 @@ const PrePlanningCreation = () => {
         `https://gecxc.com:4041/api/PrePlanning/GetPlanningHeaderListByDesignId?designId=${formData.plannedDesignedId}`
       );
       console.log('DataGridResponse', response);
-      const rowsWithId = response.data.map((row, index) => ({
+      const rowsWithId = response.data.result.map((row, index) => ({
         ...row,
         id: index + 1
       }));
@@ -167,7 +167,7 @@ const PrePlanningCreation = () => {
           'https://gecxc.com:4041/api/PrePlanning/GetCollectionFromPlanningHeader'
         );
         console.log('GetCollectionFromPlanningHeader', response);
-        setPlannedCollection(response.data);
+        setPlannedCollection(response.data.result);
       } catch (error) {
         console.error('Error fetching design options:', error);
       }
@@ -183,7 +183,7 @@ const PrePlanningCreation = () => {
             `https://gecxc.com:4041/api/PrePlanning/GetDesignFromPlanningHeaderByCollectionId?collectionid=${formData.plannedCollectionId}`
           );
           console.log('GetDesignFromPlanningHeaderByCollectionId', response);
-          setPlannedDesign(response.data);
+          setPlannedDesign(response.data.result);
         } catch (error) {
           console.error('Error fetching design options:', error);
         }

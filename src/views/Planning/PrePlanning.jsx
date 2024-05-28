@@ -10,6 +10,8 @@ import {
   Typography,
   Divider
 } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
+
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 // import { useGetDesignListQuery } from 'api/store/Apis/designApi';
 import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
@@ -34,6 +36,8 @@ const PrePlanning = () => {
       refetch();
     }
   }, [designData]);
+  console.log('designList', designList);
+  console.log('selectedCollectionId', selectedCollectionId);
 
   const collectionList = collectionData?.result || [];
   // const designList = designData?.result || [];
@@ -493,7 +497,7 @@ const PrePlanning = () => {
           </Grid>
 
           <Grid item sm={3}>
-            <TextField
+            {/* <TextField
               fullWidth
               select
               label="Select Component"
@@ -508,7 +512,26 @@ const PrePlanning = () => {
                   {option.lookUpName}
                 </MenuItem>
               ))}
-            </TextField>
+            </TextField> */}
+
+            <Autocomplete
+              fullWidth
+              options={components}
+              getOptionLabel={(option) => option.lookUpName}
+              onChange={(event, newValue) =>
+                handleChange({
+                  target: { name: 'componentId', value: newValue }
+                })
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select Component"
+                  variant="outlined"
+                  size="small"
+                />
+              )}
+            />
           </Grid>
           <Grid item sm={3}>
             <TextField
