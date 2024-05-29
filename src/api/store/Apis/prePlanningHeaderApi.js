@@ -10,11 +10,16 @@ export const prePlanningHeaderApi = createApi({
     getDesignFromPlanningHeaderByCollectionId: builder.query({
       query: (collectionId) =>
         `PrePlanning/GetDesignFromPlanningHeaderByCollectionId?collectionid=${collectionId}`
+    }),
+    getPrePlanningHeaderByDesignId: builder.query({
+      query: (designId) =>
+        `PrePlanning/GetPrePlanningHeaderByDesignId?designId=${designId}`
     })
   })
 });
 
 export const {
   useGetCollectionFromPlanningHeaderQuery,
-  useGetDesignFromPlanningHeaderByCollectionIdQuery
+  useGetDesignFromPlanningHeaderByCollectionIdQuery,
+  useGetPrePlanningHeaderByDesignIdQuery
 } = prePlanningHeaderApi;
