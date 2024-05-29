@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
+
 import axios from 'axios';
 import {
   Button,
@@ -8,35 +8,78 @@ import {
   Typography,
   Divider,
   Grid,
-  TextField
+  TextField,
+  Box,
+  Tab
 } from '@mui/material';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import SearchIcon from '@mui/icons-material/Search';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
+import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
+import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
+import { width } from '@mui/system';
+import { WidthFull } from '@mui/icons-material';
 // import { GetCollectionList } from 'api/apis';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const NewCollection = () => {
   const { data, error, isLoading, refetch } = useGetCollectionListQuery();
+  const { data: lookupData } = useGetLookUpListQuery();
+  const [brands, setBrands] = useState([]);
+  const [seasons, setSeasons] = useState([]);
 
   const [formData, setFormData] = useState({
     collectionName: '',
+    brandId: '',
+    seasonId: '',
     volume: '',
     planningDate: '',
     launchDate: '',
     isReapetCollection: '',
     noOfDesigns: '',
     noOfColors: '',
+    poPcs: '',
+    appId: 1, // change after login api fetchdata
     createdBy: 0,
     createdOn: new Date().toISOString(),
     lastUpdatedBy: 0,
     lastUpdatedOn: new Date().toISOString()
   });
-  console.log('data', data);
+  const [totalPcs, setTotalPcs] = useState('');
+  console.log('formData', formData);
+  console.log('lookupData', lookupData);
+
+  ///////////////tabs
+  const [value, setValue] = useState('1');
+
+  const handleChangeTabs = (event, newValue) => {
+    setValue(newValue);
+  };
+
   const [collectionList, setCollectionList] = useState([]);
+
+  useEffect(() => {
+    // fetchData();
+    if (lookupData) {
+      const data = lookupData.result[0];
+
+      setBrands(data.brandList);
+      setSeasons(data.seasonList);
+    }
+    refetch();
+  }, [lookupData]);
+  console.log('brands', brands);
+  console.log('seasons', seasons);
+
+  useEffect(() => {
+    setTotalPcs(formData.noOfColors * formData.poPcs);
+  }, [formData.noOfColors, formData.poPcs]);
 
   // const fetchData = useCallback(async () => {
   //   try {
@@ -66,6 +109,7 @@ const NewCollection = () => {
       }));
       setCollectionList(rowsWithId);
     }
+    refetch();
   }, [data]);
 
   const initialRows = collectionList;
@@ -169,12 +213,15 @@ const NewCollection = () => {
       console.log('Form data saved:', response.data);
       setFormData({
         collectionName: '',
+        brandId: '',
+        seasonId: '',
         volume: '',
         planningDate: '',
         launchDate: '',
         isReapetCollection: '',
+        noOfDesigns: '',
         noOfColors: '',
-        noOfDesigns: ''
+        poPcs: ''
       });
       // fetchData();
       refetch();
@@ -192,124 +239,277 @@ const NewCollection = () => {
       style={{
         borderWidth: 1,
         borderStyle: 'dotted',
-        borderColor: '#a11f23'
+        borderColor: '#a11f23',
+        width: 'auto',
+        maxHeight: { xs: '80vh', md: 'auto' },
+        overflow: 'auto'
       }}
     >
-      <FormControl>
-        <Grid container spacing={2} width="inherit">
-          <Grid item sm={9}>
-            <Typography variant="h3" gutterBottom>
-              Create New Collection
-            </Typography>
-          </Grid>
-          <Grid item sm={3} textAlign="right">
-            <Button variant="contained" size="small" onClick={handleSave}>
-              Save
-            </Button>
-          </Grid>
-          <Grid item sm={6}>
-            <TextField
-              label="Collection Name"
-              fullWidth
-              size="small"
-              name="collectionName"
-              onChange={handleChange}
-              value={formData.collectionName}
-            />
-          </Grid>
+      <Box sx={{ width: '100%', typography: 'body1' }}>
+        <TabContext value={value}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <TabList
+              onChange={handleChangeTabs}
+              aria-label="lab API tabs example"
+            >
+              <Tab
+                icon={<AddCircleIcon />}
+                label="Add Collection"
+                value="1"
+                sx={(theme) => ({
+                  '& .MuiTouchRipple-child': {
+                    backgroundColor: `${theme.palette.primary.main} !important`
+                  }
+                })}
+              />
+              <Tab
+                icon={<SearchIcon />}
+                label="Search Collection"
+                value="2"
+                sx={(theme) => ({
+                  '& .MuiTouchRipple-child': {
+                    backgroundColor: `${theme.palette.primary.main} !important`
+                  }
+                })}
+              />
+            </TabList>
+          </Box>
+          <TabPanel value="1">
+            Item One
+            <FormControl>
+              <Grid container spacing={2} width="inherit">
+                <Grid item xs={9} md={9}>
+                  <Typography variant="h3" gutterBottom>
+                    Create New Collection
+                  </Typography>
+                </Grid>
+                <Grid item xs={3} textAlign="right">
+                  <Button variant="contained" size="small" onClick={handleSave}>
+                    Save
+                  </Button>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Brand Name"
+                    name="brandId"
+                    value={formData.brandId}
+                    onChange={handleChange}
+                    size="small"
+                  >
+                    {brands.map((option) => (
+                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                        {option.lookUpName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Season Name"
+                    name="seasonId"
+                    value={formData.seasonId}
+                    onChange={handleChange}
+                    size="small"
+                  >
+                    {seasons.map((option) => (
+                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                        {option.lookUpName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    label="Collection Name"
+                    fullWidth
+                    size="small"
+                    name="collectionName"
+                    onChange={handleChange}
+                    value={formData.collectionName}
+                  />
+                </Grid>
 
-          <Grid item sm={3}>
-            <TextField
-              size="small"
-              type="date"
-              label="Planning Date"
-              name="planningDate"
-              value={formData.planningDate}
-              onChange={handleChange}
-              fullWidth
-              focused
-            />
-          </Grid>
-          <Grid item sm={3}>
-            <TextField
-              size="small"
-              type="date"
-              label="Launch Date"
-              name="launchDate"
-              value={formData.launchDate}
-              onChange={handleChange}
-              fullWidth
-              focused
-            />
-          </Grid>
-          <Grid item sm={3}>
-            <TextField
-              fullWidth
-              select
-              label="Volume"
-              name="volume"
-              value={formData.volume}
-              onChange={handleChange}
-              size="small"
-            >
-              {volume.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item sm={3}>
-            <TextField
-              fullWidth
-              select
-              label="Repeat Collection?"
-              name="isReapetCollection"
-              value={formData.isReapetCollection}
-              onChange={handleChange}
-              size="small"
-            >
-              {enabled.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item sm={3}>
-            <TextField
-              label="No. of Colors"
-              fullWidth
-              size="small"
-              name="noOfColors"
-              onChange={handleChange}
-              value={formData.noOfColors}
-            />
-          </Grid>
-          <Grid item sm={3}>
-            <TextField
-              label="No. of Designs"
-              fullWidth
-              size="small"
-              name="noOfDesigns"
-              onChange={handleChange}
-              value={formData.noOfDesigns}
-            />
-          </Grid>
-          <Divider />
-          <Grid item sm={12} paddingTop={1}>
-            <EditAbleDataGrid
-              initialRows={initialRows}
-              ncolumns={columns}
-              // fetchData={fetchData}
-              formData={formData}
-              deleteApi={deleteApi}
-              deleteBy="collectionId"
-              editAPi={editAPi}
-            />
-          </Grid>
-        </Grid>
-      </FormControl>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    size="small"
+                    type="date"
+                    label="Planning Date"
+                    name="planningDate"
+                    value={formData.planningDate}
+                    onChange={handleChange}
+                    fullWidth
+                    focused
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    size="small"
+                    type="date"
+                    label="Launch Date"
+                    name="launchDate"
+                    value={formData.launchDate}
+                    onChange={handleChange}
+                    fullWidth
+                    focused
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Volume"
+                    name="volume"
+                    value={formData.volume}
+                    onChange={handleChange}
+                    size="small"
+                  >
+                    {volume.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Repeat Collection?"
+                    name="isReapetCollection"
+                    value={formData.isReapetCollection}
+                    onChange={handleChange}
+                    size="small"
+                  >
+                    {enabled.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="No. of Colors/Articles"
+                    fullWidth
+                    size="small"
+                    name="noOfColors"
+                    onChange={handleChange}
+                    value={formData.noOfColors}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="No. of Designs"
+                    fullWidth
+                    size="small"
+                    name="noOfDesigns"
+                    onChange={handleChange}
+                    value={formData.noOfDesigns}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Po. Pieces"
+                    fullWidth
+                    size="small"
+                    name="poPcs"
+                    onChange={handleChange}
+                    value={formData.poPcs}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Total Pieces"
+                    fullWidth
+                    size="small"
+                    name="totalPcs"
+                    // onChange={handleChange}
+                    value={totalPcs}
+                    disabled
+                  />
+                </Grid>
+                <Grid item sm={12}>
+                  <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
+                </Grid>
+              </Grid>
+            </FormControl>
+            <Grid container spacing={2} width="inherit" paddingTop={2}>
+              <Grid item xs={12}>
+                <EditAbleDataGrid
+                  initialRows={initialRows}
+                  ncolumns={columns}
+                  // fetchData={fetchData}
+                  formData={formData}
+                  deleteApi={deleteApi}
+                  deleteBy="collectionId"
+                  editAPi={editAPi}
+                />
+              </Grid>
+            </Grid>
+          </TabPanel>
+          <TabPanel value="2">
+            <Grid container spacing={2} width="inherit">
+              <Grid item xs={9} md={9}>
+                <Typography variant="h3" gutterBottom>
+                  Search Collection
+                </Typography>
+              </Grid>
+              <Grid item xs={3} textAlign="right">
+                <Button variant="contained" size="small" onClick={handleSave}>
+                  Search
+                </Button>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <TextField
+                  size="small"
+                  type="date"
+                  label="Date From"
+                  name="planningDate"
+                  value={formData.planningDate}
+                  onChange={handleChange}
+                  fullWidth
+                  focused
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  size="small"
+                  type="date"
+                  label="Date to"
+                  name="launchDate"
+                  value={formData.launchDate}
+                  onChange={handleChange}
+                  fullWidth
+                  focused
+                />
+              </Grid>
+
+              <Grid item sm={12}>
+                <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={2} width="inherit" paddingTop={2}>
+              <Grid item xs={12}>
+                <EditAbleDataGrid
+                  initialRows={initialRows}
+                  ncolumns={columns}
+                  formData={formData}
+                  // deleteApi={deleteApi}
+                  // deleteBy="collectionId"
+                  // editAPi={editAPi}
+                  disableAddRecord={true}
+                />
+              </Grid>
+            </Grid>
+          </TabPanel>
+        </TabContext>
+      </Box>
     </MainCard>
   );
 };
