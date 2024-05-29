@@ -535,8 +535,7 @@ const PrePlanning = () => {
               )}
             />
           </Grid>
-          <Grid item sm={3}>
-            {/* <TextField
+          {/* <TextField
               label="Color"
               fullWidth
               select
@@ -551,6 +550,7 @@ const PrePlanning = () => {
                 </MenuItem>
               ))}
             </TextField> */}
+          <Grid item sm={3}>
             <Autocomplete
               fullWidth
               options={colors}

@@ -275,7 +275,6 @@ const NewCollection = () => {
             </TabList>
           </Box>
           <TabPanel value="1">
-            Item One
             <FormControl>
               <Grid container spacing={2} width="inherit">
                 <Grid item xs={9} md={9}>
@@ -287,6 +286,24 @@ const NewCollection = () => {
                   <Button variant="contained" size="small" onClick={handleSave}>
                     Save
                   </Button>
+                </Grid>
+
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Season Name"
+                    name="seasonId"
+                    value={formData.seasonId}
+                    onChange={handleChange}
+                    size="small"
+                  >
+                    {seasons.map((option) => (
+                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                        {option.lookUpName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
                 <Grid item xs={12} md={3}>
                   <TextField
@@ -305,23 +322,6 @@ const NewCollection = () => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    fullWidth
-                    select
-                    label="Season Name"
-                    name="seasonId"
-                    value={formData.seasonId}
-                    onChange={handleChange}
-                    size="small"
-                  >
-                    {seasons.map((option) => (
-                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                        {option.lookUpName}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
                 <Grid item xs={12} md={6}>
                   <TextField
                     label="Collection Name"
@@ -332,7 +332,23 @@ const NewCollection = () => {
                     value={formData.collectionName}
                   />
                 </Grid>
-
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Volume"
+                    name="volume"
+                    value={formData.volume}
+                    onChange={handleChange}
+                    size="small"
+                  >
+                    {volume.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
                 <Grid item xs={12} md={3}>
                   <TextField
                     size="small"
@@ -357,23 +373,7 @@ const NewCollection = () => {
                     focused
                   />
                 </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    fullWidth
-                    select
-                    label="Volume"
-                    name="volume"
-                    value={formData.volume}
-                    onChange={handleChange}
-                    size="small"
-                  >
-                    {volume.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
+
                 <Grid item xs={12} md={3}>
                   <TextField
                     fullWidth

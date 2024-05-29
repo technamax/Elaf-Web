@@ -17,7 +17,7 @@ import Dyeing from './Dyeing';
 // import { color } from '@mui/system';
 const steps = [
   'Pre Planning',
-  'Fabrication',
+  'Fabric Requisition',
   'Dyeing/Printing  ',
   'MultiHead ',
   'Schiffli',

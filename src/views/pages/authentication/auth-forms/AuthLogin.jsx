@@ -52,8 +52,9 @@ const AuthLogin = ({ ...others }) => {
         variant: 'success',
         autoHideDuration: 5000
       });
-      navigate('/');
+      localStorage.setItem('authToken', response.data.token); // Save the token
 
+      navigate('/dashboard');
       console.log('Authentication successful', response.data);
     } catch (error) {
       console.error('Authentication failed', error.response.data);
