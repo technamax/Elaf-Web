@@ -13,18 +13,18 @@ import {
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 // import { useGetDesignListQuery } from 'api/store/Apis/designApi';
 import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
+import { useGetCollectionFromPlanningHeaderQuery } from 'api/store/Apis/prePlanningHeaderApi';
+import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
 
 const PrePlanning = () => {
-  const { data: collectionData } = useGetCollectionListQuery();
+  const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
-  const { data: designData, refetch } = useGetDesignListByCollectionIdQuery(
-    selectedCollectionId,
-    {
+  const { data: designData, refetch } =
+    useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
       skip: !selectedCollectionId // Skip the query if no collection is selected
-    }
-  );
+    });
 
   const [designList, setDesignList] = useState([]);
 
@@ -389,22 +389,25 @@ const PrePlanning = () => {
       style={{
         borderWidth: 2,
         borderStyle: 'dotted',
-        borderColor: '#a11f23'
+        borderColor: '#a11f23',
+        width: 'auto',
+        maxHeight: { xs: '80vh', md: 'auto' },
+        overflow: 'auto'
       }}
     >
       <FormControl>
         <Grid container spacing={2} width="Inherit">
-          <Grid item sm={9}>
+          <Grid item xs={9} md={9}>
             <Typography variant="h3" gutterBottom>
               Pre Planning
             </Typography>
           </Grid>
-          <Grid item sm={3} textAlign="right">
+          <Grid item xs={3} textAlign="right">
             <Button variant="contained" size="small" onClick={handleSave}>
               Save
             </Button>
           </Grid>
-          <Grid item sm={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               fullWidth
               select
@@ -422,7 +425,7 @@ const PrePlanning = () => {
             </TextField>{' '}
           </Grid>
 
-          <Grid item sm={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               label="No of Design"
               fullWidth
@@ -433,7 +436,7 @@ const PrePlanning = () => {
               disabled
             />
           </Grid>
-          <Grid item sm={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               label="No of Color"
               fullWidth
@@ -444,7 +447,7 @@ const PrePlanning = () => {
               disabled
             />
           </Grid>
-          <Grid item sm={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               fullWidth
               select
@@ -456,12 +459,12 @@ const PrePlanning = () => {
             >
               {designList.map((option) => (
                 <MenuItem key={option.designId} value={option.designId}>
-                  {option.designerName}
+                  {option.designNo}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               label="Base Color"
               fullWidth
@@ -472,7 +475,7 @@ const PrePlanning = () => {
               disabled
             />
           </Grid>
-          <Grid item sm={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               fullWidth
               select
@@ -490,11 +493,11 @@ const PrePlanning = () => {
             </TextField>{' '}
           </Grid>
 
-          <Grid item sm={12}>
+          <Grid item xs={12} md={12}>
             <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
           </Grid>
 
-          <Grid item sm={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               fullWidth
               select
@@ -512,7 +515,7 @@ const PrePlanning = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               label="Color"
               fullWidth
@@ -529,7 +532,7 @@ const PrePlanning = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               label="Cutting Size"
               fullWidth
@@ -539,7 +542,7 @@ const PrePlanning = () => {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               fullWidth
               select
@@ -557,7 +560,7 @@ const PrePlanning = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               fullWidth
               select
@@ -575,7 +578,7 @@ const PrePlanning = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               label="Repeats"
               fullWidth
@@ -585,7 +588,7 @@ const PrePlanning = () => {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               label="Repeat Size"
               fullWidth
@@ -595,7 +598,7 @@ const PrePlanning = () => {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               label="Total Fabric"
               fullWidth
@@ -605,7 +608,7 @@ const PrePlanning = () => {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               fullWidth
               select
@@ -623,7 +626,7 @@ const PrePlanning = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               label="Shrinkage %"
               fullWidth
@@ -633,7 +636,7 @@ const PrePlanning = () => {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               label="Wastage %"
               fullWidth
@@ -643,7 +646,7 @@ const PrePlanning = () => {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item sm={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               label="Total"
               fullWidth
@@ -656,7 +659,7 @@ const PrePlanning = () => {
         </Grid>
       </FormControl>
       <Grid container spacing={2} width="Inherit">
-        <Grid sx={{ marginTop: 2 }} item sm={12}>
+        <Grid sx={{ marginTop: 2 }} item xs={12}>
           <EditAbleDataGrid
             ncolumns={columns}
             initialRows={initialRows}
