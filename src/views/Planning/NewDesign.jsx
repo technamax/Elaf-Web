@@ -1,16 +1,22 @@
-import {
-  Grid,
-  TextField,
-  Button,
-  MenuItem,
-  FormControl,
-  Typography,
-  Divider
-} from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
 import axios from 'axios';
+
+import {
+  Button,
+  MenuItem,
+  FormControl,
+  Typography,
+  Divider,
+  Grid,
+  TextField,
+  Box,
+  Tab
+} from '@mui/material';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import SearchIcon from '@mui/icons-material/Search';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
@@ -27,6 +33,11 @@ const NewDesign = () => {
 
   const [designList, setDesignList] = useState([]);
   const [colors, setColors] = useState([]);
+  const [value, setValue] = useState('1');
+
+  const handleChangeTabs = (event, newValue) => {
+    setValue(newValue);
+  };
 
   useEffect(() => {
     if (designData) {
@@ -178,6 +189,9 @@ const NewDesign = () => {
   const deleteApi =
     'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
   const editAPi = 'https://gecxc.com:4041/API/DesignRegistration/SaveDesign';
+  const handleSearch = () => {
+    //search api call
+  };
 
   return (
     <MainCard
@@ -187,105 +201,196 @@ const NewDesign = () => {
         borderColor: '#a11f23'
       }}
     >
-      <FormControl>
-        <Grid container spacing={2} width="Inherit">
-          <Grid item sm={9}>
-            <Typography variant="h3" gutterBottom>
-              Create New Design
-            </Typography>
-          </Grid>
-          <Grid item sm={3} textAlign="right">
-            <Button variant="contained" size="small" onClick={handleSave}>
-              Save
-            </Button>
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              fullWidth
-              select
-              label="Select Collection"
-              name="collectionId"
-              value={formData.collectionId}
-              onChange={handleChange}
-              size="small"
-            >
-              {collectionList.map((option) => (
-                <MenuItem key={option.collectionId} value={option.collectionId}>
-                  {option.collectionName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              label="Design No."
-              name="designNo"
-              fullWidth
-              size="small"
-              value={formData.designNo}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              label="Designer Name"
-              fullWidth
-              size="small"
-              name="designerName"
-              value={formData.designerName}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              size="small"
-              type="date"
-              label="Planning Date"
-              name="dateOfPlanning"
-              value={formData.dateOfPlanning}
-              onChange={handleChange}
-              fullWidth
-              focused
-            />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              label="Po PCs"
-              fullWidth
-              size="small"
-              name="poPcs"
-              value={formData.poPcs}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              fullWidth
-              select
-              label="Color"
-              size="small"
-              name="colorId"
-              value={formData.colorId}
-              onChange={handleChange}
-            >
-              {colors.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Divider />
-          <Grid item sm={12} paddingTop={1}>
-            <EditAbleDataGrid
-              initialRows={initialRows}
-              ncolumns={columns}
-              formData={formData}
-              editAPi={editAPi}
-            />
-          </Grid>
-        </Grid>
-      </FormControl>
+      <Box sx={{ width: '100%', typography: 'body1' }}>
+        <TabContext value={value}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <TabList onChange={handleChangeTabs}>
+              <Tab
+                icon={<AddCircleIcon />}
+                label="Add Design"
+                value="1"
+                sx={(theme) => ({
+                  '& .MuiTouchRipple-child': {
+                    backgroundColor: `${theme.palette.primary.main} !important`
+                  }
+                })}
+              />
+              <Tab
+                icon={<SearchIcon />}
+                label="Search Design"
+                value="2"
+                sx={(theme) => ({
+                  '& .MuiTouchRipple-child': {
+                    backgroundColor: `${theme.palette.primary.main} !important`
+                  }
+                })}
+              />
+            </TabList>
+          </Box>
+          <TabPanel value="1">
+            Item One
+            <FormControl>
+              <Grid container spacing={2} width="Inherit">
+                <Grid item sm={9}>
+                  <Typography variant="h3" gutterBottom>
+                    Create New Design
+                  </Typography>
+                </Grid>
+                <Grid item sm={3} textAlign="right">
+                  <Button variant="contained" size="small" onClick={handleSave}>
+                    Save
+                  </Button>
+                </Grid>
+                <Grid item sm={4}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Select Collection"
+                    name="collectionId"
+                    value={formData.collectionId}
+                    onChange={handleChange}
+                    size="small"
+                  >
+                    {collectionList.map((option) => (
+                      <MenuItem
+                        key={option.collectionId}
+                        value={option.collectionId}
+                      >
+                        {option.collectionName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item sm={4}>
+                  <TextField
+                    label="Design No."
+                    name="designNo"
+                    fullWidth
+                    size="small"
+                    value={formData.designNo}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item sm={4}>
+                  <TextField
+                    label="Designer Name"
+                    fullWidth
+                    size="small"
+                    name="designerName"
+                    value={formData.designerName}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item sm={4}>
+                  <TextField
+                    size="small"
+                    type="date"
+                    label="Planning Date"
+                    name="dateOfPlanning"
+                    value={formData.dateOfPlanning}
+                    onChange={handleChange}
+                    fullWidth
+                    focused
+                  />
+                </Grid>
+                <Grid item sm={4}>
+                  <TextField
+                    label="Po PCs"
+                    fullWidth
+                    size="small"
+                    name="poPcs"
+                    value={formData.poPcs}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item sm={4}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Color"
+                    size="small"
+                    name="colorId"
+                    value={formData.colorId}
+                    onChange={handleChange}
+                  >
+                    {colors.map((option) => (
+                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                        {option.lookUpName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              </Grid>
+            </FormControl>
+            <Divider />
+            <Grid container spacing={2} width="inherit" paddingTop={2}>
+              <Grid item xs={12}>
+                <EditAbleDataGrid
+                  initialRows={initialRows}
+                  ncolumns={columns}
+                  formData={formData}
+                  editAPi={editAPi}
+                />
+              </Grid>
+            </Grid>
+          </TabPanel>
+          <TabPanel value="2">
+            <Grid container spacing={2} width="inherit">
+              <Grid item xs={9} md={9}>
+                <Typography variant="h3" gutterBottom>
+                  Search Design
+                </Typography>
+              </Grid>
+              <Grid item xs={3} textAlign="right">
+                <Button variant="contained" size="small" onClick={handleSearch}>
+                  Search
+                </Button>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <TextField
+                  size="small"
+                  type="date"
+                  label="Date From"
+                  name="planningDate"
+                  value={formData.planningDate}
+                  onChange={handleChange}
+                  fullWidth
+                  focused
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  size="small"
+                  type="date"
+                  label="Date to"
+                  name="launchDate"
+                  value={formData.launchDate}
+                  onChange={handleChange}
+                  fullWidth
+                  focused
+                />
+              </Grid>
+
+              <Grid item sm={12}>
+                <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
+              </Grid>
+            </Grid>
+
+            <Grid container spacing={2} width="inherit" paddingTop={2}>
+              <Grid item xs={12}>
+                <EditAbleDataGrid
+                  initialRows={[]}
+                  ncolumns={columns}
+                  formData={formData}
+                  editAPi={editAPi}
+                  // disableEdit={true}
+                />
+              </Grid>
+            </Grid>
+          </TabPanel>
+        </TabContext>
+      </Box>
     </MainCard>
   );
 };
