@@ -48,15 +48,6 @@ const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
       <MobileView>
         <Box sx={{ px: 2 }}>
           <MenuList empId={empId} token={token} />
-          {/* <Stack direction="row" justifyContent="center" sx={{ mb: 2 }}>
-            <Chip
-              label={import.meta.env.VITE_APP_VERSION}
-              disabled
-              chipcolor="secondary"
-              size="small"
-              sx={{ cursor: 'pointer' }}
-            />
-          </Stack> */}
         </Box>
       </MobileView>
     </>

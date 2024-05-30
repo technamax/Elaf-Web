@@ -5,7 +5,7 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
+import { useState, useEffect } from 'react';
 // project imports
 import { CssBaseline, styled, useTheme } from '@mui/material';
 import Header from './Header';
@@ -55,9 +55,10 @@ const Main = styled('main', {
 // ==============================|| MAIN LAYOUT ||============================== //
 
 const MainLayout = () => {
-  const empId = '10014';
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYmYiOjE3MTY1Mjg5MzYsImV4cCI6MTcxNjYxNTMzNiwiaWF0IjoxNzE2NTI4OTM2fQ.Ku5x42gHE3JXLqHQVQaV_Qoh-lK2lc5LnBfdshPGPiU';
+  // const empId = '10014';
+  // const token =
+  // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYmYiOjE3MTY1Mjg5MzYsImV4cCI6MTcxNjYxNTMzNiwiaWF0IjoxNzE2NTI4OTM2fQ.Ku5x42gHE3JXLqHQVQaV_Qoh-lK2lc5LnBfdshPGPiU';
+  const empId = localStorage.getItem('empId');
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
   // Handle left drawer
@@ -66,7 +67,28 @@ const MainLayout = () => {
   const handleLeftDrawerToggle = () => {
     dispatch({ type: SET_MENU, opened: !leftDrawerOpened });
   };
+  // const [empId, setEmpId] = useState('');
+  const [token, setToken] = useState('');
+  console.log(empId, token);
 
+  useEffect(() => {
+    const storedEmpId = localStorage.getItem('empId');
+    const authToken = localStorage.getItem('authToken');
+
+    if (authToken) {
+      setToken(authToken);
+      console.log('Retrieved authToken:', authToken); // Log the token for debugging
+    } else {
+      console.error('No authToken found in localStorage');
+    }
+
+    // if (storedEmpId) {
+    //   setEmpId(storedEmpId);
+    //   console.log('Retrieved empId:', storedEmpId); // Log the empId for debugging
+    // } else {
+    //   console.error('No empId found in localStorage');
+    // }
+  }, []);
   console.log(token);
   return (
     <Box sx={{ display: 'flex' }}>

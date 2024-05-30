@@ -19,6 +19,7 @@ import CardHeader from '@mui/material/CardHeader';
 import SearchIcon from '@mui/icons-material/Search';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -31,6 +32,7 @@ const PrePlanningCreation = () => {
   const { data: collectionData } = useGetCollectionListQuery();
   const { data: designData } = useGetDesignListByCollectionIdQuery();
   const [loading, setLoading] = useState(true);
+  const { enqueueSnackbar } = useSnackbar();
 
   const collectionList = collectionData?.result || [];
   const designList = designData || [];
@@ -136,6 +138,11 @@ const PrePlanningCreation = () => {
         formData
       );
       console.log('Form data saved:', response.data);
+      enqueueSnackbar('Planning Batch saved successfully!', {
+        variant: 'success',
+        autoHideDuration: 5000
+      });
+
       setFormData({
         collectionName: '',
         collectionId: '',

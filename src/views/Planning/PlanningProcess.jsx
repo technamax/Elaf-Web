@@ -14,6 +14,8 @@ import Fabrication from 'views/Planning/Fabrication';
 import { Grid, TextField } from '@mui/material';
 import PrePlanning from './PrePlanning';
 import Dyeing from './Dyeing';
+import { SnackbarProvider, useSnackbar } from 'notistack';
+
 // import { color } from '@mui/system';
 const steps = [
   'Pre Planning',
@@ -31,6 +33,7 @@ export default function PlanningProcess() {
   const [skipped, setSkipped] = React.useState(new Set());
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [lookupDomains, setLookupDomains] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -128,6 +131,10 @@ export default function PlanningProcess() {
         `https://gecxc.com:4041/api/Common/SaveLookUp?lookupDomain=${formData.lookUpDomain}&LookUpName=${formData.lookUpName}&appId=1`
       );
       console.log('Form data saved:', response.data);
+      enqueueSnackbar('Lookup saved successfully!', {
+        variant: 'success',
+        autoHideDuration: 5000
+      });
 
       // Clear form fields
       setFormData({

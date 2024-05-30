@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
 import axios from 'axios';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 import {
   Button,
@@ -30,6 +31,7 @@ const NewDesign = () => {
       skip: !selectedCollectionId // Skip the query if no collection is selected
     }
   );
+  const { enqueueSnackbar } = useSnackbar();
 
   const [designList, setDesignList] = useState([]);
   const [colors, setColors] = useState([]);
@@ -170,6 +172,11 @@ const NewDesign = () => {
         'https://gecxc.com:4041/API/DesignRegistration/SaveDesign',
         formData
       );
+      enqueueSnackbar('Design saved successfully!', {
+        variant: 'success',
+        autoHideDuration: 5000
+      });
+
       console.log('Form data saved:', response.data);
       setDesignList([...designList, response.data]);
       setFormData({

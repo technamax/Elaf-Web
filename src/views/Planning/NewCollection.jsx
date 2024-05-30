@@ -19,6 +19,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -57,6 +58,7 @@ const NewCollection = () => {
 
   ///////////////tabs
   const [value, setValue] = useState('1');
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
@@ -210,6 +212,11 @@ const NewCollection = () => {
         'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection',
         formData
       );
+      enqueueSnackbar('Collection saved successfully!', {
+        variant: 'success',
+        autoHideDuration: 5000
+      });
+
       console.log('Form data saved:', response.data);
       setFormData({
         collectionName: '',

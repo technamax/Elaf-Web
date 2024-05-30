@@ -10,7 +10,7 @@ import {
   Divider,
   colors
 } from '@mui/material';
-// import { useState } from 'react';
+import { useState } from 'react';
 // import dayjs from 'dayjs';
 // import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -34,12 +34,36 @@ const Dyeing = () => {
       role: 'developer'
     }
   ];
-
+  const [formData, setFormData] = useState({
+    DPId: '',
+    DesignId: '',
+    BatchNo: '',
+    FabricId: '',
+    ColorId: '',
+    VendorId: '',
+    ProcessType: '',
+    AvailableQty: '',
+    Shrinkage: '',
+    Wastage: '',
+    OutputQty: '',
+    UOM: '',
+    RatePerUOM: '',
+    UnitRatePerPo: '',
+    TotalExclGst: '',
+    GST: '',
+    GSTAmount: '',
+    TotalIncludingGst: '',
+    // appId: 1,
+    createdBy: 0
+    // createdOn: new Date().toISOString(),
+    // lastUpdatedBy: 0,
+    // lastUpdatedOn: new Date().toISOString()
+  });
   const columns = [
-    { field: 'name', headerName: 'Name', editable: true, flex: 2 },
+    { field: 'name', headerName: 'Order Number', editable: true, flex: 2 },
     {
-      field: 'age',
-      headerName: 'Age',
+      field: 'DesignId',
+      headerName: 'Design',
       type: 'number',
       flex: 1,
       align: 'left',
@@ -47,19 +71,59 @@ const Dyeing = () => {
       editable: true
     },
     {
-      field: 'joinDate',
-      headerName: 'Join date',
+      field: 'FabricId',
+      headerName: 'Fabric',
       type: 'date',
       flex: 1,
       editable: true
     },
     {
-      field: 'role',
-      headerName: 'Department',
+      field: 'ProcessType',
+      headerName: 'Process',
       flex: 1,
-      editable: true,
-      type: 'singleSelect',
-      valueOptions: ['Market', 'Finance', 'Development']
+      editable: true
+    },
+    {
+      field: 'ColorId',
+      headerName: 'Color',
+      flex: 1,
+      editable: true
+    },
+    {
+      field: 'role',
+      headerName: 'Po Pcs',
+      flex: 1,
+      editable: true
+    },
+    {
+      field: 'AvailableQty',
+      headerName: 'Qty',
+      flex: 1,
+      editable: true
+    },
+    {
+      field: 'UOM',
+      headerName: 'UOM',
+      flex: 1,
+      editable: true
+    },
+    {
+      field: 'RatePerUOM',
+      headerName: 'Rate',
+      flex: 1,
+      editable: true
+    },
+    {
+      field: 'UnitRatePerPo',
+      headerName: 'Unit Price',
+      flex: 1,
+      editable: true
+    },
+    {
+      field: 'TotalIncludingGst',
+      headerName: 'Total W/ GST',
+      flex: 1,
+      editable: true
     }
   ];
 
@@ -95,22 +159,25 @@ const Dyeing = () => {
       style={{
         borderWidth: 1,
         borderStyle: 'dotted',
-        borderColor: '#a11f23'
+        borderColor: '#a11f23',
+        width: 'auto',
+        maxHeight: { xs: '80vh', md: 'auto' },
+        overflow: 'auto'
       }}
     >
       <FormControl>
         <Grid container spacing={2} width="Inherit">
-          <Grid item sm={9}>
+          <Grid item xs={9} md={9}>
             <Typography variant="h3" gutterBottom>
               Dyeing/Printing
             </Typography>
           </Grid>
-          <Grid item sm={3} textAlign="right">
+          <Grid item xs={3} md={3} textAlign="right">
             <Button variant="contained" size="small" color="error">
               Save
             </Button>
           </Grid>
-          <Grid item sm={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               fullWidth
               id="outlined-select-currency"
@@ -127,7 +194,7 @@ const Dyeing = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               fullWidth
               id="outlined-select-currency"
@@ -143,7 +210,7 @@ const Dyeing = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               fullWidth
               id="outlined-select-currency"
@@ -159,7 +226,7 @@ const Dyeing = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               fullWidth
               id="outlined-select-currency"
@@ -176,8 +243,7 @@ const Dyeing = () => {
               ))}
             </TextField>
           </Grid>
-
-          <Grid item sm={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               fullWidth
               id="outlined-select-currency"
@@ -194,44 +260,44 @@ const Dyeing = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={4}>
+          <Grid item xs={12} md={4}>
             <TextField label="Po PC's" fullWidth size="small" />
           </Grid>
-          <Grid item sm={2}>
+          <Grid item xs={12} md={2}>
             <TextField label="UOM" fullWidth size="small" />
           </Grid>
-          <Grid item sm={2}>
+          <Grid item xs={12} md={2}>
             <TextField label="Qty" fullWidth size="small" />
           </Grid>
-          <Grid item sm={2}>
+          <Grid item xs={12} md={2}>
             <TextField label="Shrinkage%" fullWidth size="small" />
           </Grid>
-          <Grid item sm={2}>
+          <Grid item xs={12} md={2}>
             <TextField label="Wastage%" fullWidth size="small" />
           </Grid>
-          <Grid item sm={2}>
+          <Grid item xs={12} md={2}>
             <TextField label="Output Qty" fullWidth size="small" />
           </Grid>
-          <Grid item sm={2}>
+          <Grid item xs={12} md={2}>
             <TextField label="Rate/UOM" fullWidth size="small" />
           </Grid>
-          <Grid item sm={2}>
+          <Grid item xs={12} md={2}>
             <TextField label="GST" fullWidth size="small" />
           </Grid>
-          <Grid item sm={2}>
+          <Grid item xs={12} md={2}>
             <TextField label="Total Incl GST" fullWidth size="small" />
           </Grid>
-          <Grid item sm={2}>
+          <Grid item xs={12} md={2}>
             <TextField label="GST Amount" fullWidth size="small" />
           </Grid>
-          <Grid item sm={2}>
+          <Grid item xs={12} md={2}>
             <TextField label="Total:Including Gst" fullWidth size="small" />
           </Grid>
-          <Grid item sm={2}>
+          <Grid item xs={12} md={2}>
             <TextField label="Unit P: T/Po PC's" fullWidth size="small" />
           </Grid>
-          <Divider></Divider>
-          <Grid item sm={12} paddingTop={1}>
+          <Divider color="#cc8587" sx={{ height: 2, width: '100%', mt: 2 }} />
+          <Grid item xs={12} md={12} paddingTop={1}>
             <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} />
           </Grid>
         </Grid>

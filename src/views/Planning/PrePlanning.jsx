@@ -11,6 +11,7 @@ import {
   Divider
 } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 // import { useGetDesignListQuery } from 'api/store/Apis/designApi';
@@ -41,6 +42,7 @@ const PrePlanning = () => {
 
   const collectionList = collectionData?.result || [];
   // const designList = designData?.result || [];
+  const { enqueueSnackbar } = useSnackbar();
 
   const [components, setComponents] = useState([]);
   const [Fabrications, setFabrications] = useState([]);
@@ -232,6 +234,11 @@ const PrePlanning = () => {
         }
       );
       console.log('Data saved successfully:', response.data);
+      enqueueSnackbar('PrePlanning saved successfully!', {
+        variant: 'success',
+        autoHideDuration: 5000
+      });
+
       setFormData({
         collectionId: '',
         baseColorId: '', // not in api
