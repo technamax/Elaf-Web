@@ -42,7 +42,7 @@ const NewCollection = () => {
     volume: '',
     planningDate: '',
     launchDate: '',
-    isRepeatCollection: '',
+    isReapetCollection: '',
     noOfDesigns: '',
     noOfColors: '',
     poPcs: '',
@@ -166,7 +166,7 @@ const NewCollection = () => {
       }
     },
     {
-      field: 'isRepeatCollection',
+      field: 'isReapetCollection',
       headerName: 'Repeat',
       flex: 1,
       editable: true,
@@ -225,7 +225,7 @@ const NewCollection = () => {
         volume: '',
         planningDate: '',
         launchDate: '',
-        isRepeatCollection: '',
+        isReapetCollection: '',
         noOfDesigns: '',
         noOfColors: '',
         poPcs: ''
@@ -241,10 +241,6 @@ const NewCollection = () => {
   const editAPi =
     'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection';
 
-  const handleSearch = () => {
-    //search api call
-  };
-
   return (
     <MainCard
       style={{
@@ -259,7 +255,10 @@ const NewCollection = () => {
       <Box sx={{ width: '100%', typography: 'body1' }}>
         <TabContext value={value}>
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <TabList onChange={handleChangeTabs}>
+            <TabList
+              onChange={handleChangeTabs}
+              aria-label="lab API tabs example"
+            >
               <Tab
                 icon={<AddCircleIcon />}
                 label="Add Collection"
@@ -387,8 +386,8 @@ const NewCollection = () => {
                     fullWidth
                     select
                     label="Repeat Collection?"
-                    name="isRepeatCollection"
-                    value={formData.isRepeatCollection}
+                    name="isReapetCollection"
+                    value={formData.isReapetCollection}
                     onChange={handleChange}
                     size="small"
                   >
@@ -467,7 +466,7 @@ const NewCollection = () => {
                 </Typography>
               </Grid>
               <Grid item xs={3} textAlign="right">
-                <Button variant="contained" size="small" onClick={handleSearch}>
+                <Button variant="contained" size="small" onClick={handleSave}>
                   Search
                 </Button>
               </Grid>
@@ -512,8 +511,6 @@ const NewCollection = () => {
                   // deleteBy="collectionId"
                   // editAPi={editAPi}
                   disableAddRecord={true}
-                  disableEdit={true}
-                  disableDelete={true}
                 />
               </Grid>
             </Grid>

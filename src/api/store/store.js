@@ -3,7 +3,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import { collectionApi } from './Apis/collectionApi';
 import { designApi } from './Apis/designApi';
 import { lookupApi } from './Apis/lookupApi';
-import { prePlanningHeaderApi } from './Apis/prePlanningHeaderApi';
 import rootReducer from '../../store/reducer';
 
 const store = configureStore({
@@ -12,8 +11,7 @@ const store = configureStore({
     getDefaultMiddleware()
       .concat(collectionApi.middleware)
       .concat(designApi.middleware)
-      .concat(lookupApi.middleware)
-      .concat(prePlanningHeaderApi.middleware) // Include the API middleware
+      .concat(lookupApi.middleware) // Include the API middleware
 });
 
 export default store;
