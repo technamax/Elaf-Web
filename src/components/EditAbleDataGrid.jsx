@@ -24,10 +24,8 @@ export default function FullFeaturedCrudGrid({
   // fetchData,
   formData,
   deleteApi,
-  disableDelete,
   deleteBy,
   editAPi,
-  disableEdit,
   disableAddRecord
 }) {
   const [rows, setRows] = useState(initialRows);
@@ -183,7 +181,6 @@ export default function FullFeaturedCrudGrid({
             />
           ];
         }
-
         return [
           <GridActionsCellItem
             icon={<EditIcon />}
@@ -192,7 +189,6 @@ export default function FullFeaturedCrudGrid({
             onClick={handleEditClick(id)}
             color="inherit"
             sx={{ color: 'secondary.dark' }}
-            disabled={disableEdit}
           />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
@@ -200,15 +196,11 @@ export default function FullFeaturedCrudGrid({
             onClick={handleDeleteClick(id)}
             color="inherit"
             sx={{ color: 'error.dark' }}
-            disabled={disableDelete}
           />
         ];
       }
     }
   ];
-  const handleCellDoubleClick = (params, event) => {
-    event.defaultMuiPrevented = true;
-  };
 
   return (
     <Box
@@ -234,7 +226,6 @@ export default function FullFeaturedCrudGrid({
         slots={{ toolbar: !disableAddRecord ? EditToolbar : null }}
         slotProps={{ toolbar: { setRows, setRowModesModel } }}
         getRowId={(row) => row.id}
-        onCellDoubleClick={handleCellDoubleClick}
       />
     </Box>
   );
