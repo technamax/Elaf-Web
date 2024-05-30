@@ -10,11 +10,13 @@ import {
   Divider,
   colors
 } from '@mui/material';
+<<<<<<< HEAD
 // import { useState } from 'react';
 // import dayjs from 'dayjs';
 // import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 // import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Elogo from '../../assets/images/ELogo.png';
+=======
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 // import { useGetDesignListQuery } from 'api/store/Apis/designApi';
 import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
@@ -27,6 +29,10 @@ import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Api
 import { useGetPrePlanningHeaderByDesignIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 
+<<<<<<< HEAD
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
+=======
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import { color } from 'framer-motion';
 
@@ -37,6 +43,192 @@ import MainCard from 'ui-component/cards/MainCard';
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const Fabrication = () => {
+<<<<<<< HEAD
+<<<<<<< HEAD
+  const initialRows = [
+    {
+      id: 1,
+      name: 'Fabrication',
+      age: 25,
+      joinDate: new Date('2024-05-25'),
+      role: 'developer'
+    }
+  ];
+=======
+  const [formData, setFormData] = useState({
+    designId: '',
+    batchNo: '',
+    baseColorId: '',
+    baseColorName: '',
+    fabricId: '',
+    poPcs: '',
+    quantity: '',
+    rate: '',
+    uomId: 'string',
+    total: '',
+    unitPrice: '',
+    gst: '', //// not in api
+    totalInclGst: '', ///// not in api total*gst
+    createdOn: '2024-05-29T09:56:23.916Z',
+    createdBy: 0,
+    lastUpdatedOn: '2024-05-29T09:56:23.916Z',
+    LastUpdatedBy: 0
+  });
+
+  const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
+  const [selectedCollectionId, setSelectedCollectionId] = useState('');
+  const { data: lookupData } = useGetLookUpListQuery();
+  const { data: designData, refetch } =
+    useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
+      skip: !selectedCollectionId // Skip the query if no collection is selected
+    });
+  const { data: batchData, refetch: refetchBatches } =
+    useGetPrePlanningHeaderByDesignIdQuery(formData.designId, {
+      skip: !formData.designId // Skip the query if no collection is selected
+    });
+  const { data: fabricData } = useGetFabricFromPrePlanningByBatchNoQuery(
+    formData.batchNo,
+    {
+      skip: !formData.batchNo // Skip the query if no collection is selected
+    }
+  );
+  const { data: fabricRequisitionData, refetch: refetchFabricRequisitionData } =
+    useGetFabricRequisitionListByBatchNoQuery(formData.batchNo, {
+      skip: !formData.batchNo // Skip the query if no collection is selected
+    });
+  console.log('fabricRequisitionData', fabricRequisitionData);
+
+  const [designList, setDesignList] = useState([]);
+  const [batchList, setBatchList] = useState([]);
+  const [Fabrications, setFabrications] = useState([]);
+  const [uoms, setUoms] = useState([]);
+  const [initialRows, setInitialRows] = useState([]);
+
+  useEffect(() => {
+    if (designData) {
+      setDesignList(designData.result);
+      // refetch();
+    }
+  }, [designData]);
+  useEffect(() => {
+    if (batchData) {
+      setBatchList(batchData.result);
+      // refetchBatches();
+    }
+  }, [batchData]);
+  useEffect(() => {
+    if (fabricData) {
+      setFabrications(fabricData.result);
+      // refetchBatches();
+    }
+  }, [fabricData]);
+  useEffect(() => {
+    if (fabricRequisitionData) {
+      setInitialRows(
+        fabricRequisitionData.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+      // refetchBatches();
+    }
+  }, [fabricRequisitionData]);
+
+  useEffect(() => {
+    // fetchData();
+    if (lookupData) {
+      const data = lookupData.result[0];
+
+      setUoms(data.uomList);
+    }
+  }, [lookupData]);
+
+  console.log('designList', designList);
+  console.log('selectedCollectionId', selectedCollectionId);
+  console.log('batchList', batchList);
+  console.log('uom', uoms);
+  console.log('Fabrications', Fabrications);
+  console.log('initialRows', initialRows);
+
+  const collectionList = collectionData?.result || [];
+  console.log('collectionList', collectionList);
+
+  // const initialRows = [
+  //   {
+  //     id: 1,
+  //     fabricationId: 1,
+  //     designId: 1,
+  //     batchNo: 'D-01-5-24-1',
+  //     baseColorId: 74,
+  //     fabricId: 9,
+  //     poPcs: 0,
+  //     quantity: 7.0,
+  //     rate: 0.0,
+  //     uomId: 138,
+  //     total: 0.0,
+  //     unitPrice: 0.0,
+  //     createdOn: '2024-05-23T07:07:11.547',
+  //     createdBy: 0,
+  //     lastUpdatedOn: '2024-05-23T07:07:11.547',
+  //     lastUpdatedBy: 0,
+  //     baseColorName: 'STEEL GREY',
+  //     fabricName: 'Bambar Chiffon ',
+  //     orderNumber: null,
+  //     designNo: 'Design-01-A',
+  //     collectionId: 26
+  //   }
+  // ];
+
+  useEffect(() => {
+    const calculateTotal = () => {
+      const quantity = parseFloat(formData.quantity) || 0;
+      const rate = parseFloat(formData.rate) || 0;
+      return quantity * rate;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      total: calculateTotal()
+    }));
+    const calculateTotalWithGst = () => {
+      const total = parseFloat(formData.total) || 0;
+      const gst = parseFloat(formData.gst) || 0;
+      return total * gst;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      totalInclGst: calculateTotalWithGst()
+    }));
+    const calculateUnitPrice = () => {
+      const total = parseFloat(formData.total) || 0;
+      const poPcs = parseFloat(formData.poPcs) || 0;
+      return total / poPcs;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      unitPrice: calculateUnitPrice()
+    }));
+  }, [formData.quantity, formData.rate, formData.total, formData.gst]);
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
+
+  const columns = [
+    { field: 'name', headerName: 'Name', editable: true, flex: 2 },
+    {
+      field: 'age',
+      headerName: 'Age',
+      type: 'number',
+      flex: 1,
+      align: 'left',
+      headerAlign: 'left',
+      editable: true
+    },
+    {
+      field: 'joinDate',
+      headerName: 'Join date',
+      type: 'date',
+=======
   const [formData, setFormData] = useState({
     designId: '',
     batchNo: '',
@@ -264,28 +456,55 @@ const Fabrication = () => {
     {
       field: 'poPcs',
       headerName: 'PO. Pieces',
+<<<<<<< HEAD
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
+=======
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
       flex: 1,
       editable: true
+    },
+    {
+<<<<<<< HEAD
+<<<<<<< HEAD
+      field: 'role',
+      headerName: 'Department',
+      flex: 1,
+      editable: true,
+      type: 'singleSelect',
+      valueOptions: ['Market', 'Finance', 'Development']
+=======
+=======
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
       field: 'quantity',
       headerName: 'quantity',
+      flex: 1,
       editable: true
     },
     {
       field: 'rate',
       headerName: 'Rate',
-      headerName: 'Department',
+      editable: true,
       flex: 1
+    },
+    {
       field: 'uomId',
       headerName: 'UOM',
       editable: true,
+      flex: 1,
       type: 'singleSelect',
       valueOptions: uoms.map((collection) => ({
-=======
-      field: 'quantity',
-      headerName: 'quantity',
+        value: collection.lookUpId,
+        label: collection.lookUpName
+      }))
+    },
 
+    {
       field: 'total',
       headerName: 'total',
+      flex: 1,
+      editable: true
+    },
+    {
       field: 'unitPrice',
       headerName: 'Unit Price',
       flex: 1,
@@ -294,7 +513,6 @@ const Fabrication = () => {
     {
       field: 'gst',
       headerName: 'GST',
-
       flex: 1,
       editable: true
     },
@@ -303,8 +521,14 @@ const Fabrication = () => {
       headerName: 'Total Inc. GST',
       flex: 1,
       editable: true
-      editable: true
+<<<<<<< HEAD
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
+=======
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
     }
+
+    // {
+    //   field: 'totalFabric',
     //   headerName: 'Total Fabric',
     //   flex: 1,
     //   editable: true,
@@ -319,14 +543,38 @@ const Fabrication = () => {
     // },
   ];
 
-  const handleSave = async () => {
-    try {
-      // Make the API call
-      const response = await axios.post(
-        'https://gecxc.com:4041/api/Fabrication/SaveFabrication',
-        formData
-      );
-
+<<<<<<< HEAD
+<<<<<<< HEAD
+  // const handleSave = () => {
+  // };
+  const design = [
+    {
+      value: 'Vol',
+      label: 'D 1'
+    },
+    {
+      value: 'Vol',
+      label: 'D 2'
+    },
+    {
+      value: 'Vol',
+      label: 'D 3'
+    }
+  ];
+  const fQuality = [
+    {
+      value: '1',
+      label: 'Red'
+    },
+    { value: '2', label: 'Blue' },
+    {
+      value: '3',
+      label: 'Green'
+    }
+  ];
+=======
+=======
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
   const handleSave = async () => {
     try {
       // Make the API call
@@ -368,6 +616,7 @@ const Fabrication = () => {
   console.log('formData', formData);
   const editAPi = `https://gecxc.com:4041/api/Fabrication/SaveFabrication`;
   const deleteApi = ``;
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
   return (
     <MainCard
       style={{
@@ -381,8 +630,12 @@ const Fabrication = () => {
         <Grid container spacing={2} width="Inherit">
           <Grid item sm={9}>
             <Typography variant="h3" gutterBottom>
-              Fabric Requisition
+<<<<<<< HEAD
+<<<<<<< HEAD
               Fabrication
+=======
+              Fabric Requisition
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
 =======
               Fabric Requisition
 >>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
@@ -393,9 +646,12 @@ const Fabrication = () => {
               Save
             </Button>
           </Grid>
-          <Grid item xs={12} md={3}>
+<<<<<<< HEAD
+<<<<<<< HEAD
           <Grid item sm={6}>
 =======
+=======
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -415,6 +671,10 @@ const Fabrication = () => {
           </Grid>
 
           <Grid item xs={12} md={3}>
+<<<<<<< HEAD
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
+=======
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
             <TextField
               fullWidth
               id="outlined-select-currency"
@@ -431,9 +691,12 @@ const Fabrication = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} md={3}>
+<<<<<<< HEAD
+<<<<<<< HEAD
           <Grid item sm={6}>
 =======
+=======
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
           <Grid item xs={12} md={3}>
             <TextField
               label="Base Color"
@@ -446,6 +709,9 @@ const Fabrication = () => {
             />
           </Grid>
           <Grid item xs={12} md={3}>
+<<<<<<< HEAD
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
+=======
 >>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
             <TextField
               fullWidth
@@ -456,6 +722,11 @@ const Fabrication = () => {
               //   helperText="Fabric Quality"
               size="small"
             >
+<<<<<<< HEAD
+              {fQuality.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+=======
               {batchList.map((option) => (
                 <MenuItem key={option.batchNo} value={option.batchNo}>
                   {option.batchNo}
@@ -482,10 +753,21 @@ const Fabrication = () => {
               {Fabrications.map((option) => (
                 <MenuItem key={option.fabricId} value={option.fabricId}>
                   {option.fabric}
+<<<<<<< HEAD
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
+=======
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
+<<<<<<< HEAD
+<<<<<<< HEAD
+          <Grid item sm={2}>
+            <TextField label="Po PCs " fullWidth size="small" />
+=======
+=======
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -498,14 +780,64 @@ const Fabrication = () => {
               onChange={handleChange}
             >
               {uoms.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
 
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Po Pcs"
+              fullWidth
+              size="small"
+              name="poPcs"
+              value={formData.poPcs}
+              onChange={handleChange}
+            />
+<<<<<<< HEAD
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
+          </Grid>
           <Grid item sm={2}>
-            <TextField label="Po PCs " fullWidth size="small" />
+            <TextField label="Quantity " fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Uom" fullWidth size="small" />
+          </Grid>
+<<<<<<< HEAD
+          <Grid item sm={2}>
+            <TextField label="Rate/Uom" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Total(Qty*Rate)" fullWidth size="small" />
+          </Grid>
+          <Grid item sm={2}>
+            <TextField label="Unit Price Total/PoPcs" fullWidth size="small" />
 =======
+=======
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Quantity"
+              fullWidth
+              size="small"
+              name="quantity"
+              value={formData.quantity}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Rate"
+              fullWidth
+              size="small"
+              name="rate"
+              value={formData.rate}
+              onChange={handleChange}
+            />
+          </Grid>
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
 
           <Grid item xs={12} md={3}>
             <TextField
@@ -516,34 +848,9 @@ const Fabrication = () => {
               value={formData.total}
               onChange={handleChange}
             />
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
           </Grid>
-
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Unit Price"
-              fullWidth
-              size="small"
-              name="unitPrice"
-              value={formData.unitPrice}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField label="Quantity " fullWidth size="small" />
-          </Grid>
-          <Grid item sm={2}>
-            <TextField label="Uom" fullWidth size="small" />
-          </Grid>
-            <TextField
-              label="GST"
-              fullWidth
-              size="small"
-              name="gst"
-              value={formData.gst}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
+          <Grid item sm={8}></Grid>
           <Grid item sm={2}>
             <TextField label="GST" fullWidth size="small" />
           </Grid>
@@ -556,11 +863,31 @@ const Fabrication = () => {
           </Grid>
           <Grid item xs={12} md={1.5}>
             <TextField
+              label="GST"
+              fullWidth
+              size="small"
+              name="gst"
+              value={formData.gst}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
               label="Total Inc GSt."
               fullWidth
               size="small"
               name="totalInclGst"
               value={formData.totalInclGst}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="GST"
+              fullWidth
+              size="small"
+              name="gst"
+              value={formData.gst}
               onChange={handleChange}
             />
           </Grid>
@@ -576,6 +903,8 @@ const Fabrication = () => {
           </Grid>
         </Grid>
       </FormControl>
+<<<<<<< HEAD
+=======
       <Grid container spacing={2} width="Inherit">
         <Grid sx={{ marginTop: 2 }} item xs={12}>
           <EditAbleDataGrid
@@ -589,6 +918,7 @@ const Fabrication = () => {
           />
         </Grid>
       </Grid>
+>>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
     </MainCard>
   );
 };
