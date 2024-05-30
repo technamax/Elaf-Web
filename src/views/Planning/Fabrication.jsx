@@ -294,49 +294,28 @@ const Fabrication = () => {
     {
       field: 'poPcs',
       headerName: 'PO. Pieces',
->>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
       flex: 1,
       editable: true
-    },
-    {
-<<<<<<< HEAD
-      field: 'role',
-      headerName: 'Department',
-      flex: 1,
-      editable: true,
-      type: 'singleSelect',
-      valueOptions: ['Market', 'Finance', 'Development']
-=======
       field: 'quantity',
       headerName: 'quantity',
-      flex: 1,
       editable: true
     },
     {
       field: 'rate',
       headerName: 'Rate',
-      editable: true,
+      headerName: 'Department',
       flex: 1
-    },
-    {
       field: 'uomId',
       headerName: 'UOM',
       editable: true,
-      flex: 1,
       type: 'singleSelect',
       valueOptions: uoms.map((collection) => ({
-        value: collection.lookUpId,
-        label: collection.lookUpName
-      }))
-    },
+=======
+      field: 'quantity',
+      headerName: 'quantity',
 
-    {
       field: 'total',
       headerName: 'total',
-      flex: 1,
-      editable: true
-    },
-    {
       field: 'unitPrice',
       headerName: 'Unit Price',
       flex: 1,
@@ -345,6 +324,7 @@ const Fabrication = () => {
     {
       field: 'gst',
       headerName: 'GST',
+
       flex: 1,
       editable: true
     },
@@ -353,11 +333,9 @@ const Fabrication = () => {
       headerName: 'Total Inc. GST',
       flex: 1,
       editable: true
+      editable: true
 >>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
     }
-
-    // {
-    //   field: 'totalFabric',
     //   headerName: 'Total Fabric',
     //   flex: 1,
     //   editable: true,
@@ -387,7 +365,6 @@ const Fabrication = () => {
     {
       value: 'Vol',
       label: 'D 3'
-    }
   ];
   const fQuality = [
     {
@@ -399,8 +376,31 @@ const Fabrication = () => {
       value: '3',
       label: 'Green'
     }
+
+    // {
+    //   field: 'totalFabric',
+    //   headerName: 'Total Fabric',
+    //   flex: 1,
+    //   editable: true,
+
+    //   valueSetter: (params, row) => {
+    //     const repeats = row.repeats ?? 0;
+    //     const repeatSize = row.repeatSize ?? 0;
+    //     const totalFabric = repeats * repeatSize;
+    //     console.log('totalFabric', totalFabric);
+    //     return { ...row, totalFabric };
+    //   }
+    // },
   ];
 =======
+  const handleSave = async () => {
+    try {
+      // Make the API call
+      const response = await axios.post(
+        'https://gecxc.com:4041/api/Fabrication/SaveFabrication',
+        formData
+      );
+
   const handleSave = async () => {
     try {
       // Make the API call
@@ -456,7 +456,7 @@ const Fabrication = () => {
         <Grid container spacing={2} width="Inherit">
           <Grid item sm={9}>
             <Typography variant="h3" gutterBottom>
-<<<<<<< HEAD
+              Fabric Requisition
               Fabrication
 =======
               Fabric Requisition
@@ -468,7 +468,7 @@ const Fabrication = () => {
               Save
             </Button>
           </Grid>
-<<<<<<< HEAD
+          <Grid item xs={12} md={3}>
           <Grid item sm={6}>
 =======
           <Grid item xs={12} md={3}>
@@ -490,7 +490,6 @@ const Fabrication = () => {
           </Grid>
 
           <Grid item xs={12} md={3}>
->>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
             <TextField
               fullWidth
               id="outlined-select-currency"
@@ -507,7 +506,7 @@ const Fabrication = () => {
               ))}
             </TextField>
           </Grid>
-<<<<<<< HEAD
+          <Grid item xs={12} md={3}>
           <Grid item sm={6}>
 =======
           <Grid item xs={12} md={3}>
@@ -563,15 +562,10 @@ const Fabrication = () => {
               {Fabrications.map((option) => (
                 <MenuItem key={option.fabricId} value={option.fabricId}>
                   {option.fabric}
->>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
-<<<<<<< HEAD
-          <Grid item sm={2}>
-            <TextField label="Po PCs " fullWidth size="small" />
-=======
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -584,25 +578,38 @@ const Fabrication = () => {
               onChange={handleChange}
             >
               {uoms.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
 
+          <Grid item sm={2}>
+            <TextField label="Po PCs " fullWidth size="small" />
+=======
+
           <Grid item xs={12} md={3}>
             <TextField
-              label="Po Pcs"
+              label="Total"
               fullWidth
               size="small"
-              name="poPcs"
-              value={formData.poPcs}
+              name="total"
+              value={formData.total}
+              onChange={handleChange}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Unit Price"
+              fullWidth
+              size="small"
+              name="unitPrice"
+              value={formData.unitPrice}
               onChange={handleChange}
             />
 >>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
           </Grid>
-          <Grid item sm={2}>
+          <Grid item xs={12} md={1.5}>
             <TextField label="Quantity " fullWidth size="small" />
           </Grid>
           <Grid item sm={2}>
@@ -618,19 +625,17 @@ const Fabrication = () => {
           <Grid item sm={2}>
             <TextField label="Unit Price Total/PoPcs" fullWidth size="small" />
 =======
-
-          <Grid item xs={12} md={3}>
             <TextField
-              label="Total"
+              label="GST"
               fullWidth
               size="small"
-              name="total"
-              value={formData.total}
+              name="gst"
+              value={formData.gst}
               onChange={handleChange}
             />
 >>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
           </Grid>
-          <Grid item sm={8}></Grid>
+          <Grid item xs={12} md={1.5}>
           <Grid item sm={2}>
             <TextField label="GST" fullWidth size="small" />
           </Grid>
@@ -643,11 +648,11 @@ const Fabrication = () => {
           </Grid>
           <Grid item xs={12} md={1.5}>
             <TextField
-              label="GST"
+              label="Total Inc GSt."
               fullWidth
               size="small"
-              name="gst"
-              value={formData.gst}
+              name="totalInclGst"
+              value={formData.totalInclGst}
               onChange={handleChange}
             />
           </Grid>
