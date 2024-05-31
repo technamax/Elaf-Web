@@ -46,7 +46,8 @@ const Dyeing = () => {
     GST: '',
     GSTAmount: '',
     TotalIncludingGst: '',
-    createdBy: 0
+    createdBy: 0,
+    poPcs: ''
   });
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
@@ -77,7 +78,7 @@ const Dyeing = () => {
   const [uoms, setUoms] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   const [colors, setColors] = useState([]);
-  const [vendors, setVendor] = useState([]);
+  const [vendors, setVendors] = useState([]);
 
   useEffect(() => {
     if (designData) {
@@ -96,7 +97,12 @@ const Dyeing = () => {
       setFabrications(fabricData.result);
     }
   }, [fabricData]);
-
+  useEffect(() => {
+    if (lookupData) {
+      setVendors(lookupData.result[0].vendorList);
+    }
+  }, [fabricData]);
+  console.log(vendors);
   useEffect(() => {
     if (fabricRequisitionData) {
       setInitialRows(
@@ -146,50 +152,77 @@ const Dyeing = () => {
         batchNo: value,
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
       });
-      fetchFabricColorData(value); // Fetch data from API when batchNo changes
+      // Fetch data from API when batchNo changes
     } else if (name === 'fabricId') {
       const selectedFabric = Fabrications.find(
         (fabric) => fabric.fabricId === value
       );
+      console.log('Selected Fabric:', Fabrications); // Add this line to check selected fabric
       setFormData({
         ...formData,
         fabricId: value,
         OutputQty: selectedFabric ? selectedFabric.total : ''
       });
+      fetchFabricColorData(value); // Pass formData.fabricId instead of value
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
-  const fetchFabricColorData = async (batchNo) => {
+  const fetchFabricColorData = async (fabricId) => {
     try {
       const response = await axios.get(
-        `https://gecxc.com:4041/api/DyeingPrinting/GetFabricColorFromPrePlanningByBatchNo?batchNo=${batchNo}`
+        `https://gecxc.com:4041/api/DyeingPrinting/GetFabricColorFromPrePlanningByFabricId?fabricId=${fabricId}`
       );
-      const data = response.data.result; // Directly access the result array
+      const data = response.data.result;
       console.log('Dyeing Color Data', data);
 
-      // Format colors for Autocomplete
+      if (data.length > 0) {
+        const fabricInfo = data[0]; // Assuming only one fabric info is returned
+
+        // Update form data with fabric info
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          Shrinkage: fabricInfo.shrinkage.toFixed(2), // Assuming shrinkage is returned as a decimal
+          Wastage: fabricInfo.wastage.toFixed(2), // Assuming wastage is returned as a decimal
+          UOM: fabricInfo.uom,
+          AvailableQty: fabricInfo.total.toString() // Convert total to string to set in TextField
+          // Assuming uomId is not needed in the form
+        }));
+      }
+
       const colorOptions = data.map((item) => ({
         label: item.color,
         value: item.colorId
       }));
 
-      // Assume the first item in the result array to set initial values
-      const firstItem = data[0] || {};
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        fabricId: firstItem.fabricId || '',
-        ColorId: firstItem.colorId || '',
-        TotalIncludingGst: firstItem.total || '',
-        color: firstItem.color || ''
-      }));
-      setColors(colorOptions); // Update the colors state with the fetched data
+      setColors(colorOptions);
+      // Assuming the first color is automatically selected
+      if (colorOptions.length > 0) {
+        const firstColor = colorOptions[0];
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          ColorId: firstColor.value,
+          color: firstColor.label
+        }));
+      }
     } catch (error) {
       console.error('Error fetching fabric color data:', error);
     }
   };
+  useEffect(() => {
+    const calculateTotal = () => {
+      const AvailableQty = parseFloat(formData.AvailableQty) || 0;
+      const shrinkage = parseFloat(formData.Shrinkage) || 0;
+      const wastage = parseFloat(formData.Wastage) || 0;
+      return (AvailableQty * (100 - (shrinkage + wastage))) / 100;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      OutputQty: calculateTotal()
+    }));
+  }, []);
 
   const columns = [
     { field: 'name', headerName: 'Order Number', editable: true, flex: 2 },
@@ -261,16 +294,12 @@ const Dyeing = () => {
 
   const design = [
     {
-      value: 'Vol',
-      label: 'D 1'
+      value: 'Dyeing',
+      label: 'Dyeing'
     },
     {
-      value: 'Vol',
-      label: 'D 2'
-    },
-    {
-      value: 'Vol',
-      label: 'D 3'
+      value: 'Printing',
+      label: 'Printing'
     }
   ];
 
@@ -393,9 +422,9 @@ const Dyeing = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField fullWidth select label="Vendor Name " size="small">
-              {design.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+              {vendors.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
                 </MenuItem>
               ))}
             </TextField>
@@ -422,26 +451,68 @@ const Dyeing = () => {
             </TextField>
           </Grid>
           <Grid item xs={12} md={3}>
-            <TextField label="Po PC's" fullWidth size="small" />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField label="UOM" fullWidth size="small" />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField label="Qty" fullWidth size="small" />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField label="Shrinkage%" fullWidth size="small" />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField label="Wastage%" fullWidth size="small" />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField label="Output Qty" fullWidth size="small" />
+            <TextField
+              label="Po Pcs"
+              fullWidth
+              size="small"
+              name="poPcs"
+              value={formData.poPcs}
+              onChange={handleChange}
+            />
           </Grid>
           <Grid item xs={12} md={1.5}>
             <TextField
-              label="Rate/UOM"
+              label="UOM"
+              fullWidth
+              size="small"
+              name="UOM"
+              value={formData.UOM}
+              focused
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="AvailableQty"
+              fullWidth
+              size="small"
+              name="AvailableQty"
+              value={formData.AvailableQty}
+              focused
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Shrinkage%"
+              fullWidth
+              size="small"
+              name="Shrinkage"
+              value={formData.Shrinkage}
+              focused
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Wastage%"
+              fullWidth
+              size="small"
+              name="Wastage"
+              value={formData.Wastage}
+              focused
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Output Qty"
+              fullWidth
+              size="small"
+              name="OutputQty"
+              value={formData.OutputQty}
+              focused
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Rate"
               fullWidth
               size="small"
               name="RatePerUOM"
@@ -450,18 +521,26 @@ const Dyeing = () => {
             />
           </Grid>
           <Grid item xs={12} md={1.5}>
-            <TextField label="GST" fullWidth size="small" />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
             <TextField
-              label="Total Incl GST"
+              label="Total Excluding GST"
               fullWidth
               size="small"
-              name="TotalIncludingGst"
-              value={formData.TotalIncludingGst}
+              name="TotalExclGst"
+              value={formData.TotalExclGst}
               onChange={handleChange}
             />
           </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="GST"
+              fullWidth
+              size="small"
+              name="GST"
+              value={formData.GST}
+              onChange={handleChange}
+            />{' '}
+          </Grid>
+
           <Grid item xs={12} md={1.5}>
             <TextField
               label="GST Amount"
@@ -478,12 +557,19 @@ const Dyeing = () => {
               fullWidth
               size="small"
               name="TotalExclGst"
-              value={formData.TotalExclGst}
+              value={formData.TotalIncludingGst}
               onChange={handleChange}
             />
           </Grid>
           <Grid item xs={12} md={1.5}>
-            <TextField label="Unit P: T/Po PC's" fullWidth size="small" />
+            <TextField
+              label="Unit P: T/Po PC's"
+              fullWidth
+              size="small"
+              name="UnitRatePerPo"
+              value={formData.UnitRatePerPo}
+              onChange={handleChange}
+            />
           </Grid>
           <Divider color="#cc8587" sx={{ height: 2, width: '100%', mt: 2 }} />
           <Grid item xs={12} md={12} paddingTop={1}>
