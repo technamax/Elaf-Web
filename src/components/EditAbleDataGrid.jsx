@@ -28,7 +28,8 @@ export default function FullFeaturedCrudGrid({
   deleteBy,
   editAPi,
   disableEdit,
-  disableAddRecord
+  disableAddRecord,
+  refetch
 }) {
   const [rows, setRows] = useState(initialRows);
   const [rowModesModel, setRowModesModel] = useState({});
@@ -116,6 +117,7 @@ export default function FullFeaturedCrudGrid({
     console.log('newRow', newRow);
     try {
       const { id, ...formattedRow } = newRow;
+      console.log('formattedRow', formattedRow);
 
       // Format date fields if necessary
       // const formattedDates = {
@@ -152,6 +154,7 @@ export default function FullFeaturedCrudGrid({
       ...prevModel,
       [id]: { mode: GridRowModes.View }
     }));
+    refetch();
   };
 
   const columns = [

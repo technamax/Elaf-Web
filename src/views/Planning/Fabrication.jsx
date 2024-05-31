@@ -123,32 +123,6 @@ const Fabrication = () => {
   const collectionList = collectionData?.result || [];
   console.log('collectionList', collectionList);
 
-  // const initialRows = [
-  //   {
-  //     id: 1,
-  //     fabricationId: 1,
-  //     designId: 1,
-  //     batchNo: 'D-01-5-24-1',
-  //     baseColorId: 74,
-  //     fabricId: 9,
-  //     poPcs: 0,
-  //     quantity: 7.0,
-  //     rate: 0.0,
-  //     uomId: 138,
-  //     total: 0.0,
-  //     unitPrice: 0.0,
-  //     createdOn: '2024-05-23T07:07:11.547',
-  //     createdBy: 0,
-  //     lastUpdatedOn: '2024-05-23T07:07:11.547',
-  //     lastUpdatedBy: 0,
-  //     baseColorName: 'STEEL GREY',
-  //     fabricName: 'Bambar Chiffon ',
-  //     orderNumber: null,
-  //     designNo: 'Design-01-A',
-  //     collectionId: 26
-  //   }
-  // ];
-
   useEffect(() => {
     const calculateTotal = () => {
       const quantity = parseFloat(formData.quantity) || 0;
@@ -163,7 +137,7 @@ const Fabrication = () => {
     const calculateTotalWithGst = () => {
       const total = parseFloat(formData.total) || 0;
       const gst = parseFloat(formData.gst) || 0;
-      return total * gst;
+      return total * (1 + gst / 100);
     };
 
     setFormData((prevData) => ({
@@ -227,17 +201,6 @@ const Fabrication = () => {
   };
 
   const columns = [
-    // {
-    //   field: 'OrderNumber ',
-    //   headerName: 'Component',
-    //   editable: true,
-    //   flex: 1,
-    //   type: 'singleSelect',
-    //   valueOptions: components.map((collection) => ({
-    //     value: collection.lookUpId,
-    //     label: collection.lookUpName
-    //   }))
-    // },
     {
       field: 'designId',
       headerName: 'Design',
@@ -257,7 +220,7 @@ const Fabrication = () => {
     },
     {
       field: 'quantity',
-      headerName: 'quantity',
+      headerName: 'Quantity',
       flex: 1,
       editable: true
     },
@@ -278,18 +241,37 @@ const Fabrication = () => {
         label: collection.lookUpName
       }))
     },
-
     {
       field: 'total',
-      headerName: 'total',
+      headerName: 'Total',
       flex: 1,
-      editable: true
+      editable: false,
+      valueGetter: (params, row) => {
+        const quantity = parseFloat(row.quantity) || 0;
+        const rate = parseFloat(row.rate) || 0;
+        return quantity * rate;
+      },
+      valueSetter: (params, row) => {
+        const quantity = parseFloat(row.quantity) || 0;
+        const rate = parseFloat(row.rate) || 0;
+        return quantity * rate;
+      }
     },
     {
       field: 'unitPrice',
       headerName: 'Unit Price',
       flex: 1,
-      editable: true
+      editable: false,
+      valueGetter: (params, row) => {
+        const total = parseFloat(row.total) || 0;
+        const poPcs = parseFloat(row.poPcs) || 0;
+        return total / poPcs;
+      },
+      valueSetter: (params, row) => {
+        const total = parseFloat(row.total) || 0;
+        const poPcs = parseFloat(row.poPcs) || 0;
+        return total / poPcs;
+      }
     },
     {
       field: 'gst',
@@ -301,24 +283,113 @@ const Fabrication = () => {
       field: 'totalInclGst',
       headerName: 'Total Inc. GST',
       flex: 1,
-      editable: true
+      editable: false,
+      valueGetter: (params, row) => {
+        const total = parseFloat(row.total) || 0;
+        const gst = parseFloat(row.gst) || 0;
+        return total * (1 + gst / 100);
+      },
+      valueSetter: (params, row) => {
+        const total = parseFloat(row.total) || 0;
+        const gst = parseFloat(row.gst) || 0;
+        return total * (1 + gst / 100);
+      }
     }
-
-    // {
-    //   field: 'totalFabric',
-    //   headerName: 'Total Fabric',
-    //   flex: 1,
-    //   editable: true,
-
-    //   valueSetter: (params, row) => {
-    //     const repeats = row.repeats ?? 0;
-    //     const repeatSize = row.repeatSize ?? 0;
-    //     const totalFabric = repeats * repeatSize;
-    //     console.log('totalFabric', totalFabric);
-    //     return { ...row, totalFabric };
-    //   }
-    // },
   ];
+
+  // const columns = [
+  //   // {
+  //   //   field: 'OrderNumber ',
+  //   //   headerName: 'Component',
+  //   //   editable: true,
+  //   //   flex: 1,
+  //   //   type: 'singleSelect',
+  //   //   valueOptions: components.map((collection) => ({
+  //   //     value: collection.lookUpId,
+  //   //     label: collection.lookUpName
+  //   //   }))
+  //   // },
+  //   {
+  //     field: 'designId',
+  //     headerName: 'Design',
+  //     editable: true,
+  //     flex: 1,
+  //     type: 'singleSelect',
+  //     valueOptions: designList.map((collection) => ({
+  //       value: collection.designId,
+  //       label: collection.designNo
+  //     }))
+  //   },
+  //   {
+  //     field: 'poPcs',
+  //     headerName: 'PO. Pieces',
+  //     flex: 1,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'quantity',
+  //     headerName: 'quantity',
+  //     flex: 1,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'rate',
+  //     headerName: 'Rate',
+  //     editable: true,
+  //     flex: 1
+  //   },
+  //   {
+  //     field: 'uomId',
+  //     headerName: 'UOM',
+  //     editable: true,
+  //     flex: 1,
+  //     type: 'singleSelect',
+  //     valueOptions: uoms.map((collection) => ({
+  //       value: collection.lookUpId,
+  //       label: collection.lookUpName
+  //     }))
+  //   },
+
+  //   {
+  //     field: 'total',
+  //     headerName: 'total',
+  //     flex: 1,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'unitPrice',
+  //     headerName: 'Unit Price',
+  //     flex: 1,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'gst',
+  //     headerName: 'GST',
+  //     flex: 1,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'totalInclGst',
+  //     headerName: 'Total Inc. GST',
+  //     flex: 1,
+  //     editable: true
+  //   }
+
+  //   // {
+  //   //   field: 'totalFabric',
+  //   //   headerName: 'Total Fabric',
+  //   //   flex: 1,
+  //   //   editable: true,
+
+  //   //   valueSetter: (params, row) => {
+  //   //     const repeats = row.repeats ?? 0;
+  //   //     const repeatSize = row.repeatSize ?? 0;
+  //   //     const totalFabric = repeats * repeatSize;
+  //   //     console.log('totalFabric', totalFabric);
+  //   //     return { ...row, totalFabric };
+  //   //   }
+  //   // },
+  // ];
 
   const handleSave = async () => {
     try {
@@ -332,6 +403,7 @@ const Fabrication = () => {
       console.log('Save response:', response.data);
 
       // Clear the form after successful save
+      refetchFabricRequisitionData();
       setFormData({
         designId: '',
         batchNo: '',
@@ -351,10 +423,8 @@ const Fabrication = () => {
         lastUpdatedOn: '2024-05-29T09:56:23.916Z',
         LastUpdatedBy: 0
       });
-      refetchFabricRequisitionData();
     } catch (error) {
       console.error('Error saving data:', error);
-      // Handle the error if needed
     }
   };
 
@@ -569,6 +639,7 @@ const Fabrication = () => {
             initialRows={initialRows}
             formData={formData}
             editAPi={editAPi}
+            refetch={refetchFabricRequisitionData}
             // deleteApi={deleteApi}
             // deleteBy="planningId"
             // disableAddRecord={true}
