@@ -1,5 +1,5 @@
-/* eslint-disable prettier/prettier */
-// material-ui
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Grid,
   TextField,
@@ -7,16 +7,8 @@ import {
   MenuItem,
   FormControl,
   Typography,
-  Divider,
-  colors
+  Divider
 } from '@mui/material';
-// import { useState } from 'react';
-// import dayjs from 'dayjs';
-// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import Elogo from '../../assets/images/ELogo.png';
-<<<<<<< HEAD
-=======
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 // import { useGetDesignListQuery } from 'api/store/Apis/designApi';
 import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
@@ -29,44 +21,10 @@ import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Api
 import { useGetPrePlanningHeaderByDesignIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 
->>>>>>> Develop
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
-import { color } from 'framer-motion';
-
-// project imports
 import MainCard from 'ui-component/cards/MainCard';
-// import Edit from '@mui/icons-material/Edit';
-
-// ==============================|| SAMPLE PAGE ||============================== //
 
 const Fabrication = () => {
-<<<<<<< HEAD
-  const initialRows = [
-    {
-      id: 1,
-      name: 'Fabrication',
-      age: 25,
-      joinDate: new Date('2024-05-25'),
-      role: 'developer'
-    }
-  ];
-
-  const columns = [
-    { field: 'name', headerName: 'Name', editable: true, flex: 2 },
-    {
-      field: 'age',
-      headerName: 'Age',
-      type: 'number',
-      flex: 1,
-      align: 'left',
-      headerAlign: 'left',
-      editable: true
-    },
-    {
-      field: 'joinDate',
-      headerName: 'Join date',
-      type: 'date',
-=======
   const [formData, setFormData] = useState({
     designId: '',
     batchNo: '',
@@ -165,32 +123,6 @@ const Fabrication = () => {
   const collectionList = collectionData?.result || [];
   console.log('collectionList', collectionList);
 
-  // const initialRows = [
-  //   {
-  //     id: 1,
-  //     fabricationId: 1,
-  //     designId: 1,
-  //     batchNo: 'D-01-5-24-1',
-  //     baseColorId: 74,
-  //     fabricId: 9,
-  //     poPcs: 0,
-  //     quantity: 7.0,
-  //     rate: 0.0,
-  //     uomId: 138,
-  //     total: 0.0,
-  //     unitPrice: 0.0,
-  //     createdOn: '2024-05-23T07:07:11.547',
-  //     createdBy: 0,
-  //     lastUpdatedOn: '2024-05-23T07:07:11.547',
-  //     lastUpdatedBy: 0,
-  //     baseColorName: 'STEEL GREY',
-  //     fabricName: 'Bambar Chiffon ',
-  //     orderNumber: null,
-  //     designNo: 'Design-01-A',
-  //     collectionId: 26
-  //   }
-  // ];
-
   useEffect(() => {
     const calculateTotal = () => {
       const quantity = parseFloat(formData.quantity) || 0;
@@ -269,17 +201,6 @@ const Fabrication = () => {
   };
 
   const columns = [
-    // {
-    //   field: 'OrderNumber ',
-    //   headerName: 'Component',
-    //   editable: true,
-    //   flex: 1,
-    //   type: 'singleSelect',
-    //   valueOptions: components.map((collection) => ({
-    //     value: collection.lookUpId,
-    //     label: collection.lookUpName
-    //   }))
-    // },
     {
       field: 'designId',
       headerName: 'Design',
@@ -294,46 +215,67 @@ const Fabrication = () => {
     {
       field: 'poPcs',
       headerName: 'PO. Pieces',
->>>>>>> Develop
       flex: 1,
-      editable: true
-      field: 'quantity',
-      headerName: 'quantity',
       editable: true
     },
     {
-<<<<<<< HEAD
-      field: 'role',
-      headerName: 'Department',
+      field: 'quantity',
+      headerName: 'Quantity',
       flex: 1,
-      editable: true,
-      type: 'singleSelect',
-      valueOptions: ['Market', 'Finance', 'Development']
-=======
+      editable: true
+    },
+    {
       field: 'rate',
       headerName: 'Rate',
-      headerName: 'Department',
+      editable: true,
       flex: 1
+    },
+    {
       field: 'uomId',
       headerName: 'UOM',
       editable: true,
+      flex: 1,
       type: 'singleSelect',
       valueOptions: uoms.map((collection) => ({
-=======
-      field: 'quantity',
-      headerName: 'quantity',
-
+        value: collection.lookUpId,
+        label: collection.lookUpName
+      }))
+    },
+    {
       field: 'total',
-      headerName: 'total',
+      headerName: 'Total',
+      flex: 1,
+      editable: false,
+      valueGetter: (params, row) => {
+        const quantity = parseFloat(row.quantity) || 0;
+        const rate = parseFloat(row.rate) || 0;
+        return quantity * rate;
+      },
+      valueSetter: (params, row) => {
+        const quantity = parseFloat(row.quantity) || 0;
+        const rate = parseFloat(row.rate) || 0;
+        return quantity * rate;
+      }
+    },
+    {
       field: 'unitPrice',
       headerName: 'Unit Price',
       flex: 1,
-      editable: true
+      editable: false,
+      valueGetter: (params, row) => {
+        const total = parseFloat(row.total) || 0;
+        const poPcs = parseFloat(row.poPcs) || 0;
+        return total / poPcs;
+      },
+      valueSetter: (params, row) => {
+        const total = parseFloat(row.total) || 0;
+        const poPcs = parseFloat(row.poPcs) || 0;
+        return total / poPcs;
+      }
     },
     {
       field: 'gst',
       headerName: 'GST',
-
       flex: 1,
       editable: true
     },
@@ -341,60 +283,113 @@ const Fabrication = () => {
       field: 'totalInclGst',
       headerName: 'Total Inc. GST',
       flex: 1,
-      editable: true
-      editable: true
->>>>>>> Develop
+      editable: false,
+      valueGetter: (params, row) => {
+        const total = parseFloat(row.total) || 0;
+        const gst = parseFloat(row.gst) || 0;
+        return total * (gst / 100);
+      },
+      valueSetter: (params, row) => {
+        const total = parseFloat(row.total) || 0;
+        const gst = parseFloat(row.gst) || 0;
+        return total * (gst / 100);
+      }
     }
-    //   headerName: 'Total Fabric',
-    //   flex: 1,
-    //   editable: true,
-
-    //   valueSetter: (params, row) => {
-    //     const repeats = row.repeats ?? 0;
-    //     const repeatSize = row.repeatSize ?? 0;
-    //     const totalFabric = repeats * repeatSize;
-    //     console.log('totalFabric', totalFabric);
-    //     return { ...row, totalFabric };
-    //   }
-    // },
   ];
 
-<<<<<<< HEAD
-  // const handleSave = () => {
-  // };
-  const design = [
-    {
-      value: 'Vol',
-      label: 'D 1'
-    },
-    {
-      value: 'Vol',
-      label: 'D 2'
-    },
-    {
-      value: 'Vol',
-      label: 'D 3'
-    }
-  ];
-  const fQuality = [
-    {
-      value: '1',
-      label: 'Red'
-    },
-    { value: '2', label: 'Blue' },
-    {
-      value: '3',
-      label: 'Green'
-    }
-  ];
-=======
-  const handleSave = async () => {
-    try {
-      // Make the API call
-      const response = await axios.post(
-        'https://gecxc.com:4041/api/Fabrication/SaveFabrication',
-        formData
-      );
+  // const columns = [
+  //   // {
+  //   //   field: 'OrderNumber ',
+  //   //   headerName: 'Component',
+  //   //   editable: true,
+  //   //   flex: 1,
+  //   //   type: 'singleSelect',
+  //   //   valueOptions: components.map((collection) => ({
+  //   //     value: collection.lookUpId,
+  //   //     label: collection.lookUpName
+  //   //   }))
+  //   // },
+  //   {
+  //     field: 'designId',
+  //     headerName: 'Design',
+  //     editable: true,
+  //     flex: 1,
+  //     type: 'singleSelect',
+  //     valueOptions: designList.map((collection) => ({
+  //       value: collection.designId,
+  //       label: collection.designNo
+  //     }))
+  //   },
+  //   {
+  //     field: 'poPcs',
+  //     headerName: 'PO. Pieces',
+  //     flex: 1,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'quantity',
+  //     headerName: 'quantity',
+  //     flex: 1,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'rate',
+  //     headerName: 'Rate',
+  //     editable: true,
+  //     flex: 1
+  //   },
+  //   {
+  //     field: 'uomId',
+  //     headerName: 'UOM',
+  //     editable: true,
+  //     flex: 1,
+  //     type: 'singleSelect',
+  //     valueOptions: uoms.map((collection) => ({
+  //       value: collection.lookUpId,
+  //       label: collection.lookUpName
+  //     }))
+  //   },
+
+  //   {
+  //     field: 'total',
+  //     headerName: 'total',
+  //     flex: 1,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'unitPrice',
+  //     headerName: 'Unit Price',
+  //     flex: 1,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'gst',
+  //     headerName: 'GST',
+  //     flex: 1,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'totalInclGst',
+  //     headerName: 'Total Inc. GST',
+  //     flex: 1,
+  //     editable: true
+  //   }
+
+  //   // {
+  //   //   field: 'totalFabric',
+  //   //   headerName: 'Total Fabric',
+  //   //   flex: 1,
+  //   //   editable: true,
+
+  //   //   valueSetter: (params, row) => {
+  //   //     const repeats = row.repeats ?? 0;
+  //   //     const repeatSize = row.repeatSize ?? 0;
+  //   //     const totalFabric = repeats * repeatSize;
+  //   //     console.log('totalFabric', totalFabric);
+  //   //     return { ...row, totalFabric };
+  //   //   }
+  //   // },
+  // ];
 
   const handleSave = async () => {
     try {
@@ -430,49 +425,35 @@ const Fabrication = () => {
       refetchFabricRequisitionData();
     } catch (error) {
       console.error('Error saving data:', error);
-      // Handle the error if needed
     }
   };
 
   console.log('formData', formData);
   const editAPi = `https://gecxc.com:4041/api/Fabrication/SaveFabrication`;
   const deleteApi = ``;
->>>>>>> Develop
   return (
     <MainCard
       style={{
-        borderWidth: 1,
+        borderWidth: 2,
         borderStyle: 'dotted',
-        borderColor: '#a11f23'
+        borderColor: '#a11f23',
+        width: 'auto',
+        maxHeight: { xs: '80vh', md: 'auto' },
+        overflow: 'auto'
       }}
     >
-      {/* <img src={Elogo} a width="100%" /> */}
       <FormControl>
         <Grid container spacing={2} width="Inherit">
-          <Grid item sm={9}>
+          <Grid item xs={9} md={9}>
             <Typography variant="h3" gutterBottom>
-<<<<<<< HEAD
-              Fabrication
-=======
               Fabric Requisition
-              Fabrication
-=======
-              Fabric Requisition
->>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
->>>>>>> Develop
             </Typography>
           </Grid>
-          <Grid item sm={3} textAlign="right">
-            <Button variant="contained" size="small" color="error">
+          <Grid item xs={3} textAlign="right">
+            <Button variant="contained" size="small" onClick={handleSave}>
               Save
             </Button>
           </Grid>
-<<<<<<< HEAD
-          <Grid item sm={6}>
-=======
-          <Grid item xs={12} md={3}>
-          <Grid item sm={6}>
-=======
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -492,29 +473,22 @@ const Fabrication = () => {
           </Grid>
 
           <Grid item xs={12} md={3}>
->>>>>>> Develop
             <TextField
               fullWidth
-              id="outlined-select-currency"
               select
               label="Select Design"
-              defaultValue=""
-              //   helperText="Please Select Collection"
+              name="designId"
+              value={formData.designId}
+              onChange={handleChange}
               size="small"
             >
-              {design.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+              {designList.map((option) => (
+                <MenuItem key={option.designId} value={option.designId}>
+                  {option.designNo}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
-<<<<<<< HEAD
-          <Grid item sm={6}>
-=======
-          <Grid item xs={12} md={3}>
-          <Grid item sm={6}>
-=======
           <Grid item xs={12} md={3}>
             <TextField
               label="Base Color"
@@ -527,22 +501,15 @@ const Fabrication = () => {
             />
           </Grid>
           <Grid item xs={12} md={3}>
->>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
->>>>>>> Develop
             <TextField
               fullWidth
-              id="outlined-select-currency"
               select
-              label="Fabric "
-              defaultValue="EUR"
-              //   helperText="Fabric Quality"
+              label="Batch No."
+              name="batchNo"
+              value={formData.batchNo}
+              onChange={handleChange}
               size="small"
             >
-<<<<<<< HEAD
-              {fQuality.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-=======
               {batchList.map((option) => (
                 <MenuItem key={option.batchNo} value={option.batchNo}>
                   {option.batchNo}
@@ -569,41 +536,10 @@ const Fabrication = () => {
               {Fabrications.map((option) => (
                 <MenuItem key={option.fabricId} value={option.fabricId}>
                   {option.fabric}
->>>>>>> Develop
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
-<<<<<<< HEAD
-          <Grid item sm={2}>
-            <TextField label="Po PCs " fullWidth size="small" />
-          </Grid>
-          <Grid item sm={2}>
-            <TextField label="Quantity " fullWidth size="small" />
-          </Grid>
-          <Grid item sm={2}>
-            <TextField label="Uom" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={2}>
-            <TextField label="Rate/Uom" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={2}>
-            <TextField label="Total(Qty*Rate)" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={2}>
-            <TextField label="Unit Price Total/PoPcs" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={8}></Grid>
-          <Grid item sm={2}>
-            <TextField label="GST" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={2}>
-            <TextField label="Total Incl GST" fullWidth size="small" />
-          </Grid>
-          <Divider></Divider>
-          <Grid item sm={12} paddingTop={1}>
-            <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} />
-=======
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -616,14 +552,43 @@ const Fabrication = () => {
               onChange={handleChange}
             >
               {uoms.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
 
-          <Grid item sm={2}>
-            <TextField label="Po PCs " fullWidth size="small" />
-=======
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Po Pcs"
+              fullWidth
+              size="small"
+              name="poPcs"
+              value={formData.poPcs}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Quantity"
+              fullWidth
+              size="small"
+              name="quantity"
+              value={formData.quantity}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Rate"
+              fullWidth
+              size="small"
+              name="rate"
+              value={formData.rate}
+              onChange={handleChange}
+            />
+          </Grid>
 
           <Grid item xs={12} md={3}>
             <TextField
@@ -635,7 +600,6 @@ const Fabrication = () => {
               onChange={handleChange}
             />
           </Grid>
-
           <Grid item xs={12} md={3}>
             <TextField
               label="Unit Price"
@@ -645,41 +609,14 @@ const Fabrication = () => {
               value={formData.unitPrice}
               onChange={handleChange}
             />
->>>>>>> Develop
           </Grid>
           <Grid item xs={12} md={1.5}>
-            <TextField label="Quantity " fullWidth size="small" />
-          </Grid>
-          <Grid item sm={2}>
-            <TextField label="Uom" fullWidth size="small" />
-          </Grid>
             <TextField
               label="GST"
               fullWidth
               size="small"
               name="gst"
               value={formData.gst}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-          <Grid item sm={2}>
-            <TextField label="GST" fullWidth size="small" />
-          </Grid>
-          <Grid item sm={2}>
-            <TextField label="Total Incl GST" fullWidth size="small" />
-          </Grid>
-          <Divider></Divider>
-          <Grid item sm={12} paddingTop={1}>
-            <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="Total Inc GSt."
-              fullWidth
-              size="small"
-              name="totalInclGst"
-              value={formData.totalInclGst}
               onChange={handleChange}
             />
           </Grid>
@@ -695,8 +632,6 @@ const Fabrication = () => {
           </Grid>
         </Grid>
       </FormControl>
-<<<<<<< HEAD
-=======
       <Grid container spacing={2} width="Inherit">
         <Grid sx={{ marginTop: 2 }} item xs={12}>
           <EditAbleDataGrid
@@ -710,7 +645,6 @@ const Fabrication = () => {
           />
         </Grid>
       </Grid>
->>>>>>> Develop
     </MainCard>
   );
 };
