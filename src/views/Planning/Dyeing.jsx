@@ -2,7 +2,6 @@
 // material-ui
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-
 import {
   Grid,
   TextField,
@@ -10,9 +9,9 @@ import {
   MenuItem,
   FormControl,
   Typography,
-  Divider,
-  colors
+  Divider
 } from '@mui/material';
+import Autocomplete from '@mui/lab/Autocomplete';
 import {
   useGetCollectionFromPlanningHeaderQuery,
   useGetFabricFromPrePlanningByBatchNoQuery,
@@ -22,31 +21,18 @@ import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Api
 import { useGetPrePlanningHeaderByDesignIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
-import { color } from 'framer-motion';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
-// import Edit from '@mui/icons-material/Edit';
-
-// ==============================|| SAMPLE PAGE ||============================== //
 
 const Dyeing = () => {
-  // const initialRows = [
-  //   {
-  //     id: 1,
-  //     name: 'Dyeing',
-  //     age: 25,
-  //     joinDate: new Date('2024-05-25'),
-  //     role: 'developer'
-  //   }
-  // ];
-
   const [formData, setFormData] = useState({
     DPId: '',
     DesignId: '',
     BatchNo: '',
     FabricId: '',
     ColorId: '',
+    color: '',
     VendorId: '',
     ProcessType: '',
     AvailableQty: '',
@@ -60,11 +46,7 @@ const Dyeing = () => {
     GST: '',
     GSTAmount: '',
     TotalIncludingGst: '',
-    // appId: 1,
     createdBy: 0
-    // createdOn: new Date().toISOString(),
-    // lastUpdatedBy: 0,
-    // lastUpdatedOn: new Date().toISOString()
   });
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
@@ -72,48 +54,49 @@ const Dyeing = () => {
   const { data: lookupData } = useGetLookUpListQuery();
   const { data: designData, refetch } =
     useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
-      skip: !selectedCollectionId // Skip the query if no collection is selected
+      skip: !selectedCollectionId
     });
   const { data: batchData, refetch: refetchBatches } =
     useGetPrePlanningHeaderByDesignIdQuery(formData.designId, {
-      skip: !formData.designId // Skip the query if no collection is selected
+      skip: !formData.designId
     });
   const { data: fabricData } = useGetFabricFromPrePlanningByBatchNoQuery(
     formData.batchNo,
     {
-      skip: !formData.batchNo // Skip the query if no collection is selected
+      skip: !formData.batchNo
     }
   );
   const { data: fabricRequisitionData, refetch: refetchFabricRequisitionData } =
     useGetFabricRequisitionListByBatchNoQuery(formData.batchNo, {
-      skip: !formData.batchNo // Skip the query if no collection is selected
+      skip: !formData.batchNo
     });
-  console.log('fabricRequisitionData', fabricRequisitionData);
 
   const [designList, setDesignList] = useState([]);
   const [batchList, setBatchList] = useState([]);
   const [Fabrications, setFabrications] = useState([]);
   const [uoms, setUoms] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [vendors, setVendor] = useState([]);
 
   useEffect(() => {
     if (designData) {
       setDesignList(designData.result);
-      // refetch();
     }
   }, [designData]);
+
   useEffect(() => {
     if (batchData) {
       setBatchList(batchData.result);
-      // refetchBatches();
     }
   }, [batchData]);
+
   useEffect(() => {
     if (fabricData) {
       setFabrications(fabricData.result);
-      // refetchBatches();
     }
   }, [fabricData]);
+
   useEffect(() => {
     if (fabricRequisitionData) {
       setInitialRows(
@@ -122,28 +105,17 @@ const Dyeing = () => {
           ...row
         }))
       );
-      // refetchBatches();
     }
   }, [fabricRequisitionData]);
 
   useEffect(() => {
-    // fetchData();
     if (lookupData) {
       const data = lookupData.result[0];
-
       setUoms(data.uomList);
     }
   }, [lookupData]);
 
-  console.log('designList', designList);
-  console.log('selectedCollectionId', selectedCollectionId);
-  console.log('batchList', batchList);
-  console.log('uom', uoms);
-  console.log('Fabrications', Fabrications);
-  console.log('initialRows', initialRows);
-
   const collectionList = collectionData?.result || [];
-  console.log('collectionList', collectionList);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -155,7 +127,6 @@ const Dyeing = () => {
       setFormData({
         ...formData,
         collectionId: value,
-
         poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
     } else if (name === 'designId') {
@@ -175,6 +146,7 @@ const Dyeing = () => {
         batchNo: value,
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
       });
+      fetchFabricColorData(value); // Fetch data from API when batchNo changes
     } else if (name === 'fabricId') {
       const selectedFabric = Fabrications.find(
         (fabric) => fabric.fabricId === value
@@ -182,10 +154,40 @@ const Dyeing = () => {
       setFormData({
         ...formData,
         fabricId: value,
-        quantity: selectedFabric ? selectedFabric.total : ''
+        OutputQty: selectedFabric ? selectedFabric.total : ''
       });
     } else {
       setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const fetchFabricColorData = async (batchNo) => {
+    try {
+      const response = await axios.get(
+        `https://gecxc.com:4041/api/DyeingPrinting/GetFabricColorFromPrePlanningByBatchNo?batchNo=${batchNo}`
+      );
+      const data = response.data.result; // Directly access the result array
+      console.log('Dyeing Color Data', data);
+
+      // Format colors for Autocomplete
+      const colorOptions = data.map((item) => ({
+        label: item.color,
+        value: item.colorId
+      }));
+
+      // Assume the first item in the result array to set initial values
+      const firstItem = data[0] || {};
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        fabricId: firstItem.fabricId || '',
+        ColorId: firstItem.colorId || '',
+        TotalIncludingGst: firstItem.total || '',
+        color: firstItem.color || ''
+      }));
+      setColors(colorOptions); // Update the colors state with the fetched data
+    } catch (error) {
+      console.error('Error fetching fabric color data:', error);
     }
   };
 
@@ -257,8 +259,6 @@ const Dyeing = () => {
     }
   ];
 
-  // const handleSave = () => {
-  // };
   const design = [
     {
       value: 'Vol',
@@ -273,17 +273,7 @@ const Dyeing = () => {
       label: 'D 3'
     }
   ];
-  const fQuality = [
-    {
-      value: '1',
-      label: 'Red'
-    },
-    { value: '2', label: 'Blue' },
-    {
-      value: '3',
-      label: 'Green'
-    }
-  ];
+
   return (
     <MainCard
       style={{
@@ -342,17 +332,6 @@ const Dyeing = () => {
               ))}
             </TextField>
           </Grid>
-          {/* <Grid item xs={12} md={3}>
-            <TextField
-              label="Base Color"
-              fullWidth
-              size="small"
-              name="baseColorName"
-              value={formData.baseColorName}
-              onChange={handleChange}
-              disabled
-            />
-          </Grid> */}
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -389,15 +368,32 @@ const Dyeing = () => {
             </TextField>
           </Grid>
           <Grid item xs={12} md={3}>
-            <TextField
+            <Autocomplete
               fullWidth
-              id="outlined-select-currency"
-              select
-              label="Color "
-              //   helperText="Fabric Quality"
-              size="small"
-            >
-              {fQuality.map((option) => (
+              options={colors}
+              getOptionLabel={(option) => option.label || ''}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Color"
+                  name="ColorId"
+                  size="small"
+                />
+              )}
+              value={
+                colors.find((color) => color.value === formData.ColorId) || null
+              }
+              onChange={(event, newValue) => {
+                setFormData((prevFormData) => ({
+                  ...prevFormData,
+                  ColorId: newValue ? newValue.value : ''
+                }));
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField fullWidth select label="Vendor Name " size="small">
+              {design.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
@@ -406,32 +402,19 @@ const Dyeing = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
+              // label="Base Color"
               fullWidth
-              id="outlined-select-currency"
-              select
-              label="Vendor Name "
-              //   defaultValue="EUR"
-              //   helperText="Fabric Quality"
               size="small"
-            >
-              {fQuality.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
+              name="baseColorName"
+              value={formData.baseColorName}
+              onChange={handleChange}
+              disabled
+              focused
+            />
           </Grid>
           <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              id="outlined-select-currency"
-              select
-              label="Process Type "
-              //   defaultValue="EUR"
-              //   helperText="Fabric Quality"
-              size="small"
-            >
-              {fQuality.map((option) => (
+            <TextField fullWidth select label="Process Type " size="small">
+              {design.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
@@ -457,19 +440,47 @@ const Dyeing = () => {
             <TextField label="Output Qty" fullWidth size="small" />
           </Grid>
           <Grid item xs={12} md={1.5}>
-            <TextField label="Rate/UOM" fullWidth size="small" />
+            <TextField
+              label="Rate/UOM"
+              fullWidth
+              size="small"
+              name="RatePerUOM"
+              value={formData.RatePerUOM}
+              onChange={handleChange}
+            />
           </Grid>
           <Grid item xs={12} md={1.5}>
             <TextField label="GST" fullWidth size="small" />
           </Grid>
           <Grid item xs={12} md={1.5}>
-            <TextField label="Total Incl GST" fullWidth size="small" />
+            <TextField
+              label="Total Incl GST"
+              fullWidth
+              size="small"
+              name="TotalIncludingGst"
+              value={formData.TotalIncludingGst}
+              onChange={handleChange}
+            />
           </Grid>
           <Grid item xs={12} md={1.5}>
-            <TextField label="GST Amount" fullWidth size="small" />
+            <TextField
+              label="GST Amount"
+              fullWidth
+              size="small"
+              name="GSTAmount"
+              value={formData.GSTAmount}
+              onChange={handleChange}
+            />
           </Grid>
           <Grid item xs={12} md={1.5}>
-            <TextField label="Total:Including Gst" fullWidth size="small" />
+            <TextField
+              label="Total:Including Gst"
+              fullWidth
+              size="small"
+              name="TotalExclGst"
+              value={formData.TotalExclGst}
+              onChange={handleChange}
+            />
           </Grid>
           <Grid item xs={12} md={1.5}>
             <TextField label="Unit P: T/Po PC's" fullWidth size="small" />

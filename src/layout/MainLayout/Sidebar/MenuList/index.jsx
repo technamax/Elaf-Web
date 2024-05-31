@@ -19,7 +19,7 @@ const MenuList = ({ empId, token }) => {
         setMenuItems(data.mainMenuModel); // Adjust to use mainMenuModel
         setLoading(false);
         console.log('menuItem', menuItem);
-        console.log('Fetched data:', data.mainMenuModel);
+        // console.log('Fetched data:', data.mainMenuModel);
       } catch (err) {
         setError(err.message);
         setLoading(false);

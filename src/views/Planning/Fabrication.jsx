@@ -46,6 +46,7 @@ const Fabrication = () => {
   });
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
+  console.log(collectionData);
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const { data: lookupData } = useGetLookUpListQuery();
   const { data: designData, refetch } =
