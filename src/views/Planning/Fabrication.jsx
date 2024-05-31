@@ -137,7 +137,7 @@ const Fabrication = () => {
     const calculateTotalWithGst = () => {
       const total = parseFloat(formData.total) || 0;
       const gst = parseFloat(formData.gst) || 0;
-      return total * gst;
+      return total * (1 + gst / 100);
     };
 
     setFormData((prevData) => ({
@@ -287,12 +287,12 @@ const Fabrication = () => {
       valueGetter: (params, row) => {
         const total = parseFloat(row.total) || 0;
         const gst = parseFloat(row.gst) || 0;
-        return total * (gst / 100);
+        return total * (1 + gst / 100);
       },
       valueSetter: (params, row) => {
         const total = parseFloat(row.total) || 0;
         const gst = parseFloat(row.gst) || 0;
-        return total * (gst / 100);
+        return total * (1 + gst / 100);
       }
     }
   ];
@@ -403,6 +403,7 @@ const Fabrication = () => {
       console.log('Save response:', response.data);
 
       // Clear the form after successful save
+      refetchFabricRequisitionData();
       setFormData({
         designId: '',
         batchNo: '',
@@ -422,7 +423,6 @@ const Fabrication = () => {
         lastUpdatedOn: '2024-05-29T09:56:23.916Z',
         LastUpdatedBy: 0
       });
-      refetchFabricRequisitionData();
     } catch (error) {
       console.error('Error saving data:', error);
     }
@@ -639,6 +639,7 @@ const Fabrication = () => {
             initialRows={initialRows}
             formData={formData}
             editAPi={editAPi}
+            refetch={refetchFabricRequisitionData}
             // deleteApi={deleteApi}
             // deleteBy="planningId"
             // disableAddRecord={true}
