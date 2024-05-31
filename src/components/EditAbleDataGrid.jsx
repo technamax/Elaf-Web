@@ -140,6 +140,7 @@ export default function FullFeaturedCrudGrid({
       console.log('response.data:', response.data);
 
       return responseData; // Return the updated row
+      refetch();
     } catch (error) {
       console.error('Error updating data:', error);
       throw error; // Propagate the error for error handling

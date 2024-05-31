@@ -24,21 +24,40 @@ import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
 
-const Fabrication = () => {
+const Embroidery = () => {
   const [formData, setFormData] = useState({
     designId: '',
     batchNo: '',
-    baseColorId: '',
-    baseColorName: '',
+    componentId: '',
     fabricId: '',
-    poPcs: '',
-    quantity: '',
-    rate: '',
-    uomId: 'string',
-    total: '',
-    unitPrice: '',
-    gst: '', //// not in api
-    totalInclGst: '', ///// not in api total*gst
+    vendorId: '',
+    poPcs: '', // coming from getcollectionapi
+    baseColorId: '', // coming from getcollectionapi
+    baseColorName: '',
+    colorId: '', //from dying screen coming from fabricAPi
+    availableQty: '',
+    noOfHeads: '',
+    repeats: '',
+    cuttingSize: '',
+    itemsPerRepeat: '',
+    totalPcs: '', //repeat*itemsPerRepeat
+    totalAmount: '', //
+    threadStitches: '',
+    threadRate: '',
+    treadAmount: '',
+    tillaStitches: '',
+    tillaRate: '',
+    tillaAmount: '',
+    sequenceStitches: '',
+    sequenceRate: '',
+    sequenceAmount: '',
+    solvingStitches: '',
+    solvingRate: '',
+    solvingAmount: '',
+    additional: '',
+
+    costPerComponent: '', //
+    costPerComponent: '', //
     createdOn: '2024-05-29T09:56:23.916Z',
     createdBy: 0,
     lastUpdatedOn: '2024-05-29T09:56:23.916Z',
@@ -668,4 +687,4 @@ const Fabrication = () => {
   );
 };
 
-export default Fabrication;
+export default Embroidery;
