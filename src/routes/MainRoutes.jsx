@@ -25,6 +25,15 @@ const UserManagementRoles = Loadable(
 const UserManagementApplication = Loadable(
   lazy(() => import('views/UserManagement/Application'))
 );
+const UserManagementMainMenu = Loadable(
+  lazy(() => import('views/UserManagement/MainMenu'))
+);
+const UserManagementSubMenu = Loadable(
+  lazy(() => import('views/UserManagement/SubMenu'))
+);
+const UserManagementUsers = Loadable(
+  lazy(() => import('views/UserManagement/Users'))
+);
 const PrePlanningCreation = Loadable(
   lazy(() => import('views/Planning/PrePlanningCreation'))
 );
@@ -63,6 +72,18 @@ const MainRoutes = {
         {
           path: 'Application', // Relative path
           element: <UserManagementApplication />
+        },
+        {
+          path: 'MainMenu', // Relative path
+          element: <UserManagementMainMenu />
+        },
+        {
+          path: 'SubMenu', // Relative path
+          element: <UserManagementSubMenu />
+        },
+        {
+          path: 'Users', // Relative path
+          element: <UserManagementUsers />
         }
       ]
     },

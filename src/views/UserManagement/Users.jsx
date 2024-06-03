@@ -1,16 +1,14 @@
 import React from 'react';
-import AddRole from 'components/Roles/addRole';
 import Divider from '@mui/material/Divider';
-import AddRoleTable from 'components/Roles/addroleTable';
-
+import AddUsers from 'components/Users/addUsers';
+import AddUsersTable from 'components/Users/addusersTable';
 
 export default function Application() {
   return (
     <>
-      <AddRole />
+      <AddUsers />
       <Divider />
-      <AddRoleTable />
+      <AddUsersTable />
     </>
   );
 }
-
