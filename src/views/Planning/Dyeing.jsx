@@ -43,7 +43,7 @@ const Dyeing = () => {
     RatePerUOM: '',
     UnitRatePerPo: '',
     TotalExclGst: '',
-    GST: '',
+    GST: '0',
     GSTAmount: '',
     TotalIncludingGst: '',
     createdBy: 0,
@@ -224,18 +224,46 @@ const Dyeing = () => {
     }
   };
   useEffect(() => {
-    const calculateTotal = () => {
+    const calculateOutputQty = () => {
       const AvailableQty = parseFloat(formData.AvailableQty) || 0;
       const shrinkage = parseFloat(formData.Shrinkage) || 0;
       const wastage = parseFloat(formData.Wastage) || 0;
       return (AvailableQty * (100 - (shrinkage + wastage))) / 100;
     };
 
+    const calculateTotalExclGst = () => {
+      const quantity = parseFloat(formData.AvailableQty) || 0;
+      const rate = parseFloat(formData.RatePerUOM) || 0;
+      return quantity * rate;
+    };
+
+    const calculateTotalWithGst = (totalExclGst, gst) => {
+      return totalExclGst * (1 + gst / 100);
+    };
+
+    const outputQty = calculateOutputQty();
+    const totalExclGst = calculateTotalExclGst();
+    const gst = parseFloat(formData.GST) || 0;
+    const totalIncludingGst = calculateTotalWithGst(totalExclGst, gst);
+    const poPcs = parseFloat(formData.poPcs) || 0;
+    const unitRatePerPo = poPcs ? totalIncludingGst / poPcs : 0;
+
     setFormData((prevData) => ({
       ...prevData,
-      OutputQty: calculateTotal()
+      OutputQty: outputQty,
+      TotalExclGst: totalExclGst.toFixed(2),
+      TotalIncludingGst: totalIncludingGst.toFixed(2),
+      UnitRatePerPo: unitRatePerPo.toFixed(2)
     }));
-  }, [formData.AvailableQty, formData.Shrinkage, formData.Wastage]);
+  }, [
+    formData.AvailableQty,
+    formData.Shrinkage,
+    formData.Wastage,
+    formData.RatePerUOM,
+    formData.GST,
+    formData.poPcs
+  ]);
+
   const handleSave = async () => {
     // Validate required fields
     // if (
@@ -285,6 +313,29 @@ const Dyeing = () => {
 
       if (response.status === 200) {
         console.log('Data saved successfully:', response.data);
+        setFormData({
+          DPId: '',
+          designId: '',
+          batchNo: '',
+          fabricId: '',
+          ColorId: '',
+          color: '',
+          vendorId: '',
+          processType: '',
+          AvailableQty: '',
+          Shrinkage: '',
+          Wastage: '',
+          OutputQty: '',
+          UOM: '',
+          RatePerUOM: '',
+          UnitRatePerPo: '',
+          TotalExclGst: '',
+          GST: '0',
+          GSTAmount: '',
+          TotalIncludingGst: '',
+          createdBy: 0,
+          poPcs: ''
+        });
         // Handle success (e.g., show a success message or reset the form)
       } else {
         console.error('Failed to save data:', response.data);
@@ -639,7 +690,7 @@ const Dyeing = () => {
             />{' '}
           </Grid>
 
-          <Grid item xs={12} md={1.5}>
+          {/* <Grid item xs={12} md={1.5}>
             <TextField
               label="GST Amount"
               fullWidth
@@ -648,7 +699,7 @@ const Dyeing = () => {
               value={formData.GSTAmount}
               onChange={handleChange}
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} md={1.5}>
             <TextField
               label="Total:Including Gst"
