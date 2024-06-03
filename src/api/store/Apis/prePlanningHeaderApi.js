@@ -22,6 +22,17 @@ export const prePlanningHeaderApi = createApi({
     getFabricRequisitionListByBatchNo: builder.query({
       query: (batchNo) =>
         `Fabrication/GetFabricRequisitionListByBatchNo?batchNo=${batchNo}`
+    }),
+    getComponentsByBatchNo: builder.query({
+      query: (batchNo) => `Embroidery/GetComponentsByBatchNo?batchNo=${batchNo}`
+    }),
+    getFabricByComponentsAndBatchNo: builder.query({
+      query: ({ batchNo, componentId }) =>
+        `Embroidery/GetFabricByComponentsAndBatchNo?batchNo=${batchNo}&componentId=${componentId}`
+    }),
+    getFabricColorByComponentsBatchNoAndFabricId: builder.query({
+      query: ({ batchNo, componentId, fabricId }) =>
+        `Embroidery/GetFabricColorByComponentsBatchNoAndFabricId?batchNo=${batchNo}&componentId=${componentId}&fabricId=${fabricId}`
     })
   })
 });
@@ -31,5 +42,8 @@ export const {
   useGetDesignFromPlanningHeaderByCollectionIdQuery,
   useGetPrePlanningHeaderByDesignIdQuery,
   useGetFabricFromPrePlanningByBatchNoQuery,
-  useGetFabricRequisitionListByBatchNoQuery
+  useGetFabricRequisitionListByBatchNoQuery,
+  useGetComponentsByBatchNoQuery,
+  useGetFabricByComponentsAndBatchNoQuery,
+  useGetFabricColorByComponentsBatchNoAndFabricIdQuery
 } = prePlanningHeaderApi;

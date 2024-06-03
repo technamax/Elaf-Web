@@ -11,6 +11,7 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Fabrication from 'views/Planning/Fabrication';
+import Embroidery from './Embroidery';
 import { Grid, TextField } from '@mui/material';
 import PrePlanning from './PrePlanning';
 import Dyeing from './Dyeing';
@@ -19,7 +20,7 @@ const steps = [
   'Pre Planning',
   'Fabrication',
   'Dyeing/Printing  ',
-  'MultiHead ',
+  'Embroidery ',
   'Schiffli',
   'name6',
   'name7',
@@ -243,6 +244,7 @@ export default function PlanningProcess() {
           {activeStep === 1 && <Fabrication />}
 
           {activeStep === 2 && <Dyeing />}
+          {activeStep === 3 && <Embroidery />}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"

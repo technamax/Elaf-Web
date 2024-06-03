@@ -39,9 +39,9 @@ const Fabrication = () => {
     unitPrice: '',
     gst: '', //// not in api
     totalInclGst: '', ///// not in api total*gst
-    createdOn: '2024-05-29T09:56:23.916Z',
+    createdOn: new Date().toISOString(),
     createdBy: 0,
-    lastUpdatedOn: '2024-05-29T09:56:23.916Z',
+    lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: 0
   });
 
