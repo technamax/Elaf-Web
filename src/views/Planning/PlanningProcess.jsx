@@ -14,6 +14,7 @@ import Fabrication from 'views/Planning/Fabrication';
 import { Grid, TextField } from '@mui/material';
 import PrePlanning from './PrePlanning';
 import Dyeing from './Dyeing';
+import Schiffli from './Schiffli';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 
 // import { color } from '@mui/system';
@@ -288,12 +289,13 @@ export default function PlanningProcess() {
         </React.Fragment>
       ) : (
         <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
+          {/* <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography> */}
 
           {activeStep === 0 && <PrePlanning />}
           {activeStep === 1 && <Fabrication />}
 
           {activeStep === 2 && <Dyeing />}
+          {activeStep === 4 && <Schiffli />}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"

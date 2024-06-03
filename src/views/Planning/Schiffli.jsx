@@ -25,7 +25,7 @@ import EditAbleDataGrid from 'components/EditAbleDataGrid';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 
-const Dyeing = () => {
+const Schiffli = () => {
   const [formData, setFormData] = useState({
     DPId: '',
     designId: '',
@@ -383,7 +383,7 @@ const Dyeing = () => {
         <Grid container spacing={2} width="Inherit">
           <Grid item xs={9} md={9}>
             <Typography variant="h3" gutterBottom>
-              Dyeing/Printing
+              Schiffli
             </Typography>
           </Grid>
           <Grid item xs={3} md={3} textAlign="right">
@@ -665,4 +665,4 @@ const Dyeing = () => {
   );
 };
 
-export default Dyeing;
+export default Schiffli;
