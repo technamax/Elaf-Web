@@ -42,7 +42,7 @@ const NewCollection = () => {
     volume: '',
     planningDate: '',
     launchDate: '',
-    isReapetCollection: '',
+    isReapetCollection: 'No',
     noOfDesigns: '',
     noOfColors: '',
     poPcs: '',
@@ -387,6 +387,7 @@ const NewCollection = () => {
                     select
                     label="Repeat Collection?"
                     name="isReapetCollection"
+                    defaultValue="No"
                     value={formData.isReapetCollection}
                     onChange={handleChange}
                     size="small"

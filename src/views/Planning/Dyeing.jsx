@@ -28,13 +28,13 @@ import MainCard from 'ui-component/cards/MainCard';
 const Dyeing = () => {
   const [formData, setFormData] = useState({
     DPId: '',
-    DesignId: '',
-    BatchNo: '',
-    FabricId: '',
+    designId: '',
+    batchNo: '',
+    fabricId: '',
     ColorId: '',
     color: '',
-    VendorId: '',
-    ProcessType: '',
+    vendorId: '',
+    processType: '',
     AvailableQty: '',
     Shrinkage: '',
     Wastage: '',
@@ -47,9 +47,10 @@ const Dyeing = () => {
     GSTAmount: '',
     TotalIncludingGst: '',
     createdBy: 0,
-    poPcs: ''
+    poPcs: '',
+    fabricId: ''
   });
-
+  console.log('Dyeing form data to send', formData);
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const { data: lookupData } = useGetLookUpListQuery();
@@ -222,7 +223,66 @@ const Dyeing = () => {
       ...prevData,
       OutputQty: calculateTotal()
     }));
-  }, []);
+  }, [formData.AvailableQty, formData.Shrinkage, formData.Wastage]);
+  const handleSave = async () => {
+    // Validate required fields
+    // if (
+    //   !formData.designId ||
+    //   !formData.batchNo ||
+    //   !formData.fabricId ||
+    //   !formData.vendorId ||
+    //   !formData.processType
+    // ) {
+    //   alert('Please fill all required fields.');
+    //   return;
+    // }
+
+    // Log formData to debug
+    console.log('Form Data:', formData);
+
+    const payload = {
+      dpId: parseInt(formData.DPId) || 0,
+      designId: parseInt(formData.designId),
+      batchNo: formData.batchNo,
+      fabricId: parseInt(formData.fabricId),
+      colorId: parseInt(formData.ColorId) || 0,
+      vendorId: parseInt(formData.vendorId) || 0,
+      processType: formData.processType,
+      availableQty: parseFloat(formData.AvailableQty) || 0,
+      shrinkage: parseFloat(formData.Shrinkage) || 0,
+      wastage: parseFloat(formData.Wastage) || 0,
+      outputQty: parseFloat(formData.OutputQty) || 0,
+      uomId: parseInt(formData.UOM) || 0,
+      ratePerUOM: parseFloat(formData.RatePerUOM) || 0,
+      unitRatePerPo: parseFloat(formData.UnitRatePerPo) || 0,
+      totalExclGst: parseFloat(formData.TotalExclGst) || 0,
+      gst: parseFloat(formData.GST) || 0,
+      gstAmount: parseFloat(formData.GSTAmount) || 0,
+      totalIncludingGst: parseFloat(formData.TotalIncludingGst) || 0,
+      createdBy: formData.createdBy
+    };
+
+    // Log payload to debug
+    console.log('Payload:', payload);
+
+    try {
+      const response = await axios.post(
+        'https://gecxc.com:4041/api/DyeingPrinting/SaveDyeingPrinting',
+        payload
+      );
+
+      if (response.status === 200) {
+        console.log('Data saved successfully:', response.data);
+        // Handle success (e.g., show a success message or reset the form)
+      } else {
+        console.error('Failed to save data:', response.data);
+        // Handle error (e.g., show an error message)
+      }
+    } catch (error) {
+      console.error('Error saving data:', error);
+      // Handle error (e.g., show an error message)
+    }
+  };
 
   const columns = [
     { field: 'name', headerName: 'Order Number', editable: true, flex: 2 },
@@ -291,14 +351,19 @@ const Dyeing = () => {
       editable: true
     }
   ];
-
+  const handleAutocompleteChange = (event, newValue, name) => {
+    setFormData({
+      ...formData,
+      [name]: newValue ? newValue.value : ''
+    });
+  };
   const design = [
     {
-      value: 'Dyeing',
+      value: 'D',
       label: 'Dyeing'
     },
     {
-      value: 'Printing',
+      value: 'P',
       label: 'Printing'
     }
   ];
@@ -322,7 +387,12 @@ const Dyeing = () => {
             </Typography>
           </Grid>
           <Grid item xs={3} md={3} textAlign="right">
-            <Button variant="contained" size="small" color="error">
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={handleSave}
+            >
               Save
             </Button>
           </Grid>
@@ -421,7 +491,14 @@ const Dyeing = () => {
             />
           </Grid>
           <Grid item xs={12} md={3}>
-            <TextField fullWidth select label="Vendor Name " size="small">
+            <TextField
+              fullWidth
+              select
+              label="Vendor Name "
+              size="small"
+              value={formData.vendorId}
+              handleChange={handleChange}
+            >
               {vendors.map((option) => (
                 <MenuItem key={option.lookUpId} value={option.lookUpId}>
                   {option.lookUpName}
@@ -442,7 +519,14 @@ const Dyeing = () => {
             />
           </Grid>
           <Grid item xs={12} md={3}>
-            <TextField fullWidth select label="Process Type " size="small">
+            <TextField
+              fullWidth
+              select
+              label="Process Type "
+              size="small"
+              value={formData.processType}
+              handleChange={handleChange}
+            >
               {design.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
@@ -467,7 +551,7 @@ const Dyeing = () => {
               size="small"
               name="UOM"
               value={formData.UOM}
-              focused
+              // focused
             />
           </Grid>
           <Grid item xs={12} md={1.5}>
@@ -477,7 +561,7 @@ const Dyeing = () => {
               size="small"
               name="AvailableQty"
               value={formData.AvailableQty}
-              focused
+              // focused
             />
           </Grid>
           <Grid item xs={12} md={1.5}>
@@ -487,7 +571,7 @@ const Dyeing = () => {
               size="small"
               name="Shrinkage"
               value={formData.Shrinkage}
-              focused
+              // focused
             />
           </Grid>
           <Grid item xs={12} md={1.5}>
@@ -497,7 +581,7 @@ const Dyeing = () => {
               size="small"
               name="Wastage"
               value={formData.Wastage}
-              focused
+              // focused
             />
           </Grid>
           <Grid item xs={12} md={1.5}>
@@ -507,7 +591,7 @@ const Dyeing = () => {
               size="small"
               name="OutputQty"
               value={formData.OutputQty}
-              focused
+              // focused
             />
           </Grid>
           <Grid item xs={12} md={1.5}>
