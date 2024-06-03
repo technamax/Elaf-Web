@@ -165,6 +165,18 @@ const Dyeing = () => {
         OutputQty: selectedFabric ? selectedFabric.total : ''
       });
       fetchFabricColorData(value); // Pass formData.fabricId instead of value
+    } else if (name === 'processType') {
+      // Update formData for processType
+      setFormData({
+        ...formData,
+        processType: value
+      });
+    } else if (name === 'vendorId') {
+      // Update formData for vendorId
+      setFormData({
+        ...formData,
+        vendorId: value
+      });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -246,7 +258,7 @@ const Dyeing = () => {
       batchNo: formData.batchNo,
       fabricId: parseInt(formData.fabricId),
       colorId: parseInt(formData.ColorId) || 0,
-      vendorId: parseInt(formData.vendorId) || 0,
+      vendorId: formData.vendorId || 0,
       processType: formData.processType,
       availableQty: parseFloat(formData.AvailableQty) || 0,
       shrinkage: parseFloat(formData.Shrinkage) || 0,
@@ -494,10 +506,11 @@ const Dyeing = () => {
             <TextField
               fullWidth
               select
-              label="Vendor Name "
+              label="Vendor Name"
               size="small"
+              name="vendorId"
               value={formData.vendorId}
-              handleChange={handleChange}
+              onChange={handleChange} // Change handleChange to handleAutocompleteChange
             >
               {vendors.map((option) => (
                 <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -522,10 +535,11 @@ const Dyeing = () => {
             <TextField
               fullWidth
               select
-              label="Process Type "
+              label="Process Type"
               size="small"
+              name="processType"
               value={formData.processType}
-              handleChange={handleChange}
+              onChange={handleChange} // Change handleChange to handleAutocompleteChange
             >
               {design.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
