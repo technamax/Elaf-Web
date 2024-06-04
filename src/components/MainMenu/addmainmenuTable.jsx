@@ -27,21 +27,6 @@ export default function AddMainMenuTable() {
     fetchData(); // Fetch data when the component mounts
   }, [fetchData]);
 
-  // This is where you would fetch data from an API or other source
-  // useEffect(() => {
-  //   // Example data fetching
-  //   const fetchData = async () => {
-  //     // This is where you would fetch data from an API or other source
-  //     const data = [
-  //       { id: 1, "Role Name": "Admin", Description: "Administrator Role", enabled: "Yes", action: "Edit" },
-  //       { id: 2, "Role Name": "User", Description: "User Role", enabled: "No", action: "Edit" },
-  //       // Add more rows as needed
-  //     ];
-  //     setRows(data);
-  //   };
-
-  //   fetchData();
-  // }, []);
 
 // GetMainMenuList
 

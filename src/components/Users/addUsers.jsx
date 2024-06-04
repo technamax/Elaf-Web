@@ -1,31 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
+import axios from 'axios';
 
-export default function AddUsers() {
+export default function AddUsers(onSaveSuccess) {
     const options = [
         {
-          value: 'Admin',
-          label: 'Admin',
+          value: 'yes',
+          label: 'yes',
         },
         {
-          value: 'User',
-          label: 'User',
+          value: 'no',
+          label: 'no',
         },
     ];
-    const option1 = [
-        {
-          value: 'Yes',
-          label: 'Yes',
-        },
-        {
-          value: 'No',
-          label: 'No',
-        },
-    ];
+
+
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        userName: '',
+        empId: '',
+        password: 0,
+        isActive:'',
+        appId: ''
+      });
+    
+      const handleChange = async (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+      };
+    
+      const handleSave = async () => {
+        console.log(formData);
+        try {
+          const response = await axios.post(
+            'https://gecxc.com:4041/api/Users/SaveUsers',
+            formData
+          );
+          console.log('Form data saved:', response.data);
+          setFormData({
+            firstName: '',
+            lastName: '',
+            userName: '',
+            empId: '',
+            password: '',
+            isActive: '',
+            appId: ''
+          });
+          if (onSaveSuccess) onSaveSuccess(); // Call the success handler to refresh data
+        } catch (error) {
+          console.error('Error saving data:', error);
+        }
+      };
+
     return (
         <div>
             <Box  m={3} pt={4}
@@ -132,9 +163,9 @@ export default function AddUsers() {
                         <TextField
                             id="outlined-select-option"
                             select
-                            label="Main Menu"
-                            defaultValue="Admin"
-                            helperText="Select Menu"
+                            label="Enabled"
+                            defaultValue="yes"
+                            // helperText="Select Menu"
                             variant="outlined"
                             size="small"
                             fullWidth
@@ -146,28 +177,19 @@ export default function AddUsers() {
                             ))}
                         </TextField>
                     </Grid>
-                    {/* grid-9 ends */}
+                    {/* grid-8 ends */}
 
-                    {/* grid-10 */}
+                    {/* grid-9 */}
                     <Grid item md={4} width="inherit" paddingX={1}>
                         <TextField
-                            id="outlined-select-option"
-                            select
-                            label="Enabled"
-                            defaultValue="yes"
-                            helperText="Please select an option"
-                            variant="outlined"
+                            id="outlined-required"
+                            label="App Id"
+                            name="App Id"
                             size="small"
-                            fullWidth
-                        >
-                            {option1.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
+                            required
+                        />
                     </Grid>
-                    {/* grid-10 ends */}
+                    {/* grid-9 ends */}
 
                       
 
@@ -175,7 +197,7 @@ export default function AddUsers() {
                     {/* grid-button */}
                     <Grid item md={12} width="inherit" paddingX={1} textAlign="right">
                      
-                            <Button variant="contained" color="primary" size="small"  >
+                            <Button variant="contained" color="primary" size="small" onClick={handleSave} >
                                 Save
                             </Button>
                        

@@ -1,29 +1,94 @@
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import React, { useState, useEffect } from "react";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid"
+import React, { useState, useEffect, useCallback } from "react";
+import axios from 'axios';
 
 export default function AddRoleTable() {
   const [rows, setRows] = useState([]);
 
-  useEffect(() => {
-    // Example data fetching
-    const fetchData = async () => {
-      // This is where you would fetch data from an API or other source
-      const data = [
-        { id: 1, "Role Name": "Admin", Description: "Administrator Role", enabled: "Yes", action: "Edit" },
-        { id: 2, "Role Name": "User", Description: "User Role", enabled: "No", action: "Edit" },
-        // Add more rows as needed
-      ];
-      setRows(data);
-    };
+  // GetRoleById
 
-    fetchData();
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `https://gecxc.com:4041/api/Role/GetRoleById?id=1`
+      );
+
+    
+      const dataWithId = response.data.result.map((row, index) => ({
+        id: index, 
+        ...row,
+      }));
+
+      setRows(dataWithId); // Set the fetched data to the rows state
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   }, []);
 
+  useEffect(() => {
+    fetchData(); // Fetch data when the component mounts
+  }, [fetchData]);
+
+
+
+  // GetRoleList
+
+// const [rows, setRows] = useState([]);
+const fetchData2 = useCallback(async () => {
+  try {
+    console.log("Fetching data...");
+    const response = await axios.get('https://gecxc.com:4041/api/Role/GetRoleList?appId=1');
+    console.log("Data fetched:", response.data);
+
+    const dataWithId = response.data.result.map((row, index) => ({
+      id: index, 
+      ...row,
+    }));
+    console.log("Data with ID:", dataWithId);
+
+    setRows(dataWithId); // Set the fetched data to the rows state
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}, []);
+
+useEffect(() => {
+  fetchData2(); // Fetch data when the component mounts
+}, [fetchData2]);
+
+
+  //DeleteRoleById
+
+// const [rows, setRows] = useState([]);
+const fetchData3 = useCallback(async () => {
+  try {
+    console.log("Fetching data...");
+    const response = await axios.get('https://gecxc.com:4041/api/Role/DeleteRoleById?id=1');
+    console.log("Data fetched:", response.data);
+
+    const dataWithId = response.data.result.map((row, index) => ({
+      id: index, 
+      ...row,
+    }));
+    console.log("Data with ID:", dataWithId);
+
+    setRows(dataWithId); // Set the fetched data to the rows state
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}, []);
+
+useEffect(() => {
+  fetchData3(); // Fetch data when the component mounts
+}, [fetchData3]);
+
+
   const columns = [
-    { field: "Role Name", headerName: "Role Name", width: 150 },
-    { field: "Description", headerName: "Description", width: 300 },
+    { field: "roleName", headerName: "Role Name", width: 150 },
+    { field: "description", headerName: "Description", width: 300 },
     { field: "enabled", headerName: "Enabled", minWidth: 120 },
-    { field: "action", headerName: "Action", minWidth: 120 }
+    { field: "createdBy", headerName: "Created By", minWidth: 120 },
+    { field: "createdOn", headerName: "Created On", minWidth: 120 }
   ];
 
   return (

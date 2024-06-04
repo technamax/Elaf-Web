@@ -31,7 +31,7 @@ export default function AddSubMenuTable() {
   }, [fetchData]);
 
   const columns = [
-    { field: "subMenuDescription", headerName: "Sub Menu Description", width: 200 },
+    { field: "subMenuDesc", headerName: "Sub Menu Description", width: 200, flex:1 },
     { field: "link", headerName: "Link", minWidth: 120 },
     { field: "icon", headerName: "Icon", minWidth: 120 },
     { field: "orderNo", headerName: "Order No.", minWidth: 120 },

@@ -14,7 +14,7 @@ export default function AddMainMenu({ onSaveSuccess }) {
   ];
 
   const [formData, setFormData] = useState({
-    mainMenuId: '',
+   
     mainMenuDesc: '',
     orderNo: '',
     enabled: '',
@@ -64,18 +64,15 @@ export default function AddMainMenu({ onSaveSuccess }) {
         <Grid container>
 
         
-          {/* grid-1 */}
+          {/* grid-1 */} 
           {/* <Grid item md={3} width="inherit" paddingX={1}>
             <TextField
               id="outlined-required"
               label="Main Menu Id"
-              name="Main Menu Id"
+              name="mainMenuId "
               size="small"
               value={formData.mainMenuId}
-
-              
               onChange={handleChange}
-              required
             />
           </Grid> */}
           {/* grid-1 ends */}

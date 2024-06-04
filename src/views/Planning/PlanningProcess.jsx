@@ -14,6 +14,8 @@ import Fabrication from 'views/Planning/Fabrication';
 import { Grid, TextField } from '@mui/material';
 import PrePlanning from './PrePlanning';
 import Dyeing from './Dyeing';
+import AdditionalProcess from './AdditionalProcess';
+import AddAdditionalServices from './AdditionalServices';
 // import { color } from '@mui/system';
 const steps = [
   'Pre Planning',
@@ -21,8 +23,8 @@ const steps = [
   'Dyeing/Printing  ',
   'MultiHead ',
   'Schiffli',
-  'name6',
-  'name7',
+  'Additional Process',
+  'Additional Services',
   'name8'
 ];
 
@@ -287,6 +289,10 @@ export default function PlanningProcess() {
           {activeStep === 1 && <Fabrication />}
 
           {activeStep === 2 && <Dyeing />}
+          
+          {activeStep === 5 && <AdditionalProcess/>}
+          
+          {activeStep === 6 && <AddAdditionalServices />}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"

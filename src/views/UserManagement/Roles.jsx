@@ -4,12 +4,13 @@ import Divider from '@mui/material/Divider';
 import AddRoleTable from 'components/Roles/addroleTable';
 
 
-export default function Application() {
+export default function Application(fetchData) {
   return (
     <>
       <AddRole />
       <Divider />
-      <AddRoleTable />
+      <AddRoleTable
+       fetchData={fetchData} />
     </>
   );
 }

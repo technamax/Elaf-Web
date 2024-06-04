@@ -1,34 +1,93 @@
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import axios from 'axios';
 
 export default function AddUsersTable() {
   const [rows, setRows] = useState([]);
 
-  useEffect(() => {
-    // Example data fetching
-    const fetchData = async () => {
-      // This is where you would fetch data from an API or other source
-      const data = [
-        { id: 1, "Role Name": "Admin", Description: "Administrator Role", enabled: "Yes", action: "Edit" },
-        { id: 2, "Role Name": "User", Description: "User Role", enabled: "No", action: "Edit" },
-        // Add more rows as needed
-      ];
-      setRows(data);
-    };
+  // GetUserMenuByEmpId
+   // Define fetchData inside the component
+   const fetchData = useCallback(async () => {
+    try {
+      console.log("Fetching data...");
+      const response = await axios.get('https://gecxc.com:4041/api/Users/GetUserMenuByEmpId?empId=1');
+      console.log("Data fetched:", response.data);
 
-    fetchData();
+      const dataWithId = response.data.result.map((row, index) => ({
+        id: index, 
+        ...row,
+      }));
+      console.log("Data with ID:", dataWithId);
+
+      setRows(dataWithId); // Set the fetched data to the rows state
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   }, []);
 
+  useEffect(() => {
+    fetchData(); // Fetch data when the component mounts
+  }, [fetchData]);
+
+  // GetGetUserSubMenuByEmpId
+
+
+// const [rows, setRows] = useState([]);
+const fetchData2 = useCallback(async () => {
+  try {
+    console.log("Fetching data...");
+    const response = await axios.get('https://gecxc.com:4041/api/Users/GetUserSubMenuByEmpId?empId=1');
+    console.log("Data fetched:", response.data);
+
+    const dataWithId = response.data.result.map((row, index) => ({
+      id: index, 
+      ...row,
+    }));
+    console.log("Data with ID:", dataWithId);
+
+    setRows(dataWithId); // Set the fetched data to the rows state
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}, []);
+
+useEffect(() => {
+  fetchData2(); // Fetch data when the component mounts
+}, [fetchData2]);
+
+
+// GetUsersList
+
+const fetchData3 = useCallback(async () => {
+  try {
+    console.log("Fetching data...");
+    const response = await axios.get('https://gecxc.com:4041/api/Users/GetUsersList');
+    console.log("Data fetched:", response.data);
+
+    const dataWithId = response.data.result.map((row, index) => ({
+      id: index, 
+      ...row,
+    }));
+    console.log("Data with ID:", dataWithId);
+
+    setRows(dataWithId); // Set the fetched data to the rows state
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}, []);
+
+useEffect(() => {
+  fetchData3(); // Fetch data when the component mounts
+}, [fetchData3]);
+
   const columns = [
-    { field: "First Name", headerName: "First Name", width: 150 },
-    { field: "Last Name", headerName: "Last Name", width:200 },
-    { field: "User Name", headerName: "User Name", minWidth: 120 },
-    { field: "Id", headerName: "Id", minWidth: 120 },
-    { field: "Password", headerName: "Password", minWidth: 120 },
-    { field: "is Active", headerName: "is Active", minWidth: 120 },
-    { field: "Emp Id", headerName: "Emp Id", minWidth: 120 },
-    { field: "App Id", headerName: "App Id", minWidth: 120 },
-    { field: "Enabled", headerName: "Enabled", minWidth: 120 }
+    { field: "firstName", headerName: "First Name", width: 150 },
+    { field: "lastName", headerName: "Last Name", width:200 },
+    { field: "userName", headerName: "User Name", minWidth: 120 },
+    { field: "empId", headerName: " Emp Id", minWidth: 120 },
+    { field: "password", headerName: "Password", minWidth: 120 },
+    { field: "isActive", headerName: "is Active", minWidth: 120 },
+    { field: "appId", headerName: "App Id", minWidth: 120 },
 
   ];
 

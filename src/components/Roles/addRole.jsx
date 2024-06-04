@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
+import axios from 'axios';
 
-export default function AddRole() {
+export default function AddRole(  onSaveSuccess ) {
     const options = [
         {
           value: 'yes',
@@ -16,6 +17,38 @@ export default function AddRole() {
           label: 'No',
         },
     ];
+
+    const [formData, setFormData] = useState({
+        roleName: '',
+        description: '',
+        enabled: '',
+        createdBy: 0,
+    createdOn: new Date().toISOString()
+      });
+    
+      const handleChange = async (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+      };
+    
+      const handleSave = async () => {
+        console.log(formData);
+        try {
+          const response = await axios.post(
+            'https://gecxc.com:4041/api/Role/SaveRole',
+            formData
+          );
+          console.log('Form data saved:', response.data);
+          setFormData({
+            roleName: '',
+            description: '',
+            enabled: ''
+          });
+          if (onSaveSuccess) onSaveSuccess(); // Call the success handler to refresh data
+        } catch (error) {
+          console.error('Error saving data:', error);
+        }
+      };
 
     return (
         <div>
@@ -33,8 +66,10 @@ export default function AddRole() {
                         <TextField
                             id="outlined-required"
                             label="Role Name"
-                            name="Role Name"
+                            name="roleName"
                             size="small"
+                            value={formData.roleName}
+                            onChange={handleChange}
                             required
                         />
                     </Grid>
@@ -45,8 +80,10 @@ export default function AddRole() {
                         <TextField
                             id="outlined-required"
                             label="Description"
-                            name="Description"
+                            name="description"
                             size="small"
+                            value={formData.description}
+                            onChange={handleChange}
                             required
                         />
                     </Grid>
@@ -62,6 +99,9 @@ export default function AddRole() {
                             helperText="Please select an option"
                             variant="outlined"
                             size="small"
+                            name="enabled"
+                            value={formData.enabled}
+                            onChange={handleChange}
                             fullWidth
                         >
                             {options.map((option) => (
@@ -76,7 +116,7 @@ export default function AddRole() {
                     {/* grid-5 */}
                     <Grid item md={12} width="inherit" paddingX={1} textAlign="right">
                      
-                            <Button variant="contained" color="primary" size="small"  >
+                            <Button variant="contained" color="primary" size="small" onClick={handleSave} >
                                 Save
                             </Button>
                        
