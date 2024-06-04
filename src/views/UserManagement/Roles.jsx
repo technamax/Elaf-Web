@@ -4,6 +4,7 @@ import Divider from '@mui/material/Divider';
 import AddRoleTable from 'components/Roles/addroleTable';
 
 
+
 export default function Application(fetchData) {
   return (
     <>
