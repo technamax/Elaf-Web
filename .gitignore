@@ -24,3 +24,13 @@ yarn-error.log*
 /.idea/
 src/menu-items/dashboard.js.orig
 src/views/sample-page/index.jsx.orig
+.eslintrc.orig
+package.json.orig
+package-lock.json.orig
+src/components/EditAbleDataGrid.jsx.orig
+src/views/Planning/NewCollection.jsx.orig
+src/views/Planning/PrePlanning.jsx.orig
+src/api/menuService.js.orig
+src/views/Planning/NewDesign.jsx.orig
+src/views/Planning/PrePlanningCreation.jsx.orig
+.gitignore.orig

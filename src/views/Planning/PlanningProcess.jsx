@@ -1,21 +1,27 @@
 /* eslint-disable prettier/prettier */
 import * as React from 'react';
 import Box from '@mui/material/Box';
+import Popover from '@mui/material/Popover';
+import { useEffect, useState } from 'react';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
+import axios from 'axios';
+import MenuItem from '@mui/material/MenuItem';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Fabrication from 'views/Planning/Fabrication';
+import Embroidery from './Embroidery';
 import { Grid, TextField } from '@mui/material';
 import PrePlanning from './PrePlanning';
 import Dyeing from './Dyeing';
+import Schiffli from './Schiffli';
 // import { color } from '@mui/system';
 const steps = [
   'Pre Planning',
   'Fabrication',
   'Dyeing/Printing  ',
-  'MultiHead ',
+  'Embroidery ',
   'Schiffli',
   'name6',
   'name7',
@@ -25,7 +31,25 @@ const steps = [
 export default function PlanningProcess() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [lookupDomains, setLookupDomains] = useState([]);
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
   const isStepOptional = (step) => {
     return step === 1;
   };
@@ -68,9 +92,25 @@ export default function PlanningProcess() {
     setActiveStep(0);
   };
 
+  useEffect(() => {
+    const GetLookUpDomains = async () => {
+      try {
+        const response = await axios.get(
+          `https://gecxc.com:4041/api/Common/GetLookUpDomains?appId=${1}`
+        );
+        console.log('LookupData', response);
+        setLookupDomains(response.data.result);
+      } catch (error) {
+        console.error('Error fetching design options:', error);
+      }
+      console.log('LookupData', response);
+    };
+    GetLookUpDomains();
+  }, []);
+
   return (
     <Box sx={{ width: '100%' }}>
-      <Grid container spacing={0} width="Inherit">
+      <Grid container spacing={1} width="Inherit">
         <Grid item sm={6}>
           <Typography variant="h2" gutterBottom>
             Planning Process
@@ -78,14 +118,71 @@ export default function PlanningProcess() {
           {/* <TextField fullWidth size="small"></TextField> */}
         </Grid>
         <Grid item sm={6} textAlign="right">
-          <TextField
-            fullWidth
-            select
-            label="Select Collection"
-            defaultValue=""
+          <Button
+            aria-describedby={id}
+            variant="outlined"
             size="small"
-            helperText="Please Select Collection"
-          ></TextField>
+            onClick={handleClick}
+          >
+            +Lookup
+          </Button>
+          <Popover
+            id="mouse-over-popover"
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right'
+            }}
+            sx={{
+              '.MuiPopover-paper': {
+                width: '300px', // Adjust the width as needed
+                padding: '16px' // Add some padding
+              }
+            }}
+          >
+            <Grid container spacing={3} width="Inherit">
+              <Grid item sm={12}>
+                <TextField
+                  fullWidth
+                  id="outlined-select-currency"
+                  select
+                  label="Select Design"
+                  size="small"
+                >
+                  {lookupDomains.map((domain) => (
+                    <MenuItem
+                      key={domain.lookUpDomain}
+                      value={domain.lookUpDomain}
+                    >
+                      {domain.lookUpDomain}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item sm={12}>
+                <TextField
+                  fullWidth
+                  label="Add Lookup Description"
+                  size="small"
+                ></TextField>
+              </Grid>
+              <Grid item sm={3} textAlign="right">
+                <Button
+                  variant="contained"
+                  size="small"
+                  // onClick={handleSave}
+                >
+                  Save
+                </Button>
+              </Grid>
+            </Grid>
+          </Popover>
         </Grid>
       </Grid>
 
@@ -148,6 +245,8 @@ export default function PlanningProcess() {
           {activeStep === 1 && <Fabrication />}
 
           {activeStep === 2 && <Dyeing />}
+          {activeStep === 3 && <Embroidery />}
+          {activeStep === 4 && <Schiffli />}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"

@@ -52,9 +52,23 @@ const AuthLogin = ({ ...others }) => {
         variant: 'success',
         autoHideDuration: 5000
       });
-      navigate('/');
+      console.log('Full response:', response);
 
-      console.log('Authentication successful', response.data);
+      if (response.data) {
+        const { token, empId } = response.data; // Destructure token and empId
+
+        // Save token and empId to localStorage
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('empId', empId);
+
+        console.log('Stored empId:', empId); // Log stored empId
+        console.log('Stored token:', token); // Log stored token
+
+        navigate('/dashboard');
+        console.log('Authentication successful', response.data);
+      } else {
+        throw new Error('No data in response');
+      }
     } catch (error) {
       console.error('Authentication failed', error.response.data);
       setError('Authentication failed. Please check your credentials.');

@@ -1,14 +1,9 @@
-/* eslint-disable prettier/prettier */
 import { lazy } from 'react';
-
-// project imports
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
-// import { element } from 'prop-types';
+import ProtectedRoute from './ProtectedRoute';
 
-// dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard')));
-
 const PlanningNewCollection = Loadable(
   lazy(() => import('views/Planning/NewCollection'))
 );
@@ -18,51 +13,62 @@ const PlanningNewDesign = Loadable(
 const PlanningProcess = Loadable(
   lazy(() => import('views/Planning/PlanningProcess'))
 );
-
-// sample page routing
+const UserManagementRoles = Loadable(
+  lazy(() => import('views/UserManagement/Roles'))
+);
+const UserManagementApplication = Loadable(
+  lazy(() => import('views/UserManagement/Application'))
+);
+const PrePlanningCreation = Loadable(
+  lazy(() => import('views/Planning/PrePlanningCreation'))
+);
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
-
-// ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
   path: '/',
   element: <MainLayout />,
   children: [
     {
-      path: '/',
-      element: <DashboardDefault />
+      path: 'dashboard',
+      element: <ProtectedRoute element={DashboardDefault} />
     },
     {
-      path: 'dashboard',
+      path: 'UserManagement',
       children: [
         {
-          path: 'default',
-          element: <DashboardDefault />
+          path: 'Role',
+          element: <ProtectedRoute element={UserManagementRoles} />
+        },
+        {
+          path: 'Application',
+          element: <ProtectedRoute element={UserManagementApplication} />
         }
       ]
     },
-
     {
       path: 'Planning',
       children: [
         {
-          path: 'NewCollection', // Relative path
-          element: <PlanningNewCollection />
+          path: 'NewCollection',
+          element: <ProtectedRoute element={PlanningNewCollection} />
         },
         {
-          path: 'NewDesign', // Relative path
-          element: <PlanningNewDesign />
+          path: 'NewDesign',
+          element: <ProtectedRoute element={PlanningNewDesign} />
         },
         {
-          path: 'PlanningProcess', // Relative path
-          element: <PlanningProcess />
+          path: 'PlanningProcess',
+          element: <ProtectedRoute element={PlanningProcess} />
+        },
+        {
+          path: 'PrePlanningCreation',
+          element: <ProtectedRoute element={PrePlanningCreation} />
         }
       ]
     },
-
     {
       path: 'sample-page',
-      element: <SamplePage />
+      element: <ProtectedRoute element={SamplePage} />
     }
   ]
 };
