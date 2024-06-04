@@ -336,14 +336,14 @@ const Schiffli = () => {
         batchNo: value,
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
       });
-    } else if (name === 'fabricId') {
-      const selectedFabric = Fabrications.find(
-        (fabric) => fabric.fabricId === value
-      );
+    } else if (name === 'colorId') {
+      const selectedcolor = colors.find((color) => color.colorId === value);
       setFormData({
         ...formData,
-        fabricId: value,
-        quantity: selectedFabric ? selectedFabric.total : ''
+        colorId: value,
+        availableQty: selectedcolor ? selectedcolor.total : '',
+        cuttingSize: selectedcolor ? selectedcolor.cuttingSize : '',
+        repeats: selectedcolor ? selectedcolor.repeats : ''
       });
     } else {
       setFormData({ ...formData, [name]: value });

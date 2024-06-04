@@ -47,7 +47,8 @@ const Dyeing = () => {
     GSTAmount: '',
     TotalIncludingGst: '',
     createdBy: 0,
-    poPcs: ''
+    poPcs: '',
+    baseColorName: ''
     // fabricId: ''
   });
   console.log('Dyeing form data to send', formData);
@@ -573,14 +574,13 @@ const Dyeing = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
-              // label="Base Color"
+              label="Base Color"
               fullWidth
               size="small"
               name="baseColorName"
               value={formData.baseColorName}
               onChange={handleChange}
               disabled
-              focused
             />
           </Grid>
           <Grid item xs={12} md={3}>
