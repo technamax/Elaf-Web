@@ -15,6 +15,7 @@ import Embroidery from './Embroidery';
 import { Grid, TextField } from '@mui/material';
 import PrePlanning from './PrePlanning';
 import Dyeing from './Dyeing';
+import Schiffli from './Schiffli';
 // import { color } from '@mui/system';
 const steps = [
   'Pre Planning',
@@ -245,6 +246,7 @@ export default function PlanningProcess() {
 
           {activeStep === 2 && <Dyeing />}
           {activeStep === 3 && <Embroidery />}
+          {activeStep === 4 && <Schiffli />}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"

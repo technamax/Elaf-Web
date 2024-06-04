@@ -1,6 +1,4 @@
-/* eslint-disable prettier/prettier */
-// material-ui
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Grid,
@@ -9,101 +7,152 @@ import {
   MenuItem,
   FormControl,
   Typography,
-  Divider
+  Divider,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material';
-import Autocomplete from '@mui/lab/Autocomplete';
+import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
+// import { useGetDesignListQuery } from 'api/store/Apis/designApi';
+import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
 import {
   useGetCollectionFromPlanningHeaderQuery,
   useGetFabricFromPrePlanningByBatchNoQuery,
-  useGetFabricRequisitionListByBatchNoQuery
+  useGetFabricRequisitionListByBatchNoQuery,
+  useGetFabricColorByComponentsBatchNoAndFabricIdQuery
 } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetPrePlanningHeaderByDesignIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
-import EditAbleDataGrid from 'components/EditAbleDataGrid';
+import { useGetComponentsByBatchNoQuery } from 'api/store/Apis/prePlanningHeaderApi';
+import { useGetFabricByComponentsAndBatchNoQuery } from 'api/store/Apis/prePlanningHeaderApi';
 
-// project imports
+import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
 
 const Schiffli = () => {
   const [formData, setFormData] = useState({
-    DPId: '',
     designId: '',
     batchNo: '',
+    componentId: '',
     fabricId: '',
-    ColorId: '',
-    color: '',
     vendorId: '',
-    processType: '',
-    AvailableQty: '',
-    Shrinkage: '',
-    Wastage: '',
-    OutputQty: '',
-    UOM: '',
-    RatePerUOM: '',
-    UnitRatePerPo: '',
-    TotalExclGst: '',
-    GST: '',
-    GSTAmount: '',
-    TotalIncludingGst: '',
+    poPcs: '', // coming from getcollectionapi
+    baseColorId: '', // coming from getcollectionapi
+    baseColorName: '',
+    colorId: '', //from dying screen coming from fabricAPi
+    availableQty: '',
+    noOfHeads: '',
+    repeats: '',
+    cuttingSize: '',
+    itemsPerRepeat: '',
+    totalPcs: '', //repeat*itemsPerRepeat
+    totalAmount: '', //
+    threadStitches: '',
+    threadRate: '',
+    threadAmount: '',
+    tillaStitches: '',
+    tillaRate: '',
+    tillaAmount: '',
+    sequenceStitches: '',
+    sequenceRate: '',
+    sequenceAmount: '',
+    isSolving: false,
+    solvingLayers: '',
+    solvingInMeters: '',
+    solvingRate: '',
+    solvingAmount: '',
+    additional: '',
+
+    costPerComponent: '', //
+    // costPerComponent: '',
+    createdOn: new Date().toISOString(),
     createdBy: 0,
-    poPcs: ''
-    // fabricId: ''
+    lastUpdatedOn: new Date().toISOString(),
+    LastUpdatedBy: 0
   });
-  console.log('Dyeing form data to send', formData);
+
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const { data: lookupData } = useGetLookUpListQuery();
   const { data: designData, refetch } =
     useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
-      skip: !selectedCollectionId
+      skip: !selectedCollectionId // Skip the query if no collection is selected
     });
   const { data: batchData, refetch: refetchBatches } =
     useGetPrePlanningHeaderByDesignIdQuery(formData.designId, {
-      skip: !formData.designId
+      skip: !formData.designId // Skip the query if no collection is selected
     });
-  const { data: fabricData } = useGetFabricFromPrePlanningByBatchNoQuery(
-    formData.batchNo,
+  const { data: fabricData } = useGetFabricByComponentsAndBatchNoQuery(
     {
-      skip: !formData.batchNo
+      batchNo: formData.batchNo,
+      componentId: formData.componentId
+    },
+    {
+      skip: !formData.batchNo || !formData.componentId
     }
   );
+  const { data: colorData } =
+    useGetFabricColorByComponentsBatchNoAndFabricIdQuery(
+      {
+        batchNo: formData.batchNo,
+        componentId: formData.componentId,
+        fabricId: formData.fabricId
+      },
+      {
+        skip: !formData.batchNo || !formData.componentId || !formData.fabricId
+      }
+    );
+
   const { data: fabricRequisitionData, refetch: refetchFabricRequisitionData } =
     useGetFabricRequisitionListByBatchNoQuery(formData.batchNo, {
-      skip: !formData.batchNo
+      skip: !formData.batchNo // Skip the query if no collection is selected
     });
+  const { data: componentsByBatch } = useGetComponentsByBatchNoQuery(
+    formData.batchNo,
+    {
+      skip: !formData.batchNo // Skip the query if no collection is selected
+    }
+  );
 
+  console.log('colorData', colorData);
   const [designList, setDesignList] = useState([]);
   const [batchList, setBatchList] = useState([]);
   const [Fabrications, setFabrications] = useState([]);
-  const [uoms, setUoms] = useState([]);
-  const [initialRows, setInitialRows] = useState([]);
-  const [colors, setColors] = useState([]);
   const [vendors, setVendors] = useState([]);
+  const [heads, setHeads] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [initialRows, setInitialRows] = useState([]);
+  const [components, setComponents] = useState([]);
 
   useEffect(() => {
     if (designData) {
       setDesignList(designData.result);
+      // refetch();
     }
   }, [designData]);
-
   useEffect(() => {
     if (batchData) {
       setBatchList(batchData.result);
+      // refetchBatches();
     }
   }, [batchData]);
-
   useEffect(() => {
     if (fabricData) {
       setFabrications(fabricData.result);
+      // refetchBatches();
     }
   }, [fabricData]);
   useEffect(() => {
-    if (lookupData) {
-      setVendors(lookupData.result[0].vendorList);
+    if (colorData) {
+      setColors(fabricData.result);
+      // refetchBatches();
     }
-  }, [fabricData]);
-  console.log(vendors);
+  }, [colorData]);
+  useEffect(() => {
+    if (componentsByBatch) {
+      setComponents(componentsByBatch.result);
+    }
+  }, [componentsByBatch]);
   useEffect(() => {
     if (fabricRequisitionData) {
       setInitialRows(
@@ -112,17 +161,150 @@ const Schiffli = () => {
           ...row
         }))
       );
+      // refetchBatches();
     }
   }, [fabricRequisitionData]);
 
   useEffect(() => {
+    // fetchData();
     if (lookupData) {
       const data = lookupData.result[0];
-      setUoms(data.uomList);
+
+      setVendors(data.vendorList);
+      setHeads(data.noOfHeadsList);
     }
   }, [lookupData]);
 
+  // console.log('designList', designList);
+  // console.log('selectedCollectionId', selectedCollectionId);
+  // console.log('batchList', batchList);
+  // console.log('uom', uoms);
+  // console.log('Fabrications', Fabrications);
+  // console.log('initialRows', initialRows);
+  // console.log('components', components);
+
   const collectionList = collectionData?.result || [];
+  // console.log('collectionList', collectionList);
+
+  useEffect(() => {
+    const calculateTotalPcs = () => {
+      const repeats = parseFloat(formData.repeats) || 0;
+      const itemsPerRepeat = parseFloat(formData.itemsPerRepeat) || 0;
+      return repeats * itemsPerRepeat;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      totalPcs: calculateTotalPcs()
+    }));
+    const calculateThread = () => {
+      const stitches = parseFloat(formData.threadStitches) || 0;
+      const rate = parseFloat(formData.threadRate) || 0;
+      const heads = parseFloat(formData.noOfHeads) || 0;
+      const repeats = parseFloat(formData.repeats) || 0;
+      return (stitches / 1000) * (rate * repeats * heads);
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      threadAmount: calculateThread()
+    }));
+    const calculateTilla = () => {
+      const stitches = parseFloat(formData.tillaStitches) || 0;
+      const rate = parseFloat(formData.tillaRate) || 0;
+      const heads = parseFloat(formData.noOfHeads) || 0;
+      const repeats = parseFloat(formData.repeats) || 0;
+      return (stitches / 1000) * (rate * repeats * heads);
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      tillaAmount: calculateTilla()
+    }));
+    const calculateSequence = () => {
+      const stitches = parseFloat(formData.sequenceStitches) || 0;
+      const rate = parseFloat(formData.sequenceRate) || 0;
+      const heads = parseFloat(formData.noOfHeads) || 0;
+      const repeats = parseFloat(formData.repeats) || 0;
+      return (stitches / 1000) * (rate * repeats * heads);
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      sequenceAmount: calculateSequence()
+    }));
+    const calculateInMeters = () => {
+      const repeats = parseFloat(formData.repeats) || 0;
+      const noOfHeads = parseFloat(formData.noOfHeads) || 0;
+      const layers = parseFloat(formData.solvingLayers) || 0;
+      return ((repeats * noOfHeads * 13) / 39.37) * layers;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      solvingInMeters: calculateInMeters()
+    }));
+    const calculateSolvingAmount = () => {
+      const solvingInMeters = parseFloat(formData.solvingInMeters) || 0;
+      const solvingRate = parseFloat(formData.solvingRate) || 0;
+      const layers = parseFloat(formData.solvingLayers) || 0;
+      return solvingInMeters * solvingRate;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      solvingAmount: calculateSolvingAmount()
+    }));
+    const calculateTotalAmount = () => {
+      const thread = parseFloat(formData.threadAmount) || 0;
+      const tilla = parseFloat(formData.tillaAmount) || 0;
+      const sequence = parseFloat(formData.sequenceAmount) || 0;
+      const solving = parseFloat(formData.solvingAmount) || 0;
+      return thread + tilla + sequence + solving;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      totalAmount: calculateTotalAmount()
+    }));
+    const calculateCostPerComponent = () => {
+      const totalAmount = parseFloat(formData.totalAmount) || 0;
+      const totalPcs = parseFloat(formData.totalPcs) || 0;
+
+      return totalAmount / totalPcs;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      costPerComponent: calculateCostPerComponent()
+    }));
+  }, [
+    formData.threadAmount,
+    formData.totalAmount,
+    formData.sequenceAmount,
+    formData.solvingAmount,
+    formData.repeats,
+    formData.tillaAmount,
+    formData.itemsPerRepeat,
+    formData.threadRate,
+    formData.threadStitches,
+    formData.noOfHeads,
+    formData.tillaRate,
+    formData.tillaStitches,
+    formData.sequenceRate,
+    formData.sequenceStitches,
+    formData.solvingLayers,
+    formData.solvingInMeters,
+    formData.solvingRate
+  ]);
+
+  // const handleCheckboxChange = (e) => {
+  //   const { name, checked } = e.target;
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     [name]: checked
+  //   }));
+  // };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -134,6 +316,7 @@ const Schiffli = () => {
       setFormData({
         ...formData,
         collectionId: value,
+
         poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
     } else if (name === 'designId') {
@@ -153,225 +336,179 @@ const Schiffli = () => {
         batchNo: value,
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
       });
-      // Fetch data from API when batchNo changes
     } else if (name === 'fabricId') {
       const selectedFabric = Fabrications.find(
         (fabric) => fabric.fabricId === value
       );
-      console.log('Selected Fabric:', Fabrications); // Add this line to check selected fabric
       setFormData({
         ...formData,
         fabricId: value,
-        OutputQty: selectedFabric ? selectedFabric.total : ''
+        quantity: selectedFabric ? selectedFabric.total : ''
       });
-      fetchFabricColorData(value); // Pass formData.fabricId instead of value
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
-  const fetchFabricColorData = async (fabricId) => {
-    try {
-      const response = await axios.get(
-        `https://gecxc.com:4041/api/DyeingPrinting/GetFabricColorFromPrePlanningByFabricId?fabricId=${fabricId}`
-      );
-      const data = response.data.result;
-      console.log('Dyeing Color Data', data);
-
-      if (data.length > 0) {
-        const fabricInfo = data[0]; // Assuming only one fabric info is returned
-
-        // Update form data with fabric info
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          Shrinkage: fabricInfo.shrinkage.toFixed(2), // Assuming shrinkage is returned as a decimal
-          Wastage: fabricInfo.wastage.toFixed(2), // Assuming wastage is returned as a decimal
-          UOM: fabricInfo.uom,
-          AvailableQty: fabricInfo.total.toString() // Convert total to string to set in TextField
-          // Assuming uomId is not needed in the form
-        }));
-      }
-
-      const colorOptions = data.map((item) => ({
-        label: item.color,
-        value: item.colorId
-      }));
-
-      setColors(colorOptions);
-      // Assuming the first color is automatically selected
-      if (colorOptions.length > 0) {
-        const firstColor = colorOptions[0];
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          ColorId: firstColor.value,
-          color: firstColor.label
-        }));
-      }
-    } catch (error) {
-      console.error('Error fetching fabric color data:', error);
-    }
-  };
-  useEffect(() => {
-    const calculateTotal = () => {
-      const AvailableQty = parseFloat(formData.AvailableQty) || 0;
-      const shrinkage = parseFloat(formData.Shrinkage) || 0;
-      const wastage = parseFloat(formData.Wastage) || 0;
-      return (AvailableQty * (100 - (shrinkage + wastage))) / 100;
-    };
-
-    setFormData((prevData) => ({
-      ...prevData,
-      OutputQty: calculateTotal()
-    }));
-  }, [formData.AvailableQty, formData.Shrinkage, formData.Wastage]);
-  const handleSave = async () => {
-    // Validate required fields
-    // if (
-    //   !formData.designId ||
-    //   !formData.batchNo ||
-    //   !formData.fabricId ||
-    //   !formData.vendorId ||
-    //   !formData.processType
-    // ) {
-    //   alert('Please fill all required fields.');
-    //   return;
-    // }
-
-    // Log formData to debug
-    console.log('Form Data:', formData);
-
-    const payload = {
-      dpId: parseInt(formData.DPId) || 0,
-      designId: parseInt(formData.designId),
-      batchNo: formData.batchNo,
-      fabricId: parseInt(formData.fabricId),
-      colorId: parseInt(formData.ColorId) || 0,
-      vendorId: parseInt(formData.vendorId) || 0,
-      processType: formData.processType,
-      availableQty: parseFloat(formData.AvailableQty) || 0,
-      shrinkage: parseFloat(formData.Shrinkage) || 0,
-      wastage: parseFloat(formData.Wastage) || 0,
-      outputQty: parseFloat(formData.OutputQty) || 0,
-      uomId: parseInt(formData.UOM) || 0,
-      ratePerUOM: parseFloat(formData.RatePerUOM) || 0,
-      unitRatePerPo: parseFloat(formData.UnitRatePerPo) || 0,
-      totalExclGst: parseFloat(formData.TotalExclGst) || 0,
-      gst: parseFloat(formData.GST) || 0,
-      gstAmount: parseFloat(formData.GSTAmount) || 0,
-      totalIncludingGst: parseFloat(formData.TotalIncludingGst) || 0,
-      createdBy: formData.createdBy
-    };
-
-    // Log payload to debug
-    console.log('Payload:', payload);
-
-    try {
-      const response = await axios.post(
-        'https://gecxc.com:4041/api/DyeingPrinting/SaveDyeingPrinting',
-        payload
-      );
-
-      if (response.status === 200) {
-        console.log('Data saved successfully:', response.data);
-        // Handle success (e.g., show a success message or reset the form)
-      } else {
-        console.error('Failed to save data:', response.data);
-        // Handle error (e.g., show an error message)
-      }
-    } catch (error) {
-      console.error('Error saving data:', error);
-      // Handle error (e.g., show an error message)
-    }
-  };
-
   const columns = [
-    { field: 'name', headerName: 'Order Number', editable: true, flex: 2 },
     {
-      field: 'DesignId',
+      field: 'designId',
       headerName: 'Design',
-      type: 'number',
+      editable: true,
       flex: 1,
-      align: 'left',
-      headerAlign: 'left',
-      editable: true
+      type: 'singleSelect',
+      valueOptions: designList.map((collection) => ({
+        value: collection.designId,
+        label: collection.designNo
+      }))
     },
     {
-      field: 'FabricId',
-      headerName: 'Fabric',
-      type: 'date',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'ProcessType',
-      headerName: 'Process',
+      field: 'poPcs',
+      headerName: 'PO. Pieces',
       flex: 1,
       editable: true
     },
     {
-      field: 'ColorId',
-      headerName: 'Color',
+      field: 'quantity',
+      headerName: 'Quantity',
       flex: 1,
       editable: true
     },
     {
-      field: 'role',
-      headerName: 'Po Pcs',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'AvailableQty',
-      headerName: 'Qty',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'UOM',
-      headerName: 'UOM',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'RatePerUOM',
+      field: 'rate',
       headerName: 'Rate',
-      flex: 1,
-      editable: true
+      editable: true,
+      flex: 1
     },
     {
-      field: 'UnitRatePerPo',
+      field: 'vendorId',
+      headerName: 'Vendor',
+      editable: true,
+      flex: 1,
+      type: 'singleSelect',
+      valueOptions: vendors.map((collection) => ({
+        value: collection.lookUpId,
+        label: collection.lookUpName
+      }))
+    },
+    {
+      field: 'total',
+      headerName: 'Total',
+      flex: 1,
+      editable: true,
+      // valueGetter: (params, row) => {
+      //   const quantity = parseFloat(row.quantity) || 0;
+      //   const rate = parseFloat(row.rate) || 0;
+      //   return quantity * rate;
+      // }
+      valueSetter: (params, row) => {
+        const quantity = row.quantity ?? 0;
+        const rate = row.rate ?? 0;
+        const total = quantity * rate;
+        console.log('total', total);
+        return { ...row, total };
+      }
+      // valueSetter: (params, row) => {
+      //   console.log('row', row);
+      //   const quantity = row.quantity || 0;
+      //   const rate = row.rate || 0;
+      //   return quantity * rate;
+      // }
+    },
+    {
+      field: 'unitPrice',
       headerName: 'Unit Price',
       flex: 1,
-      editable: true
+      editable: true,
+      // valueGetter: (params, row) => {
+      //   const total = parseFloat(row.total) || 0;
+      //   const poPcs = parseFloat(row.poPcs) || 0;
+      //   return total / poPcs;
+      // }
+      valueSetter: (params, row) => {
+        const total = row.total ?? 0;
+        const poPcs = row.poPcs ?? 0;
+        const unitPrice = total / poPcs;
+        console.log('unitPrice', unitPrice);
+        return { ...row, unitPrice };
+      }
+      // valueSetter: (params, row) => {
+      //   const total = row.total || 0;
+      //   const poPcs = row.poPcs || 0;
+      //   return total / poPcs;
+      // }
     },
     {
-      field: 'TotalIncludingGst',
-      headerName: 'Total W/ GST',
+      field: 'gst',
+      headerName: 'GST',
       flex: 1,
       editable: true
-    }
-  ];
-  const handleAutocompleteChange = (event, newValue, name) => {
-    setFormData({
-      ...formData,
-      [name]: newValue ? newValue.value : ''
-    });
-  };
-  const design = [
-    {
-      value: 'D',
-      label: 'Dyeing'
     },
     {
-      value: 'P',
-      label: 'Printing'
+      field: 'totalInclGst',
+      headerName: 'Total Inc. GST',
+      flex: 1,
+      editable: true,
+      // valueGetter: (params, row) => {
+      //   console.log(row);
+      //   const total = parseFloat(row.total) || 0;
+      //   const gst = parseFloat(row.gst) || 0;
+      //   return total * (1 + gst / 100);
+      // }
+      valueSetter: (params, row) => {
+        const total = row.total ?? 0;
+        const gst = row.gst ?? 0;
+        const totalInclGst = total * (1 + gst / 100);
+        console.log('totalInclGst', totalInclGst);
+        return { ...row, totalInclGst };
+      }
     }
   ];
 
+  const handleSave = async () => {
+    try {
+      // Make the API call
+      const response = await axios.post(
+        'https://gecxc.com:4041/api/Fabrication/SaveFabrication',
+        formData
+      );
+
+      // Handle the response if needed
+      console.log('Save response:', response.data);
+
+      // Clear the form after successful save
+      // refetchFabricRequisitionData();
+      setFormData({
+        designId: '',
+        batchNo: '',
+        baseColorId: '',
+        baseColorName: '',
+        fabricId: '',
+        poPcs: '',
+        quantity: '',
+        rate: '',
+        uomId: 'string',
+        total: '',
+        unitPrice: '',
+        gst: '',
+        totalInclGst: '',
+        createdOn: '2024-05-29T09:56:23.916Z',
+        createdBy: 0,
+        lastUpdatedOn: '2024-05-29T09:56:23.916Z',
+        LastUpdatedBy: 0
+      });
+    } catch (error) {
+      console.error('Error saving data:', error);
+    }
+  };
+
+  console.log('formData', formData);
+  // const editAPi = https://gecxc.com:4041/api/Fabrication/SaveFabrication;
+  // const deleteApi = https://gecxc.com:4041/api/Fabrication/DeleteFabricByFabricId?fabricationId=;
   return (
     <MainCard
       style={{
-        borderWidth: 1,
+        borderWidth: 2,
         borderStyle: 'dotted',
         borderColor: '#a11f23',
         width: 'auto',
@@ -386,13 +523,8 @@ const Schiffli = () => {
               Schiffli
             </Typography>
           </Grid>
-          <Grid item xs={3} md={3} textAlign="right">
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={handleSave}
-            >
+          <Grid item xs={3} textAlign="right">
+            <Button variant="contained" size="small" onClick={handleSave}>
               Save
             </Button>
           </Grid>
@@ -433,6 +565,17 @@ const Schiffli = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
+              label="Base Color"
+              fullWidth
+              size="small"
+              name="baseColorName"
+              value={formData.baseColorName}
+              onChange={handleChange}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
               fullWidth
               select
               label="Batch No."
@@ -452,6 +595,28 @@ const Schiffli = () => {
             <TextField
               fullWidth
               select
+              label="Components"
+              name="componentId"
+              value={formData.componentId}
+              onChange={handleChange}
+              size="small"
+            >
+              {components.map((option) => (
+                <MenuItem key={option.componentId} value={option.componentId}>
+                  {option.componentName}
+                </MenuItem>
+              ))}
+            </TextField>{' '}
+          </Grid>
+
+          <Grid item xs={12} md={12}>
+            <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
+          </Grid>
+
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
               label="Select Fabric"
               defaultValue=""
               size="small"
@@ -467,37 +632,15 @@ const Schiffli = () => {
             </TextField>
           </Grid>
           <Grid item xs={12} md={3}>
-            <Autocomplete
-              fullWidth
-              options={colors}
-              getOptionLabel={(option) => option.label || ''}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Color"
-                  name="ColorId"
-                  size="small"
-                />
-              )}
-              value={
-                colors.find((color) => color.value === formData.ColorId) || null
-              }
-              onChange={(event, newValue) => {
-                setFormData((prevFormData) => ({
-                  ...prevFormData,
-                  ColorId: newValue ? newValue.value : ''
-                }));
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
             <TextField
               fullWidth
               select
-              label="Vendor Name "
+              label="Vendors"
+              defaultValue=""
               size="small"
+              name="vendorId"
               value={formData.vendorId}
-              handleChange={handleChange}
+              onChange={handleChange}
             >
               {vendors.map((option) => (
                 <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -506,34 +649,7 @@ const Schiffli = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              // label="Base Color"
-              fullWidth
-              size="small"
-              name="baseColorName"
-              value={formData.baseColorName}
-              onChange={handleChange}
-              disabled
-              focused
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Process Type "
-              size="small"
-              value={formData.processType}
-              handleChange={handleChange}
-            >
-              {design.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
+
           <Grid item xs={12} md={3}>
             <TextField
               label="Po Pcs"
@@ -544,123 +660,310 @@ const Schiffli = () => {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12} md={1.5}>
+          <Grid item xs={12} md={3}>
             <TextField
-              label="UOM"
               fullWidth
+              select
+              label="Color"
               size="small"
-              name="UOM"
-              value={formData.UOM}
-              // focused
-            />
+              name="colorId"
+              value={formData.colorId}
+              onChange={handleChange}
+            >
+              {colors.map((option) => (
+                <MenuItem key={option.colorId} value={option.colorId}>
+                  {option.color}
+                </MenuItem>
+              ))}
+            </TextField>
           </Grid>
-          <Grid item xs={12} md={1.5}>
+          <Grid item xs={12} md={3}>
             <TextField
-              label="AvailableQty"
+              label="Available Quantity"
               fullWidth
               size="small"
-              name="AvailableQty"
-              value={formData.AvailableQty}
-              // focused
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="Shrinkage%"
-              fullWidth
-              size="small"
-              name="Shrinkage"
-              value={formData.Shrinkage}
-              // focused
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="Wastage%"
-              fullWidth
-              size="small"
-              name="Wastage"
-              value={formData.Wastage}
-              // focused
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="Output Qty"
-              fullWidth
-              size="small"
-              name="OutputQty"
-              value={formData.OutputQty}
-              // focused
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="Rate"
-              fullWidth
-              size="small"
-              name="RatePerUOM"
-              value={formData.RatePerUOM}
+              name="availableQty"
+              value={formData.availableQty}
               onChange={handleChange}
             />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="Total Excluding GST"
-              fullWidth
-              size="small"
-              name="TotalExclGst"
-              value={formData.TotalExclGst}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="GST"
-              fullWidth
-              size="small"
-              name="GST"
-              value={formData.GST}
-              onChange={handleChange}
-            />{' '}
           </Grid>
 
-          <Grid item xs={12} md={1.5}>
+          <Grid item xs={12} md={3}>
             <TextField
-              label="GST Amount"
+              label="Repeats"
               fullWidth
               size="small"
-              name="GSTAmount"
-              value={formData.GSTAmount}
+              name="repeats"
+              value={formData.repeats}
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12} md={1.5}>
+          <Grid item xs={12} md={3}>
             <TextField
-              label="Total:Including Gst"
+              fullWidth
+              select
+              label="Heads"
+              defaultValue=""
+              size="small"
+              name="noOfHeads"
+              value={formData.noOfHeads}
+              onChange={handleChange}
+            >
+              {heads.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Cutting Size"
               fullWidth
               size="small"
-              name="TotalExclGst"
-              value={formData.TotalIncludingGst}
+              name="cuttingSize"
+              value={formData.cuttingSize}
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12} md={1.5}>
+          <Grid item xs={12} md={3}>
             <TextField
-              label="Unit P: T/Po PC's"
+              label="itemsPerRepeat"
               fullWidth
               size="small"
-              name="UnitRatePerPo"
-              value={formData.UnitRatePerPo}
+              name="itemsPerRepeat"
+              value={formData.itemsPerRepeat}
               onChange={handleChange}
             />
           </Grid>
-          <Divider color="#cc8587" sx={{ height: 2, width: '100%', mt: 2 }} />
-          <Grid item xs={12} md={12} paddingTop={1}>
-            <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} />
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="total Pcs."
+              fullWidth
+              size="small"
+              name="totalPcs"
+              value={formData.totalPcs}
+              onChange={handleChange}
+            />
           </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Total Amount"
+              fullWidth
+              size="small"
+              name="totalAmount"
+              value={formData.totalAmount}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Cost Per Component"
+              fullWidth
+              size="small"
+              name="costPerComponent"
+              value={formData.costPerComponent}
+              onChange={handleChange}
+            />
+          </Grid>
+          {/* <Grid item xs={12} md={12}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.isSolving}
+                  onChange={handleCheckboxChange}
+                  name="isSolving"
+                />
+              }
+              label="isSolving"
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Grid container spacing={1} width="Inherit">
+              <Grid item xs={12} md={12}>
+                <Typography variant="h5" gutterBottom>
+                  Thread
+                </Typography>
+              </Grid>{' '}
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="Stitches"
+                  fullWidth
+                  size="small"
+                  name="threadStitches"
+                  value={formData.threadStitches}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="Rate"
+                  fullWidth
+                  size="small"
+                  name="threadRate"
+                  value={formData.threadRate}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="Amount"
+                  fullWidth
+                  size="small"
+                  name="threadAmount"
+                  value={formData.threadAmount}
+                  onChange={handleChange}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Grid container spacing={1} width="Inherit">
+              <Grid item xs={12} md={12}>
+                <Typography variant="h5" gutterBottom>
+                  Tilla
+                </Typography>
+              </Grid>{' '}
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="Stitches"
+                  fullWidth
+                  size="small"
+                  name="tillaStitches"
+                  value={formData.tillaStitches}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="Rate"
+                  fullWidth
+                  size="small"
+                  name="tillaRate"
+                  value={formData.tillaRate}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="Amount"
+                  fullWidth
+                  size="small"
+                  name="tillaAmount"
+                  value={formData.tillaAmount}
+                  onChange={handleChange}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Grid container spacing={1} width="Inherit">
+              <Grid item xs={12} md={12}>
+                <Typography variant="h5" gutterBottom>
+                  Sequence
+                </Typography>
+              </Grid>{' '}
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="Stitches"
+                  fullWidth
+                  size="small"
+                  name="sequenceStitches"
+                  value={formData.sequenceStitches}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="Rate"
+                  fullWidth
+                  size="small"
+                  name="sequenceRate"
+                  value={formData.sequenceRate}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  label="Amount"
+                  fullWidth
+                  size="small"
+                  name="sequenceAmount"
+                  value={formData.sequenceAmount}
+                  onChange={handleChange}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          {formData.isSolving ? (
+            <Grid item xs={12} md={6}>
+              <Grid container spacing={1} width="Inherit">
+                <Grid item xs={12} md={12}>
+                  <Typography variant="h5" gutterBottom>
+                    Solving
+                  </Typography>
+                </Grid>{' '}
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Layers"
+                    fullWidth
+                    size="small"
+                    name="solvingLayers"
+                    value={formData.solvingLayers}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Meters"
+                    fullWidth
+                    size="small"
+                    name="solvingInMeters"
+                    value={formData.solvingInMeters}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Rate"
+                    fullWidth
+                    size="small"
+                    name="solvingRate"
+                    value={formData.solvingRate}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Amount"
+                    fullWidth
+                    size="small"
+                    name="solvingAmount"
+                    value={formData.solvingAmount}
+                    onChange={handleChange}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+          ) : null} */}
         </Grid>
       </FormControl>
+      <Grid container spacing={2} width="Inherit">
+        <Grid sx={{ marginTop: 2 }} item xs={12}>
+          <EditAbleDataGrid
+            ncolumns={columns}
+            initialRows={initialRows}
+            formData={formData}
+            // editAPi={editAPi}
+            // refetch={refetchFabricRequisitionData}
+            // deleteApi={deleteApi}
+            // deleteBy="fabricationId"
+            disableAddRecord={true}
+          />
+        </Grid>
+      </Grid>
     </MainCard>
   );
 };
