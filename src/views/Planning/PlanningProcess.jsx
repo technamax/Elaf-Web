@@ -16,6 +16,9 @@ import { Grid, TextField } from '@mui/material';
 import PrePlanning from './PrePlanning';
 import Dyeing from './Dyeing';
 import Schiffli from './Schiffli';
+import AdditionalProcess from './AdditionalProcess';
+import AddAdditionalServices from './AdditionalServices';
+import AdditionalServices from './AdditionalServices';
 // import { color } from '@mui/system';
 const steps = [
   'Pre Planning',
@@ -23,9 +26,8 @@ const steps = [
   'Dyeing/Printing  ',
   'Embroidery ',
   'Schiffli',
-  'name6',
-  'name7',
-  'name8'
+  'Additional Process',
+  'Additional Services'
 ];
 
 export default function PlanningProcess() {
@@ -247,6 +249,8 @@ export default function PlanningProcess() {
           {activeStep === 2 && <Dyeing />}
           {activeStep === 3 && <Embroidery />}
           {activeStep === 4 && <Schiffli />}
+          {activeStep === 5 && <AdditionalProcess />}
+          {activeStep === 6 && <AdditionalServices />}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"
