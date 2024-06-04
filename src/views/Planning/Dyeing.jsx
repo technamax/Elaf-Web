@@ -261,7 +261,8 @@ const Dyeing = () => {
     formData.Wastage,
     formData.RatePerUOM,
     formData.GST,
-    formData.poPcs
+    formData.poPcs,
+    formData.UnitRatePerPo
   ]);
 
   const handleSave = async () => {

@@ -64,7 +64,7 @@ const Embroidery = () => {
     additional: '',
 
     costPerComponent: '', //
-    costPerComponent: '', //
+    // costPerComponent: '',
     createdOn: new Date().toISOString(),
     createdBy: 0,
     lastUpdatedOn: new Date().toISOString(),
@@ -503,8 +503,8 @@ const Embroidery = () => {
   };
 
   console.log('formData', formData);
-  // const editAPi = `https://gecxc.com:4041/api/Fabrication/SaveFabrication`;
-  // const deleteApi = `https://gecxc.com:4041/api/Fabrication/DeleteFabricByFabricId?fabricationId=`;
+  // const editAPi = https://gecxc.com:4041/api/Fabrication/SaveFabrication;
+  // const deleteApi = https://gecxc.com:4041/api/Fabrication/DeleteFabricByFabricId?fabricationId=;
   return (
     <MainCard
       style={{
