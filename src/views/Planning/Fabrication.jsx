@@ -256,7 +256,7 @@ const Fabrication = () => {
         const quantity = row.quantity ?? 0;
         const rate = row.rate ?? 0;
         const total = quantity * rate;
-        console.log('total', total);
+        // console.log('total', total);
         return { ...row, total };
       }
       // valueSetter: (params, row) => {
@@ -280,7 +280,7 @@ const Fabrication = () => {
         const total = row.total ?? 0;
         const poPcs = row.poPcs ?? 0;
         const unitPrice = total / poPcs;
-        console.log('unitPrice', unitPrice);
+        // console.log('unitPrice', unitPrice);
         return { ...row, unitPrice };
       }
       // valueSetter: (params, row) => {
@@ -310,7 +310,7 @@ const Fabrication = () => {
         const total = row.total ?? 0;
         const gst = row.gst ?? 0;
         const totalInclGst = total * (1 + gst / 100);
-        console.log('totalInclGst', totalInclGst);
+        // console.log('totalInclGst', totalInclGst);
         return { ...row, totalInclGst };
       }
     }

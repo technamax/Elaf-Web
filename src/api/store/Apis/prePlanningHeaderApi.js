@@ -5,7 +5,7 @@ export const prePlanningHeaderApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'https://gecxc.com:4041/api/' }),
   endpoints: (builder) => ({
     getCollectionFromPlanningHeader: builder.query({
-      query: () => `PrePlanning/GetCollectionFromPlanningHeader`
+      query: () => `PrePlanning/GetCollectionListFromPlanningHeader`
     }),
     getDesignFromPlanningHeaderByCollectionId: builder.query({
       query: (collectionId) =>
@@ -33,6 +33,10 @@ export const prePlanningHeaderApi = createApi({
     getFabricColorByComponentsBatchNoAndFabricId: builder.query({
       query: ({ batchNo, componentId, fabricId }) =>
         `Embroidery/GetFabricColorByComponentsBatchNoAndFabricId?batchNo=${batchNo}&componentId=${componentId}&fabricId=${fabricId}`
+    }),
+    getEmbroideryListByBatchNo: builder.query({
+      query: (batchNo) =>
+        `Embroidery/GetEmbroideryListByBatchNo?batchNo=${batchNo}`
     })
   })
 });
@@ -45,5 +49,6 @@ export const {
   useGetFabricRequisitionListByBatchNoQuery,
   useGetComponentsByBatchNoQuery,
   useGetFabricByComponentsAndBatchNoQuery,
-  useGetFabricColorByComponentsBatchNoAndFabricIdQuery
+  useGetFabricColorByComponentsBatchNoAndFabricIdQuery,
+  useGetEmbroideryListByBatchNoQuery
 } = prePlanningHeaderApi;

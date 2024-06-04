@@ -9,15 +9,20 @@ import {
   Typography,
   Divider,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  InputLabel,
+  Select,
+  OutlinedInput,
+  Box
 } from '@mui/material';
-import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
-// import { useGetDesignListQuery } from 'api/store/Apis/designApi';
-import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
+
+import { DataGrid } from '@mui/x-data-grid';
+import { useTheme } from '@mui/material/styles';
+
 import {
   useGetCollectionFromPlanningHeaderQuery,
   useGetFabricFromPrePlanningByBatchNoQuery,
-  useGetFabricRequisitionListByBatchNoQuery,
+  useGetEmbroideryListByBatchNoQuery,
   useGetFabricColorByComponentsBatchNoAndFabricIdQuery
 } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
@@ -26,10 +31,11 @@ import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { useGetComponentsByBatchNoQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetFabricByComponentsAndBatchNoQuery } from 'api/store/Apis/prePlanningHeaderApi';
 
-import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
 
 const Embroidery = () => {
+  const theme = useTheme();
+
   const [formData, setFormData] = useState({
     designId: '',
     batchNo: '',
@@ -53,7 +59,7 @@ const Embroidery = () => {
     tillaStitches: '',
     tillaRate: '',
     tillaAmount: '',
-    sequenceStitches: '',
+    sequence: '',
     sequenceRate: '',
     sequenceAmount: '',
     isSolving: false,
@@ -61,15 +67,25 @@ const Embroidery = () => {
     solvingInMeters: '',
     solvingRate: '',
     solvingAmount: '',
-    additional: '',
+    // additional: '',
+    threadAdditional: [],
 
     costPerComponent: '', //
-    costPerComponent: '', //
+    // costPerComponent: '', //
     createdOn: new Date().toISOString(),
     createdBy: 0,
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: 0
   });
+  const additionals = ['Boring', 'Pooni', 'Laser', 'Doori', 'Dissolving'];
+  function getStyles(name, personName, theme) {
+    return {
+      fontWeight:
+        personName.indexOf(name) === -1
+          ? theme.typography.fontWeightRegular
+          : theme.typography.fontWeightMedium
+    };
+  }
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
@@ -103,8 +119,8 @@ const Embroidery = () => {
       }
     );
 
-  const { data: fabricRequisitionData, refetch: refetchFabricRequisitionData } =
-    useGetFabricRequisitionListByBatchNoQuery(formData.batchNo, {
+  const { data: embroideryList, refetch: refetchEmbroideryList } =
+    useGetEmbroideryListByBatchNoQuery(formData.batchNo, {
       skip: !formData.batchNo // Skip the query if no collection is selected
     });
   const { data: componentsByBatch } = useGetComponentsByBatchNoQuery(
@@ -154,16 +170,16 @@ const Embroidery = () => {
     }
   }, [componentsByBatch]);
   useEffect(() => {
-    if (fabricRequisitionData) {
+    if (embroideryList) {
       setInitialRows(
-        fabricRequisitionData.result.map((row, index) => ({
+        embroideryList.result.map((row, index) => ({
           id: index,
           ...row
         }))
       );
       // refetchBatches();
     }
-  }, [fabricRequisitionData]);
+  }, [embroideryList]);
 
   useEffect(() => {
     // fetchData();
@@ -175,16 +191,7 @@ const Embroidery = () => {
     }
   }, [lookupData]);
 
-  // console.log('designList', designList);
-  // console.log('selectedCollectionId', selectedCollectionId);
-  // console.log('batchList', batchList);
-  // console.log('uom', uoms);
-  // console.log('Fabrications', Fabrications);
-  // console.log('initialRows', initialRows);
-  // console.log('components', components);
-
   const collectionList = collectionData?.result || [];
-  // console.log('collectionList', collectionList);
 
   useEffect(() => {
     const calculateTotalPcs = () => {
@@ -222,7 +229,7 @@ const Embroidery = () => {
       tillaAmount: calculateTilla()
     }));
     const calculateSequence = () => {
-      const stitches = parseFloat(formData.sequenceStitches) || 0;
+      const stitches = parseFloat(formData.sequence) || 0;
       const rate = parseFloat(formData.sequenceRate) || 0;
       const heads = parseFloat(formData.noOfHeads) || 0;
       const repeats = parseFloat(formData.repeats) || 0;
@@ -292,7 +299,7 @@ const Embroidery = () => {
     formData.tillaRate,
     formData.tillaStitches,
     formData.sequenceRate,
-    formData.sequenceStitches,
+    formData.sequence,
     formData.solvingLayers,
     formData.solvingInMeters,
     formData.solvingRate
@@ -329,172 +336,71 @@ const Embroidery = () => {
         baseColorId: selectedDesign ? selectedDesign.colorId : '',
         baseColorName: selectedDesign ? selectedDesign.colorName : ''
       });
-    } else if (name === 'batchNo') {
-      const selectedBatch = batchList.find((batch) => batch.batchNo === value);
+    } else if (name === 'colorId') {
+      const selectedcolor = colors.find((color) => color.colorId === value);
       setFormData({
         ...formData,
-        batchNo: value,
-        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
-      });
-    } else if (name === 'fabricId') {
-      const selectedFabric = Fabrications.find(
-        (fabric) => fabric.fabricId === value
-      );
-      setFormData({
-        ...formData,
-        fabricId: value,
-        quantity: selectedFabric ? selectedFabric.total : ''
+        colorId: value,
+        availableQty: selectedcolor ? selectedcolor.total : '',
+        cuttingSize: selectedcolor ? selectedcolor.cuttingSize : '',
+        repeats: selectedcolor ? selectedcolor.repeats : ''
       });
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
-  const columns = [
-    {
-      field: 'designId',
-      headerName: 'Design',
-      editable: true,
-      flex: 1,
-      type: 'singleSelect',
-      valueOptions: designList.map((collection) => ({
-        value: collection.designId,
-        label: collection.designNo
-      }))
-    },
-    {
-      field: 'poPcs',
-      headerName: 'PO. Pieces',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'quantity',
-      headerName: 'Quantity',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'rate',
-      headerName: 'Rate',
-      editable: true,
-      flex: 1
-    },
-    {
-      field: 'vendorId',
-      headerName: 'Vendor',
-      editable: true,
-      flex: 1,
-      type: 'singleSelect',
-      valueOptions: vendors.map((collection) => ({
-        value: collection.lookUpId,
-        label: collection.lookUpName
-      }))
-    },
-    {
-      field: 'total',
-      headerName: 'Total',
-      flex: 1,
-      editable: true,
-      // valueGetter: (params, row) => {
-      //   const quantity = parseFloat(row.quantity) || 0;
-      //   const rate = parseFloat(row.rate) || 0;
-      //   return quantity * rate;
-      // }
-      valueSetter: (params, row) => {
-        const quantity = row.quantity ?? 0;
-        const rate = row.rate ?? 0;
-        const total = quantity * rate;
-        console.log('total', total);
-        return { ...row, total };
-      }
-      // valueSetter: (params, row) => {
-      //   console.log('row', row);
-      //   const quantity = row.quantity || 0;
-      //   const rate = row.rate || 0;
-      //   return quantity * rate;
-      // }
-    },
-    {
-      field: 'unitPrice',
-      headerName: 'Unit Price',
-      flex: 1,
-      editable: true,
-      // valueGetter: (params, row) => {
-      //   const total = parseFloat(row.total) || 0;
-      //   const poPcs = parseFloat(row.poPcs) || 0;
-      //   return total / poPcs;
-      // }
-      valueSetter: (params, row) => {
-        const total = row.total ?? 0;
-        const poPcs = row.poPcs ?? 0;
-        const unitPrice = total / poPcs;
-        console.log('unitPrice', unitPrice);
-        return { ...row, unitPrice };
-      }
-      // valueSetter: (params, row) => {
-      //   const total = row.total || 0;
-      //   const poPcs = row.poPcs || 0;
-      //   return total / poPcs;
-      // }
-    },
-    {
-      field: 'gst',
-      headerName: 'GST',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'totalInclGst',
-      headerName: 'Total Inc. GST',
-      flex: 1,
-      editable: true,
-      // valueGetter: (params, row) => {
-      //   console.log(row);
-      //   const total = parseFloat(row.total) || 0;
-      //   const gst = parseFloat(row.gst) || 0;
-      //   return total * (1 + gst / 100);
-      // }
-      valueSetter: (params, row) => {
-        const total = row.total ?? 0;
-        const gst = row.gst ?? 0;
-        const totalInclGst = total * (1 + gst / 100);
-        console.log('totalInclGst', totalInclGst);
-        return { ...row, totalInclGst };
-      }
-    }
-  ];
-
   const handleSave = async () => {
     try {
-      // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:4041/api/Fabrication/SaveFabrication',
-        formData
+        'https://gecxc.com:4041/api/Embroidery/SaveEmbroidery',
+        {
+          ...formData,
+          threadAdditional: formData.threadAdditional.join(', ')
+        }
       );
 
-      // Handle the response if needed
       console.log('Save response:', response.data);
 
-      // Clear the form after successful save
-      // refetchFabricRequisitionData();
       setFormData({
         designId: '',
         batchNo: '',
-        baseColorId: '',
-        baseColorName: '',
+        componentId: '',
         fabricId: '',
-        poPcs: '',
-        quantity: '',
-        rate: '',
-        uomId: 'string',
-        total: '',
-        unitPrice: '',
-        gst: '',
-        totalInclGst: '',
-        createdOn: '2024-05-29T09:56:23.916Z',
+        vendorId: '',
+        poPcs: '', // coming from getcollectionapi
+        baseColorId: '', // coming from getcollectionapi
+        baseColorName: '',
+        colorId: '', //from dying screen coming from fabricAPi
+        availableQty: '',
+        noOfHeads: '',
+        repeats: '',
+        cuttingSize: '',
+        itemsPerRepeat: '',
+        totalPcs: '', //repeat*itemsPerRepeat
+        totalAmount: '', //
+        threadStitches: '',
+        threadRate: '',
+        threadAmount: '',
+        tillaStitches: '',
+        tillaRate: '',
+        tillaAmount: '',
+        sequence: '',
+        sequenceRate: '',
+        sequenceAmount: '',
+        isSolving: false,
+        solvingLayers: '',
+        solvingInMeters: '',
+        solvingRate: '',
+        solvingAmount: '',
+        // additional: '',
+        threadAdditional: [],
+
+        costPerComponent: '', //
+        // costPerComponent: '', //
+        createdOn: new Date().toISOString(),
         createdBy: 0,
-        lastUpdatedOn: '2024-05-29T09:56:23.916Z',
+        lastUpdatedOn: new Date().toISOString(),
         LastUpdatedBy: 0
       });
     } catch (error) {
@@ -502,9 +408,80 @@ const Embroidery = () => {
     }
   };
 
-  console.log('formData', formData);
-  // const editAPi = `https://gecxc.com:4041/api/Fabrication/SaveFabrication`;
-  // const deleteApi = `https://gecxc.com:4041/api/Fabrication/DeleteFabricByFabricId?fabricationId=`;
+  console.log('initialRows', initialRows);
+  const handleEdit = () => {
+    //
+  };
+  const handleDelete = () => {
+    //
+  };
+  const columns = [
+    { field: 'designId', headerName: 'Design Id', flex: 1 },
+    { field: 'batchNo', headerName: 'Batch No.', flex: 1 },
+    { field: 'componentId', headerName: 'componentId', flex: 1 },
+    { field: 'fabricId', headerName: 'fabricId', flex: 1 },
+    {
+      field: 'vendorId',
+      headerName: 'vendorId',
+      flex: 1
+    },
+    {
+      field: 'poPcs',
+      headerName: 'Po Pcs',
+      flex: 1
+    },
+    { field: 'baseColorName', headerName: 'Base Color', flex: 1 },
+    { field: 'colorId', headerName: 'color', flex: 1 },
+    { field: 'availableQty', headerName: 'availableQty', flex: 1 },
+    { field: 'noOfHeads', headerName: 'No. Of Heads', flex: 1 },
+    { field: 'repeats', headerName: 'Repeats', flex: 1 },
+    { field: 'cuttingSize', headerName: 'cutting Size', flex: 1 },
+    { field: 'itemsPerRepeat', headerName: 'Items Per Repeat', flex: 1 },
+    { field: 'totalPcs', headerName: 'Total Pcs', flex: 1 },
+    { field: 'threadStitches', headerName: 'Thread Stitches', flex: 1 },
+    { field: 'threadRate', headerName: 'Thread Rate', flex: 1 },
+    { field: 'threadAmount', headerName: 'Thread Amount', flex: 1 },
+    { field: 'tillaStitches', headerName: 'Tilla Stitches', flex: 1 },
+    { field: 'tillaRate', headerName: 'Tilla Rate', flex: 1 },
+    { field: 'tillaAmount', headerName: 'Tilla Amount', flex: 1 },
+    { field: 'threadAmount', headerName: 'Thread Amount', flex: 1 },
+    { field: 'sequence', headerName: 'sequence', flex: 1 },
+    { field: 'sequenceRate', headerName: 'Sequence Rate', flex: 1 },
+    { field: 'sequenceAmount', headerName: 'Sequence Amount' },
+    { field: 'isSolving', headerName: 'Is Solving', flex: 1 },
+    { field: 'solvingLayers', headerName: 'Solving Layers', flex: 1 },
+    { field: 'solvingInMeters', headerName: 'Solving In Meters', flex: 1 },
+    { field: 'solvingRate', headerName: 'Solving Rate', flex: 1 },
+    { field: 'solvingAmount', headerName: 'Solving Amount', flex: 1 },
+    { field: 'threadAdditional', headerName: 'ThreadAdditional' },
+    { field: 'costPerComponent', headerName: 'Cost Per Component', flex: 1 },
+
+    {
+      field: 'Action',
+      minWidth: 200,
+      headerName: 'Actions',
+
+      width: 220,
+
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup
+            size="small"
+            variant="text"
+            aria-label="Basic button group"
+          >
+            <Button variant="contained" size="small" onClick={handleEdit}>
+              Edit
+            </Button>
+            <Button variant="contained" size="small" onClick={handleDelete}>
+              Delete
+            </Button>
+          </ButtonGroup>
+        </div>
+      )
+    }
+  ];
+
   return (
     <MainCard
       style={{
@@ -766,7 +743,7 @@ const Embroidery = () => {
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12} md={6}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -777,6 +754,30 @@ const Embroidery = () => {
               }
               label="isSolving"
             />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <FormControl fullWidth>
+              <InputLabel>Additional</InputLabel>
+              <Select
+                multiple
+                value={formData.threadAdditional}
+                name="threadAdditional"
+                onChange={handleChange}
+                input={<OutlinedInput label="Additional" />}
+                fullWidth
+                // MenuProps={MenuProps}
+              >
+                {additionals.map((name) => (
+                  <MenuItem
+                    key={name}
+                    value={name}
+                    style={getStyles(name, formData.threadAdditional, theme)}
+                  >
+                    {name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
 
           <Grid item xs={12} md={6}>
@@ -867,11 +868,11 @@ const Embroidery = () => {
               </Grid>{' '}
               <Grid item xs={12} md={4}>
                 <TextField
-                  label="Stitches"
+                  label="Sequence"
                   fullWidth
                   size="small"
-                  name="sequenceStitches"
-                  value={formData.sequenceStitches}
+                  name="sequence"
+                  value={formData.sequence}
                   onChange={handleChange}
                 />
               </Grid>
@@ -952,7 +953,22 @@ const Embroidery = () => {
       </FormControl>
       <Grid container spacing={2} width="Inherit">
         <Grid sx={{ marginTop: 2 }} item xs={12}>
-          <EditAbleDataGrid
+          <Box sx={{ height: 300, width: '100%' }}>
+            <DataGrid
+              // {...data}
+              rows={initialRows}
+              columns={columns}
+              sx={{
+                boxShadow: 2,
+                border: 2,
+                borderColor: 'primary.light',
+                '& .MuiDataGrid-cell:hover': {
+                  color: 'primary.main'
+                }
+              }}
+            />
+          </Box>
+          {/* <EditAbleDataGrid
             ncolumns={columns}
             initialRows={initialRows}
             formData={formData}
@@ -961,7 +977,7 @@ const Embroidery = () => {
             // deleteApi={deleteApi}
             // deleteBy="fabricationId"
             disableAddRecord={true}
-          />
+          /> */}
         </Grid>
       </Grid>
     </MainCard>
