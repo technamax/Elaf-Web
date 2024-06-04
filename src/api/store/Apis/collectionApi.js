@@ -7,7 +7,7 @@ export const collectionApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'https://gecxc.com:4041/api/' }),
   endpoints: (builder) => ({
     getCollectionList: builder.query({
-      query: () => 'CollectionRegistration/GetCollectionList'
+      query: () => 'CollectionRegistration/GetCollectionList?appId=1'
     }),
     getCollectionById: builder.query({
       query: (collectionId) =>

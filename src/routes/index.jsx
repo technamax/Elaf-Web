@@ -1,13 +1,30 @@
-import { createBrowserRouter } from 'react-router-dom';
-
-// routes
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {
+  RouterProvider,
+  createBrowserRouter,
+  Routes,
+  Route,
+  BrowserRouter
+} from 'react-router-dom';
 import MainRoutes from './MainRoutes';
-import LoginRoutes from './AuthenticationRoutes';
+import AuthenticationRoutes from './AuthenticationRoutes';
 
-// ==============================|| ROUTING RENDER ||============================== //
-const router = createBrowserRouter([MainRoutes, LoginRoutes], {
-    // basename: import.meta.env.VITE_APP_BASE_NAME
-    basename: ''
+const router = createBrowserRouter([AuthenticationRoutes, MainRoutes], {
+  basename: ''
 });
+
 console.log(router.basename);
+
+// ReactDOM.render(
+//   <React.StrictMode>
+//     <BrowserRouter>
+//       <Routes>
+//         <Route path="/*" element={<AuthenticationRoutes />} />
+//         <Route path="/dashboard/*" element={<MainRoutes />} />
+//       </Routes>
+//     </BrowserRouter>
+//   </React.StrictMode>,
+//   document.getElementById('root')
+// );
 export default router;

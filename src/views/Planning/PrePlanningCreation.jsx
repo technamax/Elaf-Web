@@ -7,11 +7,19 @@ import {
   Typography,
   Divider,
   Grid,
-  TextField
+  TextField,
+  Box,
+  Tab
 } from '@mui/material';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
+import Card from '@mui/material/Card';
+import CardHeader from '@mui/material/CardHeader';
+import SearchIcon from '@mui/icons-material/Search';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -24,6 +32,7 @@ const PrePlanningCreation = () => {
   const { data: collectionData } = useGetCollectionListQuery();
   const { data: designData } = useGetDesignListByCollectionIdQuery();
   const [loading, setLoading] = useState(true);
+  const { enqueueSnackbar } = useSnackbar();
 
   const collectionList = collectionData?.result || [];
   const designList = designData || [];
@@ -97,6 +106,11 @@ const PrePlanningCreation = () => {
       editable: true
     }
   ];
+  const [value, setValue] = useState('1');
+
+  const handleChangeTabs = (event, newValue) => {
+    setValue(newValue);
+  };
 
   const volume = [
     { value: 'Volume 1', label: 'Volume 1' },
@@ -124,6 +138,11 @@ const PrePlanningCreation = () => {
         formData
       );
       console.log('Form data saved:', response.data);
+      enqueueSnackbar('Planning Batch saved successfully!', {
+        variant: 'success',
+        autoHideDuration: 5000
+      });
+
       setFormData({
         collectionName: '',
         collectionId: '',
@@ -194,81 +213,153 @@ const PrePlanningCreation = () => {
   console.log('formData', formData);
 
   return (
-    <MainCard
-      style={{
-        borderWidth: 1,
-        borderStyle: 'dotted',
-        borderColor: '#a11f23'
-      }}
-    >
-      <FormControl>
+    <>
+      <div
+        style={{
+          marginBottom: 10,
+          borderRadius: 7,
+          width: 'auto',
+          maxHeight: { xs: '80vh', md: 'auto' },
+          overflow: 'auto',
+          padding: 5
+        }}
+      >
+        <Card variant="outlined">
+          <CardHeader
+            style={{ backgroundColor: '#a31f23', color: 'white' }}
+            title="Create Batch Planning"
+            titleTypographyProps={{ style: { color: 'white' } }}
+          ></CardHeader>
+
+          <Box sx={{ width: '100%', typography: 'body1' }}>
+            <TabContext value={value}>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <TabList
+                  onChange={handleChangeTabs}
+                  aria-label="lab API tabs example"
+                >
+                  <Tab
+                    icon={<AddCircleIcon />}
+                    label="Add Collection"
+                    value="1"
+                    sx={(theme) => ({
+                      '& .MuiTouchRipple-child': {
+                        backgroundColor: `${theme.palette.primary.main} !important`
+                      }
+                    })}
+                  />
+                  <Tab
+                    icon={<SearchIcon />}
+                    label="Search Collection"
+                    value="2"
+                    sx={(theme) => ({
+                      '& .MuiTouchRipple-child': {
+                        backgroundColor: `${theme.palette.primary.main} !important`
+                      }
+                    })}
+                  />
+                </TabList>
+              </Box>
+              <TabPanel value="1">
+                <Grid
+                  container
+                  spacing={2}
+                  width="inherit"
+                  sx={{ paddingX: 2 }}
+                >
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      fullWidth
+                      select
+                      label="Select Collection"
+                      name="collectionId"
+                      value={formData.collectionId}
+                      onChange={handleChange}
+                      size="small"
+                    >
+                      {collectionList.map((option) => (
+                        <MenuItem
+                          key={option.collectionId}
+                          value={option.collectionId}
+                        >
+                          {option.collectionName}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      fullWidth
+                      select
+                      label="Select Design"
+                      name="designId"
+                      value={formData.designId}
+                      onChange={handleChange}
+                      size="small"
+                    >
+                      {designOptions.map((option) => (
+                        <MenuItem key={option.designId} value={option.designId}>
+                          {option.designNo}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="Po PCs"
+                      fullWidth
+                      size="small"
+                      name="poPcs"
+                      value={formData.poPcs}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    xs={12}
+                    md={12}
+                    textAlign="right"
+                    sx={{ marginBottom: 2 }}
+                  >
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={handleSave}
+                    >
+                      Save
+                    </Button>
+                  </Grid>
+                </Grid>
+              </TabPanel>
+              <TabPanel value="2">
+                <Grid container spacing={2} width="inherit">
+                  <Grid item xs={9} md={9}>
+                    <Typography variant="h3" gutterBottom>
+                      Search Collection
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </TabPanel>
+            </TabContext>
+          </Box>
+        </Card>
+      </div>
+
+      <MainCard
+        style={{
+          borderWidth: 1,
+          borderStyle: 'dotted',
+          borderColor: '#a11f23'
+        }}
+      >
+        {/* <FormControl> */}
         <Grid container spacing={2} width="inherit">
-          <Grid item sm={9}>
-            <Typography variant="h3" gutterBottom>
-              Pre Planning Creation
-            </Typography>
-          </Grid>
-          <Grid item sm={3} textAlign="right">
-            <Button variant="contained" size="small" onClick={handleSave}>
-              Save
-            </Button>
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              fullWidth
-              select
-              label="Select Collection"
-              name="collectionId"
-              value={formData.collectionId}
-              onChange={handleChange}
-              size="small"
-            >
-              {collectionList.map((option) => (
-                <MenuItem key={option.collectionId} value={option.collectionId}>
-                  {option.collectionName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              fullWidth
-              select
-              label="Select Design"
-              name="designId"
-              value={formData.designId}
-              onChange={handleChange}
-              size="small"
-            >
-              {designOptions.map((option) => (
-                <MenuItem key={option.designId} value={option.designId}>
-                  {option.designNo}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item sm={4}>
-            <TextField
-              label="Po PCs"
-              fullWidth
-              size="small"
-              name="poPcs"
-              value={formData.poPcs}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item sm={12}>
-            <Divider
-              color="#cc8587"
-              sx={{ height: 2, width: '100%', marginBottom: 2 }}
-            />
-
+          <Grid item xs={12} md={12}>
             <Typography variant="h4" gutterBottom>
               Search
             </Typography>
           </Grid>
-          <Grid item sm={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               fullWidth
               select
@@ -293,7 +384,7 @@ const PrePlanningCreation = () => {
               )}
             </TextField>
           </Grid>
-          <Grid item sm={4}>
+          <Grid item xs={12} md={4}>
             <TextField
               fullWidth
               select
@@ -310,7 +401,7 @@ const PrePlanningCreation = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item sm={12} paddingTop={1}>
+          <Grid item xs={12} paddingTop={1}>
             <EditAbleDataGrid
               initialRows={gridData}
               ncolumns={columns}
@@ -321,8 +412,9 @@ const PrePlanningCreation = () => {
             />
           </Grid>
         </Grid>
-      </FormControl>
-    </MainCard>
+        {/* </FormControl> */}
+      </MainCard>
+    </>
   );
 };
 

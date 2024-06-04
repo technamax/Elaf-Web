@@ -1,0 +1,14 @@
+<<<<<<< HEAD
+import React from 'react'
+
+export default function Application() {
+  return (
+    <div>Application</div>
+  )
+=======
+import React from 'react';
+
+export default function Application() {
+  return <div>Application</div>;
+>>>>>>> Develop
+}

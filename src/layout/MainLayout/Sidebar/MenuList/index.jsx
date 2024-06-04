@@ -18,7 +18,8 @@ const MenuList = ({ empId, token }) => {
         const data = await fetchMenuItems(empId, token);
         setMenuItems(data.mainMenuModel); // Adjust to use mainMenuModel
         setLoading(false);
-        console.log('Fetched data:', data);
+        console.log('menuItem', menuItem);
+        // console.log('Fetched data:', data.mainMenuModel);
       } catch (err) {
         setError(err.message);
         setLoading(false);
