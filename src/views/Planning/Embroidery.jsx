@@ -177,7 +177,7 @@ const Embroidery = () => {
 
   // console.log('designList', designList);
   // console.log('selectedCollectionId', selectedCollectionId);
-  console.log('batchList', batchList);
+  // console.log('batchList', batchList);
   // console.log('uom', uoms);
   // console.log('Fabrications', Fabrications);
   // console.log('initialRows', initialRows);
@@ -465,100 +465,6 @@ const Embroidery = () => {
     }
   ];
 
-  // const columns = [
-  //   // {
-  //   //   field: 'OrderNumber ',
-  //   //   headerName: 'Component',
-  //   //   editable: true,
-  //   //   flex: 1,
-  //   //   type: 'singleSelect',
-  //   //   valueOptions: components.map((collection) => ({
-  //   //     value: collection.lookUpId,
-  //   //     label: collection.lookUpName
-  //   //   }))
-  //   // },
-  //   {
-  //     field: 'designId',
-  //     headerName: 'Design',
-  //     editable: true,
-  //     flex: 1,
-  //     type: 'singleSelect',
-  //     valueOptions: designList.map((collection) => ({
-  //       value: collection.designId,
-  //       label: collection.designNo
-  //     }))
-  //   },
-  //   {
-  //     field: 'poPcs',
-  //     headerName: 'PO. Pieces',
-  //     flex: 1,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'quantity',
-  //     headerName: 'quantity',
-  //     flex: 1,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'rate',
-  //     headerName: 'Rate',
-  //     editable: true,
-  //     flex: 1
-  //   },
-  //   {
-  //     field: 'uomId',
-  //     headerName: 'UOM',
-  //     editable: true,
-  //     flex: 1,
-  //     type: 'singleSelect',
-  //     valueOptions: uoms.map((collection) => ({
-  //       value: collection.lookUpId,
-  //       label: collection.lookUpName
-  //     }))
-  //   },
-
-  //   {
-  //     field: 'total',
-  //     headerName: 'total',
-  //     flex: 1,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'unitPrice',
-  //     headerName: 'Unit Price',
-  //     flex: 1,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'gst',
-  //     headerName: 'GST',
-  //     flex: 1,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'totalInclGst',
-  //     headerName: 'Total Inc. GST',
-  //     flex: 1,
-  //     editable: true
-  //   }
-
-  //   // {
-  //   //   field: 'totalFabric',
-  //   //   headerName: 'Total Fabric',
-  //   //   flex: 1,
-  //   //   editable: true,
-
-  //   //   valueSetter: (params, row) => {
-  //   //     const repeats = row.repeats ?? 0;
-  //   //     const repeatSize = row.repeatSize ?? 0;
-  //   //     const totalFabric = repeats * repeatSize;
-  //   //     console.log('totalFabric', totalFabric);
-  //   //     return { ...row, totalFabric };
-  //   //   }
-  //   // },
-  // ];
-
   const handleSave = async () => {
     try {
       // Make the API call
@@ -571,7 +477,7 @@ const Embroidery = () => {
       console.log('Save response:', response.data);
 
       // Clear the form after successful save
-      refetchFabricRequisitionData();
+      // refetchFabricRequisitionData();
       setFormData({
         designId: '',
         batchNo: '',
@@ -872,57 +778,7 @@ const Embroidery = () => {
               label="isSolving"
             />
           </Grid>
-          {formData.isSolving ? (
-            <Grid item xs={12} md={6}>
-              <Grid container spacing={1} width="Inherit">
-                <Grid item xs={12} md={12}>
-                  <Typography variant="h5" gutterBottom>
-                    Solving
-                  </Typography>
-                </Grid>{' '}
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Layers"
-                    fullWidth
-                    size="small"
-                    name="solvingLayers"
-                    value={formData.solvingLayers}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Meters"
-                    fullWidth
-                    size="small"
-                    name="solvingInMeters"
-                    value={formData.solvingInMeters}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Rate"
-                    fullWidth
-                    size="small"
-                    name="solvingRate"
-                    value={formData.solvingRate}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Amount"
-                    fullWidth
-                    size="small"
-                    name="solvingAmount"
-                    value={formData.solvingAmount}
-                    onChange={handleChange}
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
-          ) : null}
+
           <Grid item xs={12} md={6}>
             <Grid container spacing={1} width="Inherit">
               <Grid item xs={12} md={12}>
@@ -1041,6 +897,57 @@ const Embroidery = () => {
               </Grid>
             </Grid>
           </Grid>
+          {formData.isSolving ? (
+            <Grid item xs={12} md={6}>
+              <Grid container spacing={1} width="Inherit">
+                <Grid item xs={12} md={12}>
+                  <Typography variant="h5" gutterBottom>
+                    Solving
+                  </Typography>
+                </Grid>{' '}
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Layers"
+                    fullWidth
+                    size="small"
+                    name="solvingLayers"
+                    value={formData.solvingLayers}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Meters"
+                    fullWidth
+                    size="small"
+                    name="solvingInMeters"
+                    value={formData.solvingInMeters}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Rate"
+                    fullWidth
+                    size="small"
+                    name="solvingRate"
+                    value={formData.solvingRate}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Amount"
+                    fullWidth
+                    size="small"
+                    name="solvingAmount"
+                    value={formData.solvingAmount}
+                    onChange={handleChange}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+          ) : null}
         </Grid>
       </FormControl>
       <Grid container spacing={2} width="Inherit">
