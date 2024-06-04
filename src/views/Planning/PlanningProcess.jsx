@@ -93,6 +93,36 @@ export default function PlanningProcess() {
   const handleReset = () => {
     setActiveStep(0);
   };
+  const handleSave = async () => {
+    console.log(formData);
+    try {
+      const response = await axios.get(
+        `https://gecxc.com:4041/api/Common/SaveLookUp?lookupDomain=${formData.lookUpDomain}&LookUpName=${formData.lookUpName}&appId=1`
+      );
+      console.log('Form data saved:', response.data);
+      enqueueSnackbar('Lookup saved successfully!', {
+        variant: 'success',
+        autoHideDuration: 5000
+      });
+
+      // Clear form fields
+      setFormData({
+        lookUpId: '',
+        lookUpName: '',
+        lookUpDomain: '',
+        lookUpCategory: '',
+        enabled: '',
+        createdOn: new Date().toISOString()
+      });
+
+      // Fetch the updated lookup domains
+      // fetchPrePlanningLookUp();
+      return response.data;
+    } catch (error) {
+      console.error('Error saving data:', error);
+      throw error;
+    }
+  };
 
   useEffect(() => {
     const GetLookUpDomains = async () => {
@@ -175,11 +205,7 @@ export default function PlanningProcess() {
                 ></TextField>
               </Grid>
               <Grid item sm={3} textAlign="right">
-                <Button
-                  variant="contained"
-                  size="small"
-                  // onClick={handleSave}
-                >
+                <Button variant="contained" size="small" onClick={handleSave}>
                   Save
                 </Button>
               </Grid>

@@ -5,7 +5,7 @@ export const prePlanningHeaderApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: 'https://gecxc.com:4041/api/' }),
   endpoints: (builder) => ({
     getCollectionFromPlanningHeader: builder.query({
-      query: () => `PrePlanning/GetCollectionFromPlanningHeader`
+      query: () => `PrePlanning/GetCollectionListFromPlanningHeader`
     }),
     getDesignFromPlanningHeaderByCollectionId: builder.query({
       query: (collectionId) =>

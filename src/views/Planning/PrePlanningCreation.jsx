@@ -183,7 +183,7 @@ const PrePlanningCreation = () => {
     const GetCollectionFromPlanningHeader = async () => {
       try {
         const response = await axios.get(
-          'https://gecxc.com:4041/api/PrePlanning/GetCollectionFromPlanningHeader'
+          'https://gecxc.com:4041/api/PrePlanning/GetCollectionListFromPlanningHeader'
         );
         console.log('GetCollectionFromPlanningHeader', response);
         setPlannedCollection(response.data.result);
