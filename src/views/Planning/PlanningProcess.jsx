@@ -11,18 +11,16 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Fabrication from 'views/Planning/Fabrication';
+import Embroidery from './Embroidery';
 import { Grid, TextField } from '@mui/material';
 import PrePlanning from './PrePlanning';
 import Dyeing from './Dyeing';
-import Schiffli from './Schiffli';
-import { SnackbarProvider, useSnackbar } from 'notistack';
-
 // import { color } from '@mui/system';
 const steps = [
   'Pre Planning',
-  'Fabric Requisition',
+  'Fabrication',
   'Dyeing/Printing  ',
-  'MultiHead ',
+  'Embroidery ',
   'Schiffli',
   'name6',
   'name7',
@@ -34,7 +32,6 @@ export default function PlanningProcess() {
   const [skipped, setSkipped] = React.useState(new Set());
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [lookupDomains, setLookupDomains] = useState([]);
-  const { enqueueSnackbar } = useSnackbar();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -48,13 +45,6 @@ export default function PlanningProcess() {
   };
   const handleClose = () => {
     setAnchorEl(null);
-  };
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value
-    }));
   };
 
   const open = Boolean(anchorEl);
@@ -100,61 +90,22 @@ export default function PlanningProcess() {
   const handleReset = () => {
     setActiveStep(0);
   };
-  const [formData, setFormData] = useState({
-    lookUpId: '',
-    lookUpName: '',
-    lookUpDomain: '',
-    lookUpCategory: '',
-    enabled: '',
-    // appId: 1,
-    createdOn: new Date().toISOString()
-  });
-  const GetLookUpDomains = async () => {
-    try {
-      const response = await axios.get(
-        `https://gecxc.com:4041/api/Common/GetLookUpDomains?appId=${1}`
-      );
-      setLookupDomains(response.data.result);
-    } catch (error) {
-      console.error('Error fetching design options:', error);
-    }
-    console.log('LookupData', response);
-  };
 
   useEffect(() => {
+    const GetLookUpDomains = async () => {
+      try {
+        const response = await axios.get(
+          `https://gecxc.com:4041/api/Common/GetLookUpDomains?appId=${1}`
+        );
+        console.log('LookupData', response);
+        setLookupDomains(response.data.result);
+      } catch (error) {
+        console.error('Error fetching design options:', error);
+      }
+      console.log('LookupData', response);
+    };
     GetLookUpDomains();
   }, []);
-
-  const handleSave = async () => {
-    console.log(formData);
-    try {
-      const response = await axios.get(
-        `https://gecxc.com:4041/api/Common/SaveLookUp?lookupDomain=${formData.lookUpDomain}&LookUpName=${formData.lookUpName}&appId=1`
-      );
-      console.log('Form data saved:', response.data);
-      enqueueSnackbar('Lookup saved successfully!', {
-        variant: 'success',
-        autoHideDuration: 5000
-      });
-
-      // Clear form fields
-      setFormData({
-        lookUpId: '',
-        lookUpName: '',
-        lookUpDomain: '',
-        lookUpCategory: '',
-        enabled: '',
-        createdOn: new Date().toISOString()
-      });
-
-      // Fetch the updated lookup domains
-      // fetchPrePlanningLookUp();
-      return response.data;
-    } catch (error) {
-      console.error('Error saving data:', error);
-      throw error;
-    }
-  };
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -200,11 +151,8 @@ export default function PlanningProcess() {
                   fullWidth
                   id="outlined-select-currency"
                   select
-                  name="lookUpDomain"
-                  value={formData.lookUpDomain}
-                  label="Select LookUp"
+                  label="Select Design"
                   size="small"
-                  onChange={handleChange}
                 >
                   {lookupDomains.map((domain) => (
                     <MenuItem
@@ -220,14 +168,15 @@ export default function PlanningProcess() {
                 <TextField
                   fullWidth
                   label="Add Lookup Description"
-                  name="lookUpName"
-                  value={formData.lookUpName}
                   size="small"
-                  onChange={handleChange}
-                />
+                ></TextField>
               </Grid>
               <Grid item sm={3} textAlign="right">
-                <Button variant="contained" size="small" onClick={handleSave}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  // onClick={handleSave}
+                >
                   Save
                 </Button>
               </Grid>
@@ -289,13 +238,13 @@ export default function PlanningProcess() {
         </React.Fragment>
       ) : (
         <React.Fragment>
-          {/* <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography> */}
+          <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography>
 
           {activeStep === 0 && <PrePlanning />}
           {activeStep === 1 && <Fabrication />}
 
           {activeStep === 2 && <Dyeing />}
-          {activeStep === 4 && <Schiffli />}
+          {activeStep === 3 && <Embroidery />}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"

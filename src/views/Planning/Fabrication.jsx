@@ -39,9 +39,9 @@ const Fabrication = () => {
     unitPrice: '',
     gst: '', //// not in api
     totalInclGst: '', ///// not in api total*gst
-    createdOn: '2024-05-29T09:56:23.916Z',
+    createdOn: new Date().toISOString(),
     createdBy: 0,
-    lastUpdatedOn: '2024-05-29T09:56:23.916Z',
+    lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: 0
   });
 
@@ -114,15 +114,15 @@ const Fabrication = () => {
     }
   }, [lookupData]);
 
-  console.log('designList', designList);
-  console.log('selectedCollectionId', selectedCollectionId);
-  console.log('batchList', batchList);
-  console.log('uom', uoms);
-  console.log('Fabrications', Fabrications);
-  console.log('initialRows', initialRows);
+  // console.log('designList', designList);
+  // console.log('selectedCollectionId', selectedCollectionId);
+  // console.log('batchList', batchList);
+  // console.log('uom', uoms);
+  // console.log('Fabrications', Fabrications);
+  // console.log('initialRows', initialRows);
 
   const collectionList = collectionData?.result || [];
-  console.log('collectionList', collectionList);
+  // console.log('collectionList', collectionList);
 
   useEffect(() => {
     const calculateTotal = () => {
@@ -246,33 +246,48 @@ const Fabrication = () => {
       field: 'total',
       headerName: 'Total',
       flex: 1,
-      editable: false,
-      valueGetter: (params, row) => {
-        const quantity = parseFloat(row.quantity) || 0;
-        const rate = parseFloat(row.rate) || 0;
-        return quantity * rate;
-      },
+      editable: true,
+      // valueGetter: (params, row) => {
+      //   const quantity = parseFloat(row.quantity) || 0;
+      //   const rate = parseFloat(row.rate) || 0;
+      //   return quantity * rate;
+      // }
       valueSetter: (params, row) => {
-        const quantity = parseFloat(row.quantity) || 0;
-        const rate = parseFloat(row.rate) || 0;
-        return quantity * rate;
+        const quantity = row.quantity ?? 0;
+        const rate = row.rate ?? 0;
+        const total = quantity * rate;
+        console.log('total', total);
+        return { ...row, total };
       }
+      // valueSetter: (params, row) => {
+      //   console.log('row', row);
+      //   const quantity = row.quantity || 0;
+      //   const rate = row.rate || 0;
+      //   return quantity * rate;
+      // }
     },
     {
       field: 'unitPrice',
       headerName: 'Unit Price',
       flex: 1,
-      editable: false,
-      valueGetter: (params, row) => {
-        const total = parseFloat(row.total) || 0;
-        const poPcs = parseFloat(row.poPcs) || 0;
-        return total / poPcs;
-      },
+      editable: true,
+      // valueGetter: (params, row) => {
+      //   const total = parseFloat(row.total) || 0;
+      //   const poPcs = parseFloat(row.poPcs) || 0;
+      //   return total / poPcs;
+      // }
       valueSetter: (params, row) => {
-        const total = parseFloat(row.total) || 0;
-        const poPcs = parseFloat(row.poPcs) || 0;
-        return total / poPcs;
+        const total = row.total ?? 0;
+        const poPcs = row.poPcs ?? 0;
+        const unitPrice = total / poPcs;
+        console.log('unitPrice', unitPrice);
+        return { ...row, unitPrice };
       }
+      // valueSetter: (params, row) => {
+      //   const total = row.total || 0;
+      //   const poPcs = row.poPcs || 0;
+      //   return total / poPcs;
+      // }
     },
     {
       field: 'gst',
@@ -284,16 +299,19 @@ const Fabrication = () => {
       field: 'totalInclGst',
       headerName: 'Total Inc. GST',
       flex: 1,
-      editable: false,
-      valueGetter: (params, row) => {
-        const total = parseFloat(row.total) || 0;
-        const gst = parseFloat(row.gst) || 0;
-        return total * (1 + gst / 100);
-      },
+      editable: true,
+      // valueGetter: (params, row) => {
+      //   console.log(row);
+      //   const total = parseFloat(row.total) || 0;
+      //   const gst = parseFloat(row.gst) || 0;
+      //   return total * (1 + gst / 100);
+      // }
       valueSetter: (params, row) => {
-        const total = parseFloat(row.total) || 0;
-        const gst = parseFloat(row.gst) || 0;
-        return total * (1 + gst / 100);
+        const total = row.total ?? 0;
+        const gst = row.gst ?? 0;
+        const totalInclGst = total * (1 + gst / 100);
+        console.log('totalInclGst', totalInclGst);
+        return { ...row, totalInclGst };
       }
     }
   ];
@@ -431,7 +449,7 @@ const Fabrication = () => {
 
   console.log('formData', formData);
   const editAPi = `https://gecxc.com:4041/api/Fabrication/SaveFabrication`;
-  const deleteApi = ``;
+  const deleteApi = `https://gecxc.com:4041/api/Fabrication/DeleteFabricByFabricId?fabricationId=`;
   return (
     <MainCard
       style={{
@@ -641,9 +659,9 @@ const Fabrication = () => {
             formData={formData}
             editAPi={editAPi}
             refetch={refetchFabricRequisitionData}
-            // deleteApi={deleteApi}
-            // deleteBy="planningId"
-            // disableAddRecord={true}
+            deleteApi={deleteApi}
+            deleteBy="fabricationId"
+            disableAddRecord={true}
           />
         </Grid>
       </Grid>

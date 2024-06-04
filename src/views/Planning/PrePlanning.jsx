@@ -38,7 +38,7 @@ const PrePlanning = () => {
     }
   }, [designData]);
   console.log('designList', designList);
-  console.log('selectedCollectionId', selectedCollectionId);
+  console.log('collectionData', collectionData);
 
   const collectionList = collectionData?.result || [];
   // const designList = designData?.result || [];
