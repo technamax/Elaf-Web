@@ -247,6 +247,7 @@ const NewCollection = () => {
         borderWidth: 1,
         borderStyle: 'dotted',
         borderColor: '#a11f23',
+        // backgroundColor: '#eef2f6',
         width: 'auto',
         maxHeight: { xs: '80vh', md: 'auto' },
         overflow: 'auto'
