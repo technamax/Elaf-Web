@@ -7,7 +7,9 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
-import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
+import LinearProgress, {
+  linearProgressClasses
+} from '@mui/material/LinearProgress';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
@@ -30,7 +32,10 @@ function LinearProgressWithLabel({ value, ...others }) {
             </Typography>
           </Grid>
           <Grid item>
-            <Typography variant="h6" color="inherit">{`${Math.round(value)}%`}</Typography>
+            <Typography
+              variant="h6"
+              color="inherit"
+            >{`${Math.round(value)}%`}</Typography>
           </Grid>
         </Grid>
       </Grid>

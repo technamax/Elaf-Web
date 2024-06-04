@@ -29,9 +29,9 @@ const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
   const drawer = (
     <>
       <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-        <Box sx={{ display: 'flex', p: 2, mx: 'auto' }}>
-          <LogoSection />
-        </Box>
+        {/* <Box sx={{ display: 'flex', p: 2, mx: 'auto' }}> */}
+        <LogoSection />
+        {/* </Box> */}
       </Box>
       <BrowserView>
         <PerfectScrollbar
@@ -59,12 +59,18 @@ const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
   return (
     <Box
       component="nav"
-      sx={{ flexShrink: { md: 0 }, width: matchUpMd ? drawerWidth : 'auto' }}
+      sx={{
+        backgroundImage:
+          'url("https://cdn11.bigcommerce.com/s-hv21hhsv/images/stencil/700x700/products/38611/284805/2e6462c221260668bf7516fe2121ad54__84353.1704082180.jpg?c=2")',
+        backgroundSize: 'contain',
+        flexShrink: { md: 0 },
+        width: matchUpMd ? drawerWidth : 'auto'
+      }}
       aria-label="mailbox folders"
     >
       <Drawer
         container={container}
-        variant={matchUpMd ? 'persistent' : 'temporary'}
+        variant="persistent"
         anchor="left"
         open={drawerOpen}
         onClose={drawerToggle}
@@ -74,9 +80,14 @@ const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
             background: theme.palette.background.default,
             color: theme.palette.text.white,
             backgroundColor: 'lightgrey',
-            // to change sidebar background color
+            backgroundImage:
+              'url("https://cdn11.bigcommerce.com/s-hv21hhsv/images/stencil/700x700/products/38611/284805/2e6462c221260668bf7516fe2121ad54__84353.1704082180.jpg?c=2")',
+            backgroundSize: 'contain',
+            position: 'absolute',
+
             borderRight: 'none',
-            [theme.breakpoints.up('md')]: {
+
+            [theme.breakpoints.up('xs')]: {
               top: '84px'
             }
           }

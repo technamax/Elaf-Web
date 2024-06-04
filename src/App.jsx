@@ -9,25 +9,25 @@ import router from 'routes';
 
 // defaultTheme
 import themes from 'themes';
-
+import './App.css';
 // project imports
 import NavigationScroll from 'layout/NavigationScroll';
 
 // ==============================|| APP ||============================== //
 
 const App = () => {
-    const customization = useSelector((state) => state.customization);
+  const customization = useSelector((state) => state.customization);
 
-    return (
-        <StyledEngineProvider injectFirst>
-            <ThemeProvider theme={themes(customization)}>
-                <CssBaseline />
-                <NavigationScroll>
-                    <RouterProvider router={router} />
-                </NavigationScroll>
-            </ThemeProvider>
-        </StyledEngineProvider>
-    );
+  return (
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={themes(customization)}>
+        <CssBaseline />
+        <NavigationScroll>
+          <RouterProvider router={router} />
+        </NavigationScroll>
+      </ThemeProvider>
+    </StyledEngineProvider>
+  );
 };
 
 export default App;
