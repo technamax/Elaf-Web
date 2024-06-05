@@ -20,9 +20,13 @@ import {
 import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetPrePlanningHeaderByDesignIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
+import fabric from '../../assets/images/planningicons/fabric.png';
+// import dyeing1 from '../../assets/images/planningicons/dyeing1.png';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
+import { Card, CardHeader, Avatar } from '@mui/material';
+import '../../assets/scss/style.scss';
 
 const Fabrication = () => {
   const [formData, setFormData] = useState({
@@ -58,14 +62,14 @@ const Fabrication = () => {
       skip: !formData.designId // Skip the query if no collection is selected
     });
   const { data: fabricData } = useGetFabricFromPrePlanningByBatchNoQuery(
-    formData.batchNo,
+    formData.planningHeaderId,
     {
-      skip: !formData.batchNo // Skip the query if no collection is selected
+      skip: !formData.planningHeaderId // Skip the query if no collection is selected
     }
   );
   const { data: fabricRequisitionData, refetch: refetchFabricRequisitionData } =
-    useGetFabricRequisitionListByBatchNoQuery(formData.batchNo, {
-      skip: !formData.batchNo // Skip the query if no collection is selected
+    useGetFabricRequisitionListByBatchNoQuery(formData.planningHeaderId, {
+      skip: !formData.planningHeaderId // Skip the query if no collection is selected
     });
   console.log('fabricRequisitionData', fabricRequisitionData);
 
@@ -451,96 +455,107 @@ const Fabrication = () => {
   const editAPi = `https://gecxc.com:4041/api/Fabrication/SaveFabrication`;
   const deleteApi = `https://gecxc.com:4041/api/Fabrication/DeleteFabricByFabricId?fabricationId=`;
   return (
-    <MainCard
-      style={{
-        borderWidth: 2,
-        borderStyle: 'dotted',
-        borderColor: '#a11f23',
-        width: 'auto',
-        maxHeight: { xs: '80vh', md: 'auto' },
-        overflow: 'auto'
-      }}
-    >
-      <FormControl>
-        <Grid container spacing={2} width="Inherit">
-          <Grid item xs={9} md={9}>
-            <Typography variant="h3" gutterBottom>
-              Fabric Requisition
-            </Typography>
-          </Grid>
-          <Grid item xs={3} textAlign="right">
-            <Button variant="contained" size="small" onClick={handleSave}>
-              Save
-            </Button>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Select Collection"
-              name="collectionId"
-              value={selectedCollectionId}
-              onChange={handleChange}
-              size="small"
-            >
-              {collectionList.map((option) => (
-                <MenuItem key={option.collectionId} value={option.collectionId}>
-                  {option.collectionName}
-                </MenuItem>
-              ))}
-            </TextField>{' '}
-          </Grid>
+    <>
+      <div className="CardHeader">
+        {/* <FormControl> */}
+        <Card variant="outlined">
+          <CardHeader
+            className="css-4rfrnx-MuiCardHeader-root"
+            avatar={<Avatar src={fabric} sx={{ background: 'transparent' }} />}
+            title="Fabric Requisition"
+            titleTypographyProps={{ style: { color: 'white' } }}
+          ></CardHeader>
+          <Grid
+            container
+            spacing={2}
+            width="Inherit"
+            sx={{ paddingY: 2, paddingX: 2 }}
+          >
+            {/* <Grid item xs={3} textAlign="right">
+              <Button variant="contained" size="small" onClick={handleSave}>
+                Save
+              </Button>
+            </Grid> */}
+            <Grid item xs={12} md={3}>
+              <TextField
+                fullWidth
+                select
+                label="Select Collection"
+                name="collectionId"
+                value={selectedCollectionId}
+                onChange={handleChange}
+                size="small"
+              >
+                {collectionList.map((option) => (
+                  <MenuItem
+                    key={option.collectionId}
+                    value={option.collectionId}
+                  >
+                    {option.collectionName}
+                  </MenuItem>
+                ))}
+              </TextField>{' '}
+            </Grid>
 
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Select Design"
-              name="designId"
-              value={formData.designId}
-              onChange={handleChange}
-              size="small"
-            >
-              {designList.map((option) => (
-                <MenuItem key={option.designId} value={option.designId}>
-                  {option.designNo}
-                </MenuItem>
-              ))}
-            </TextField>
+            <Grid item xs={12} md={3}>
+              <TextField
+                fullWidth
+                select
+                label="Select Design"
+                name="designId"
+                value={formData.designId}
+                onChange={handleChange}
+                size="small"
+              >
+                {designList.map((option) => (
+                  <MenuItem key={option.designId} value={option.designId}>
+                    {option.designNo}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <TextField
+                label="Base Color"
+                fullWidth
+                size="small"
+                name="baseColorName"
+                value={formData.baseColorName}
+                onChange={handleChange}
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <TextField
+                fullWidth
+                select
+                label="Batch No."
+                name="batchNo"
+                value={formData.batchNo}
+                onChange={handleChange}
+                size="small"
+              >
+                {batchList.map((option) => (
+                  <MenuItem key={option.batchNo} value={option.batchNo}>
+                    {option.batchNo}
+                  </MenuItem>
+                ))}
+              </TextField>{' '}
+            </Grid>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Base Color"
-              fullWidth
-              size="small"
-              name="baseColorName"
-              value={formData.baseColorName}
-              onChange={handleChange}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Batch No."
-              name="batchNo"
-              value={formData.batchNo}
-              onChange={handleChange}
-              size="small"
-            >
-              {batchList.map((option) => (
-                <MenuItem key={option.batchNo} value={option.batchNo}>
-                  {option.batchNo}
-                </MenuItem>
-              ))}
-            </TextField>{' '}
-          </Grid>
-
-          <Grid item xs={12} md={12}>
-            <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
-          </Grid>
-
+        </Card>
+        {/* </FormControl> */}
+        {/* <Grid item xs={12} md={12}>
+          <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
+        </Grid> */}
+      </div>
+      <MainCard className="MainCard">
+        <Grid
+          container
+          spacing={2}
+          width="Inherit"
+          sx={{ paddingY: 2, paddingX: 2 }}
+        >
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -649,23 +664,30 @@ const Fabrication = () => {
               onChange={handleChange}
             />
           </Grid>
+          <Grid item xs={12} textAlign="right">
+            <Button variant="contained" size="small" onClick={handleSave}>
+              Save
+            </Button>
+          </Grid>
+          {/* </Grid> */}
         </Grid>
-      </FormControl>
-      <Grid container spacing={2} width="Inherit">
-        <Grid sx={{ marginTop: 2 }} item xs={12}>
-          <EditAbleDataGrid
-            ncolumns={columns}
-            initialRows={initialRows}
-            formData={formData}
-            editAPi={editAPi}
-            refetch={refetchFabricRequisitionData}
-            deleteApi={deleteApi}
-            deleteBy="fabricationId"
-            disableAddRecord={true}
-          />
+        {/* </FormControl> */}
+        <Grid container spacing={2} width="Inherit">
+          <Grid sx={{ marginTop: 2 }} item xs={12}>
+            <EditAbleDataGrid
+              ncolumns={columns}
+              initialRows={initialRows}
+              formData={formData}
+              editAPi={editAPi}
+              refetch={refetchFabricRequisitionData}
+              deleteApi={deleteApi}
+              deleteBy="fabricationId"
+              disableAddRecord={true}
+            />
+          </Grid>
         </Grid>
-      </Grid>
-    </MainCard>
+      </MainCard>
+    </>
   );
 };
 

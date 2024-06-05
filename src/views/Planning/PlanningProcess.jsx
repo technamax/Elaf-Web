@@ -19,6 +19,8 @@ import Schiffli from './Schiffli';
 import AdditionalProcess from './AdditionalProcess';
 import AddAdditionalServices from './AdditionalServices';
 import AdditionalServices from './AdditionalServices';
+import { SnackbarProvider, useSnackbar } from 'notistack';
+
 // import { color } from '@mui/system';
 const steps = [
   'Pre Planning',
@@ -35,6 +37,7 @@ export default function PlanningProcess() {
   const [skipped, setSkipped] = React.useState(new Set());
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [lookupDomains, setLookupDomains] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -89,12 +92,26 @@ export default function PlanningProcess() {
       return newSkipped;
     });
   };
-
   const handleReset = () => {
     setActiveStep(0);
   };
+  const [formData, setFormData] = useState({
+    lookUpId: '',
+    lookUpName: '',
+    lookUpDomain: '',
+    lookUpCategory: '',
+    enabled: '',
+    createdOn: new Date().toISOString()
+  });
   const handleSave = async () => {
-    console.log(formData);
+    if (!formData.lookUpDomain || !formData.lookUpName) {
+      enqueueSnackbar('Please fill in all required fields.', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+      return;
+    }
+
     try {
       const response = await axios.get(
         `https://gecxc.com:4041/api/Common/SaveLookUp?lookupDomain=${formData.lookUpDomain}&LookUpName=${formData.lookUpName}&appId=1`
@@ -120,10 +137,19 @@ export default function PlanningProcess() {
       return response.data;
     } catch (error) {
       console.error('Error saving data:', error);
+      enqueueSnackbar('Error saving data. Please try again.', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
       throw error;
     }
   };
-
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
   useEffect(() => {
     const GetLookUpDomains = async () => {
       try {
@@ -135,7 +161,7 @@ export default function PlanningProcess() {
       } catch (error) {
         console.error('Error fetching design options:', error);
       }
-      console.log('LookupData', response);
+      // console.log('LookupData', response);
     };
     GetLookUpDomains();
   }, []);
@@ -184,8 +210,11 @@ export default function PlanningProcess() {
                   fullWidth
                   id="outlined-select-currency"
                   select
-                  label="Select Design"
+                  label="Select Lookup"
                   size="small"
+                  value={formData.lookUpDomain}
+                  name="lookUpDomain"
+                  onChange={handleChange}
                 >
                   {lookupDomains.map((domain) => (
                     <MenuItem
@@ -201,8 +230,11 @@ export default function PlanningProcess() {
                 <TextField
                   fullWidth
                   label="Add Lookup Description"
+                  value={formData.lookUpName}
+                  onChange={handleChange}
+                  name="lookUpName"
                   size="small"
-                ></TextField>
+                />
               </Grid>
               <Grid item sm={3} textAlign="right">
                 <Button variant="contained" size="small" onClick={handleSave}>

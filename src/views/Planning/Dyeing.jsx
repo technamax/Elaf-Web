@@ -48,7 +48,8 @@ const Dyeing = () => {
     TotalIncludingGst: '',
     createdBy: 0,
     poPcs: '',
-    baseColorName: ''
+    baseColorName: '',
+    planningHeaderId: ''
     // fabricId: ''
   });
   console.log('Dyeing form data to send', formData);
@@ -64,14 +65,14 @@ const Dyeing = () => {
       skip: !formData.designId
     });
   const { data: fabricData } = useGetFabricFromPrePlanningByBatchNoQuery(
-    formData.batchNo,
+    formData.planningHeaderId,
     {
-      skip: !formData.batchNo
+      skip: !formData.planningHeaderId
     }
   );
   const { data: fabricRequisitionData, refetch: refetchFabricRequisitionData } =
-    useGetFabricRequisitionListByBatchNoQuery(formData.batchNo, {
-      skip: !formData.batchNo
+    useGetFabricRequisitionListByBatchNoQuery(formData.planningHeaderId, {
+      skip: !formData.planningHeaderId
     });
 
   const [designList, setDesignList] = useState([]);

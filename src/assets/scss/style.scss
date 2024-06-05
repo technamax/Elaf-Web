@@ -33,7 +33,23 @@
     right: 0;
   }
 }
+.CardHeader {
+  margin-bottom: 10px;
+  border-radius: 7px;
+  width: auto;
+  max-height: 80vh; /* Removed responsive design as it's not supported in CSS */
+  overflow: auto;
+  padding: 5px;
+}
 
+.MainCard {
+  border-width: 1px;
+  border-style: dotted;
+  border-color: #a11f23;
+}
+.bi-menu-down::before {
+  color: #d12d33;
+}
 .scrollbar-container.ps,
 .scrollbar-container > .ps {
   &.ps--active-y > .ps__rail-y {

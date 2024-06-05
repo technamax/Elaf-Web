@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 import NavGroup from './NavGroup';
 import menuItem from 'menu-items';
 import fetchMenuItems from '../../../../api/menuService';
+import * as Icons from '@mui/icons-material'; // Import all icons from MUI
+
 // ==============================|| SIDEBAR MENU LIST ||============================== //
 
 const MenuList = ({ empId, token }) => {
@@ -51,8 +53,8 @@ const MenuList = ({ empId, token }) => {
       title: subMenu.subMenuDesc,
       // title: mainMenu.mainMenuDesc,
       type: 'item',
-      url: subMenu.link
-      // icon: subMenu.icon
+      url: subMenu.link,
+      icon: subMenu.icon
     }));
 
     const navGroup = {

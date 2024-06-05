@@ -40,3 +40,9 @@
   border-style: dotted;
   border-color: rgb(161, 31, 35);
 }
+
+.MuiCardHeader-root {
+  background: rgb(161, 31, 35);
+  color: white !important;
+  max-height: 30px !important;
+}

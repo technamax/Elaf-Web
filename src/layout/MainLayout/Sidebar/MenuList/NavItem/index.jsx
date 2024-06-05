@@ -12,6 +12,8 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { MENU_OPEN, SET_MENU } from 'store/actions';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import * as Icon from 'react-bootstrap-icons';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const NavItem = ({ item, level }) => {
   const theme = useTheme();
@@ -64,8 +66,9 @@ const NavItem = ({ item, level }) => {
 
   return (
     <ListItemButton
-      {...listItemProps}
-      disabled={item.disabled}
+      component={forwardRef((props, ref) => (
+        <Link ref={ref} {...props} to={item.url} />
+      ))}
       sx={{
         borderRadius: `${customization.borderRadius}px`,
         alignItems: 'flex-start',
@@ -76,9 +79,12 @@ const NavItem = ({ item, level }) => {
       selected={customization.isOpen.findIndex((id) => id === item.id) > -1}
       onClick={() => itemHandler(item.id)}
     >
-      <ListItemIcon sx={{ my: 'auto', minWidth: !item.icon ? 18 : 36 }}>
-        {itemIcon}
-      </ListItemIcon>
+      {item.icon && (
+        <ListItemIcon sx={{ my: 'auto', minWidth: !item.icon ? 18 : 36 }}>
+          <i class={item.icon}></i>
+        </ListItemIcon>
+      )}
+
       <ListItemText
         primary={
           <Typography

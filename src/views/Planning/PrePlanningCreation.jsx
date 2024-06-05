@@ -20,7 +20,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { SnackbarProvider, useSnackbar } from 'notistack';
-
+import '../../App.css';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import { GetCollectionList } from 'api/apis';
@@ -226,7 +226,12 @@ const PrePlanningCreation = () => {
       >
         <Card variant="outlined">
           <CardHeader
-            style={{ backgroundColor: '#a31f23', color: 'white' }}
+            className="css-4rfrnx-MuiCardHeader-root"
+            // style={{
+            //   backgroundColor: '#a31f23',
+            //   color: 'white',
+            //   maxHeight: '30px'
+            // }}
             title="Create Batch Planning"
             titleTypographyProps={{ style: { color: 'white' } }}
           ></CardHeader>

@@ -1,4 +1,3 @@
-
 /* eslint-disable prettier/prettier */
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -9,7 +8,8 @@ import {
   MenuItem,
   FormControl,
   Typography,
-  Divider
+  Divider,
+  Autocomplete
 } from '@mui/material';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 // import { useGetDesignListQuery } from 'api/store/Apis/designApi';
@@ -18,7 +18,12 @@ import { useGetCollectionFromPlanningHeaderQuery } from 'api/store/Apis/prePlann
 import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
+// import Card from '@mui/material/Card';
+import { Card, CardHeader, Avatar } from '@mui/material';
 
+import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
+// import CardHeader from '@mui/material/CardHeader';
+import '../../assets/scss/style.scss';
 const PrePlanning = () => {
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
@@ -232,16 +237,13 @@ const PrePlanning = () => {
       );
       console.log('Data saved successfully:', response.data);
       setFormData({
-        collectionId: '',
-        baseColorId: '', // not in api
-        baseColorName: '', // not in api
-        noOfDesigns: '', // not in apis
-        noOfColors: '', // not in api
-        planningHeaderId: '',
-        designId: '',
-        batchNo: '',
+        collectionId: formData.collectionId,
+        designId: formData.designId,
+        batchNo: formData.batchNo,
+        baseColorName: formData.baseColorName,
+        // Clear other fields
         componentId: '',
-        cuttingSize: '', // not in api
+        cuttingSize: '',
         colorId: '',
         fabricId: '',
         noOfHeads: '',
@@ -386,293 +388,386 @@ const PrePlanning = () => {
   const editAPi = `https://gecxc.com:4041/api/PrePlanning/SavePrePlanning`;
   const deleteApi = `https://gecxc.com:4041/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
   return (
-    <MainCard
-      style={{
-        borderWidth: 2,
-        borderStyle: 'dotted',
-        borderColor: '#a11f23',
-        width: 'auto',
-        maxHeight: { xs: '80vh', md: 'auto' },
-        overflow: 'auto'
-      }}
-    >
-      <FormControl>
-        <Grid container spacing={2} width="Inherit">
-          <Grid item xs={9} md={9}>
-            <Typography variant="h3" gutterBottom>
-              Pre Planning
-            </Typography>
-          </Grid>
-          <Grid item xs={3} textAlign="right">
-            <Button variant="contained" size="small" onClick={handleSave}>
-              Save
-            </Button>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              select
-              label="Select Collection"
-              name="collectionId"
-              value={formData.collectionId}
-              onChange={handleChange}
-              size="small"
-            >
-              {collectionList.map((option) => (
-                <MenuItem key={option.collectionId} value={option.collectionId}>
-                  {option.collectionName}
-                </MenuItem>
-              ))}
-            </TextField>{' '}
-          </Grid>
+    <>
+      <div className="CardHeader">
+        <Card variant="outlined">
+          <CardHeader
+            className="css-4rfrnx-MuiCardHeader-root"
+            avatar={<SendAndArchiveIcon />}
+            title="Pre Planning"
+            titleTypographyProps={{ style: { color: 'white' } }}
+          >
+            {' '}
+          </CardHeader>
+          <Grid
+            container
+            spacing={2}
+            width="Inherit"
+            sx={{ paddingY: 2, paddingX: 2 }}
+          >
+            <Grid item xs={12} md={4}>
+              <TextField
+                fullWidth
+                select
+                label="Select Collection"
+                name="collectionId"
+                value={formData.collectionId}
+                onChange={handleChange}
+                size="small"
+              >
+                {collectionList.map((option) => (
+                  <MenuItem
+                    key={option.collectionId}
+                    value={option.collectionId}
+                  >
+                    {option.collectionName}
+                  </MenuItem>
+                ))}
+              </TextField>{' '}
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                fullWidth
+                select
+                label="Select Design"
+                name="designId"
+                value={formData.designId}
+                onChange={handleChange}
+                size="small"
+              >
+                {designList.map((option) => (
+                  <MenuItem key={option.designId} value={option.designId}>
+                    {option.designNo}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                fullWidth
+                select
+                label="Batch No."
+                name="batchNo"
+                value={formData.batchNo}
+                onChange={handleChange}
+                size="small"
+              >
+                {batchList.map((option) => (
+                  <MenuItem key={option.batchNo} value={option.batchNo}>
+                    {option.batchNo}
+                  </MenuItem>
+                ))}
+              </TextField>{' '}
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="No of Design"
+                fullWidth
+                size="small"
+                name="noOfDesigns"
+                value={formData.noOfDesigns}
+                onChange={handleChange}
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="No of Color"
+                fullWidth
+                size="small"
+                name="noOfColors"
+                value={formData.noOfColors}
+                onChange={handleChange}
+                disabled
+              />
+            </Grid>
 
-          <Grid item xs={12} md={4}>
-            <TextField
-              label="No of Design"
-              fullWidth
-              size="small"
-              name="noOfDesigns"
-              value={formData.noOfDesigns}
-              onChange={handleChange}
-              disabled
-            />
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Base Color"
+                fullWidth
+                size="small"
+                name="baseColorName"
+                value={formData.baseColorName}
+                onChange={handleChange}
+                disabled
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              label="No of Color"
-              fullWidth
-              size="small"
-              name="noOfColors"
-              value={formData.noOfColors}
-              onChange={handleChange}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              select
-              label="Select Design"
-              name="designId"
-              value={formData.designId}
-              onChange={handleChange}
-              size="small"
-            >
-              {designList.map((option) => (
-                <MenuItem key={option.designId} value={option.designId}>
-                  {option.designNo}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              label="Base Color"
-              fullWidth
-              size="small"
-              name="baseColorName"
-              value={formData.baseColorName}
-              onChange={handleChange}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              select
-              label="Batch No."
-              name="batchNo"
-              value={formData.batchNo}
-              onChange={handleChange}
-              size="small"
-            >
-              {batchList.map((option) => (
-                <MenuItem key={option.batchNo} value={option.batchNo}>
-                  {option.batchNo}
-                </MenuItem>
-              ))}
-            </TextField>{' '}
-          </Grid>
+        </Card>
+      </div>
 
-          <Grid item xs={12} md={12}>
-            <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
+      <MainCard className="MainCard">
+        {' '}
+        <FormControl>
+          <Grid container spacing={2} width="Inherit">
+            <Grid item xs={12} md={3}>
+              {/* <TextField
+                fullWidth
+                select
+                label="Select Component"
+                defaultValue=""
+                size="small"
+                name="componentId"
+                value={formData.componentId}
+                onChange={handleChange}
+              >
+                {components.map((option) => (
+                  <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                    {option.lookUpName}
+                  </MenuItem>
+                ))}
+              </TextField> */}
+              <Autocomplete
+                fullWidth
+                options={components}
+                getOptionLabel={(option) => option.lookUpName}
+                value={
+                  components.find(
+                    (component) => component.lookUpId === formData.componentId
+                  ) || null
+                }
+                onChange={(event, newValue) => {
+                  handleChange({
+                    target: {
+                      name: 'componentId',
+                      value: newValue ? newValue.lookUpId : ''
+                    }
+                  });
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Select Component"
+                    size="small"
+                    name="componentId"
+                    value={formData.componentId}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              {/* <TextField
+                label="Color"
+                fullWidth
+                select
+                size="small"
+                name="colorId"
+                value={formData.colorId}
+                onChange={handleChange}
+              >
+                {colors.map((option) => (
+                  <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                    {option.lookUpName}
+                  </MenuItem>
+                ))}
+              </TextField> */}{' '}
+              <Autocomplete
+                fullWidth
+                options={colors}
+                getOptionLabel={(option) => option.lookUpName}
+                value={
+                  colors.find((color) => color.lookUpId === formData.colorId) ||
+                  null
+                }
+                onChange={(event, newValue) => {
+                  handleChange({
+                    target: {
+                      name: 'colorId',
+                      value: newValue ? newValue.lookUpId : ''
+                    }
+                  });
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Color"
+                    size="small"
+                    value={formData.colorId}
+                    name="colorId"
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <TextField
+                label="Cutting Size"
+                fullWidth
+                size="small"
+                name="cuttingSize"
+                value={formData.cuttingSize}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              {/* <TextField
+                fullWidth
+                select
+                label="Fabrication"
+                defaultValue=""
+                size="small"
+                name="fabricId"
+                value={formData.fabricId}
+                onChange={handleChange}
+              >
+                {Fabrications.map((option) => (
+                  <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                    {option.lookUpName}
+                  </MenuItem>
+                ))}
+              </TextField> */}
+              <Autocomplete
+                fullWidth
+                options={Fabrications}
+                getOptionLabel={(option) => option.lookUpName}
+                value={
+                  Fabrications.find(
+                    (fabric) => fabric.lookUpId === formData.fabricId
+                  ) || null
+                }
+                onChange={(event, newValue) => {
+                  handleChange({
+                    target: {
+                      name: 'fabricId',
+                      value: newValue ? newValue.lookUpId : ''
+                    }
+                  });
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Fabrication"
+                    size="small"
+                    name="fabricId"
+                    value={formData.fabricId}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <TextField
+                fullWidth
+                select
+                label="No of Heads"
+                defaultValue=""
+                size="small"
+                name="noOfHeads"
+                value={formData.noOfHeads}
+                onChange={handleChange}
+              >
+                {heads.map((option) => (
+                  <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                    {option.lookUpName}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <TextField
+                label="Repeats"
+                fullWidth
+                size="small"
+                name="repeats"
+                value={formData.repeats}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <TextField
+                label="Repeat Size"
+                fullWidth
+                size="small"
+                name="repeatSize"
+                value={formData.repeatSize}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <TextField
+                label="Total Fabric"
+                fullWidth
+                size="small"
+                name="totalFabric"
+                value={formData.totalFabric}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <TextField
+                fullWidth
+                select
+                label="UOM"
+                defaultValue=""
+                size="small"
+                name="uomId"
+                value={formData.uomId}
+                onChange={handleChange}
+              >
+                {uoms.map((option) => (
+                  <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                    {option.lookUpName}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <TextField
+                label="Shrinkage %"
+                fullWidth
+                size="small"
+                name="shrinkage"
+                value={formData.shrinkage}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <TextField
+                label="Wastage %"
+                fullWidth
+                size="small"
+                name="wastage"
+                value={formData.wastage}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <TextField
+                label="Total"
+                fullWidth
+                size="small"
+                name="total"
+                value={formData.total}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} textAlign="right">
+              <Button variant="contained" size="small" onClick={handleSave}>
+                Save
+              </Button>
+            </Grid>
           </Grid>
-
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Select Component"
-              defaultValue=""
-              size="small"
-              name="componentId"
-              value={formData.componentId}
-              onChange={handleChange}
-            >
-              {components.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Color"
-              fullWidth
-              select
-              size="small"
-              name="colorId"
-              value={formData.colorId}
-              onChange={handleChange}
-            >
-              {colors.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Cutting Size"
-              fullWidth
-              size="small"
-              name="cuttingSize"
-              value={formData.cuttingSize}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Fabrication"
-              defaultValue=""
-              size="small"
-              name="fabricId"
-              value={formData.fabricId}
-              onChange={handleChange}
-            >
-              {Fabrications.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="No of Heads"
-              defaultValue=""
-              size="small"
-              name="noOfHeads"
-              value={formData.noOfHeads}
-              onChange={handleChange}
-            >
-              {heads.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Repeats"
-              fullWidth
-              size="small"
-              name="repeats"
-              value={formData.repeats}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Repeat Size"
-              fullWidth
-              size="small"
-              name="repeatSize"
-              value={formData.repeatSize}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Total Fabric"
-              fullWidth
-              size="small"
-              name="totalFabric"
-              value={formData.totalFabric}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="UOM"
-              defaultValue=""
-              size="small"
-              name="uomId"
-              value={formData.uomId}
-              onChange={handleChange}
-            >
-              {uoms.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Shrinkage %"
-              fullWidth
-              size="small"
-              name="shrinkage"
-              value={formData.shrinkage}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Wastage %"
-              fullWidth
-              size="small"
-              name="wastage"
-              value={formData.wastage}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Total"
-              fullWidth
-              size="small"
-              name="total"
-              value={formData.total}
-              onChange={handleChange}
-            />
-          </Grid>
-        </Grid>
-      </FormControl>
-      <Grid container spacing={2} width="Inherit">
-        <Grid sx={{ marginTop: 2 }} item xs={12}>
-          <EditAbleDataGrid
-            ncolumns={columns}
-            initialRows={initialRows}
-            formData={formData}
-            editAPi={editAPi}
-            deleteApi={deleteApi}
-            deleteBy="planningId"
-            disableAddRecord={true}
+        </FormControl>
+        <Grid item xs={12} md={12}>
+          <Divider
+            color="#cc8587"
+            sx={{ height: 2, width: '100%', marginTop: 2 }}
           />
         </Grid>
-      </Grid>
-    </MainCard>
+        <Grid container spacing={2} width="Inherit">
+          <Grid sx={{ marginTop: 2 }} item xs={12}>
+            <EditAbleDataGrid
+              ncolumns={columns}
+              initialRows={initialRows}
+              formData={formData}
+              editAPi={editAPi}
+              deleteApi={deleteApi}
+              deleteBy="planningId"
+              disableAddRecord={true}
+            />
+          </Grid>
+        </Grid>
+      </MainCard>
+    </>
   );
 };
 
