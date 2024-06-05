@@ -13,7 +13,8 @@ import {
   InputLabel,
   Select,
   OutlinedInput,
-  Box
+  Box,
+  ButtonGroup
 } from '@mui/material';
 
 import { DataGrid } from '@mui/x-data-grid';
@@ -35,48 +36,94 @@ import MainCard from 'ui-component/cards/MainCard';
 
 const Embroidery = () => {
   const theme = useTheme();
+  const [initialData, setInitialData] = useState([]);
 
   const [formData, setFormData] = useState({
-    designId: '',
-    batchNo: '',
-    componentId: '',
-    fabricId: '',
-    vendorId: '',
-    poPcs: '', // coming from getcollectionapi
-    baseColorId: '', // coming from getcollectionapi
-    baseColorName: '',
-    colorId: '', //from dying screen coming from fabricAPi
-    availableQty: '',
-    noOfHeads: '',
-    repeats: '',
-    cuttingSize: '',
-    itemsPerRepeat: '',
-    totalPcs: '', //repeat*itemsPerRepeat
-    totalAmount: '', //
-    threadStitches: '',
-    threadRate: '',
-    threadAmount: '',
-    tillaStitches: '',
-    tillaRate: '',
-    tillaAmount: '',
-    sequence: '',
-    sequenceRate: '',
-    sequenceAmount: '',
-    isSolving: false,
-    solvingLayers: '',
-    solvingInMeters: '',
-    solvingRate: '',
-    solvingAmount: '',
-    // additional: '',
-    threadAdditional: [],
+    embroideryId: initialData?.embroideryId || 0,
+    designId: initialData?.designId || '',
+    batchNo: initialData?.batchNo || '',
+    planningHeaderId: initialData?.planningHeaderId || '',
+    componentId: initialData?.componentId || '',
+    fabricId: initialData?.fabricId || '',
+    vendorId: initialData?.vendorId || '',
+    poPcs: initialData?.poPcs || '', // coming from getcollectionapi
+    baseColorId: initialData?.baseColorId || '', // coming from getcollectionapi
+    baseColorName: initialData?.baseColorName || '',
+    colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
+    availableQty: initialData?.availableQty || '',
+    noOfHead: initialData?.noOfHead || '',
+    repeats: initialData?.repeats || '',
+    cuttingSize: initialData?.cuttingSize || '',
+    itemsPerRepeat: initialData?.itemsPerRepeat || '',
+    totalPcs: initialData?.totalPcs || '', //repeat*itemsPerRepeat
+    totalAmount: initialData?.totalAmount || '', //
+    threadStiches: initialData?.threadStiches || '',
+    threadRate: initialData?.threadRate || '',
+    threadAmount: initialData?.threadAmount || '',
+    tillaStiches: initialData?.tillaStiches || '',
+    tilaRate: initialData?.tilaRate || '',
+    tilaAmount: initialData?.tilaAmount || '',
+    sequence: initialData?.sequence || '',
+    sequenceRate: initialData?.sequenceRate || '',
+    sequenceAmount: initialData?.sequenceAmount || '',
+    isSolving: initialData?.isSolving || false,
+    solvingLayers: initialData?.solvingLayers || 0,
+    solvingInMeters: initialData?.solvingInMeters || '',
+    solvingRate: initialData?.solvingRate || 0,
+    solvingAmount: initialData?.solvingAmount || '',
+    // additional:  initialData?.tilaRate || '',
+    threadAdditional: initialData?.threadAdditional || [],
 
-    costPerComponent: '', //
-    // costPerComponent: '', //
-    createdOn: new Date().toISOString(),
-    createdBy: 0,
+    costPerComponent: initialData?.costPerComponent || '', //
+    // costPerComponent:  initialData?.tilaRate || '', //
+    createdOn: initialData?.createdOn || new Date().toISOString(),
+    createdBy: initialData?.createdBy || 0,
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: 0
   });
+
+  useEffect(() => {
+    setFormData({
+      embroideryId: initialData?.embroideryId || 0,
+      designId: initialData?.designId || '',
+      batchNo: initialData?.batchNo || '',
+      planningHeaderId: initialData?.planningHeaderId || '',
+      componentId: initialData?.componentId || '',
+      fabricId: initialData?.fabricId || '',
+      vendorId: initialData?.vendorId || '',
+      poPcs: initialData?.poPcs || '', // coming from getcollectionapi
+      baseColorId: initialData?.baseColorId || '', // coming from getcollectionapi
+      baseColorName: initialData?.baseColorName || '',
+      colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
+      availableQty: initialData?.availableQty || '',
+      noOfHead: initialData?.noOfHead || '',
+      repeats: initialData?.repeats || '',
+      cuttingSize: initialData?.cuttingSize || '',
+      itemsPerRepeat: initialData?.itemsPerRepeat || '',
+      totalPcs: initialData?.totalPcs || '', //repeat*itemsPerRepeat
+      totalAmount: initialData?.totalAmount || '', //
+      threadStiches: initialData?.threadStiches || '',
+      threadRate: initialData?.threadRate || '',
+      threadAmount: initialData?.threadAmount || '',
+      tillaStiches: initialData?.tillaStiches || '',
+      tilaRate: initialData?.tilaRate || '',
+      tilaAmount: initialData?.tilaAmount || '',
+      sequence: initialData?.sequence || '',
+      sequenceRate: initialData?.sequenceRate || '',
+      sequenceAmount: initialData?.sequenceAmount || '',
+      isSolving: initialData?.isSolving || false,
+      solvingLayers: initialData?.solvingLayers || 0,
+      solvingInMeters: initialData?.solvingInMeters || '',
+      solvingRate: initialData?.solvingRate || 0,
+      solvingAmount: initialData?.solvingAmount || '',
+      threadAdditional: initialData?.threadAdditional || [],
+      costPerComponent: initialData?.costPerComponent || '', //
+      createdOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || 0,
+      lastUpdatedOn: new Date().toISOString(),
+      LastUpdatedBy: 0
+    });
+  }, [initialData]);
   const additionals = ['Boring', 'Pooni', 'Laser', 'Doori', 'Dissolving'];
   function getStyles(name, personName, theme) {
     return {
@@ -100,37 +147,41 @@ const Embroidery = () => {
     });
   const { data: fabricData } = useGetFabricByComponentsAndBatchNoQuery(
     {
-      batchNo: formData.batchNo,
+      batchNo: formData.planningHeaderId,
       componentId: formData.componentId
     },
     {
-      skip: !formData.batchNo || !formData.componentId
+      skip: !formData.planningHeaderId || !formData.componentId
     }
   );
   const { data: colorData } =
     useGetFabricColorByComponentsBatchNoAndFabricIdQuery(
       {
-        batchNo: formData.batchNo,
+        batchNo: formData.planningHeaderId,
         componentId: formData.componentId,
         fabricId: formData.fabricId
       },
       {
-        skip: !formData.batchNo || !formData.componentId || !formData.fabricId
+        skip:
+          !formData.planningHeaderId ||
+          !formData.componentId ||
+          !formData.fabricId
       }
     );
 
   const { data: embroideryList, refetch: refetchEmbroideryList } =
-    useGetEmbroideryListByBatchNoQuery(formData.batchNo, {
-      skip: !formData.batchNo // Skip the query if no collection is selected
+    useGetEmbroideryListByBatchNoQuery(formData.planningHeaderId, {
+      skip: !formData.planningHeaderId // Skip the query if no collection is selected
     });
   const { data: componentsByBatch } = useGetComponentsByBatchNoQuery(
-    formData.batchNo,
+    formData.planningHeaderId,
     {
-      skip: !formData.batchNo // Skip the query if no collection is selected
+      skip: !formData.planningHeaderId // Skip the query if no collection is selected
     }
   );
+  console.log('formData.planningHeaderId', formData.planningHeaderId);
+  console.log('collectionData', collectionData);
 
-  console.log('colorData', colorData);
   const [designList, setDesignList] = useState([]);
   const [batchList, setBatchList] = useState([]);
   const [Fabrications, setFabrications] = useState([]);
@@ -139,6 +190,8 @@ const Embroidery = () => {
   const [colors, setColors] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   const [components, setComponents] = useState([]);
+  console.log('batchList', batchList);
+  console.log('formData', formData);
 
   useEffect(() => {
     if (designData) {
@@ -179,7 +232,9 @@ const Embroidery = () => {
       );
       // refetchBatches();
     }
-  }, [embroideryList]);
+  }, [embroideryList, refetchEmbroideryList]);
+  console.log('embroideryList', embroideryList);
+  console.log('initialRows', initialRows);
 
   useEffect(() => {
     // fetchData();
@@ -205,9 +260,9 @@ const Embroidery = () => {
       totalPcs: calculateTotalPcs()
     }));
     const calculateThread = () => {
-      const stitches = parseFloat(formData.threadStitches) || 0;
+      const stitches = parseFloat(formData.threadStiches) || 0;
       const rate = parseFloat(formData.threadRate) || 0;
-      const heads = parseFloat(formData.noOfHeads) || 0;
+      const heads = parseFloat(formData.noOfHead) || 0;
       const repeats = parseFloat(formData.repeats) || 0;
       return (stitches / 1000) * (rate * repeats * heads);
     };
@@ -217,21 +272,21 @@ const Embroidery = () => {
       threadAmount: calculateThread()
     }));
     const calculateTilla = () => {
-      const stitches = parseFloat(formData.tillaStitches) || 0;
-      const rate = parseFloat(formData.tillaRate) || 0;
-      const heads = parseFloat(formData.noOfHeads) || 0;
+      const stitches = parseFloat(formData.tillaStiches) || 0;
+      const rate = parseFloat(formData.tilaRate) || 0;
+      const heads = parseFloat(formData.noOfHead) || 0;
       const repeats = parseFloat(formData.repeats) || 0;
       return (stitches / 1000) * (rate * repeats * heads);
     };
 
     setFormData((prevData) => ({
       ...prevData,
-      tillaAmount: calculateTilla()
+      tilaAmount: calculateTilla()
     }));
     const calculateSequence = () => {
       const stitches = parseFloat(formData.sequence) || 0;
       const rate = parseFloat(formData.sequenceRate) || 0;
-      const heads = parseFloat(formData.noOfHeads) || 0;
+      const heads = parseFloat(formData.noOfHead) || 0;
       const repeats = parseFloat(formData.repeats) || 0;
       return (stitches / 1000) * (rate * repeats * heads);
     };
@@ -242,9 +297,9 @@ const Embroidery = () => {
     }));
     const calculateInMeters = () => {
       const repeats = parseFloat(formData.repeats) || 0;
-      const noOfHeads = parseFloat(formData.noOfHeads) || 0;
+      const noOfHead = parseFloat(formData.noOfHead) || 0;
       const layers = parseFloat(formData.solvingLayers) || 0;
-      return ((repeats * noOfHeads * 13) / 39.37) * layers;
+      return ((repeats * noOfHead * 13) / 39.37) * layers;
     };
 
     setFormData((prevData) => ({
@@ -264,7 +319,7 @@ const Embroidery = () => {
     }));
     const calculateTotalAmount = () => {
       const thread = parseFloat(formData.threadAmount) || 0;
-      const tilla = parseFloat(formData.tillaAmount) || 0;
+      const tilla = parseFloat(formData.tilaAmount) || 0;
       const sequence = parseFloat(formData.sequenceAmount) || 0;
       const solving = parseFloat(formData.solvingAmount) || 0;
       return thread + tilla + sequence + solving;
@@ -291,13 +346,13 @@ const Embroidery = () => {
     formData.sequenceAmount,
     formData.solvingAmount,
     formData.repeats,
-    formData.tillaAmount,
+    formData.tilaAmount,
     formData.itemsPerRepeat,
     formData.threadRate,
-    formData.threadStitches,
-    formData.noOfHeads,
-    formData.tillaRate,
-    formData.tillaStitches,
+    formData.threadStiches,
+    formData.noOfHead,
+    formData.tilaRate,
+    formData.tillaStiches,
     formData.sequenceRate,
     formData.sequence,
     formData.solvingLayers,
@@ -323,7 +378,6 @@ const Embroidery = () => {
       setFormData({
         ...formData,
         collectionId: value,
-
         poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
     } else if (name === 'designId') {
@@ -345,6 +399,13 @@ const Embroidery = () => {
         cuttingSize: selectedcolor ? selectedcolor.cuttingSize : '',
         repeats: selectedcolor ? selectedcolor.repeats : ''
       });
+    } else if (name === 'batchNo') {
+      const selectedBatch = batchList.find((batch) => batch.batchNo === value);
+      setFormData({
+        ...formData,
+        batchNo: value,
+        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
+      });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -361,10 +422,13 @@ const Embroidery = () => {
       );
 
       console.log('Save response:', response.data);
+      setInitialData({});
 
       setFormData({
-        designId: '',
-        batchNo: '',
+        embroideryId: 0,
+        designId: response.data.result.designId,
+        batchNo: response.data.result.batchNo,
+        planningHeaderId: response.data.result.planningHeaderId,
         componentId: '',
         fabricId: '',
         vendorId: '',
@@ -373,25 +437,25 @@ const Embroidery = () => {
         baseColorName: '',
         colorId: '', //from dying screen coming from fabricAPi
         availableQty: '',
-        noOfHeads: '',
+        noOfHead: '',
         repeats: '',
         cuttingSize: '',
         itemsPerRepeat: '',
         totalPcs: '', //repeat*itemsPerRepeat
         totalAmount: '', //
-        threadStitches: '',
+        threadStiches: '',
         threadRate: '',
         threadAmount: '',
-        tillaStitches: '',
-        tillaRate: '',
-        tillaAmount: '',
+        tillaStiches: '',
+        tilaRate: '',
+        tilaAmount: '',
         sequence: '',
         sequenceRate: '',
         sequenceAmount: '',
         isSolving: false,
-        solvingLayers: '',
+        solvingLayers: 0,
         solvingInMeters: '',
-        solvingRate: '',
+        solvingRate: 0,
         solvingAmount: '',
         // additional: '',
         threadAdditional: [],
@@ -403,77 +467,88 @@ const Embroidery = () => {
         lastUpdatedOn: new Date().toISOString(),
         LastUpdatedBy: 0
       });
+      setInitialRows([]);
     } catch (error) {
       console.error('Error saving data:', error);
     }
+    refetchEmbroideryList();
   };
 
   console.log('initialRows', initialRows);
-  const handleEdit = () => {
-    //
+  const handleEdit = (row) => {
+    // Convert the comma-separated string to an array
+    const threadAdditionalArray = row.threadAdditional
+      ? row.threadAdditional.split(',').map((item) => item.trim())
+      : [];
+
+    setInitialData({
+      ...row,
+      threadAdditional: threadAdditionalArray
+    });
   };
-  const handleDelete = () => {
-    //
+
+  console.log('initialData', initialData);
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(
+        `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=${id}`
+      );
+      refetchEmbroideryList();
+      console.log('deleted');
+    } catch (error) {
+      console.error('Error deleting data:', error);
+    }
+    // Handle delete logic
   };
   const columns = [
-    { field: 'designId', headerName: 'Design Id', flex: 1 },
-    { field: 'batchNo', headerName: 'Batch No.', flex: 1 },
-    { field: 'componentId', headerName: 'componentId', flex: 1 },
-    { field: 'fabricId', headerName: 'fabricId', flex: 1 },
-    {
-      field: 'vendorId',
-      headerName: 'vendorId',
-      flex: 1
-    },
-    {
-      field: 'poPcs',
-      headerName: 'Po Pcs',
-      flex: 1
-    },
-    { field: 'baseColorName', headerName: 'Base Color', flex: 1 },
-    { field: 'colorId', headerName: 'color', flex: 1 },
-    { field: 'availableQty', headerName: 'availableQty', flex: 1 },
-    { field: 'noOfHeads', headerName: 'No. Of Heads', flex: 1 },
-    { field: 'repeats', headerName: 'Repeats', flex: 1 },
-    { field: 'cuttingSize', headerName: 'cutting Size', flex: 1 },
-    { field: 'itemsPerRepeat', headerName: 'Items Per Repeat', flex: 1 },
-    { field: 'totalPcs', headerName: 'Total Pcs', flex: 1 },
-    { field: 'threadStitches', headerName: 'Thread Stitches', flex: 1 },
-    { field: 'threadRate', headerName: 'Thread Rate', flex: 1 },
-    { field: 'threadAmount', headerName: 'Thread Amount', flex: 1 },
-    { field: 'tillaStitches', headerName: 'Tilla Stitches', flex: 1 },
-    { field: 'tillaRate', headerName: 'Tilla Rate', flex: 1 },
-    { field: 'tillaAmount', headerName: 'Tilla Amount', flex: 1 },
-    { field: 'threadAmount', headerName: 'Thread Amount', flex: 1 },
-    { field: 'sequence', headerName: 'sequence', flex: 1 },
-    { field: 'sequenceRate', headerName: 'Sequence Rate', flex: 1 },
+    { field: 'designId', headerName: 'Design Id' },
+    { field: 'batchNo', headerName: 'Batch No.' },
+    { field: 'componentId', headerName: 'Component Id' },
+    { field: 'fabricId', headerName: 'Fabric Id' },
+    { field: 'vendorId', headerName: 'Vendor Id' },
+    { field: 'poPcs', headerName: 'Po Pcs' },
+    { field: 'baseColorName', headerName: 'Base Color' },
+    { field: 'colorId', headerName: 'Color' },
+    { field: 'availableQty', headerName: 'Available Qty' },
+    { field: 'noOfHead', headerName: 'No. Of Heads' },
+    { field: 'repeats', headerName: 'Repeats' },
+    { field: 'cuttingSize', headerName: 'Cutting Size' },
+    { field: 'itemsPerRepeat', headerName: 'Items Per Repeat' },
+    { field: 'totalPcs', headerName: 'Total Pcs' },
+    { field: 'threadStiches', headerName: 'Thread Stitches' },
+    { field: 'threadRate', headerName: 'Thread Rate' },
+    { field: 'threadAmount', headerName: 'Thread Amount' },
+    { field: 'tillaStiches', headerName: 'Tilla Stitches' },
+    { field: 'tilaRate', headerName: 'Tilla Rate' },
+    { field: 'tilaAmount', headerName: 'Tilla Amount' },
+    { field: 'sequence', headerName: 'sequence' },
+    { field: 'sequenceRate', headerName: 'Sequence Rate' },
     { field: 'sequenceAmount', headerName: 'Sequence Amount' },
-    { field: 'isSolving', headerName: 'Is Solving', flex: 1 },
-    { field: 'solvingLayers', headerName: 'Solving Layers', flex: 1 },
-    { field: 'solvingInMeters', headerName: 'Solving In Meters', flex: 1 },
-    { field: 'solvingRate', headerName: 'Solving Rate', flex: 1 },
-    { field: 'solvingAmount', headerName: 'Solving Amount', flex: 1 },
+    { field: 'isSolving', headerName: 'Is Solving' },
+    { field: 'solvingLayers', headerName: 'Solving Layers' },
+    { field: 'solvingInMeters', headerName: 'Solving In Meters' },
+    { field: 'solvingRate', headerName: 'Solving Rate' },
+    { field: 'solvingAmount', headerName: 'Solving Amount' },
     { field: 'threadAdditional', headerName: 'ThreadAdditional' },
-    { field: 'costPerComponent', headerName: 'Cost Per Component', flex: 1 },
-
+    { field: 'costPerComponent', headerName: 'Cost Per Component' },
     {
       field: 'Action',
-      minWidth: 200,
       headerName: 'Actions',
-
-      width: 220,
-
       renderCell: (params) => (
         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <ButtonGroup
-            size="small"
-            variant="text"
-            aria-label="Basic button group"
-          >
-            <Button variant="contained" size="small" onClick={handleEdit}>
+          <ButtonGroup size="small" variant="text">
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => handleEdit(params.row)}
+            >
               Edit
             </Button>
-            <Button variant="contained" size="small" onClick={handleDelete}>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => handleDelete(params.row.embroideryId)}
+            >
               Delete
             </Button>
           </ButtonGroup>
@@ -682,8 +757,8 @@ const Embroidery = () => {
               label="Heads"
               defaultValue=""
               size="small"
-              name="noOfHeads"
-              value={formData.noOfHeads}
+              name="noOfHead"
+              value={formData.noOfHead}
               onChange={handleChange}
             >
               {heads.map((option) => (
@@ -792,8 +867,8 @@ const Embroidery = () => {
                   label="Stitches"
                   fullWidth
                   size="small"
-                  name="threadStitches"
-                  value={formData.threadStitches}
+                  name="threadStiches"
+                  value={formData.threadStiches}
                   onChange={handleChange}
                 />
               </Grid>
@@ -832,8 +907,8 @@ const Embroidery = () => {
                   label="Stitches"
                   fullWidth
                   size="small"
-                  name="tillaStitches"
-                  value={formData.tillaStitches}
+                  name="tillaStiches"
+                  value={formData.tillaStiches}
                   onChange={handleChange}
                 />
               </Grid>
@@ -842,8 +917,8 @@ const Embroidery = () => {
                   label="Rate"
                   fullWidth
                   size="small"
-                  name="tillaRate"
-                  value={formData.tillaRate}
+                  name="tilaRate"
+                  value={formData.tilaRate}
                   onChange={handleChange}
                 />
               </Grid>
@@ -852,8 +927,8 @@ const Embroidery = () => {
                   label="Amount"
                   fullWidth
                   size="small"
-                  name="tillaAmount"
-                  value={formData.tillaAmount}
+                  name="tilaAmount"
+                  value={formData.tilaAmount}
                   onChange={handleChange}
                 />
               </Grid>
@@ -953,11 +1028,12 @@ const Embroidery = () => {
       </FormControl>
       <Grid container spacing={2} width="Inherit">
         <Grid sx={{ marginTop: 2 }} item xs={12}>
-          <Box sx={{ height: 300, width: '100%' }}>
+          <Box sx={{ height: 'auto', width: '100%' }}>
             <DataGrid
               // {...data}
               rows={initialRows}
               columns={columns}
+              rowLength={100}
               sx={{
                 boxShadow: 2,
                 border: 2,
