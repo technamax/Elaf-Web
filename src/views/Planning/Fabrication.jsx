@@ -27,6 +27,7 @@ import MainCard from 'ui-component/cards/MainCard';
 const Fabrication = () => {
   const [formData, setFormData] = useState({
     designId: '',
+    planningHeaderId: '',
     batchNo: '',
     baseColorId: '',
     baseColorName: '',
@@ -58,14 +59,14 @@ const Fabrication = () => {
       skip: !formData.designId // Skip the query if no collection is selected
     });
   const { data: fabricData } = useGetFabricFromPrePlanningByBatchNoQuery(
-    formData.batchNo,
+    formData.planningHeaderId,
     {
-      skip: !formData.batchNo // Skip the query if no collection is selected
+      skip: !formData.planningHeaderId // Skip the query if no collection is selected
     }
   );
   const { data: fabricRequisitionData, refetch: refetchFabricRequisitionData } =
-    useGetFabricRequisitionListByBatchNoQuery(formData.batchNo, {
-      skip: !formData.batchNo // Skip the query if no collection is selected
+    useGetFabricRequisitionListByBatchNoQuery(formData.planningHeaderId, {
+      skip: !formData.planningHeaderId // Skip the query if no collection is selected
     });
   console.log('fabricRequisitionData', fabricRequisitionData);
 
@@ -74,6 +75,7 @@ const Fabrication = () => {
   const [Fabrications, setFabrications] = useState([]);
   const [uoms, setUoms] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
+  console.log('planningHeaderId', formData.planningHeaderId);
 
   useEffect(() => {
     if (designData) {
@@ -211,6 +213,17 @@ const Fabrication = () => {
       valueOptions: designList.map((collection) => ({
         value: collection.designId,
         label: collection.designNo
+      }))
+    },
+    {
+      field: 'fabricId',
+      headerName: 'Fabric',
+      editable: true,
+      flex: 2,
+      type: 'singleSelect',
+      valueOptions: Fabrications.map((option) => ({
+        value: option.fabricId,
+        label: option.fabric
       }))
     },
     {

@@ -44,6 +44,7 @@ const Schiffli = () => {
     availableQty: '',
     thaanQty: 0,
     operatingMachineId: 0,
+    operatingMachine: '',
     workingHeadId: 0,
     cuttingSize: '',
     rate: '',
@@ -53,6 +54,7 @@ const Schiffli = () => {
     noOfStichesPerYard: 0,
     amountPerYard: 0,
     totalPcs: 0,
+    laserCut: false,
     laserCutRate: 0,
     pcsForLaserCut: 0,
     totalAmount: 0,
@@ -62,7 +64,7 @@ const Schiffli = () => {
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: 0
   });
-
+  console.log('formData', formData);
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const { data: lookupData } = useGetLookUpListQuery();
@@ -115,11 +117,13 @@ const Schiffli = () => {
   const [batchList, setBatchList] = useState([]);
   const [Fabrications, setFabrications] = useState([]);
   const [vendors, setVendors] = useState([]);
-  const [heads, setHeads] = useState([]);
+
+  const [operatingMachineList, setOperatingMachineList] = useState([]);
+  const [workingHeadList, setWorkingHeadList] = useState([]);
+
   const [colors, setColors] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   const [components, setComponents] = useState([]);
-  console.log('designData', designData);
 
   useEffect(() => {
     if (designData) {
@@ -168,7 +172,9 @@ const Schiffli = () => {
       const data = lookupData.result[0];
 
       setVendors(data.vendorList);
-      setHeads(data.noOfHeadsList);
+
+      setOperatingMachineList(data.operatingMachineList);
+      setWorkingHeadList(data.workingHeadList);
     }
   }, [lookupData]);
 
@@ -184,85 +190,37 @@ const Schiffli = () => {
   // console.log('collectionList', collectionList);
 
   useEffect(() => {
+    const calculateTotalEmbroidey = () => {
+      const thaanQty = parseFloat(formData.thaanQty) || 0;
+      const operatingMachine = parseFloat(formData.operatingMachine) || 0;
+      return thaanQty * operatingMachine;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      totalEmbroidry: calculateTotalEmbroidey()
+    }));
     const calculateTotalPcs = () => {
-      const repeats = parseFloat(formData.repeats) || 0;
-      const itemsPerRepeat = parseFloat(formData.itemsPerRepeat) || 0;
-      return repeats * itemsPerRepeat;
+      const thaanQty = parseFloat(formData.thaanQty) || 0;
+      const noOfStichesPerYard = parseFloat(formData.noOfStichesPerYard) || 0;
+
+      return thaanQty * noOfStichesPerYard;
     };
 
     setFormData((prevData) => ({
       ...prevData,
       totalPcs: calculateTotalPcs()
     }));
-    const calculateThread = () => {
-      const stitches = parseFloat(formData.threadStitches) || 0;
-      const rate = parseFloat(formData.threadRate) || 0;
-      const heads = parseFloat(formData.noOfHeads) || 0;
-      const repeats = parseFloat(formData.repeats) || 0;
-      return (stitches / 1000) * (rate * repeats * heads);
+    const calculateAmountPerYard = () => {
+      const noOfStichesPerYard = parseFloat(formData.noOfStichesPerYard) || 0;
+      const rate = parseFloat(formData.rate) || 0;
+
+      return (noOfStichesPerYard / 1000) * rate;
     };
 
     setFormData((prevData) => ({
       ...prevData,
-      threadAmount: calculateThread()
-    }));
-    const calculateTilla = () => {
-      const stitches = parseFloat(formData.tillaStitches) || 0;
-      const rate = parseFloat(formData.tillaRate) || 0;
-      const heads = parseFloat(formData.noOfHeads) || 0;
-      const repeats = parseFloat(formData.repeats) || 0;
-      return (stitches / 1000) * (rate * repeats * heads);
-    };
-
-    setFormData((prevData) => ({
-      ...prevData,
-      tillaAmount: calculateTilla()
-    }));
-    const calculateSequence = () => {
-      const stitches = parseFloat(formData.sequenceStitches) || 0;
-      const rate = parseFloat(formData.sequenceRate) || 0;
-      const heads = parseFloat(formData.noOfHeads) || 0;
-      const repeats = parseFloat(formData.repeats) || 0;
-      return (stitches / 1000) * (rate * repeats * heads);
-    };
-
-    setFormData((prevData) => ({
-      ...prevData,
-      sequenceAmount: calculateSequence()
-    }));
-    const calculateInMeters = () => {
-      const repeats = parseFloat(formData.repeats) || 0;
-      const noOfHeads = parseFloat(formData.noOfHeads) || 0;
-      const layers = parseFloat(formData.solvingLayers) || 0;
-      return ((repeats * noOfHeads * 13) / 39.37) * layers;
-    };
-
-    setFormData((prevData) => ({
-      ...prevData,
-      solvingInMeters: calculateInMeters()
-    }));
-    const calculateSolvingAmount = () => {
-      const solvingInMeters = parseFloat(formData.solvingInMeters) || 0;
-      const solvingRate = parseFloat(formData.solvingRate) || 0;
-      const layers = parseFloat(formData.solvingLayers) || 0;
-      return solvingInMeters * solvingRate;
-    };
-
-    setFormData((prevData) => ({
-      ...prevData,
-      solvingAmount: calculateSolvingAmount()
-    }));
-    const calculateTotalAmount = () => {
-      const thread = parseFloat(formData.threadAmount) || 0;
-      const tilla = parseFloat(formData.tillaAmount) || 0;
-      const sequence = parseFloat(formData.sequenceAmount) || 0;
-      const solving = parseFloat(formData.solvingAmount) || 0;
-      return thread + tilla + sequence + solving;
-    };
-
-    setFormData((prevData) => ({
-      ...prevData,
-      totalAmount: calculateTotalAmount()
+      amountPerYard: calculateAmountPerYard()
     }));
     const calculateCostPerComponent = () => {
       const totalAmount = parseFloat(formData.totalAmount) || 0;
@@ -275,24 +233,29 @@ const Schiffli = () => {
       ...prevData,
       costPerComponent: calculateCostPerComponent()
     }));
+    const calculateTotalamount = () => {
+      const amountPerYard = parseFloat(formData.amountPerYard) || 0;
+      const totalEmbroidry = parseFloat(formData.totalEmbroidry) || 0;
+      const laserCutRate = parseFloat(formData.laserCutRate) || 0;
+      const pcsForLaserCut = parseFloat(formData.pcsForLaserCut) || 0;
+      return amountPerYard * totalEmbroidry + pcsForLaserCut * laserCutRate;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      totalAmount: calculateTotalamount()
+    }));
   }, [
-    formData.threadAmount,
+    formData.thaanQty,
+    formData.operatingMachine,
+    formData.noOfStichesPerYard,
+    formData.rate,
     formData.totalAmount,
-    formData.sequenceAmount,
-    formData.solvingAmount,
-    formData.repeats,
-    formData.tillaAmount,
-    formData.itemsPerRepeat,
-    formData.threadRate,
-    formData.threadStitches,
-    formData.noOfHeads,
-    formData.tillaRate,
-    formData.tillaStitches,
-    formData.sequenceRate,
-    formData.sequenceStitches,
-    formData.solvingLayers,
-    formData.solvingInMeters,
-    formData.solvingRate
+    formData.totalPcs,
+    formData.amountPerYard,
+    formData.totalEmbroidry,
+    formData.laserCutRate,
+    formData.pcsForLaserCut
   ]);
 
   // const handleCheckboxChange = (e) => {
@@ -302,7 +265,13 @@ const Schiffli = () => {
   //     [name]: checked
   //   }));
   // };
-
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: checked
+    }));
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'collectionId') {
@@ -341,6 +310,15 @@ const Schiffli = () => {
         availableQty: selectedcolor ? selectedcolor.total : '',
         cuttingSize: selectedcolor ? selectedcolor.cuttingSize : '',
         repeats: selectedcolor ? selectedcolor.repeats : ''
+      });
+    } else if (name === 'operatingMachineId') {
+      const selectedMachine = operatingMachineList.find(
+        (machine) => machine.lookUpId === value
+      );
+      setFormData({
+        ...formData,
+        operatingMachineId: value,
+        operatingMachine: selectedMachine ? selectedMachine.lookUpName : ''
       });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -706,7 +684,7 @@ const Schiffli = () => {
               value={formData.operatingMachineId}
               onChange={handleChange}
             >
-              {heads.map((option) => (
+              {operatingMachineList.map((option) => (
                 <MenuItem key={option.lookUpId} value={option.lookUpId}>
                   {option.lookUpName}
                 </MenuItem>
@@ -724,13 +702,14 @@ const Schiffli = () => {
               value={formData.workingHeadId}
               onChange={handleChange}
             >
-              {heads.map((option) => (
+              {workingHeadList.map((option) => (
                 <MenuItem key={option.lookUpId} value={option.lookUpId}>
                   {option.lookUpName}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
+
           <Grid item xs={12} md={3}>
             <TextField
               label="Cutting Size"
@@ -753,11 +732,22 @@ const Schiffli = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
-              label="Cost Per Component"
+              label="No. Of Stiches Per Yard"
               fullWidth
               size="small"
-              name="costPerComponent"
-              value={formData.costPerComponent}
+              name="noOfStichesPerYard"
+              value={formData.noOfStichesPerYard}
+              onChange={handleChange}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="No. Of Items Per Thaan"
+              fullWidth
+              size="small"
+              name="noOfItemPerThaan"
+              value={formData.noOfItemPerThaan}
               onChange={handleChange}
             />
           </Grid>
@@ -773,26 +763,6 @@ const Schiffli = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
-              label="No. Of Items Per Thaan"
-              fullWidth
-              size="small"
-              name="noOfItemPerThaan"
-              value={formData.noOfItemPerThaan}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="No. Of Stiches Per Yard"
-              fullWidth
-              size="small"
-              name="noOfStichesPerYard"
-              value={formData.noOfStichesPerYard}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
               label="Amount Per Yard"
               fullWidth
               size="small"
@@ -801,6 +771,7 @@ const Schiffli = () => {
               onChange={handleChange}
             />
           </Grid>
+
           <Grid item xs={12} md={3}>
             <TextField
               label="Total Pcs"
@@ -813,24 +784,15 @@ const Schiffli = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
-              label="Laser Cut Rate"
+              label="Cost Per Component"
               fullWidth
               size="small"
-              name="laserCutRate"
-              value={formData.laserCutRate}
+              name="costPerComponent"
+              value={formData.costPerComponent}
               onChange={handleChange}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Pcs For LaserCut"
-              fullWidth
-              size="small"
-              name="pcsForLaserCut"
-              value={formData.pcsForLaserCut}
-              onChange={handleChange}
-            />
-          </Grid>
+
           <Grid item xs={12} md={3}>
             <TextField
               label="Total Amount"
@@ -841,6 +803,44 @@ const Schiffli = () => {
               onChange={handleChange}
             />
           </Grid>
+          <Grid item xs={12} md={3}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.laserCut}
+                  onChange={handleCheckboxChange}
+                  name="laserCut"
+                />
+              }
+              label="Laser Cut"
+            />
+          </Grid>
+          {formData.laserCut ? (
+            <Grid item xs={12} md={6}>
+              <Grid container spacing={1} width="Inherit">
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    label="Laser Cut Rate"
+                    fullWidth
+                    size="small"
+                    name="laserCutRate"
+                    value={formData.laserCutRate}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    label="Pcs For LaserCut"
+                    fullWidth
+                    size="small"
+                    name="pcsForLaserCut"
+                    value={formData.pcsForLaserCut}
+                    onChange={handleChange}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+          ) : null}
           {/* <Grid item xs={12} md={12}>
             <FormControlLabel
               control={
