@@ -84,13 +84,13 @@ const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
               'url("https://cdn11.bigcommerce.com/s-hv21hhsv/images/stencil/700x700/products/38611/284805/2e6462c221260668bf7516fe2121ad54__84353.1704082180.jpg?c=2")',
             backgroundSize: 'contain',
             position: 'absolute',
-            height: '94%',
-            borderRadius: '25px',
+            height: '96%',
+            borderRadius: '17px',
 
             borderRight: 'none',
 
             [theme.breakpoints.up('xs')]: {
-              top: '84px'
+              top: '54px'
             }
           }
         }}
