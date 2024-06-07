@@ -49,6 +49,11 @@ const Main = styled('main', {
     width: `calc(100% - ${drawerWidth}px)`,
     padding: '16px',
     marginRight: '10px'
+  },
+
+  '&::-webkit-scrollbar': {
+    width: '0px' /* Hide scrollbar width */,
+    height: '0px' /* Hide scrollbar height */
   }
 }));
 
@@ -99,7 +104,13 @@ const MainLayout = () => {
         transform: !matchDownMd ? 'scale(0.8)' : 'none',
         transformOrigin: 'top left',
         width: !matchDownMd ? '125%' : '100%',
-        height: !matchDownMd ? '125%' : '100%'
+        height: !matchDownMd ? '125%' : '100%',
+        overflow: 'hidden',
+        '&::-webkit-scrollbar': {
+          display: 'none'
+        },
+        '-ms-overflow-style': 'none' /* IE and Edge */,
+        'scrollbar-width': 'none' /* Firefox */
       }}
     >
       <CssBaseline />
@@ -147,5 +158,6 @@ const MainLayout = () => {
     </Box>
   );
 };
+/////////////////////////////////////
 
 export default MainLayout;
