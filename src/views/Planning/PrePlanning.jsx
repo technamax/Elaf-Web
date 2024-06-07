@@ -834,12 +834,12 @@ const PrePlanning = () => {
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid
-          container
-          spacing={2}
-          width="Inherit"
-          sx={{ paddingY: 2, paddingX: 2 }}
+          // container
+          // spacing={2}
+          // width="Inherit"
+          sx={{ paddingY: 1, paddingX: 1 }}
         >
-          <Grid sx={{ marginTop: 0 }} item xs={12}>
+          <Grid sx={{}} item xs={12}>
             <EditAbleDataGrid
               ncolumns={columns}
               initialRows={initialRows}
