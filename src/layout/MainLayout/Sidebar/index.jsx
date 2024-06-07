@@ -90,7 +90,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
             borderRight: 'none',
 
             [theme.breakpoints.up('xs')]: {
-              top: '74px'
+              top: '84px'
             }
           }
         }}
