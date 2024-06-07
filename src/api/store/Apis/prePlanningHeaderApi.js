@@ -37,6 +37,9 @@ export const prePlanningHeaderApi = createApi({
     getEmbroideryListByBatchNo: builder.query({
       query: (batchNo) =>
         `Embroidery/GetEmbroideryListByBatchNo?batchNo=${batchNo}`
+    }),
+    getSchffiliListByBatchNo: builder.query({
+      query: (batchNo) => `Schiffli/GetSchffiliListByBatchNo?batchNo=${batchNo}`
     })
   })
 });
@@ -50,5 +53,6 @@ export const {
   useGetComponentsByBatchNoQuery,
   useGetFabricByComponentsAndBatchNoQuery,
   useGetFabricColorByComponentsBatchNoAndFabricIdQuery,
-  useGetEmbroideryListByBatchNoQuery
+  useGetEmbroideryListByBatchNoQuery,
+  useGetSchffiliListByBatchNoQuery
 } = prePlanningHeaderApi;

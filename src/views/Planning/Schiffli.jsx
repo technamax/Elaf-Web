@@ -9,8 +9,15 @@ import {
   Typography,
   Divider,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  ButtonGroup,
+  Box,
+  IconButton
 } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 // import { useGetDesignListQuery } from 'api/store/Apis/designApi';
 import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
@@ -18,7 +25,7 @@ import {
   useGetCollectionFromPlanningHeaderQuery,
   useGetFabricFromPrePlanningByBatchNoQuery,
   useGetFabricRequisitionListByBatchNoQuery,
-  useGetEmbroideryListByBatchNoQuery,
+  useGetSchffiliListByBatchNoQuery,
   useGetFabricColorByComponentsBatchNoAndFabricIdQuery
 } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
@@ -29,9 +36,12 @@ import { useGetFabricByComponentsAndBatchNoQuery } from 'api/store/Apis/prePlann
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
+import { AlignHorizontalCenter } from '@mui/icons-material';
 
 const Schiffli = () => {
+  const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
+    schiffiliId: 0,
     designId: '',
     planningHeaderId: 0,
     batchNo: '',
@@ -64,7 +74,41 @@ const Schiffli = () => {
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: 0
   });
-  console.log('formData', formData);
+  useEffect(() => {
+    setFormData({
+      schiffiliId: initialData.schiffiliId || 0,
+      designId: initialData?.designId || '',
+      planningHeaderId: initialData?.planningHeaderId || 0,
+      batchNo: initialData?.batchNo || '',
+      componentId: initialData?.componentId || '',
+      poPcs: initialData?.poPcs || '',
+      baseColorName: initialData?.baseColorName || '',
+      fabricId: initialData?.fabricId || '',
+      vendorId: initialData?.vendorId || '',
+      colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
+      availableQty: initialData?.availableQty || '',
+      thaanQty: initialData?.thaanQty || 0,
+      operatingMachineId: initialData?.operatingMachineId || 0,
+      operatingMachine: initialData?.operatingMachine || '',
+      workingHeadId: initialData?.workingHeadId || 0,
+      cuttingSize: initialData?.cuttingSize || '',
+      rate: initialData?.rate || '',
+      costPerComponent: initialData?.costPerComponent || '',
+      totalEmbroidry: initialData?.totalEmbroidry || 0,
+      noOfItemPerThaan: initialData?.noOfItemPerThaan || 0,
+      noOfStichesPerYard: initialData?.noOfStichesPerYard || 0,
+      amountPerYard: initialData?.amountPerYard || 0,
+      totalPcs: initialData?.totalPcs || 0,
+      laserCut: initialData?.laserCut || false,
+      laserCutRate: initialData?.laserCutRate || 0,
+      pcsForLaserCut: initialData?.pcsForLaserCut || 0,
+      totalAmount: initialData?.totalAmount || 0,
+      reatedOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || 0,
+      lastUpdatedOn: new Date().toISOString(),
+      LastUpdatedBy: 0
+    });
+  }, [initialData]);
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const { data: lookupData } = useGetLookUpListQuery();
@@ -100,8 +144,8 @@ const Schiffli = () => {
       }
     );
 
-  const { data: embroideryList, refetch: refetchEmbroideryList } =
-    useGetEmbroideryListByBatchNoQuery(formData.planningHeaderId, {
+  const { data: schiffliList, refetch: refetchSchiffliList } =
+    useGetSchffiliListByBatchNoQuery(formData.planningHeaderId, {
       skip: !formData.planningHeaderId // Skip the query if no collection is selected
     });
   const { data: componentsByBatch } = useGetComponentsByBatchNoQuery(
@@ -112,6 +156,7 @@ const Schiffli = () => {
   );
   console.log('formData.planningHeaderId', formData.planningHeaderId);
   console.log('collectionData', collectionData);
+  console.log('schiffliList', schiffliList);
 
   const [designList, setDesignList] = useState([]);
   const [batchList, setBatchList] = useState([]);
@@ -155,16 +200,16 @@ const Schiffli = () => {
     }
   }, [componentsByBatch]);
   useEffect(() => {
-    if (embroideryList) {
+    if (schiffliList) {
       setInitialRows(
-        embroideryList.result.map((row, index) => ({
+        schiffliList.result.map((row, index) => ({
           id: index,
           ...row
         }))
       );
       // refetchBatches();
     }
-  }, [embroideryList, refetchEmbroideryList]);
+  }, [schiffliList, refetchSchiffliList]);
 
   useEffect(() => {
     // fetchData();
@@ -183,7 +228,7 @@ const Schiffli = () => {
   // console.log('batchList', batchList);
   // console.log('uom', uoms);
   // console.log('Fabrications', Fabrications);
-  // console.log('initialRows', initialRows);
+  console.log('initialRows', initialRows);
   // console.log('components', components);
 
   const collectionList = collectionData?.result || [];
@@ -324,127 +369,13 @@ const Schiffli = () => {
       setFormData({ ...formData, [name]: value });
     }
   };
-
-  const columns = [
-    {
-      field: 'designId',
-      headerName: 'Design',
-      editable: true,
-      flex: 1,
-      type: 'singleSelect',
-      valueOptions: designList.map((collection) => ({
-        value: collection.designId,
-        label: collection.designNo
-      }))
-    },
-    {
-      field: 'poPcs',
-      headerName: 'PO. Pieces',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'quantity',
-      headerName: 'Quantity',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'rate',
-      headerName: 'Rate',
-      editable: true,
-      flex: 1
-    },
-    {
-      field: 'vendorId',
-      headerName: 'Vendor',
-      editable: true,
-      flex: 1,
-      type: 'singleSelect',
-      valueOptions: vendors.map((collection) => ({
-        value: collection.lookUpId,
-        label: collection.lookUpName
-      }))
-    },
-    {
-      field: 'total',
-      headerName: 'Total',
-      flex: 1,
-      editable: true,
-      // valueGetter: (params, row) => {
-      //   const quantity = parseFloat(row.quantity) || 0;
-      //   const rate = parseFloat(row.rate) || 0;
-      //   return quantity * rate;
-      // }
-      valueSetter: (params, row) => {
-        const quantity = row.quantity ?? 0;
-        const rate = row.rate ?? 0;
-        const total = quantity * rate;
-        console.log('total', total);
-        return { ...row, total };
-      }
-      // valueSetter: (params, row) => {
-      //   console.log('row', row);
-      //   const quantity = row.quantity || 0;
-      //   const rate = row.rate || 0;
-      //   return quantity * rate;
-      // }
-    },
-    {
-      field: 'unitPrice',
-      headerName: 'Unit Price',
-      flex: 1,
-      editable: true,
-      // valueGetter: (params, row) => {
-      //   const total = parseFloat(row.total) || 0;
-      //   const poPcs = parseFloat(row.poPcs) || 0;
-      //   return total / poPcs;
-      // }
-      valueSetter: (params, row) => {
-        const total = row.total ?? 0;
-        const poPcs = row.poPcs ?? 0;
-        const unitPrice = total / poPcs;
-        console.log('unitPrice', unitPrice);
-        return { ...row, unitPrice };
-      }
-      // valueSetter: (params, row) => {
-      //   const total = row.total || 0;
-      //   const poPcs = row.poPcs || 0;
-      //   return total / poPcs;
-      // }
-    },
-    {
-      field: 'gst',
-      headerName: 'GST',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'totalInclGst',
-      headerName: 'Total Inc. GST',
-      flex: 1,
-      editable: true,
-      // valueGetter: (params, row) => {
-      //   console.log(row);
-      //   const total = parseFloat(row.total) || 0;
-      //   const gst = parseFloat(row.gst) || 0;
-      //   return total * (1 + gst / 100);
-      // }
-      valueSetter: (params, row) => {
-        const total = row.total ?? 0;
-        const gst = row.gst ?? 0;
-        const totalInclGst = total * (1 + gst / 100);
-        console.log('totalInclGst', totalInclGst);
-        return { ...row, totalInclGst };
-      }
-    }
-  ];
+  console.log('colors', colors);
 
   const handleSave = async () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:4041/api/Fabrication/SaveFabrication',
+        'https://gecxc.com:4041/api/Schiffli/SaveSchiffili',
         formData
       );
 
@@ -453,33 +384,229 @@ const Schiffli = () => {
 
       // Clear the form after successful save
       // refetchFabricRequisitionData();
-      setFormData({
-        designId: '',
-        batchNo: '',
-        baseColorId: '',
-        baseColorName: '',
-        fabricId: '',
+
+      // Assuming designId, planningHeaderId, and batchNo are part of the formData state
+      setFormData((prevFormData) => ({
+        designId: prevFormData.designId,
+        planningHeaderId: prevFormData.planningHeaderId,
+        batchNo: prevFormData.batchNo,
+        schiffiliId: 0,
+        componentId: '',
         poPcs: '',
-        quantity: '',
+        baseColorName: prevFormData.baseColorName,
+        fabricId: '',
+        vendorId: '',
+        colorId: '', // from dying screen coming from fabricAPI
+        availableQty: '',
+        thaanQty: 0,
+        operatingMachineId: 0,
+        operatingMachine: '',
+        workingHeadId: 0,
+        cuttingSize: '',
         rate: '',
-        uomId: 'string',
-        total: '',
-        unitPrice: '',
-        gst: '',
-        totalInclGst: '',
-        createdOn: '2024-05-29T09:56:23.916Z',
+        costPerComponent: '',
+        totalEmbroidry: 0,
+        noOfItemPerThaan: 0,
+        noOfStichesPerYard: 0,
+        amountPerYard: 0,
+        totalPcs: 0,
+        laserCut: false,
+        laserCutRate: 0,
+        pcsForLaserCut: 0,
+        totalAmount: 0,
+        createdOn: new Date().toISOString(),
         createdBy: 0,
-        lastUpdatedOn: '2024-05-29T09:56:23.916Z',
+        lastUpdatedOn: new Date().toISOString(),
         LastUpdatedBy: 0
-      });
+      }));
+      refetchSchiffliList();
+      setInitialData((prevFormData) => ({
+        designId: prevFormData.designId,
+        planningHeaderId: prevFormData.planningHeaderId,
+        batchNo: prevFormData.batchNo,
+        schiffiliId: 0,
+        componentId: '',
+        poPcs: '',
+        baseColorName: prevFormData.baseColorName,
+        fabricId: '',
+        vendorId: '',
+        colorId: '', // from dying screen coming from fabricAPI
+        availableQty: '',
+        thaanQty: 0,
+        operatingMachineId: 0,
+        operatingMachine: '',
+        workingHeadId: 0,
+        cuttingSize: '',
+        rate: '',
+        costPerComponent: '',
+        totalEmbroidry: 0,
+        noOfItemPerThaan: 0,
+        noOfStichesPerYard: 0,
+        amountPerYard: 0,
+        totalPcs: 0,
+        laserCut: false,
+        laserCutRate: 0,
+        pcsForLaserCut: 0,
+        totalAmount: 0,
+        createdOn: new Date().toISOString(),
+        createdBy: 0,
+        lastUpdatedOn: new Date().toISOString(),
+        LastUpdatedBy: 0
+      }));
     } catch (error) {
       console.error('Error saving data:', error);
     }
   };
-
   console.log('formData', formData);
-  // const editAPi = https://gecxc.com:4041/api/Fabrication/SaveFabrication;
-  // const deleteApi = https://gecxc.com:4041/api/Fabrication/DeleteFabricByFabricId?fabricationId=;
+
+  const handleEdit = (row) => {
+    // Convert the comma-separated string to an array
+    setInitialData(row);
+    // const threadAdditionalArray = row.threadAdditional
+    //   ? row.threadAdditional.split(',').map((item) => item.trim())
+    //   : [];
+
+    // setInitialData({
+    //   ...row,
+    //   threadAdditional: threadAdditionalArray
+    // });
+  };
+
+  console.log('initialData', initialData);
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(
+        `https://gecxc.com:4041/api/Schiffli/DeleteSchiffiById?schiffiId=${id}`
+      );
+      // refetchEmbroideryList();
+      refetchSchiffliList();
+      console.log('deleted');
+    } catch (error) {
+      console.error('Error deleting data:', error);
+    }
+    // Handle delete logic
+  };
+
+  const columns = [
+    {
+      field: 'componentName',
+      headerName: 'Component'
+    },
+    {
+      field: 'fabricName',
+      headerName: 'Fabric'
+    },
+    {
+      field: 'vendorName',
+      headerName: 'Vendor'
+    },
+
+    {
+      field: 'colourName',
+      headerName: 'Color'
+    },
+    {
+      field: 'thaanQty',
+      headerName: 'Thaan Quantity'
+    },
+    {
+      field: 'availableQty',
+      headerName: 'Available Quantitity'
+    },
+    {
+      field: 'operatingMachineName',
+      headerName: 'Operating Machine'
+    },
+    {
+      field: 'noOfHeadsName',
+      headerName: 'Working Head'
+    },
+    {
+      field: 'cuttingSize',
+      headerName: 'Cutting Size'
+    },
+    {
+      field: 'rate',
+      headerName: 'Rate'
+    },
+    {
+      field: 'noOfStichesPerYard',
+      headerName: 'No. Of Stiches Per Yard'
+    },
+    {
+      field: 'noOfItemPerThaan',
+      headerName: 'No. Of Item Per Thaan'
+    },
+    {
+      field: 'totalEmbroidry',
+      headerName: 'Total Embroidry'
+    },
+    {
+      field: 'amountPerYard',
+      headerName: 'Amount Per Yard'
+    },
+
+    {
+      field: 'totalPcs',
+      headerName: 'Total Pcs'
+    },
+    {
+      field: 'totalAmount',
+      headerName: 'Total Amount'
+    },
+    {
+      field: 'costPerComponent',
+      headerName: 'Cost Per Component'
+    },
+    {
+      field: 'laserCutRate',
+      headerName: 'LaserCut Rate'
+    },
+    {
+      field: 'pcsForLaserCut',
+      headerName: 'Pcs.For Laser Cut'
+    },
+    {
+      field: 'Action',
+      headerName: 'Actions',
+
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup size="small" variant="text">
+            {/* <Button
+              variant="contained"
+              size="small"
+              onClick={() => handleEdit(params.row)}
+            >
+              Edit
+            </Button> */}
+            <IconButton
+              aria-label="Edit"
+              // color="primary"
+              onClick={() => handleEdit(params.row)}
+            >
+              <EditIcon />
+            </IconButton>
+            <IconButton
+              aria-label="delete"
+              color="primary"
+              onClick={() => handleDelete(params.row.schiffiliId)}
+            >
+              <DeleteIcon />
+            </IconButton>
+            {/* <Button
+              variant="contained"
+              size="small"
+              onClick={() => handleDelete(params.row.schiffiliId)}
+            >
+              Delete
+            </Button> */}
+          </ButtonGroup>
+        </div>
+      )
+    }
+  ];
+
   return (
     <MainCard
       style={{
@@ -841,202 +968,47 @@ const Schiffli = () => {
               </Grid>
             </Grid>
           ) : null}
-          {/* <Grid item xs={12} md={12}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.isSolving}
-                  onChange={handleCheckboxChange}
-                  name="isSolving"
-                />
-              }
-              label="isSolving"
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Grid container spacing={1} width="Inherit">
-              <Grid item xs={12} md={12}>
-                <Typography variant="h5" gutterBottom>
-                  Thread
-                </Typography>
-              </Grid>{' '}
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Stitches"
-                  fullWidth
-                  size="small"
-                  name="threadStitches"
-                  value={formData.threadStitches}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Rate"
-                  fullWidth
-                  size="small"
-                  name="threadRate"
-                  value={formData.threadRate}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Amount"
-                  fullWidth
-                  size="small"
-                  name="threadAmount"
-                  value={formData.threadAmount}
-                  onChange={handleChange}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Grid container spacing={1} width="Inherit">
-              <Grid item xs={12} md={12}>
-                <Typography variant="h5" gutterBottom>
-                  Tilla
-                </Typography>
-              </Grid>{' '}
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Stitches"
-                  fullWidth
-                  size="small"
-                  name="tillaStitches"
-                  value={formData.tillaStitches}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Rate"
-                  fullWidth
-                  size="small"
-                  name="tillaRate"
-                  value={formData.tillaRate}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Amount"
-                  fullWidth
-                  size="small"
-                  name="tillaAmount"
-                  value={formData.tillaAmount}
-                  onChange={handleChange}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Grid container spacing={1} width="Inherit">
-              <Grid item xs={12} md={12}>
-                <Typography variant="h5" gutterBottom>
-                  Sequence
-                </Typography>
-              </Grid>{' '}
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Stitches"
-                  fullWidth
-                  size="small"
-                  name="sequenceStitches"
-                  value={formData.sequenceStitches}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Rate"
-                  fullWidth
-                  size="small"
-                  name="sequenceRate"
-                  value={formData.sequenceRate}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Amount"
-                  fullWidth
-                  size="small"
-                  name="sequenceAmount"
-                  value={formData.sequenceAmount}
-                  onChange={handleChange}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-          {formData.isSolving ? (
-            <Grid item xs={12} md={6}>
-              <Grid container spacing={1} width="Inherit">
-                <Grid item xs={12} md={12}>
-                  <Typography variant="h5" gutterBottom>
-                    Solving
-                  </Typography>
-                </Grid>{' '}
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Layers"
-                    fullWidth
-                    size="small"
-                    name="solvingLayers"
-                    value={formData.solvingLayers}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Meters"
-                    fullWidth
-                    size="small"
-                    name="solvingInMeters"
-                    value={formData.solvingInMeters}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Rate"
-                    fullWidth
-                    size="small"
-                    name="solvingRate"
-                    value={formData.solvingRate}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Amount"
-                    fullWidth
-                    size="small"
-                    name="solvingAmount"
-                    value={formData.solvingAmount}
-                    onChange={handleChange}
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
-          ) : null} */}
         </Grid>
       </FormControl>
       <Grid container spacing={2} width="Inherit">
         <Grid sx={{ marginTop: 2 }} item xs={12}>
-          <EditAbleDataGrid
+          <Box
+            sx={{
+              height: 500,
+              width: 'inherit',
+              '& .actions': {
+                color: 'text.secondary'
+              },
+              '& .textPrimary': {
+                color: 'text.primary'
+              }
+            }}
+          >
+            <DataGrid
+              // {...data}
+              rows={initialRows}
+              columns={columns}
+              rowLength={100}
+              sx={{
+                boxShadow: 2,
+                border: 2,
+                borderColor: 'primary.light',
+                '& .MuiDataGrid-cell:hover': {
+                  color: 'primary.main'
+                }
+              }}
+            />
+          </Box>
+          {/* <EditAbleDataGrid
             ncolumns={columns}
             initialRows={initialRows}
             formData={formData}
-            // editAPi={editAPi}
-            // refetch={refetchFabricRequisitionData}
+            editAPi={editAPi}
+            refetch={refetchSchiffliList}
             // deleteApi={deleteApi}
             // deleteBy="fabricationId"
             disableAddRecord={true}
-          />
+          /> */}
         </Grid>
       </Grid>
     </MainCard>

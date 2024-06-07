@@ -17,9 +17,12 @@ import {
   ButtonGroup,
   Accordion,
   AccordionSummary,
-  AccordionDetails
+  AccordionDetails,
+  IconButton
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 
 import { DataGrid } from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles';
@@ -530,6 +533,7 @@ const Embroidery = () => {
         `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=${id}`
       );
       // refetchEmbroideryList();
+      fetchEmbroidery();
       console.log('deleted');
     } catch (error) {
       console.error('Error deleting data:', error);
@@ -573,7 +577,21 @@ const Embroidery = () => {
       renderCell: (params) => (
         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
           <ButtonGroup size="small" variant="text">
-            <Button
+            <IconButton
+              aria-label="Edit"
+              // color="primary"
+              onClick={() => handleEdit(params.row)}
+            >
+              <EditIcon />
+            </IconButton>
+            <IconButton
+              aria-label="delete"
+              color="primary"
+              onClick={() => handleDelete(params.row.embroideryId)}
+            >
+              <DeleteIcon />
+            </IconButton>
+            {/* <Button
               variant="contained"
               size="small"
               onClick={() => handleEdit(params.row)}
@@ -586,7 +604,7 @@ const Embroidery = () => {
               onClick={() => handleDelete(params.row.embroideryId)}
             >
               Delete
-            </Button>
+            </Button> */}
           </ButtonGroup>
         </div>
       )

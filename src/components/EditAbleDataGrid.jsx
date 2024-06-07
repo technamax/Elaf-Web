@@ -155,7 +155,7 @@ export default function FullFeaturedCrudGrid({
       ...prevModel,
       [id]: { mode: GridRowModes.View }
     }));
-    refetch();
+    // refetch();
   };
 
   const columns = [
