@@ -234,6 +234,10 @@ const NewCollection = () => {
       refetch();
     } catch (error) {
       console.error('Error saving data:', error);
+      enqueueSnackbar('Collection not saved !', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
     }
   };
   const deleteApi =

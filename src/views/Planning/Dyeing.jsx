@@ -9,7 +9,10 @@ import {
   MenuItem,
   FormControl,
   Typography,
-  Divider
+  Divider,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary
 } from '@mui/material';
 import Autocomplete from '@mui/lab/Autocomplete';
 import {
@@ -21,6 +24,10 @@ import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Api
 import { useGetPrePlanningHeaderByDesignIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
+import { SnackbarProvider, useSnackbar } from 'notistack';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+import { Card, CardHeader, Avatar } from '@mui/material';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -52,6 +59,8 @@ const Dyeing = () => {
     planningHeaderId: ''
     // fabricId: ''
   });
+  const { enqueueSnackbar } = useSnackbar();
+
   console.log('Dyeing form data to send', formData);
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
@@ -82,6 +91,10 @@ const Dyeing = () => {
   const [initialRows, setInitialRows] = useState([]);
   const [colors, setColors] = useState([]);
   const [vendors, setVendors] = useState([]);
+  const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
+  const handleAccordionToggle = (event, isExpanded) => {
+    setAccordionExpanded(isExpanded);
+  };
 
   useEffect(() => {
     if (designData) {
@@ -167,6 +180,7 @@ const Dyeing = () => {
         OutputQty: selectedFabric ? selectedFabric.total : ''
       });
       fetchFabricColorData(value); // Pass formData.fabricId instead of value
+      // setAccordionExpanded(true);
     } else if (name === 'processType') {
       // Update formData for processType
       setFormData({
@@ -220,6 +234,7 @@ const Dyeing = () => {
           ColorId: firstColor.value,
           color: firstColor.label
         }));
+        setAccordionExpanded(true);
       }
     } catch (error) {
       console.error('Error fetching fabric color data:', error);
@@ -269,16 +284,10 @@ const Dyeing = () => {
 
   const handleSave = async () => {
     // Validate required fields
-    // if (
-    //   !formData.designId ||
-    //   !formData.batchNo ||
-    //   !formData.fabricId ||
-    //   !formData.vendorId ||
-    //   !formData.processType
-    // ) {
-    //   alert('Please fill all required fields.');
-    //   return;
-    // }
+    if (!formData.designId || !formData.batchNo) {
+      alert('Please fill all required fields.');
+      return;
+    }
 
     // Log formData to debug
     console.log('Form Data:', formData);
@@ -316,6 +325,10 @@ const Dyeing = () => {
 
       if (response.status === 200) {
         console.log('Data saved successfully:', response.data);
+        enqueueSnackbar('Dyeing saved successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
         setFormData({
           DPId: '',
           designId: '',
@@ -342,8 +355,13 @@ const Dyeing = () => {
         // Handle success (e.g., show a success message or reset the form)
       } else {
         console.error('Failed to save data:', response.data);
+        enqueueSnackbar('Dyeing not saved successfully!', {
+          variant: 'error',
+          autoHideDuration: 5000
+        });
         // Handle error (e.g., show an error message)
       }
+      setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
       // Handle error (e.g., show an error message)
@@ -435,33 +453,39 @@ const Dyeing = () => {
   ];
 
   return (
-    <MainCard
-      style={{
-        borderWidth: 1,
-        borderStyle: 'dotted',
-        borderColor: '#a11f23',
-        width: 'auto',
-        maxHeight: { xs: '80vh', md: 'auto' },
-        overflow: 'auto'
-      }}
-    >
-      <FormControl>
-        <Grid container spacing={2} width="Inherit">
-          <Grid item xs={9} md={9}>
+    // <MainCard
+    //   style={{
+    //     borderWidth: 1,
+    //     borderStyle: 'dotted',
+    //     borderColor: '#a11f23',
+    //     width: 'auto',
+    //     maxHeight: { xs: '80vh', md: 'auto' },
+    //     overflow: 'auto'
+    //   }}
+    // >
+    <>
+      {/* <div className="CardHeader"> */}
+      <Card variant="outlined">
+        <CardHeader
+          className="css-4rfrnx-MuiCardHeader-root"
+          // avatar={<Avatar src={fabric} />}
+          title="Dyeing "
+          titleTypographyProps={{ style: { color: 'white' } }}
+        ></CardHeader>
+
+        {/* <FormControl> */}
+        <Grid
+          container
+          spacing={2}
+          width="Inherit"
+          sx={{ paddingY: 2, paddingX: 2 }}
+        >
+          <Grid item xs={12} md={12}>
             <Typography variant="h3" gutterBottom>
               Dyeing/Printing
             </Typography>
           </Grid>
-          <Grid item xs={3} md={3} textAlign="right">
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={handleSave}
-            >
-              Save
-            </Button>
-          </Grid>
+
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -516,6 +540,17 @@ const Dyeing = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
+              label="Base Color"
+              fullWidth
+              size="small"
+              name="baseColorName"
+              value={formData.baseColorName}
+              onChange={handleChange}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
               fullWidth
               select
               label="Select Fabric"
@@ -533,6 +568,30 @@ const Dyeing = () => {
             </TextField>
           </Grid>
           <Grid item xs={12} md={3}>
+            {/* <Autocomplete
+                fullWidth
+                options={colors}
+                getOptionLabel={(option) => option.label || ''}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Color"
+                    name="ColorId"
+                    size="small"
+                    // value={formData.color}
+                  />
+                )}
+                value={
+                  colors.find((color) => color.value === formData.color) || null
+                }
+                onChange={(event, newValue) => {
+                  setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    ColorId: newValue ? newValue.value : '',
+                    color: newValue ? newValue.value : ''
+                  }));
+                }}
+              /> */}
             <Autocomplete
               fullWidth
               options={colors}
@@ -551,148 +610,168 @@ const Dyeing = () => {
               onChange={(event, newValue) => {
                 setFormData((prevFormData) => ({
                   ...prevFormData,
-                  ColorId: newValue ? newValue.value : ''
+                  ColorId: newValue ? newValue.value : '',
+                  color: newValue ? newValue.label : '' // Update to newValue.label
                 }));
               }}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Vendor Name"
-              size="small"
-              name="vendorId"
-              value={formData.vendorId}
-              onChange={handleChange} // Change handleChange to handleAutocompleteChange
-            >
-              {vendors.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Base Color"
-              fullWidth
-              size="small"
-              name="baseColorName"
-              value={formData.baseColorName}
-              onChange={handleChange}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Process Type"
-              size="small"
-              name="processType"
-              value={formData.processType}
-              onChange={handleChange} // Change handleChange to handleAutocompleteChange
-            >
-              {design.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Po Pcs"
-              fullWidth
-              size="small"
-              name="poPcs"
-              value={formData.poPcs}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="UOM"
-              fullWidth
-              size="small"
-              name="UOM"
-              value={formData.UOM}
-              // focused
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="AvailableQty"
-              fullWidth
-              size="small"
-              name="AvailableQty"
-              value={formData.AvailableQty}
-              // focused
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="Shrinkage%"
-              fullWidth
-              size="small"
-              name="Shrinkage"
-              value={formData.Shrinkage}
-              // focused
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="Wastage%"
-              fullWidth
-              size="small"
-              name="Wastage"
-              value={formData.Wastage}
-              // focused
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="Output Qty"
-              fullWidth
-              size="small"
-              name="OutputQty"
-              value={formData.OutputQty}
-              // focused
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="Rate"
-              fullWidth
-              size="small"
-              name="RatePerUOM"
-              value={formData.RatePerUOM}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="Total Excluding GST"
-              fullWidth
-              size="small"
-              name="TotalExclGst"
-              value={formData.TotalExclGst}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="GST"
-              fullWidth
-              size="small"
-              name="GST"
-              value={formData.GST}
-              onChange={handleChange}
-            />{' '}
-          </Grid>
+        </Grid>
+      </Card>
+      <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
 
-          {/* <Grid item xs={12} md={1.5}>
+      <Card variant="outlined">
+        <CardHeader
+          className="css-4rfrnx-MuiCardHeader-root"
+          // avatar={<Avatar src={fabric} />}
+          title="Add Dyeing "
+          titleTypographyProps={{ style: { color: 'white' } }}
+        ></CardHeader>
+        <Accordion
+          expanded={accordionExpanded}
+          onChange={handleAccordionToggle}
+          sx={{}}
+        >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          ></AccordionSummary>
+          <AccordionDetails>
+            {/* <FormControl> */}
+            <Grid
+              container
+              spacing={2}
+              width="Inherit"
+              sx={{ paddingY: 2, paddingX: 2 }}
+            >
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Vendor Name"
+                  size="small"
+                  name="vendorId"
+                  value={formData.vendorId}
+                  onChange={handleChange} // Change handleChange to handleAutocompleteChange
+                >
+                  {vendors.map((option) => (
+                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                      {option.lookUpName}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Process Type"
+                  size="small"
+                  name="processType"
+                  value={formData.processType}
+                  onChange={handleChange} // Change handleChange to handleAutocompleteChange
+                >
+                  {design.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Po Pcs"
+                  fullWidth
+                  size="small"
+                  name="poPcs"
+                  value={formData.poPcs}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="UOM"
+                  fullWidth
+                  size="small"
+                  name="UOM"
+                  value={formData.UOM}
+                  // focused
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="AvailableQty"
+                  fullWidth
+                  size="small"
+                  name="AvailableQty"
+                  value={formData.AvailableQty}
+                  // focused
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Shrinkage%"
+                  fullWidth
+                  size="small"
+                  name="Shrinkage"
+                  value={formData.Shrinkage}
+                  // focused
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Wastage%"
+                  fullWidth
+                  size="small"
+                  name="Wastage"
+                  value={formData.Wastage}
+                  // focused
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Output Qty"
+                  fullWidth
+                  size="small"
+                  name="OutputQty"
+                  value={formData.OutputQty}
+                  // focused
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Rate"
+                  fullWidth
+                  size="small"
+                  name="RatePerUOM"
+                  value={formData.RatePerUOM}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Total Excluding GST"
+                  fullWidth
+                  size="small"
+                  name="TotalExclGst"
+                  value={formData.TotalExclGst}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="GST"
+                  fullWidth
+                  size="small"
+                  name="GST"
+                  value={formData.GST}
+                  onChange={handleChange}
+                />{' '}
+              </Grid>
+
+              {/* <Grid item xs={12} md={1.5}>
             <TextField
               label="GST Amount"
               fullWidth
@@ -702,33 +781,62 @@ const Dyeing = () => {
               onChange={handleChange}
             />
           </Grid> */}
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="Total:Including Gst"
-              fullWidth
-              size="small"
-              name="TotalExclGst"
-              value={formData.TotalIncludingGst}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="Unit P: T/Po PC's"
-              fullWidth
-              size="small"
-              name="UnitRatePerPo"
-              value={formData.UnitRatePerPo}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Divider color="#cc8587" sx={{ height: 2, width: '100%', mt: 2 }} />
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Total:Including Gst"
+                  fullWidth
+                  size="small"
+                  name="TotalExclGst"
+                  value={formData.TotalIncludingGst}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Unit P: T/Po PC's"
+                  fullWidth
+                  size="small"
+                  name="UnitRatePerPo"
+                  value={formData.UnitRatePerPo}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={12} textAlign="right">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                  onClick={handleSave}
+                >
+                  Save
+                </Button>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+      </Card>
+      <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
+
+      <Card variant="outlined">
+        <CardHeader
+          className="css-4rfrnx-MuiCardHeader-root"
+          // avatar={<Avatar src={fabric} />}
+          title="View Dyeing "
+          titleTypographyProps={{ style: { color: 'white' } }}
+        ></CardHeader>{' '}
+        <Grid
+          container
+          spacing={2}
+          width="Inherit"
+          sx={{ paddingY: 2, paddingX: 2 }}
+        >
           <Grid item xs={12} md={12} paddingTop={1}>
             <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} />
           </Grid>
         </Grid>
-      </FormControl>
-    </MainCard>
+      </Card>
+      {/* </div> */}
+    </>
   );
 };
 

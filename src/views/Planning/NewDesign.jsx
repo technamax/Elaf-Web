@@ -190,6 +190,10 @@ const NewDesign = () => {
       refetch();
     } catch (error) {
       console.error('Error saving data:', error);
+      enqueueSnackbar('Design not saved successfully!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
     }
   };
 

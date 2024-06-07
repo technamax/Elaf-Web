@@ -7,7 +7,10 @@ import {
   MenuItem,
   FormControl,
   Typography,
-  Divider
+  Divider,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary
 } from '@mui/material';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 // import { useGetDesignListQuery } from 'api/store/Apis/designApi';
@@ -22,10 +25,16 @@ import { useGetPrePlanningHeaderByDesignIdQuery } from 'api/store/Apis/prePlanni
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import fabric from '../../assets/images/planningicons/fabric.png';
 // import dyeing1 from '../../assets/images/planningicons/dyeing1.png';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
 import { Card, CardHeader, Avatar } from '@mui/material';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import '../../assets/scss/style.scss';
 
 const Fabrication = () => {
@@ -48,6 +57,11 @@ const Fabrication = () => {
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: 0
   });
+  const { enqueueSnackbar } = useSnackbar();
+  const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
+  const handleAccordionToggle = (event, isExpanded) => {
+    setAccordionExpanded(isExpanded);
+  };
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   console.log(collectionData);
@@ -78,7 +92,6 @@ const Fabrication = () => {
   const [Fabrications, setFabrications] = useState([]);
   const [uoms, setUoms] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
-
   useEffect(() => {
     if (designData) {
       setDesignList(designData.result);
@@ -127,7 +140,6 @@ const Fabrication = () => {
 
   const collectionList = collectionData?.result || [];
   // console.log('collectionList', collectionList);
-
   useEffect(() => {
     const calculateTotal = () => {
       const quantity = parseFloat(formData.quantity) || 0;
@@ -191,6 +203,7 @@ const Fabrication = () => {
         batchNo: value,
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
       });
+      setAccordionExpanded(true);
     } else if (name === 'fabricId') {
       const selectedFabric = Fabrications.find(
         (fabric) => fabric.fabricId === value
@@ -421,14 +434,18 @@ const Fabrication = () => {
         'https://gecxc.com:4041/api/Fabrication/SaveFabrication',
         formData
       );
+      refetchFabricRequisitionData();
 
       // Handle the response if needed
       console.log('Save response:', response.data);
+      enqueueSnackbar('Fabrication saved successfully!', {
+        variant: 'success',
+        autoHideDuration: 5000
+      });
 
       // Clear the form after successful save
-      refetchFabricRequisitionData();
       setFormData({
-        designId: '',
+        designId: formData.designId,
         batchNo: '',
         baseColorId: '',
         baseColorName: '',
@@ -446,8 +463,14 @@ const Fabrication = () => {
         lastUpdatedOn: '2024-05-29T09:56:23.916Z',
         LastUpdatedBy: 0
       });
+      refetchFabricRequisitionData();
+      setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
+      enqueueSnackbar('Fabrication not saved successfully!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
     }
   };
 
@@ -549,130 +572,168 @@ const Fabrication = () => {
           <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
         </Grid> */}
       </div>
-      <MainCard className="MainCard">
+      <Card variant="outlined">
+        <CardHeader
+          className="css-4rfrnx-MuiCardHeader-root"
+          avatar={<AddOutlinedIcon />}
+          title="Add Fabric Requisition"
+          titleTypographyProps={{ style: { color: 'white' } }}
+        ></CardHeader>
+        <Accordion
+          expanded={accordionExpanded}
+          onChange={handleAccordionToggle}
+          sx={{}}
+        >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          ></AccordionSummary>
+          <AccordionDetails>
+            <Grid
+              container
+              spacing={2}
+              width="Inherit"
+              sx={{ paddingY: 2, paddingX: 2 }}
+            >
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Select Fabric"
+                  defaultValue=""
+                  size="small"
+                  name="fabricId"
+                  value={formData.fabricId}
+                  onChange={handleChange}
+                >
+                  {Fabrications.map((option) => (
+                    <MenuItem key={option.fabricId} value={option.fabricId}>
+                      {option.fabric}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  select
+                  label="UOM"
+                  defaultValue=""
+                  size="small"
+                  name="uomId"
+                  value={formData.uomId}
+                  onChange={handleChange}
+                >
+                  {uoms.map((option) => (
+                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                      {option.lookUpName}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Po Pcs"
+                  fullWidth
+                  size="small"
+                  name="poPcs"
+                  value={formData.poPcs}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Quantity"
+                  fullWidth
+                  size="small"
+                  name="quantity"
+                  value={formData.quantity}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Rate"
+                  fullWidth
+                  size="small"
+                  type="number"
+                  name="rate"
+                  value={formData.rate}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Total"
+                  fullWidth
+                  size="small"
+                  name="total"
+                  value={formData.total}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Unit Price"
+                  fullWidth
+                  size="small"
+                  name="unitPrice"
+                  value={formData.unitPrice}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="GST"
+                  fullWidth
+                  size="small"
+                  name="gst"
+                  value={formData.gst}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Total Inc GSt."
+                  fullWidth
+                  size="small"
+                  name="totalInclGst"
+                  value={formData.totalInclGst}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} textAlign="right">
+                <Button variant="contained" size="small" onClick={handleSave}>
+                  Save
+                </Button>
+              </Grid>
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+      </Card>
+      <Grid item xs={12} md={12}>
+        <Divider
+          // color="#cc8587"
+          sx={{ height: 1, width: '100%', marginTop: 1, marginBottom: 1 }}
+        />
+      </Grid>
+
+      <Card variant="outlined">
+        <CardHeader
+          className="css-4rfrnx-MuiCardHeader-root"
+          avatar={<VisibilityOutlinedIcon />}
+          title="View"
+          titleTypographyProps={{ style: { color: 'white' } }}
+        ></CardHeader>
         <Grid
           container
           spacing={2}
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Select Fabric"
-              defaultValue=""
-              size="small"
-              name="fabricId"
-              value={formData.fabricId}
-              onChange={handleChange}
-            >
-              {Fabrications.map((option) => (
-                <MenuItem key={option.fabricId} value={option.fabricId}>
-                  {option.fabric}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="UOM"
-              defaultValue=""
-              size="small"
-              name="uomId"
-              value={formData.uomId}
-              onChange={handleChange}
-            >
-              {uoms.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Po Pcs"
-              fullWidth
-              size="small"
-              name="poPcs"
-              value={formData.poPcs}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Quantity"
-              fullWidth
-              size="small"
-              name="quantity"
-              value={formData.quantity}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Rate"
-              fullWidth
-              size="small"
-              name="rate"
-              value={formData.rate}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Total"
-              fullWidth
-              size="small"
-              name="total"
-              value={formData.total}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Unit Price"
-              fullWidth
-              size="small"
-              name="unitPrice"
-              value={formData.unitPrice}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="GST"
-              fullWidth
-              size="small"
-              name="gst"
-              value={formData.gst}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
-            <TextField
-              label="Total Inc GSt."
-              fullWidth
-              size="small"
-              name="totalInclGst"
-              value={formData.totalInclGst}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} textAlign="right">
-            <Button variant="contained" size="small" onClick={handleSave}>
-              Save
-            </Button>
-          </Grid>
-          {/* </Grid> */}
-        </Grid>
-        {/* </FormControl> */}
-        <Grid container spacing={2} width="Inherit">
           <Grid sx={{ marginTop: 2 }} item xs={12}>
             <EditAbleDataGrid
               ncolumns={columns}
@@ -686,7 +747,7 @@ const Fabrication = () => {
             />
           </Grid>
         </Grid>
-      </MainCard>
+      </Card>
     </>
   );
 };

@@ -18,6 +18,7 @@ import {
   useGetCollectionFromPlanningHeaderQuery,
   useGetFabricFromPrePlanningByBatchNoQuery,
   useGetFabricRequisitionListByBatchNoQuery,
+  useGetSchffiliListByBatchNoQuery,
   useGetFabricColorByComponentsBatchNoAndFabricIdQuery
 } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
@@ -32,45 +33,37 @@ import MainCard from 'ui-component/cards/MainCard';
 const Schiffli = () => {
   const [formData, setFormData] = useState({
     designId: '',
+    planningHeaderId: 0,
     batchNo: '',
     componentId: '',
+    poPcs: '',
+    baseColorName: '',
     fabricId: '',
     vendorId: '',
-    poPcs: '', // coming from getcollectionapi
-    baseColorId: '', // coming from getcollectionapi
-    baseColorName: '',
     colorId: '', //from dying screen coming from fabricAPi
     availableQty: '',
-    noOfHeads: '',
-    repeats: '',
+    thaanQty: 0,
+    operatingMachineId: 0,
+    operatingMachine: '',
+    workingHeadId: 0,
     cuttingSize: '',
-    itemsPerRepeat: '',
-    totalPcs: '', //repeat*itemsPerRepeat
-    totalAmount: '', //
-    threadStitches: '',
-    threadRate: '',
-    threadAmount: '',
-    tillaStitches: '',
-    tillaRate: '',
-    tillaAmount: '',
-    sequenceStitches: '',
-    sequenceRate: '',
-    sequenceAmount: '',
-    isSolving: false,
-    solvingLayers: '',
-    solvingInMeters: '',
-    solvingRate: '',
-    solvingAmount: '',
-    additional: '',
+    rate: '',
+    costPerComponent: '',
+    totalEmbroidry: 0,
+    noOfItemPerThaan: 0,
+    noOfStichesPerYard: 0,
+    amountPerYard: 0,
+    totalPcs: 0,
+    laserCut: false,
+    laserCutRate: 0,
+    pcsForLaserCut: 0,
+    totalAmount: 0,
 
-    costPerComponent: '', //
-    // costPerComponent: '',
     createdOn: new Date().toISOString(),
     createdBy: 0,
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: 0
   });
-
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const { data: lookupData } = useGetLookUpListQuery();
@@ -84,42 +77,50 @@ const Schiffli = () => {
     });
   const { data: fabricData } = useGetFabricByComponentsAndBatchNoQuery(
     {
-      batchNo: formData.batchNo,
+      batchNo: formData.planningHeaderId,
       componentId: formData.componentId
     },
     {
-      skip: !formData.batchNo || !formData.componentId
+      skip: !formData.planningHeaderId || !formData.componentId
     }
   );
   const { data: colorData } =
     useGetFabricColorByComponentsBatchNoAndFabricIdQuery(
       {
-        batchNo: formData.batchNo,
+        batchNo: formData.planningHeaderId,
         componentId: formData.componentId,
         fabricId: formData.fabricId
       },
       {
-        skip: !formData.batchNo || !formData.componentId || !formData.fabricId
+        skip:
+          !formData.planningHeaderId ||
+          !formData.componentId ||
+          !formData.fabricId
       }
     );
 
-  const { data: fabricRequisitionData, refetch: refetchFabricRequisitionData } =
-    useGetFabricRequisitionListByBatchNoQuery(formData.batchNo, {
-      skip: !formData.batchNo // Skip the query if no collection is selected
+  const { data: schiffliList, refetch: refetchSchiffliList } =
+    useGetSchffiliListByBatchNoQuery(formData.planningHeaderId, {
+      skip: !formData.planningHeaderId // Skip the query if no collection is selected
     });
   const { data: componentsByBatch } = useGetComponentsByBatchNoQuery(
-    formData.batchNo,
+    formData.planningHeaderId,
     {
-      skip: !formData.batchNo // Skip the query if no collection is selected
+      skip: !formData.planningHeaderId // Skip the query if no collection is selected
     }
   );
+  console.log('formData.planningHeaderId', formData.planningHeaderId);
+  console.log('collectionData', collectionData);
+  console.log('schiffliList', schiffliList);
 
-  console.log('colorData', colorData);
   const [designList, setDesignList] = useState([]);
   const [batchList, setBatchList] = useState([]);
   const [Fabrications, setFabrications] = useState([]);
   const [vendors, setVendors] = useState([]);
-  const [heads, setHeads] = useState([]);
+
+  const [operatingMachineList, setOperatingMachineList] = useState([]);
+  const [workingHeadList, setWorkingHeadList] = useState([]);
+
   const [colors, setColors] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   const [components, setComponents] = useState([]);
@@ -154,16 +155,16 @@ const Schiffli = () => {
     }
   }, [componentsByBatch]);
   useEffect(() => {
-    if (fabricRequisitionData) {
+    if (schiffliList) {
       setInitialRows(
-        fabricRequisitionData.result.map((row, index) => ({
+        schiffliList.result.map((row, index) => ({
           id: index,
           ...row
         }))
       );
       // refetchBatches();
     }
-  }, [fabricRequisitionData]);
+  }, [schiffliList, refetchSchiffliList]);
 
   useEffect(() => {
     // fetchData();
@@ -171,7 +172,9 @@ const Schiffli = () => {
       const data = lookupData.result[0];
 
       setVendors(data.vendorList);
-      setHeads(data.noOfHeadsList);
+
+      setOperatingMachineList(data.operatingMachineList);
+      setWorkingHeadList(data.workingHeadList);
     }
   }, [lookupData]);
 
@@ -180,92 +183,44 @@ const Schiffli = () => {
   // console.log('batchList', batchList);
   // console.log('uom', uoms);
   // console.log('Fabrications', Fabrications);
-  // console.log('initialRows', initialRows);
+  console.log('initialRows', initialRows);
   // console.log('components', components);
 
   const collectionList = collectionData?.result || [];
   // console.log('collectionList', collectionList);
 
   useEffect(() => {
+    const calculateTotalEmbroidey = () => {
+      const thaanQty = parseFloat(formData.thaanQty) || 0;
+      const operatingMachine = parseFloat(formData.operatingMachine) || 0;
+      return thaanQty * operatingMachine;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      totalEmbroidry: calculateTotalEmbroidey()
+    }));
     const calculateTotalPcs = () => {
-      const repeats = parseFloat(formData.repeats) || 0;
-      const itemsPerRepeat = parseFloat(formData.itemsPerRepeat) || 0;
-      return repeats * itemsPerRepeat;
+      const thaanQty = parseFloat(formData.thaanQty) || 0;
+      const noOfStichesPerYard = parseFloat(formData.noOfStichesPerYard) || 0;
+
+      return thaanQty * noOfStichesPerYard;
     };
 
     setFormData((prevData) => ({
       ...prevData,
       totalPcs: calculateTotalPcs()
     }));
-    const calculateThread = () => {
-      const stitches = parseFloat(formData.threadStitches) || 0;
-      const rate = parseFloat(formData.threadRate) || 0;
-      const heads = parseFloat(formData.noOfHeads) || 0;
-      const repeats = parseFloat(formData.repeats) || 0;
-      return (stitches / 1000) * (rate * repeats * heads);
+    const calculateAmountPerYard = () => {
+      const noOfStichesPerYard = parseFloat(formData.noOfStichesPerYard) || 0;
+      const rate = parseFloat(formData.rate) || 0;
+
+      return (noOfStichesPerYard / 1000) * rate;
     };
 
     setFormData((prevData) => ({
       ...prevData,
-      threadAmount: calculateThread()
-    }));
-    const calculateTilla = () => {
-      const stitches = parseFloat(formData.tillaStitches) || 0;
-      const rate = parseFloat(formData.tillaRate) || 0;
-      const heads = parseFloat(formData.noOfHeads) || 0;
-      const repeats = parseFloat(formData.repeats) || 0;
-      return (stitches / 1000) * (rate * repeats * heads);
-    };
-
-    setFormData((prevData) => ({
-      ...prevData,
-      tillaAmount: calculateTilla()
-    }));
-    const calculateSequence = () => {
-      const stitches = parseFloat(formData.sequenceStitches) || 0;
-      const rate = parseFloat(formData.sequenceRate) || 0;
-      const heads = parseFloat(formData.noOfHeads) || 0;
-      const repeats = parseFloat(formData.repeats) || 0;
-      return (stitches / 1000) * (rate * repeats * heads);
-    };
-
-    setFormData((prevData) => ({
-      ...prevData,
-      sequenceAmount: calculateSequence()
-    }));
-    const calculateInMeters = () => {
-      const repeats = parseFloat(formData.repeats) || 0;
-      const noOfHeads = parseFloat(formData.noOfHeads) || 0;
-      const layers = parseFloat(formData.solvingLayers) || 0;
-      return ((repeats * noOfHeads * 13) / 39.37) * layers;
-    };
-
-    setFormData((prevData) => ({
-      ...prevData,
-      solvingInMeters: calculateInMeters()
-    }));
-    const calculateSolvingAmount = () => {
-      const solvingInMeters = parseFloat(formData.solvingInMeters) || 0;
-      const solvingRate = parseFloat(formData.solvingRate) || 0;
-      const layers = parseFloat(formData.solvingLayers) || 0;
-      return solvingInMeters * solvingRate;
-    };
-
-    setFormData((prevData) => ({
-      ...prevData,
-      solvingAmount: calculateSolvingAmount()
-    }));
-    const calculateTotalAmount = () => {
-      const thread = parseFloat(formData.threadAmount) || 0;
-      const tilla = parseFloat(formData.tillaAmount) || 0;
-      const sequence = parseFloat(formData.sequenceAmount) || 0;
-      const solving = parseFloat(formData.solvingAmount) || 0;
-      return thread + tilla + sequence + solving;
-    };
-
-    setFormData((prevData) => ({
-      ...prevData,
-      totalAmount: calculateTotalAmount()
+      amountPerYard: calculateAmountPerYard()
     }));
     const calculateCostPerComponent = () => {
       const totalAmount = parseFloat(formData.totalAmount) || 0;
@@ -278,24 +233,29 @@ const Schiffli = () => {
       ...prevData,
       costPerComponent: calculateCostPerComponent()
     }));
+    const calculateTotalamount = () => {
+      const amountPerYard = parseFloat(formData.amountPerYard) || 0;
+      const totalEmbroidry = parseFloat(formData.totalEmbroidry) || 0;
+      const laserCutRate = parseFloat(formData.laserCutRate) || 0;
+      const pcsForLaserCut = parseFloat(formData.pcsForLaserCut) || 0;
+      return amountPerYard * totalEmbroidry + pcsForLaserCut * laserCutRate;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      totalAmount: calculateTotalamount()
+    }));
   }, [
-    formData.threadAmount,
+    formData.thaanQty,
+    formData.operatingMachine,
+    formData.noOfStichesPerYard,
+    formData.rate,
     formData.totalAmount,
-    formData.sequenceAmount,
-    formData.solvingAmount,
-    formData.repeats,
-    formData.tillaAmount,
-    formData.itemsPerRepeat,
-    formData.threadRate,
-    formData.threadStitches,
-    formData.noOfHeads,
-    formData.tillaRate,
-    formData.tillaStitches,
-    formData.sequenceRate,
-    formData.sequenceStitches,
-    formData.solvingLayers,
-    formData.solvingInMeters,
-    formData.solvingRate
+    formData.totalPcs,
+    formData.amountPerYard,
+    formData.totalEmbroidry,
+    formData.laserCutRate,
+    formData.pcsForLaserCut
   ]);
 
   // const handleCheckboxChange = (e) => {
@@ -305,7 +265,13 @@ const Schiffli = () => {
   //     [name]: checked
   //   }));
   // };
-
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: checked
+    }));
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'collectionId') {
@@ -345,40 +311,42 @@ const Schiffli = () => {
         cuttingSize: selectedcolor ? selectedcolor.cuttingSize : '',
         repeats: selectedcolor ? selectedcolor.repeats : ''
       });
+    } else if (name === 'operatingMachineId') {
+      const selectedMachine = operatingMachineList.find(
+        (machine) => machine.lookUpId === value
+      );
+      setFormData({
+        ...formData,
+        operatingMachineId: value,
+        operatingMachine: selectedMachine ? selectedMachine.lookUpName : ''
+      });
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
-
+  console.log('colors', colors);
   const columns = [
     {
-      field: 'designId',
-      headerName: 'Design',
+      field: 'componentId',
+      headerName: 'Component',
       editable: true,
       flex: 1,
       type: 'singleSelect',
-      valueOptions: designList.map((collection) => ({
-        value: collection.designId,
-        label: collection.designNo
+      valueOptions: components.map((collection) => ({
+        value: collection.componentId,
+        label: collection.componentName
       }))
     },
     {
-      field: 'poPcs',
-      headerName: 'PO. Pieces',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'quantity',
-      headerName: 'Quantity',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'rate',
-      headerName: 'Rate',
+      field: 'fabricId',
+      headerName: 'Fabric',
       editable: true,
-      flex: 1
+      flex: 1,
+      type: 'singleSelect',
+      valueOptions: Fabrications.map((collection) => ({
+        value: collection.fabricId,
+        label: collection.fabric
+      }))
     },
     {
       field: 'vendorId',
@@ -391,77 +359,155 @@ const Schiffli = () => {
         label: collection.lookUpName
       }))
     },
+    // {
+    //   field: 'poPcs',
+    //   headerName: 'PO. Pieces',
+    //   flex: 1,
+    //   editable: false
+    // },
     {
-      field: 'total',
-      headerName: 'Total',
-      flex: 1,
+      field: 'colorId',
+      headerName: 'Color',
       editable: true,
-      // valueGetter: (params, row) => {
-      //   const quantity = parseFloat(row.quantity) || 0;
-      //   const rate = parseFloat(row.rate) || 0;
-      //   return quantity * rate;
-      // }
-      valueSetter: (params, row) => {
-        const quantity = row.quantity ?? 0;
-        const rate = row.rate ?? 0;
-        const total = quantity * rate;
-        console.log('total', total);
-        return { ...row, total };
-      }
-      // valueSetter: (params, row) => {
-      //   console.log('row', row);
-      //   const quantity = row.quantity || 0;
-      //   const rate = row.rate || 0;
-      //   return quantity * rate;
-      // }
+      flex: 1,
+      type: 'singleSelect',
+      valueOptions: colors.map((collection) => ({
+        value: collection.colorId,
+        label: collection.color
+      }))
     },
     {
-      field: 'unitPrice',
-      headerName: 'Unit Price',
-      flex: 1,
-      editable: true,
-      // valueGetter: (params, row) => {
-      //   const total = parseFloat(row.total) || 0;
-      //   const poPcs = parseFloat(row.poPcs) || 0;
-      //   return total / poPcs;
-      // }
-      valueSetter: (params, row) => {
-        const total = row.total ?? 0;
-        const poPcs = row.poPcs ?? 0;
-        const unitPrice = total / poPcs;
-        console.log('unitPrice', unitPrice);
-        return { ...row, unitPrice };
-      }
-      // valueSetter: (params, row) => {
-      //   const total = row.total || 0;
-      //   const poPcs = row.poPcs || 0;
-      //   return total / poPcs;
-      // }
-    },
-    {
-      field: 'gst',
-      headerName: 'GST',
+      field: 'thaanQty',
+      headerName: 'Thaan Quantity',
       flex: 1,
       editable: true
     },
     {
-      field: 'totalInclGst',
-      headerName: 'Total Inc. GST',
+      field: 'operatingMachineId',
+      headerName: 'Operating Machine',
+      editable: true,
+      flex: 1,
+      type: 'singleSelect',
+      valueOptions: operatingMachineList.map((collection) => ({
+        value: collection.lookUpId,
+        label: collection.lookUpName
+      }))
+    },
+    {
+      field: 'workingHeadId',
+      headerName: 'Working Head',
+      editable: true,
+      flex: 1,
+      type: 'singleSelect',
+      valueOptions: workingHeadList.map((collection) => ({
+        value: collection.lookUpId,
+        label: collection.lookUpName
+      }))
+    },
+    {
+      field: 'cuttingSize',
+      headerName: 'Cutting Size',
+      editable: true,
+      flex: 1
+    },
+    {
+      field: 'rate',
+      headerName: 'Rate',
+      editable: true,
+      flex: 1
+    },
+    {
+      field: 'noOfStichesPerYard',
+      headerName: 'No. Of Stiches Per Yard',
+      editable: true,
+      flex: 1
+    },
+    {
+      field: 'noOfItemPerThaan',
+      headerName: 'No. Of Item Per Thaan',
+      editable: true,
+      flex: 1
+    },
+    {
+      field: 'totalEmbroidry',
+      headerName: 'Total Embroidry',
       flex: 1,
       editable: true,
-      // valueGetter: (params, row) => {
-      //   console.log(row);
-      //   const total = parseFloat(row.total) || 0;
-      //   const gst = parseFloat(row.gst) || 0;
-      //   return total * (1 + gst / 100);
-      // }
+
       valueSetter: (params, row) => {
-        const total = row.total ?? 0;
-        const gst = row.gst ?? 0;
-        const totalInclGst = total * (1 + gst / 100);
-        console.log('totalInclGst', totalInclGst);
-        return { ...row, totalInclGst };
+        const thaanQty = row.thaanQty ?? 0;
+        const operatingMachine = row.operatingMachine ?? 0;
+        const totalEmbroidry = thaanQty * operatingMachine;
+        return { ...row, totalEmbroidry };
       }
+    },
+    {
+      field: 'amountPerYard',
+      headerName: 'Amount Per Yard',
+      flex: 1,
+      editable: true,
+
+      valueSetter: (params, row) => {
+        const noOfStichesPerYard = row.noOfStichesPerYard ?? 0;
+        const rate = row.rate ?? 0;
+        const amountPerYard = (noOfStichesPerYard / 1000) * rate;
+        return { ...row, amountPerYard };
+      }
+    },
+
+    {
+      field: 'totalPcs',
+      headerName: 'Total Pcs',
+      flex: 1,
+      editable: true,
+
+      valueSetter: (params, row) => {
+        const thaanQty = row.thaanQty ?? 0;
+        const noOfStichesPerYard = row.noOfStichesPerYard ?? 0;
+        const totalPcs = thaanQty * noOfStichesPerYard;
+        return { ...row, totalPcs };
+      }
+    },
+    {
+      field: 'totalAmount',
+      headerName: 'Total Amount',
+      flex: 1,
+      editable: true,
+
+      valueSetter: (params, row) => {
+        const amountPerYard = row.amountPerYard ?? 0;
+        const totalEmbroidry = row.totalEmbroidry ?? 0;
+        const laserCutRate = row.laserCutRate ?? 0;
+        const pcsForLaserCut = row.pcsForLaserCut ?? 0;
+        const totalAmount =
+          amountPerYard * totalEmbroidry + pcsForLaserCut * laserCutRate;
+        return { ...row, totalAmount };
+      }
+    },
+    {
+      field: 'costPerComponent',
+      headerName: 'Cost Per Component',
+      flex: 1,
+      editable: true,
+
+      valueSetter: (params, row) => {
+        const totalAmount = row.totalAmount ?? 0;
+        const totalPcs = row.totalPcs ?? 0;
+        const costPerComponent = totalAmount / totalPcs;
+        return { ...row, costPerComponent };
+      }
+    },
+    {
+      field: 'laserCutRate',
+      headerName: 'LaserCut Rate',
+      flex: 1,
+      editable: true
+    },
+    {
+      field: 'pcsForLaserCut',
+      headerName: 'Pcs.For Laser Cut',
+      flex: 1,
+      editable: true
     }
   ];
 
@@ -469,7 +515,7 @@ const Schiffli = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:4041/api/Fabrication/SaveFabrication',
+        'https://gecxc.com:4041/api/Schiffli/SaveSchiffili',
         formData
       );
 
@@ -478,32 +524,48 @@ const Schiffli = () => {
 
       // Clear the form after successful save
       // refetchFabricRequisitionData();
-      setFormData({
-        designId: '',
-        batchNo: '',
-        baseColorId: '',
+
+      // Assuming designId, planningHeaderId, and batchNo are part of the formData state
+      setFormData((prevFormData) => ({
+        designId: prevFormData.designId,
+        planningHeaderId: prevFormData.planningHeaderId,
+        batchNo: prevFormData.batchNo,
+        componentId: '',
+        poPcs: '',
         baseColorName: '',
         fabricId: '',
-        poPcs: '',
-        quantity: '',
+        vendorId: '',
+        colorId: '', // from dying screen coming from fabricAPI
+        availableQty: '',
+        thaanQty: 0,
+        operatingMachineId: 0,
+        operatingMachine: '',
+        workingHeadId: 0,
+        cuttingSize: '',
         rate: '',
-        uomId: 'string',
-        total: '',
-        unitPrice: '',
-        gst: '',
-        totalInclGst: '',
-        createdOn: '2024-05-29T09:56:23.916Z',
+        costPerComponent: '',
+        totalEmbroidry: 0,
+        noOfItemPerThaan: 0,
+        noOfStichesPerYard: 0,
+        amountPerYard: 0,
+        totalPcs: 0,
+        laserCut: false,
+        laserCutRate: 0,
+        pcsForLaserCut: 0,
+        totalAmount: 0,
+        createdOn: new Date().toISOString(),
         createdBy: 0,
-        lastUpdatedOn: '2024-05-29T09:56:23.916Z',
+        lastUpdatedOn: new Date().toISOString(),
         LastUpdatedBy: 0
-      });
+      }));
+      refetchSchiffliList();
     } catch (error) {
       console.error('Error saving data:', error);
     }
   };
+  const editAPi = `https://gecxc.com:4041/api/Schiffli/SaveSchiffili`;
+  // console.log('formData', formData);`
 
-  console.log('formData', formData);
-  // const editAPi = https://gecxc.com:4041/api/Fabrication/SaveFabrication;
   // const deleteApi = https://gecxc.com:4041/api/Fabrication/DeleteFabricByFabricId?fabricationId=;
   return (
     <MainCard
@@ -690,11 +752,11 @@ const Schiffli = () => {
 
           <Grid item xs={12} md={3}>
             <TextField
-              label="Repeats"
+              label="Thaan Quantity"
               fullWidth
               size="small"
-              name="repeats"
-              value={formData.repeats}
+              name="thaanQty"
+              value={formData.thaanQty}
               onChange={handleChange}
             />
           </Grid>
@@ -702,20 +764,39 @@ const Schiffli = () => {
             <TextField
               fullWidth
               select
-              label="Heads"
+              label="operatingMachineId"
               defaultValue=""
               size="small"
-              name="noOfHeads"
-              value={formData.noOfHeads}
+              name="operatingMachineId"
+              value={formData.operatingMachineId}
               onChange={handleChange}
             >
-              {heads.map((option) => (
+              {operatingMachineList.map((option) => (
                 <MenuItem key={option.lookUpId} value={option.lookUpId}>
                   {option.lookUpName}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="workingHeadId"
+              defaultValue=""
+              size="small"
+              name="workingHeadId"
+              value={formData.workingHeadId}
+              onChange={handleChange}
+            >
+              {workingHeadList.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+
           <Grid item xs={12} md={3}>
             <TextField
               label="Cutting Size"
@@ -728,31 +809,63 @@ const Schiffli = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
-              label="itemsPerRepeat"
+              label="Rate"
               fullWidth
               size="small"
-              name="itemsPerRepeat"
-              value={formData.itemsPerRepeat}
+              name="rate"
+              value={formData.rate}
               onChange={handleChange}
             />
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
-              label="total Pcs."
+              label="No. Of Stiches Per Yard"
+              fullWidth
+              size="small"
+              name="noOfStichesPerYard"
+              value={formData.noOfStichesPerYard}
+              onChange={handleChange}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="No. Of Items Per Thaan"
+              fullWidth
+              size="small"
+              name="noOfItemPerThaan"
+              value={formData.noOfItemPerThaan}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Total Embroidry"
+              fullWidth
+              size="small"
+              name="totalEmbroidry"
+              value={formData.totalEmbroidry}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Amount Per Yard"
+              fullWidth
+              size="small"
+              name="amountPerYard"
+              value={formData.amountPerYard}
+              onChange={handleChange}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Total Pcs"
               fullWidth
               size="small"
               name="totalPcs"
               value={formData.totalPcs}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Total Amount"
-              fullWidth
-              size="small"
-              name="totalAmount"
-              value={formData.totalAmount}
               onChange={handleChange}
             />
           </Grid>
@@ -766,6 +879,55 @@ const Schiffli = () => {
               onChange={handleChange}
             />
           </Grid>
+
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Total Amount"
+              fullWidth
+              size="small"
+              name="totalAmount"
+              value={formData.totalAmount}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={formData.laserCut}
+                  onChange={handleCheckboxChange}
+                  name="laserCut"
+                />
+              }
+              label="Laser Cut"
+            />
+          </Grid>
+          {formData.laserCut ? (
+            <Grid item xs={12} md={6}>
+              <Grid container spacing={1} width="Inherit">
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    label="Laser Cut Rate"
+                    fullWidth
+                    size="small"
+                    name="laserCutRate"
+                    value={formData.laserCutRate}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    label="Pcs For LaserCut"
+                    fullWidth
+                    size="small"
+                    name="pcsForLaserCut"
+                    value={formData.pcsForLaserCut}
+                    onChange={handleChange}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+          ) : null}
           {/* <Grid item xs={12} md={12}>
             <FormControlLabel
               control={
@@ -956,8 +1118,8 @@ const Schiffli = () => {
             ncolumns={columns}
             initialRows={initialRows}
             formData={formData}
-            // editAPi={editAPi}
-            // refetch={refetchFabricRequisitionData}
+            editAPi={editAPi}
+            refetch={refetchSchiffliList}
             // deleteApi={deleteApi}
             // deleteBy="fabricationId"
             disableAddRecord={true}

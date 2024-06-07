@@ -153,6 +153,10 @@ const PrePlanningCreation = () => {
       refetch();
     } catch (error) {
       console.error('Error saving data:', error);
+      enqueueSnackbar('Planning Batch not saved successfully!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
     }
   };
 

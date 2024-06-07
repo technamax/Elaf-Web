@@ -9,15 +9,23 @@ import {
   Typography,
   Divider,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  InputLabel,
+  Select,
+  OutlinedInput,
+  Box,
+  ButtonGroup,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails
 } from '@mui/material';
-import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
-// import { useGetDesignListQuery } from 'api/store/Apis/designApi';
-import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+import { DataGrid } from '@mui/x-data-grid';
+import { useTheme } from '@mui/material/styles';
+
 import {
   useGetCollectionFromPlanningHeaderQuery,
-  useGetFabricFromPrePlanningByBatchNoQuery,
-  useGetFabricRequisitionListByBatchNoQuery,
   useGetFabricColorByComponentsBatchNoAndFabricIdQuery
 } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
@@ -26,50 +34,107 @@ import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { useGetComponentsByBatchNoQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetFabricByComponentsAndBatchNoQuery } from 'api/store/Apis/prePlanningHeaderApi';
 
-import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
 
 const Embroidery = () => {
-  const [formData, setFormData] = useState({
-    designId: '',
-    batchNo: '',
-    componentId: '',
-    fabricId: '',
-    vendorId: '',
-    poPcs: '', // coming from getcollectionapi
-    baseColorId: '', // coming from getcollectionapi
-    baseColorName: '',
-    colorId: '', //from dying screen coming from fabricAPi
-    availableQty: '',
-    noOfHeads: '',
-    repeats: '',
-    cuttingSize: '',
-    itemsPerRepeat: '',
-    totalPcs: '', //repeat*itemsPerRepeat
-    totalAmount: '', //
-    threadStitches: '',
-    threadRate: '',
-    threadAmount: '',
-    tillaStitches: '',
-    tillaRate: '',
-    tillaAmount: '',
-    sequenceStitches: '',
-    sequenceRate: '',
-    sequenceAmount: '',
-    isSolving: false,
-    solvingLayers: '',
-    solvingInMeters: '',
-    solvingRate: '',
-    solvingAmount: '',
-    additional: '',
+  const theme = useTheme();
+  const [initialData, setInitialData] = useState([]);
 
-    costPerComponent: '', //
-    // costPerComponent: '',
-    createdOn: new Date().toISOString(),
-    createdBy: 0,
+  const [formData, setFormData] = useState({
+    embroideryId: initialData?.embroideryId || 0,
+    designId: initialData?.designId || '',
+    batchNo: initialData?.batchNo || '',
+    planningHeaderId: initialData?.planningHeaderId || '',
+    componentId: initialData?.componentId || '',
+    fabricId: initialData?.fabricId || '',
+    vendorId: initialData?.vendorId || '',
+    poPcs: initialData?.poPcs || '', // coming from getcollectionapi
+    baseColorId: initialData?.baseColorId || '', // coming from getcollectionapi
+    baseColorName: initialData?.baseColorName || '',
+    colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
+    availableQty: initialData?.availableQty || '',
+    noOfHead: initialData?.noOfHead || '',
+    repeats: initialData?.repeats || '',
+    cuttingSize: initialData?.cuttingSize || '',
+    itemsPerRepeat: initialData?.itemsPerRepeat || '',
+    totalPcs: initialData?.totalPcs || '', //repeat*itemsPerRepeat
+    totalAmount: initialData?.totalAmount || '', //
+    threadStiches: initialData?.threadStiches || '',
+    threadRate: initialData?.threadRate || '',
+    threadAmount: initialData?.threadAmount || '',
+    tillaStiches: initialData?.tillaStiches || '',
+    tilaRate: initialData?.tilaRate || '',
+    tilaAmount: initialData?.tilaAmount || '',
+    sequence: initialData?.sequence || '',
+    sequenceRate: initialData?.sequenceRate || '',
+    sequenceAmount: initialData?.sequenceAmount || '',
+    isSolving: initialData?.isSolving || false,
+    solvingLayers: initialData?.solvingLayers || 0,
+    solvingInMeters: initialData?.solvingInMeters || '',
+    solvingRate: initialData?.solvingRate || 0,
+    solvingAmount: initialData?.solvingAmount || '',
+    // additional:  initialData?.tilaRate || '',
+    threadAdditional: initialData?.threadAdditional || [],
+
+    costPerComponent: initialData?.costPerComponent || '', //
+    // costPerComponent:  initialData?.tilaRate || '', //
+    createdOn: initialData?.createdOn || new Date().toISOString(),
+    createdBy: initialData?.createdBy || 0,
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: 0
   });
+
+  useEffect(() => {
+    setFormData({
+      embroideryId: initialData?.embroideryId || 0,
+      designId: initialData?.designId || '',
+      batchNo: initialData?.batchNo || '',
+      planningHeaderId: initialData?.planningHeaderId || '',
+      componentId: initialData?.componentId || '',
+      fabricId: initialData?.fabricId || '',
+      vendorId: initialData?.vendorId || '',
+      poPcs: initialData?.poPcs || '', // coming from getcollectionapi
+      baseColorId: initialData?.baseColorId || '', // coming from getcollectionapi
+      baseColorName: initialData?.baseColorName || '',
+      colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
+      availableQty: initialData?.availableQty || '',
+      noOfHead: initialData?.noOfHead || '',
+      repeats: initialData?.repeats || '',
+      cuttingSize: initialData?.cuttingSize || '',
+      itemsPerRepeat: initialData?.itemsPerRepeat || '',
+      totalPcs: initialData?.totalPcs || '', //repeat*itemsPerRepeat
+      totalAmount: initialData?.totalAmount || '', //
+      threadStiches: initialData?.threadStiches || '',
+      threadRate: initialData?.threadRate || '',
+      threadAmount: initialData?.threadAmount || '',
+      tillaStiches: initialData?.tillaStiches || '',
+      tilaRate: initialData?.tilaRate || '',
+      tilaAmount: initialData?.tilaAmount || '',
+      sequence: initialData?.sequence || '',
+      sequenceRate: initialData?.sequenceRate || '',
+      sequenceAmount: initialData?.sequenceAmount || '',
+      isSolving: initialData?.isSolving || false,
+      solvingLayers: initialData?.solvingLayers || 0,
+      solvingInMeters: initialData?.solvingInMeters || '',
+      solvingRate: initialData?.solvingRate || 0,
+      solvingAmount: initialData?.solvingAmount || '',
+      threadAdditional: initialData?.threadAdditional || [],
+      costPerComponent: initialData?.costPerComponent || '', //
+      createdOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || 0,
+      lastUpdatedOn: new Date().toISOString(),
+      LastUpdatedBy: 0
+    });
+  }, [initialData]);
+  const additionals = ['Boring', 'Pooni', 'Laser', 'Doori', 'Dissolving'];
+  function getStyles(name, personName, theme) {
+    return {
+      fontWeight:
+        personName.indexOf(name) === -1
+          ? theme.typography.fontWeightRegular
+          : theme.typography.fontWeightMedium
+    };
+  }
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
@@ -84,37 +149,41 @@ const Embroidery = () => {
     });
   const { data: fabricData } = useGetFabricByComponentsAndBatchNoQuery(
     {
-      batchNo: formData.batchNo,
+      batchNo: formData.planningHeaderId,
       componentId: formData.componentId
     },
     {
-      skip: !formData.batchNo || !formData.componentId
+      skip: !formData.planningHeaderId || !formData.componentId
     }
   );
   const { data: colorData } =
     useGetFabricColorByComponentsBatchNoAndFabricIdQuery(
       {
-        batchNo: formData.batchNo,
+        batchNo: formData.planningHeaderId,
         componentId: formData.componentId,
         fabricId: formData.fabricId
       },
       {
-        skip: !formData.batchNo || !formData.componentId || !formData.fabricId
+        skip:
+          !formData.planningHeaderId ||
+          !formData.componentId ||
+          !formData.fabricId
       }
     );
 
-  const { data: fabricRequisitionData, refetch: refetchFabricRequisitionData } =
-    useGetFabricRequisitionListByBatchNoQuery(formData.batchNo, {
-      skip: !formData.batchNo // Skip the query if no collection is selected
-    });
+  // const { data: embroideryList, refetch: refetchEmbroideryList } =
+  //   useGetEmbroideryListByBatchNoQuery(formData.planningHeaderId, {
+  //     skip: !formData.planningHeaderId // Skip the query if no collection is selected
+  //   });
   const { data: componentsByBatch } = useGetComponentsByBatchNoQuery(
-    formData.batchNo,
+    formData.planningHeaderId,
     {
-      skip: !formData.batchNo // Skip the query if no collection is selected
+      skip: !formData.planningHeaderId // Skip the query if no collection is selected
     }
   );
+  console.log('formData.planningHeaderId', formData.planningHeaderId);
+  console.log('collectionData', collectionData);
 
-  console.log('colorData', colorData);
   const [designList, setDesignList] = useState([]);
   const [batchList, setBatchList] = useState([]);
   const [Fabrications, setFabrications] = useState([]);
@@ -123,6 +192,9 @@ const Embroidery = () => {
   const [colors, setColors] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   const [components, setComponents] = useState([]);
+
+  console.log('batchList', batchList);
+  console.log('formData', formData);
 
   useEffect(() => {
     if (designData) {
@@ -153,17 +225,18 @@ const Embroidery = () => {
       setComponents(componentsByBatch.result);
     }
   }, [componentsByBatch]);
-  useEffect(() => {
-    if (fabricRequisitionData) {
-      setInitialRows(
-        fabricRequisitionData.result.map((row, index) => ({
-          id: index,
-          ...row
-        }))
-      );
-      // refetchBatches();
-    }
-  }, [fabricRequisitionData]);
+  // useEffect(() => {
+  //   if (embroideryList) {
+  //     setInitialRows(
+  //       embroideryList.result.map((row, index) => ({
+  //         id: index,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [embroideryList]);
+  // console.log('embroideryList', embroideryList);
+  console.log('initialRows', initialRows);
 
   useEffect(() => {
     // fetchData();
@@ -175,16 +248,38 @@ const Embroidery = () => {
     }
   }, [lookupData]);
 
-  // console.log('designList', designList);
-  // console.log('selectedCollectionId', selectedCollectionId);
-  // console.log('batchList', batchList);
-  // console.log('uom', uoms);
-  // console.log('Fabrications', Fabrications);
-  // console.log('initialRows', initialRows);
-  // console.log('components', components);
-
   const collectionList = collectionData?.result || [];
-  // console.log('collectionList', collectionList);
+
+  const fetchEmbroideryData = async (batchNo) => {
+    const url = `https://gecxc.com:4041/api/Embroidery/GetEmbroideryListByBatchNo?batchNo=${batchNo}`;
+    try {
+      const response = await axios.get(url);
+      return response.data; // Assuming the API returns JSON data
+    } catch (error) {
+      console.error('Error fetching embroidery data:', error);
+      throw error; // Re-throw the error if you want to handle it further up the call stack
+    }
+  };
+  const fetchEmbroidery = async () => {
+    if (!formData.planningHeaderId) {
+      return;
+    }
+    try {
+      const data = await fetchEmbroideryData(formData.planningHeaderId);
+      const rowsWithId = data.result.map((row, index) => ({
+        ...row,
+        id: index + 1
+      }));
+      setInitialRows(rowsWithId);
+      console.log('initialRows', initialRows);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmbroidery();
+  }, [formData.planningHeaderId]);
 
   useEffect(() => {
     const calculateTotalPcs = () => {
@@ -198,9 +293,9 @@ const Embroidery = () => {
       totalPcs: calculateTotalPcs()
     }));
     const calculateThread = () => {
-      const stitches = parseFloat(formData.threadStitches) || 0;
+      const stitches = parseFloat(formData.threadStiches) || 0;
       const rate = parseFloat(formData.threadRate) || 0;
-      const heads = parseFloat(formData.noOfHeads) || 0;
+      const heads = parseFloat(formData.noOfHead) || 0;
       const repeats = parseFloat(formData.repeats) || 0;
       return (stitches / 1000) * (rate * repeats * heads);
     };
@@ -210,21 +305,21 @@ const Embroidery = () => {
       threadAmount: calculateThread()
     }));
     const calculateTilla = () => {
-      const stitches = parseFloat(formData.tillaStitches) || 0;
-      const rate = parseFloat(formData.tillaRate) || 0;
-      const heads = parseFloat(formData.noOfHeads) || 0;
+      const stitches = parseFloat(formData.tillaStiches) || 0;
+      const rate = parseFloat(formData.tilaRate) || 0;
+      const heads = parseFloat(formData.noOfHead) || 0;
       const repeats = parseFloat(formData.repeats) || 0;
       return (stitches / 1000) * (rate * repeats * heads);
     };
 
     setFormData((prevData) => ({
       ...prevData,
-      tillaAmount: calculateTilla()
+      tilaAmount: calculateTilla()
     }));
     const calculateSequence = () => {
-      const stitches = parseFloat(formData.sequenceStitches) || 0;
+      const stitches = parseFloat(formData.sequence) || 0;
       const rate = parseFloat(formData.sequenceRate) || 0;
-      const heads = parseFloat(formData.noOfHeads) || 0;
+      const heads = parseFloat(formData.noOfHead) || 0;
       const repeats = parseFloat(formData.repeats) || 0;
       return (stitches / 1000) * (rate * repeats * heads);
     };
@@ -235,9 +330,9 @@ const Embroidery = () => {
     }));
     const calculateInMeters = () => {
       const repeats = parseFloat(formData.repeats) || 0;
-      const noOfHeads = parseFloat(formData.noOfHeads) || 0;
+      const noOfHead = parseFloat(formData.noOfHead) || 0;
       const layers = parseFloat(formData.solvingLayers) || 0;
-      return ((repeats * noOfHeads * 13) / 39.37) * layers;
+      return ((repeats * noOfHead * 13) / 39.37) * layers;
     };
 
     setFormData((prevData) => ({
@@ -257,7 +352,7 @@ const Embroidery = () => {
     }));
     const calculateTotalAmount = () => {
       const thread = parseFloat(formData.threadAmount) || 0;
-      const tilla = parseFloat(formData.tillaAmount) || 0;
+      const tilla = parseFloat(formData.tilaAmount) || 0;
       const sequence = parseFloat(formData.sequenceAmount) || 0;
       const solving = parseFloat(formData.solvingAmount) || 0;
       return thread + tilla + sequence + solving;
@@ -284,15 +379,15 @@ const Embroidery = () => {
     formData.sequenceAmount,
     formData.solvingAmount,
     formData.repeats,
-    formData.tillaAmount,
+    formData.tilaAmount,
     formData.itemsPerRepeat,
     formData.threadRate,
-    formData.threadStitches,
-    formData.noOfHeads,
-    formData.tillaRate,
-    formData.tillaStitches,
+    formData.threadStiches,
+    formData.noOfHead,
+    formData.tilaRate,
+    formData.tillaStiches,
     formData.sequenceRate,
-    formData.sequenceStitches,
+    formData.sequence,
     formData.solvingLayers,
     formData.solvingInMeters,
     formData.solvingRate
@@ -316,7 +411,6 @@ const Embroidery = () => {
       setFormData({
         ...formData,
         collectionId: value,
-
         poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
     } else if (name === 'designId') {
@@ -329,6 +423,15 @@ const Embroidery = () => {
         baseColorId: selectedDesign ? selectedDesign.colorId : '',
         baseColorName: selectedDesign ? selectedDesign.colorName : ''
       });
+    } else if (name === 'colorId') {
+      const selectedcolor = colors.find((color) => color.colorId === value);
+      setFormData({
+        ...formData,
+        colorId: value,
+        availableQty: selectedcolor ? selectedcolor.total : '',
+        cuttingSize: selectedcolor ? selectedcolor.cuttingSize : '',
+        repeats: selectedcolor ? selectedcolor.repeats : ''
+      });
     } else if (name === 'batchNo') {
       const selectedBatch = batchList.find((batch) => batch.batchNo === value);
       setFormData({
@@ -336,175 +439,159 @@ const Embroidery = () => {
         batchNo: value,
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
       });
-    } else if (name === 'fabricId') {
-      const selectedFabric = Fabrications.find(
-        (fabric) => fabric.fabricId === value
-      );
-      setFormData({
-        ...formData,
-        fabricId: value,
-        quantity: selectedFabric ? selectedFabric.total : ''
-      });
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
-  const columns = [
-    {
-      field: 'designId',
-      headerName: 'Design',
-      editable: true,
-      flex: 1,
-      type: 'singleSelect',
-      valueOptions: designList.map((collection) => ({
-        value: collection.designId,
-        label: collection.designNo
-      }))
-    },
-    {
-      field: 'poPcs',
-      headerName: 'PO. Pieces',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'quantity',
-      headerName: 'Quantity',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'rate',
-      headerName: 'Rate',
-      editable: true,
-      flex: 1
-    },
-    {
-      field: 'vendorId',
-      headerName: 'Vendor',
-      editable: true,
-      flex: 1,
-      type: 'singleSelect',
-      valueOptions: vendors.map((collection) => ({
-        value: collection.lookUpId,
-        label: collection.lookUpName
-      }))
-    },
-    {
-      field: 'total',
-      headerName: 'Total',
-      flex: 1,
-      editable: true,
-      // valueGetter: (params, row) => {
-      //   const quantity = parseFloat(row.quantity) || 0;
-      //   const rate = parseFloat(row.rate) || 0;
-      //   return quantity * rate;
-      // }
-      valueSetter: (params, row) => {
-        const quantity = row.quantity ?? 0;
-        const rate = row.rate ?? 0;
-        const total = quantity * rate;
-        console.log('total', total);
-        return { ...row, total };
-      }
-      // valueSetter: (params, row) => {
-      //   console.log('row', row);
-      //   const quantity = row.quantity || 0;
-      //   const rate = row.rate || 0;
-      //   return quantity * rate;
-      // }
-    },
-    {
-      field: 'unitPrice',
-      headerName: 'Unit Price',
-      flex: 1,
-      editable: true,
-      // valueGetter: (params, row) => {
-      //   const total = parseFloat(row.total) || 0;
-      //   const poPcs = parseFloat(row.poPcs) || 0;
-      //   return total / poPcs;
-      // }
-      valueSetter: (params, row) => {
-        const total = row.total ?? 0;
-        const poPcs = row.poPcs ?? 0;
-        const unitPrice = total / poPcs;
-        console.log('unitPrice', unitPrice);
-        return { ...row, unitPrice };
-      }
-      // valueSetter: (params, row) => {
-      //   const total = row.total || 0;
-      //   const poPcs = row.poPcs || 0;
-      //   return total / poPcs;
-      // }
-    },
-    {
-      field: 'gst',
-      headerName: 'GST',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'totalInclGst',
-      headerName: 'Total Inc. GST',
-      flex: 1,
-      editable: true,
-      // valueGetter: (params, row) => {
-      //   console.log(row);
-      //   const total = parseFloat(row.total) || 0;
-      //   const gst = parseFloat(row.gst) || 0;
-      //   return total * (1 + gst / 100);
-      // }
-      valueSetter: (params, row) => {
-        const total = row.total ?? 0;
-        const gst = row.gst ?? 0;
-        const totalInclGst = total * (1 + gst / 100);
-        console.log('totalInclGst', totalInclGst);
-        return { ...row, totalInclGst };
-      }
-    }
-  ];
-
   const handleSave = async () => {
     try {
-      // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:4041/api/Fabrication/SaveFabrication',
-        formData
+        'https://gecxc.com:4041/api/Embroidery/SaveEmbroidery',
+        {
+          ...formData,
+          threadAdditional: formData.threadAdditional.join(', ')
+        }
       );
 
-      // Handle the response if needed
       console.log('Save response:', response.data);
+      fetchEmbroidery();
+      setInitialData({});
 
-      // Clear the form after successful save
-      // refetchFabricRequisitionData();
       setFormData({
-        designId: '',
-        batchNo: '',
-        baseColorId: '',
-        baseColorName: '',
+        embroideryId: 0,
+        // designId: response.data.result.designId,
+        // batchNo: response.data.result.batchNo,
+        // planningHeaderId: response.data.result.planningHeaderId,
+        componentId: '',
         fabricId: '',
-        poPcs: '',
-        quantity: '',
-        rate: '',
-        uomId: 'string',
-        total: '',
-        unitPrice: '',
-        gst: '',
-        totalInclGst: '',
-        createdOn: '2024-05-29T09:56:23.916Z',
+        vendorId: '',
+        poPcs: '', // coming from getcollectionapi
+        baseColorId: '', // coming from getcollectionapi
+        baseColorName: '',
+        colorId: '', //from dying screen coming from fabricAPi
+        availableQty: '',
+        noOfHead: '',
+        repeats: '',
+        cuttingSize: '',
+        itemsPerRepeat: '',
+        totalPcs: '', //repeat*itemsPerRepeat
+        totalAmount: '', //
+        threadStiches: '',
+        threadRate: '',
+        threadAmount: '',
+        tillaStiches: '',
+        tilaRate: '',
+        tilaAmount: '',
+        sequence: '',
+        sequenceRate: '',
+        sequenceAmount: '',
+        isSolving: false,
+        solvingLayers: 0,
+        solvingInMeters: '',
+        solvingRate: 0,
+        solvingAmount: '',
+        // additional: '',
+        threadAdditional: [],
+
+        costPerComponent: '', //
+        // costPerComponent: '', //
+        createdOn: new Date().toISOString(),
         createdBy: 0,
-        lastUpdatedOn: '2024-05-29T09:56:23.916Z',
+        lastUpdatedOn: new Date().toISOString(),
         LastUpdatedBy: 0
       });
+      // setInitialRows([]);
+      // refetchEmbroideryList();
     } catch (error) {
       console.error('Error saving data:', error);
     }
   };
 
-  console.log('formData', formData);
-  // const editAPi = https://gecxc.com:4041/api/Fabrication/SaveFabrication;
-  // const deleteApi = https://gecxc.com:4041/api/Fabrication/DeleteFabricByFabricId?fabricationId=;
+  console.log('initialRows', initialRows);
+  const handleEdit = (row) => {
+    // Convert the comma-separated string to an array
+    const threadAdditionalArray = row.threadAdditional
+      ? row.threadAdditional.split(',').map((item) => item.trim())
+      : [];
+
+    setInitialData({
+      ...row,
+      threadAdditional: threadAdditionalArray
+    });
+  };
+
+  console.log('initialData', initialData);
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(
+        `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=${id}`
+      );
+      // refetchEmbroideryList();
+      fetchEmbroidery();
+      console.log('deleted');
+    } catch (error) {
+      console.error('Error deleting data:', error);
+    }
+    // Handle delete logic
+  };
+  const columns = [
+    { field: 'designId', headerName: 'Design Id' },
+    { field: 'batchNo', headerName: 'Batch No.' },
+    { field: 'componentId', headerName: 'Component Id' },
+    { field: 'fabricId', headerName: 'Fabric Id' },
+    { field: 'vendorId', headerName: 'Vendor Id' },
+    { field: 'poPcs', headerName: 'Po Pcs' },
+    { field: 'baseColorName', headerName: 'Base Color' },
+    { field: 'colorId', headerName: 'Color' },
+    { field: 'availableQty', headerName: 'Available Qty' },
+    { field: 'noOfHead', headerName: 'No. Of Heads' },
+    { field: 'repeats', headerName: 'Repeats' },
+    { field: 'cuttingSize', headerName: 'Cutting Size' },
+    { field: 'itemsPerRepeat', headerName: 'Items Per Repeat' },
+    { field: 'totalPcs', headerName: 'Total Pcs' },
+    { field: 'threadStiches', headerName: 'Thread Stitches' },
+    { field: 'threadRate', headerName: 'Thread Rate' },
+    { field: 'threadAmount', headerName: 'Thread Amount' },
+    { field: 'tillaStiches', headerName: 'Tilla Stitches' },
+    { field: 'tilaRate', headerName: 'Tilla Rate' },
+    { field: 'tilaAmount', headerName: 'Tilla Amount' },
+    { field: 'sequence', headerName: 'sequence' },
+    { field: 'sequenceRate', headerName: 'Sequence Rate' },
+    { field: 'sequenceAmount', headerName: 'Sequence Amount' },
+    { field: 'isSolving', headerName: 'Is Solving' },
+    { field: 'solvingLayers', headerName: 'Solving Layers' },
+    { field: 'solvingInMeters', headerName: 'Solving In Meters' },
+    { field: 'solvingRate', headerName: 'Solving Rate' },
+    { field: 'solvingAmount', headerName: 'Solving Amount' },
+    { field: 'threadAdditional', headerName: 'ThreadAdditional' },
+    { field: 'costPerComponent', headerName: 'Cost Per Component' },
+    {
+      field: 'Action',
+      headerName: 'Actions',
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup size="small" variant="text">
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => handleEdit(params.row)}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => handleDelete(params.row.embroideryId)}
+            >
+              Delete
+            </Button>
+          </ButtonGroup>
+        </div>
+      )
+    }
+  ];
+
   return (
     <MainCard
       style={{
@@ -591,368 +678,436 @@ const Embroidery = () => {
               ))}
             </TextField>{' '}
           </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Components"
-              name="componentId"
-              value={formData.componentId}
-              onChange={handleChange}
-              size="small"
-            >
-              {components.map((option) => (
-                <MenuItem key={option.componentId} value={option.componentId}>
-                  {option.componentName}
-                </MenuItem>
-              ))}
-            </TextField>{' '}
-          </Grid>
-
-          <Grid item xs={12} md={12}>
+          {/* <Grid item xs={12} md={12}>
             <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
-          </Grid>
-
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Select Fabric"
-              defaultValue=""
-              size="small"
-              name="fabricId"
-              value={formData.fabricId}
-              onChange={handleChange}
+          </Grid> */}
+          <Accordion defaultExpanded sx={{ marginTop: 2 }}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1-content"
+              id="panel1-header"
             >
-              {Fabrications.map((option) => (
-                <MenuItem key={option.fabricId} value={option.fabricId}>
-                  {option.fabric}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Vendors"
-              defaultValue=""
-              size="small"
-              name="vendorId"
-              value={formData.vendorId}
-              onChange={handleChange}
-            >
-              {vendors.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
+              <Typography variant="h5" gutterBottom>
+                Embroidery Form
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Grid container spacing={2} width="Inherit">
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Components"
+                    name="componentId"
+                    value={formData.componentId}
+                    onChange={handleChange}
+                    size="small"
+                  >
+                    {components.map((option) => (
+                      <MenuItem
+                        key={option.componentId}
+                        value={option.componentId}
+                      >
+                        {option.componentName}
+                      </MenuItem>
+                    ))}
+                  </TextField>{' '}
+                </Grid>
 
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Po Pcs"
-              fullWidth
-              size="small"
-              name="poPcs"
-              value={formData.poPcs}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Color"
-              size="small"
-              name="colorId"
-              value={formData.colorId}
-              onChange={handleChange}
-            >
-              {colors.map((option) => (
-                <MenuItem key={option.colorId} value={option.colorId}>
-                  {option.color}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Available Quantity"
-              fullWidth
-              size="small"
-              name="availableQty"
-              value={formData.availableQty}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Repeats"
-              fullWidth
-              size="small"
-              name="repeats"
-              value={formData.repeats}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Heads"
-              defaultValue=""
-              size="small"
-              name="noOfHeads"
-              value={formData.noOfHeads}
-              onChange={handleChange}
-            >
-              {heads.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Cutting Size"
-              fullWidth
-              size="small"
-              name="cuttingSize"
-              value={formData.cuttingSize}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="itemsPerRepeat"
-              fullWidth
-              size="small"
-              name="itemsPerRepeat"
-              value={formData.itemsPerRepeat}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="total Pcs."
-              fullWidth
-              size="small"
-              name="totalPcs"
-              value={formData.totalPcs}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Total Amount"
-              fullWidth
-              size="small"
-              name="totalAmount"
-              value={formData.totalAmount}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Cost Per Component"
-              fullWidth
-              size="small"
-              name="costPerComponent"
-              value={formData.costPerComponent}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={12}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.isSolving}
-                  onChange={handleCheckboxChange}
-                  name="isSolving"
-                />
-              }
-              label="isSolving"
-            />
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Grid container spacing={1} width="Inherit">
-              <Grid item xs={12} md={12}>
-                <Typography variant="h5" gutterBottom>
-                  Thread
-                </Typography>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Select Fabric"
+                    defaultValue=""
+                    size="small"
+                    name="fabricId"
+                    value={formData.fabricId}
+                    onChange={handleChange}
+                  >
+                    {Fabrications.map((option) => (
+                      <MenuItem key={option.fabricId} value={option.fabricId}>
+                        {option.fabric}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Vendors"
+                    defaultValue=""
+                    size="small"
+                    name="vendorId"
+                    value={formData.vendorId}
+                    onChange={handleChange}
+                  >
+                    {vendors.map((option) => (
+                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                        {option.lookUpName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Po Pcs"
+                    fullWidth
+                    size="small"
+                    name="poPcs"
+                    value={formData.poPcs}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Color"
+                    size="small"
+                    name="colorId"
+                    value={formData.colorId}
+                    onChange={handleChange}
+                  >
+                    {colors.map((option) => (
+                      <MenuItem key={option.colorId} value={option.colorId}>
+                        {option.color}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Available Quantity"
+                    fullWidth
+                    size="small"
+                    name="availableQty"
+                    value={formData.availableQty}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Repeats"
+                    fullWidth
+                    size="small"
+                    name="repeats"
+                    value={formData.repeats}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Heads"
+                    defaultValue=""
+                    size="small"
+                    name="noOfHead"
+                    value={formData.noOfHead}
+                    onChange={handleChange}
+                  >
+                    {heads.map((option) => (
+                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                        {option.lookUpName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Cutting Size"
+                    fullWidth
+                    size="small"
+                    name="cuttingSize"
+                    value={formData.cuttingSize}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="itemsPerRepeat"
+                    fullWidth
+                    size="small"
+                    name="itemsPerRepeat"
+                    value={formData.itemsPerRepeat}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="total Pcs."
+                    fullWidth
+                    size="small"
+                    name="totalPcs"
+                    value={formData.totalPcs}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Total Amount"
+                    fullWidth
+                    size="small"
+                    name="totalAmount"
+                    value={formData.totalAmount}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Cost Per Component"
+                    fullWidth
+                    size="small"
+                    name="costPerComponent"
+                    value={formData.costPerComponent}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={formData.isSolving}
+                        onChange={handleCheckboxChange}
+                        name="isSolving"
+                      />
+                    }
+                    label="isSolving"
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <FormControl fullWidth>
+                    <InputLabel>Additional</InputLabel>
+                    <Select
+                      multiple
+                      value={formData.threadAdditional}
+                      name="threadAdditional"
+                      onChange={handleChange}
+                      input={<OutlinedInput label="Additional" />}
+                      fullWidth
+                      // MenuProps={MenuProps}
+                    >
+                      {additionals.map((name) => (
+                        <MenuItem
+                          key={name}
+                          value={name}
+                          style={getStyles(
+                            name,
+                            formData.threadAdditional,
+                            theme
+                          )}
+                        >
+                          {name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                {formData.isSolving ? (
+                  <Grid item xs={12} md={6}>
+                    <Grid container spacing={1} width="Inherit">
+                      <Grid item xs={12} md={12}>
+                        <Typography variant="h5" gutterBottom>
+                          Solving
+                        </Typography>
+                      </Grid>{' '}
+                      <Grid item xs={12} md={3}>
+                        <TextField
+                          label="Layers"
+                          fullWidth
+                          size="small"
+                          name="solvingLayers"
+                          value={formData.solvingLayers}
+                          onChange={handleChange}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={3}>
+                        <TextField
+                          label="Meters"
+                          fullWidth
+                          size="small"
+                          name="solvingInMeters"
+                          value={formData.solvingInMeters}
+                          onChange={handleChange}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={3}>
+                        <TextField
+                          label="Rate"
+                          fullWidth
+                          size="small"
+                          name="solvingRate"
+                          value={formData.solvingRate}
+                          onChange={handleChange}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={3}>
+                        <TextField
+                          label="Amount"
+                          fullWidth
+                          size="small"
+                          name="solvingAmount"
+                          value={formData.solvingAmount}
+                          onChange={handleChange}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                ) : null}
+                <Grid item xs={12} md={6}>
+                  <Grid container spacing={1} width="Inherit">
+                    <Grid item xs={12} md={12}>
+                      <Typography variant="h5" gutterBottom>
+                        Thread
+                      </Typography>
+                    </Grid>{' '}
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="Stitches"
+                        fullWidth
+                        size="small"
+                        name="threadStiches"
+                        value={formData.threadStiches}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="Rate"
+                        fullWidth
+                        size="small"
+                        name="threadRate"
+                        value={formData.threadRate}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="Amount"
+                        fullWidth
+                        size="small"
+                        name="threadAmount"
+                        value={formData.threadAmount}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Grid container spacing={1} width="Inherit">
+                    <Grid item xs={12} md={12}>
+                      <Typography variant="h5" gutterBottom>
+                        Tilla
+                      </Typography>
+                    </Grid>{' '}
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="Stitches"
+                        fullWidth
+                        size="small"
+                        name="tillaStiches"
+                        value={formData.tillaStiches}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="Rate"
+                        fullWidth
+                        size="small"
+                        name="tilaRate"
+                        value={formData.tilaRate}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="Amount"
+                        fullWidth
+                        size="small"
+                        name="tilaAmount"
+                        value={formData.tilaAmount}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Grid container spacing={1} width="Inherit">
+                    <Grid item xs={12} md={12}>
+                      <Typography variant="h5" gutterBottom>
+                        Sequence
+                      </Typography>
+                    </Grid>{' '}
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="Sequence"
+                        fullWidth
+                        size="small"
+                        name="sequence"
+                        value={formData.sequence}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="Rate"
+                        fullWidth
+                        size="small"
+                        name="sequenceRate"
+                        value={formData.sequenceRate}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="Amount"
+                        fullWidth
+                        size="small"
+                        name="sequenceAmount"
+                        value={formData.sequenceAmount}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
               </Grid>{' '}
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Stitches"
-                  fullWidth
-                  size="small"
-                  name="threadStitches"
-                  value={formData.threadStitches}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Rate"
-                  fullWidth
-                  size="small"
-                  name="threadRate"
-                  value={formData.threadRate}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Amount"
-                  fullWidth
-                  size="small"
-                  name="threadAmount"
-                  value={formData.threadAmount}
-                  onChange={handleChange}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Grid container spacing={1} width="Inherit">
-              <Grid item xs={12} md={12}>
-                <Typography variant="h5" gutterBottom>
-                  Tilla
-                </Typography>
-              </Grid>{' '}
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Stitches"
-                  fullWidth
-                  size="small"
-                  name="tillaStitches"
-                  value={formData.tillaStitches}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Rate"
-                  fullWidth
-                  size="small"
-                  name="tillaRate"
-                  value={formData.tillaRate}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Amount"
-                  fullWidth
-                  size="small"
-                  name="tillaAmount"
-                  value={formData.tillaAmount}
-                  onChange={handleChange}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Grid container spacing={1} width="Inherit">
-              <Grid item xs={12} md={12}>
-                <Typography variant="h5" gutterBottom>
-                  Sequence
-                </Typography>
-              </Grid>{' '}
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Stitches"
-                  fullWidth
-                  size="small"
-                  name="sequenceStitches"
-                  value={formData.sequenceStitches}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Rate"
-                  fullWidth
-                  size="small"
-                  name="sequenceRate"
-                  value={formData.sequenceRate}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Amount"
-                  fullWidth
-                  size="small"
-                  name="sequenceAmount"
-                  value={formData.sequenceAmount}
-                  onChange={handleChange}
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-          {formData.isSolving ? (
-            <Grid item xs={12} md={6}>
-              <Grid container spacing={1} width="Inherit">
-                <Grid item xs={12} md={12}>
-                  <Typography variant="h5" gutterBottom>
-                    Solving
-                  </Typography>
-                </Grid>{' '}
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Layers"
-                    fullWidth
-                    size="small"
-                    name="solvingLayers"
-                    value={formData.solvingLayers}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Meters"
-                    fullWidth
-                    size="small"
-                    name="solvingInMeters"
-                    value={formData.solvingInMeters}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Rate"
-                    fullWidth
-                    size="small"
-                    name="solvingRate"
-                    value={formData.solvingRate}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Amount"
-                    fullWidth
-                    size="small"
-                    name="solvingAmount"
-                    value={formData.solvingAmount}
-                    onChange={handleChange}
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
-          ) : null}
+            </AccordionDetails>{' '}
+          </Accordion>
         </Grid>
       </FormControl>
       <Grid container spacing={2} width="Inherit">
         <Grid sx={{ marginTop: 2 }} item xs={12}>
-          <EditAbleDataGrid
+          <Box
+            sx={{
+              height: 500,
+              width: 'inherit',
+              '& .actions': {
+                color: 'text.secondary'
+              },
+              '& .textPrimary': {
+                color: 'text.primary'
+              }
+            }}
+          >
+            <DataGrid
+              // {...data}
+              rows={initialRows}
+              columns={columns}
+              rowLength={100}
+              sx={{
+                boxShadow: 2,
+                border: 2,
+                borderColor: 'primary.light',
+                '& .MuiDataGrid-cell:hover': {
+                  color: 'primary.main'
+                }
+              }}
+            />
+          </Box>
+          {/* <EditAbleDataGrid
             ncolumns={columns}
             initialRows={initialRows}
             formData={formData}
@@ -961,7 +1116,7 @@ const Embroidery = () => {
             // deleteApi={deleteApi}
             // deleteBy="fabricationId"
             disableAddRecord={true}
-          />
+          /> */}
         </Grid>
       </Grid>
     </MainCard>
