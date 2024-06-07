@@ -34,16 +34,16 @@ const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
         {/* </Box> */}
       </Box>
       <BrowserView>
-        <PerfectScrollbar
+        {/* <PerfectScrollbar
           component="div"
           style={{
             height: !matchUpMd ? 'calc(100vh - 56px)' : 'calc(100vh - 88px)',
             paddingLeft: '16px',
             paddingRight: '16px'
           }}
-        >
-          <MenuList empId={empId} token={token} />
-        </PerfectScrollbar>
+        > */}
+        <MenuList empId={empId} token={token} />
+        {/* </PerfectScrollbar> */}
       </BrowserView>
       <MobileView>
         <Box sx={{ px: 2 }}>
@@ -60,9 +60,9 @@ const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
     <Box
       component="nav"
       sx={{
-        backgroundImage:
-          'url("https://cdn11.bigcommerce.com/s-hv21hhsv/images/stencil/700x700/products/38611/284805/2e6462c221260668bf7516fe2121ad54__84353.1704082180.jpg?c=2")',
-        backgroundSize: 'contain',
+        // backgroundImage:
+        //   'url("https://cdn11.bigcommerce.com/s-hv21hhsv/images/stencil/700x700/products/38611/284805/2e6462c221260668bf7516fe2121ad54__84353.1704082180.jpg?c=2")',
+        // backgroundSize: 'contain',
         flexShrink: { md: 0 },
         width: matchUpMd ? drawerWidth : 'auto'
       }}
@@ -79,16 +79,18 @@ const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
             width: drawerWidth,
             background: theme.palette.background.default,
             color: theme.palette.text.white,
-            backgroundColor: 'lightgrey',
+            // backgroundColor: 'lightgrey',
             backgroundImage:
               'url("https://cdn11.bigcommerce.com/s-hv21hhsv/images/stencil/700x700/products/38611/284805/2e6462c221260668bf7516fe2121ad54__84353.1704082180.jpg?c=2")',
             backgroundSize: 'contain',
             position: 'absolute',
+            height: '94%',
+            borderRadius: '25px',
 
             borderRight: 'none',
 
             [theme.breakpoints.up('xs')]: {
-              top: '84px'
+              top: '74px'
             }
           }
         }}

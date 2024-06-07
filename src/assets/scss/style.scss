@@ -43,9 +43,9 @@
 }
 
 .MainCard {
-  border-width: 1px;
-  border-style: dotted;
-  border-color: #a11f23;
+  // border-width: 1px;
+  // border-style: dotted;
+  // border-color: #a11f23;
 }
 
 .css-5d09g1-MuiPaper-root-MuiAccordion-root.Mui-expanded {
@@ -54,9 +54,32 @@
 .css-1f773le-MuiButtonBase-root-MuiAccordionSummary-root.Mui-expanded {
   min-height: 40px;
 }
+//appbar
+.css-kvip5o-MuiToolbar-root {
+  min-height: 0px;
+  padding: 0px;
+}
+.css-h4y409-MuiList-root {
+  padding-top: 0px;
+}
 .bi-menu-down::before {
   color: #d12d33;
 }
+.css-138lma6-MuiPaper-root-MuiCard-root {
+  border-width: 1px;
+  border-style: dotted;
+
+  box-shadow: 3px 3px antiquewhite;
+}
+
+.css-9d4wr9 {
+  margin-left: 0;
+  width: calc(100% - 260px);
+  border-style: dashed;
+  border-color: black;
+  border-width: 2.5px;
+}
+
 .scrollbar-container.ps,
 .scrollbar-container > .ps {
   &.ps--active-y > .ps__rail-y {

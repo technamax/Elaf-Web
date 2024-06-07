@@ -62,6 +62,8 @@ const MainLayout = () => {
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
   // Handle left drawer
+  const matchDownSm = useMediaQuery(theme.breakpoints.down('sm'));
+
   const leftDrawerOpened = useSelector((state) => state.customization.opened);
   const dispatch = useDispatch();
   const handleLeftDrawerToggle = () => {
@@ -91,7 +93,15 @@ const MainLayout = () => {
   }, []);
   console.log(token);
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        transform: !matchDownMd ? 'scale(0.8)' : 'none',
+        transformOrigin: 'top left',
+        width: !matchDownMd ? '125%' : '100%',
+        height: !matchDownMd ? '125%' : '100%'
+      }}
+    >
       <CssBaseline />
       {/* header */}
 
@@ -99,7 +109,7 @@ const MainLayout = () => {
         className=".css-h4y409-MuiList-root "
         // enableColorOnDark
         position="absolute"
-        color="dark"
+        color="transparent"
         // To change Appbar Color/
         elevation={0}
         sx={{
