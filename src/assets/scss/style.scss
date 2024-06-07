@@ -69,7 +69,7 @@
   border-width: 1px;
   border-style: dotted;
 
-  box-shadow: 3px 3px antiquewhite;
+  box-shadow: 5px 5px lightgray;
 }
 
 .css-9d4wr9 {
@@ -85,6 +85,11 @@
 .css-1gr4mqk,
 .css-38c5y6 {
   background-color: #ffffff;
+  margin-left: 0;
+  width: calc(100% - 260px);
+  border-style: dashed;
+  border-color: black;
+  border-width: 2.5px;
 }
 .scrollbar-container.ps,
 .scrollbar-container > .ps {

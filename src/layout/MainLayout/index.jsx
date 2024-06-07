@@ -101,10 +101,10 @@ const MainLayout = () => {
     <Box
       sx={{
         display: 'flex',
-        transform: !matchDownMd ? 'scale(0.8)' : 'none',
-        transformOrigin: 'top left',
-        width: !matchDownMd ? '125%' : '100%',
-        height: !matchDownMd ? '125%' : '100%',
+        // transform: !matchDownMd ? 'scale(0.8)' : 'none',
+        // transformOrigin: 'top left',
+        width: !matchDownMd ? '100%' : '100%',
+        height: !matchDownMd ? '100%' : '100%',
         overflow: 'hidden',
         '&::-webkit-scrollbar': {
           display: 'none'
