@@ -308,6 +308,7 @@ const NewDesign = () => {
                   fullWidth
                   size="small"
                   name="poPcs"
+                  type="number"
                   value={formData.poPcs}
                   onChange={handleChange}
                 />

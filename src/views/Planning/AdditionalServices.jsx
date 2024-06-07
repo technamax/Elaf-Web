@@ -1,15 +1,10 @@
-// import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-// import React, { useState, useEffect } from "react";
+import React from 'react';
 import AddAdditionalServices from 'components/additionalProcesses.jsx/addadditionalServices'; 
 import Divider from '@mui/material/Divider';
 import AdditionalServiceTable from 'components/additionalProcesses.jsx/addadditionalserviceTable';
-
-
-
-import axios from 'axios'
 import MainCard from 'ui-component/cards/MainCard';
 
-export default function AdditionalServices() {
+export default function AdditionalServices(fetchData) {
 
 
   return (
@@ -26,7 +21,7 @@ export default function AdditionalServices() {
 
 <AddAdditionalServices/>
     <Divider />
-    <AdditionalServiceTable/>
+    <AdditionalServiceTable fetchData={fetchData}/>
  </MainCard> 
   );
 }

@@ -656,6 +656,7 @@ const Schiffli = () => {
               fullWidth
               size="small"
               name="poPcs"
+              type="number"
               value={formData.poPcs}
               onChange={handleChange}
             />
@@ -683,6 +684,7 @@ const Schiffli = () => {
               fullWidth
               size="small"
               name="availableQty"
+              type="number"
               value={formData.availableQty}
               onChange={handleChange}
             />
@@ -694,6 +696,7 @@ const Schiffli = () => {
               fullWidth
               size="small"
               name="repeats"
+              type="number"
               value={formData.repeats}
               onChange={handleChange}
             />
@@ -706,6 +709,7 @@ const Schiffli = () => {
               defaultValue=""
               size="small"
               name="noOfHeads"
+              type="number"
               value={formData.noOfHeads}
               onChange={handleChange}
             >
@@ -722,6 +726,7 @@ const Schiffli = () => {
               fullWidth
               size="small"
               name="cuttingSize"
+              type="number"
               value={formData.cuttingSize}
               onChange={handleChange}
             />
@@ -732,6 +737,7 @@ const Schiffli = () => {
               fullWidth
               size="small"
               name="itemsPerRepeat"
+              type="number"
               value={formData.itemsPerRepeat}
               onChange={handleChange}
             />
@@ -742,6 +748,7 @@ const Schiffli = () => {
               fullWidth
               size="small"
               name="totalPcs"
+              type="number"
               value={formData.totalPcs}
               onChange={handleChange}
             />
@@ -752,6 +759,7 @@ const Schiffli = () => {
               fullWidth
               size="small"
               name="totalAmount"
+              type="number"
               value={formData.totalAmount}
               onChange={handleChange}
             />
@@ -762,6 +770,7 @@ const Schiffli = () => {
               fullWidth
               size="small"
               name="costPerComponent"
+              type="number"
               value={formData.costPerComponent}
               onChange={handleChange}
             />

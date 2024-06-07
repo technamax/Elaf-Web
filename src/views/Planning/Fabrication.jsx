@@ -487,7 +487,7 @@ const Fabrication = () => {
                 <MenuItem key={option.collectionId} value={option.collectionId}>
                   {option.collectionName}
                 </MenuItem>
-              ))}
+              ))}89
             </TextField>{' '}
           </Grid>
 
@@ -584,6 +584,7 @@ const Fabrication = () => {
               fullWidth
               size="small"
               name="poPcs"
+              type="number"
               value={formData.poPcs}
               onChange={handleChange}
             />
@@ -594,6 +595,7 @@ const Fabrication = () => {
               fullWidth
               size="small"
               name="quantity"
+              type="number"
               value={formData.quantity}
               onChange={handleChange}
             />
@@ -604,6 +606,7 @@ const Fabrication = () => {
               fullWidth
               size="small"
               name="rate"
+              type="number"
               value={formData.rate}
               onChange={handleChange}
             />
@@ -615,6 +618,7 @@ const Fabrication = () => {
               fullWidth
               size="small"
               name="total"
+              type="number"
               value={formData.total}
               onChange={handleChange}
             />
@@ -625,6 +629,7 @@ const Fabrication = () => {
               fullWidth
               size="small"
               name="unitPrice"
+              type="number"
               value={formData.unitPrice}
               onChange={handleChange}
             />
@@ -635,6 +640,7 @@ const Fabrication = () => {
               fullWidth
               size="small"
               name="gst"
+              type="number"
               value={formData.gst}
               onChange={handleChange}
             />
@@ -645,6 +651,7 @@ const Fabrication = () => {
               fullWidth
               size="small"
               name="totalInclGst"
+              type="number"
               value={formData.totalInclGst}
               onChange={handleChange}
             />

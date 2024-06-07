@@ -1,5 +1,4 @@
-import React from 'react';
-import Box from '@mui/material/Box';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
@@ -7,9 +6,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 
 
-export default function AddAdditionalServices() {
+export default function AddAdditionalServices(onSaveSuccess) {
     const options = [
-        {
+        {//
           value: 'Card Printing',
           label: 'Card Printing',
         },
@@ -38,6 +37,67 @@ export default function AddAdditionalServices() {
           label: 'No',
         },
     ];
+
+
+    const [formData, setFormData] = useState({
+        serviceTypeId: '',
+        serviceList: '',
+        vendorId: '',
+        poPcs: '',
+        qty: '',
+        uomId: '',
+        rate: '',
+        totalAmount: '',
+        quantity: '',
+        ratePerPcs: '',
+        totalAmount: '',
+        costperPiece: '',
+        uom: '',
+        vendor: null,
+        serviceType: null,
+        serviceListName: null,
+        createdBy: 0,
+        createdOn: new Date().toISOString()
+      });
+    
+      const handleChange = async (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+      };
+    
+      const handleSave = async () => {
+        console.log(formData);
+        try {
+          const response = await axios.post(
+            'https://gecxc.com:4041/api/AdditionalServices/SaveAdditionalServices',
+            formData
+          );
+          console.log('Form data saved:', response.data);
+          setFormData({
+            serviceTypeId: '',
+            serviceList: '',
+            vendorId: '',
+            poPcs: '',
+            qty: '',
+            uomId: '',
+            rate: '',
+            totalAmount: '',
+            quantity: '',
+            ratePerPcs: '',
+            totalAmount: '',
+            costperPiece: '',
+            uom: '',
+            vendor: null,
+            serviceType: null,
+            serviceListName: null,
+          });
+          if (onSaveSuccess) onSaveSuccess(); // Call the success handler to refresh data
+        } catch (error) {
+          console.error('Error saving data:', error);
+        }
+      };
+    
+
     return (
       
                        <Grid container spacing={2} width="Inherit">
@@ -55,6 +115,9 @@ export default function AddAdditionalServices() {
                             id="outlined-select-option"
                             select
                             label="Service Type"
+                            name="serviceTypeId"
+                            value={formData.serviceTypeId}
+                            onChange={handleChange}
                             defaultValue="Card Printing"
                             helperText="Service Type"
                             variant="outlined"
@@ -77,6 +140,9 @@ export default function AddAdditionalServices() {
                             id="outlined-select-option"
                             select
                             label="Service List"
+                            name="serviceList"
+                            value={formData.serviceList}
+                            onChange={handleChange}
                             defaultValue="Elaf PVC Zipper Bag"
                             helperText="Service List"
                             variant="outlined"
@@ -99,6 +165,9 @@ export default function AddAdditionalServices() {
                             id="outlined-select-option"
                             select
                             label="Vendor Name"
+                            name="vendorId"
+                            value={formData.vendorId}
+                            onChange={handleChange}
                             defaultValue="Mudassir Hussain Packaging Service"
                             helperText="Service List"
                             variant="outlined"
@@ -119,7 +188,10 @@ export default function AddAdditionalServices() {
                         <TextField
                             id="outlined-required"
                             label="PO PC's"
-                            name="PO PC's"
+                            name="poPcs"
+                            value={formData.poPcs}
+                            onChange={handleChange}
+                            type="number"
                             size="small"
                             disabled
                         />
@@ -131,7 +203,10 @@ export default function AddAdditionalServices() {
                         <TextField
                             id="outlined-required"
                             label="Qty"
-                            name="Qty"
+                            name="qty"
+                            value={formData.qty}
+                            onChange={handleChange}
+                            type="number"
                             size="small"
                             required
                         />
@@ -144,7 +219,9 @@ export default function AddAdditionalServices() {
                         <TextField
                             id="outlined-required"
                             label="UOM"
-                            name="UOM"
+                            name="uomId"
+                            value={formData.uomId}
+                            onChange={handleChange}
                             size="small"
                             required
                         />
@@ -157,7 +234,10 @@ export default function AddAdditionalServices() {
                         <TextField
                             id="outlined-required"
                             label="Rate"
-                            name="Rate"
+                            name="rate"
+                            value={formData.rate}
+                            onChange={handleChange}
+                            type="number"
                             size="small"
                             required
                         />
@@ -170,7 +250,10 @@ export default function AddAdditionalServices() {
                         <TextField
                             id="outlined-required"
                             label="Total Amount"
-                            name="Total Amount"
+                            name="totalAmount"
+                            value={formData.totalAmount}
+                            onChange={handleChange}
+                            type="number"
                             size="small"
                             required
                         />
@@ -183,13 +266,77 @@ export default function AddAdditionalServices() {
                         <TextField
                             id="outlined-required"
                             label="Cost per Piece"
-                            name="Cost per Piece"
+                            name="costperPiece"
+                            value={formData.costperPiece}
+                            onChange={handleChange}
+                            type="number"
                             size="small"
                             required
                         />
                     </Grid>
                     {/* grid-9 ends */}
 
+                    
+                         {/* grid-10*/}
+                         <Grid item md={4} width="inherit" paddingX={1}>
+                        <TextField
+                            id="outlined-required"
+                            label="UOM"
+                            name="uom"
+                            value={formData.uom}
+                            onChange={handleChange}
+                            type="number"
+                            size="small"
+                            required
+                        />
+                    </Grid>
+                    {/* grid-10 ends */}
+
+                                             {/* grid-11*/}
+                                             <Grid item md={4} width="inherit" paddingX={1}>
+                        <TextField
+                            id="outlined-required"
+                            label="Vendor"
+                            name="vendor"
+                            value={formData.vendor}
+                            onChange={handleChange}
+                            type="number"
+                            size="small"
+                            required
+                        />
+                    </Grid>
+                    {/* grid-11 ends */}
+
+                    {/* grid-12*/}
+                    <Grid item md={4} width="inherit" paddingX={1}>
+                        <TextField
+                            id="outlined-required"
+                            label="Service Type"
+                            name="serviceType"
+                            value={formData.serviceType}
+                            onChange={handleChange}
+                            type="number"
+                            size="small"
+                            required
+                        />
+                    </Grid>
+                    {/* grid-12 ends */}
+
+                    
+                    {/* grid-13*/}
+                    <Grid item md={4} width="inherit" paddingX={1}>
+                        <TextField
+                            id="outlined-required"
+                            label="Service List Name"
+                            name="serviceListName"
+                            value={formData.serviceListName}
+                            onChange={handleChange}
+                            type="number"
+                            size="small"
+                            required
+                        />
+                    </Grid>
+                    {/* grid-13 ends */}
 
                     {/* grid-button */}
                     <Grid item md={12} width="inherit" paddingX={1} textAlign="right">

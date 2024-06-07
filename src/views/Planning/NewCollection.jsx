@@ -375,6 +375,7 @@ const NewCollection = () => {
                     type="date"
                     label="Launch Date"
                     name="launchDate"
+                  
                     value={formData.launchDate}
                     onChange={handleChange}
                     fullWidth
@@ -406,6 +407,7 @@ const NewCollection = () => {
                     fullWidth
                     size="small"
                     name="noOfColors"
+                    type="number"
                     onChange={handleChange}
                     value={formData.noOfColors}
                   />
@@ -416,6 +418,7 @@ const NewCollection = () => {
                     fullWidth
                     size="small"
                     name="noOfDesigns"
+                    type="number"
                     onChange={handleChange}
                     value={formData.noOfDesigns}
                   />
@@ -426,6 +429,7 @@ const NewCollection = () => {
                     fullWidth
                     size="small"
                     name="poPcs"
+                    type="number"
                     onChange={handleChange}
                     value={formData.poPcs}
                   />
@@ -436,6 +440,7 @@ const NewCollection = () => {
                     fullWidth
                     size="small"
                     name="totalPcs"
+                    type="number"
                     // onChange={handleChange}
                     value={totalPcs}
                     disabled

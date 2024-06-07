@@ -606,6 +606,7 @@ const Dyeing = () => {
               fullWidth
               size="small"
               name="poPcs"
+              type="number"
               value={formData.poPcs}
               onChange={handleChange}
             />
@@ -636,6 +637,7 @@ const Dyeing = () => {
               fullWidth
               size="small"
               name="Shrinkage"
+              type="number"
               value={formData.Shrinkage}
               // focused
             />
@@ -646,6 +648,7 @@ const Dyeing = () => {
               fullWidth
               size="small"
               name="Wastage"
+              type="number"
               value={formData.Wastage}
               // focused
             />
@@ -655,6 +658,7 @@ const Dyeing = () => {
               label="Output Qty"
               fullWidth
               size="small"
+              type="number"
               name="OutputQty"
               value={formData.OutputQty}
               // focused
@@ -666,6 +670,7 @@ const Dyeing = () => {
               fullWidth
               size="small"
               name="RatePerUOM"
+              type="number"
               value={formData.RatePerUOM}
               onChange={handleChange}
             />
@@ -676,6 +681,7 @@ const Dyeing = () => {
               fullWidth
               size="small"
               name="TotalExclGst"
+              type="number"
               value={formData.TotalExclGst}
               onChange={handleChange}
             />
@@ -686,6 +692,7 @@ const Dyeing = () => {
               fullWidth
               size="small"
               name="GST"
+              type="number"
               value={formData.GST}
               onChange={handleChange}
             />{' '}
@@ -707,6 +714,7 @@ const Dyeing = () => {
               fullWidth
               size="small"
               name="TotalExclGst"
+              type="number"
               value={formData.TotalIncludingGst}
               onChange={handleChange}
             />
@@ -717,6 +725,7 @@ const Dyeing = () => {
               fullWidth
               size="small"
               name="UnitRatePerPo"
+              type="number"
               value={formData.UnitRatePerPo}
               onChange={handleChange}
             />

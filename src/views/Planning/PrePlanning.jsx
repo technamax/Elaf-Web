@@ -443,6 +443,7 @@ const PrePlanning = () => {
               fullWidth
               size="small"
               name="noOfColors"
+              type="number"
               value={formData.noOfColors}
               onChange={handleChange}
               disabled
@@ -539,6 +540,7 @@ const PrePlanning = () => {
               fullWidth
               size="small"
               name="cuttingSize"
+              type="number"
               value={formData.cuttingSize}
               onChange={handleChange}
             />
@@ -569,6 +571,7 @@ const PrePlanning = () => {
               defaultValue=""
               size="small"
               name="noOfHeads"
+              type="number"
               value={formData.noOfHeads}
               onChange={handleChange}
             >
@@ -585,6 +588,7 @@ const PrePlanning = () => {
               fullWidth
               size="small"
               name="repeats"
+              type="number"
               value={formData.repeats}
               onChange={handleChange}
             />
@@ -595,6 +599,7 @@ const PrePlanning = () => {
               fullWidth
               size="small"
               name="repeatSize"
+              type="number"
               value={formData.repeatSize}
               onChange={handleChange}
             />
@@ -605,6 +610,7 @@ const PrePlanning = () => {
               fullWidth
               size="small"
               name="totalFabric"
+              type="number"
               value={formData.totalFabric}
               onChange={handleChange}
             />
@@ -633,6 +639,7 @@ const PrePlanning = () => {
               fullWidth
               size="small"
               name="shrinkage"
+              type="number"
               value={formData.shrinkage}
               onChange={handleChange}
             />
@@ -643,6 +650,7 @@ const PrePlanning = () => {
               fullWidth
               size="small"
               name="wastage"
+              type="number"
               value={formData.wastage}
               onChange={handleChange}
             />
@@ -653,6 +661,7 @@ const PrePlanning = () => {
               fullWidth
               size="small"
               name="total"
+              type="number"
               value={formData.total}
               onChange={handleChange}
             />

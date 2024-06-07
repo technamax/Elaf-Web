@@ -656,6 +656,7 @@ const Embroidery = () => {
               fullWidth
               size="small"
               name="poPcs"
+              type="number"
               value={formData.poPcs}
               onChange={handleChange}
             />
@@ -683,6 +684,7 @@ const Embroidery = () => {
               fullWidth
               size="small"
               name="availableQty"
+              type="number"
               value={formData.availableQty}
               onChange={handleChange}
             />
@@ -693,6 +695,7 @@ const Embroidery = () => {
               label="Repeats"
               fullWidth
               size="small"
+              type="number"
               name="repeats"
               value={formData.repeats}
               onChange={handleChange}
@@ -706,6 +709,7 @@ const Embroidery = () => {
               defaultValue=""
               size="small"
               name="noOfHeads"
+              type="number"
               value={formData.noOfHeads}
               onChange={handleChange}
             >
@@ -722,6 +726,7 @@ const Embroidery = () => {
               fullWidth
               size="small"
               name="cuttingSize"
+              type="number"
               value={formData.cuttingSize}
               onChange={handleChange}
             />
@@ -731,6 +736,7 @@ const Embroidery = () => {
               label="itemsPerRepeat"
               fullWidth
               size="small"
+              type="number"
               name="itemsPerRepeat"
               value={formData.itemsPerRepeat}
               onChange={handleChange}
@@ -742,6 +748,7 @@ const Embroidery = () => {
               fullWidth
               size="small"
               name="totalPcs"
+              type="number"
               value={formData.totalPcs}
               onChange={handleChange}
             />
@@ -752,6 +759,7 @@ const Embroidery = () => {
               fullWidth
               size="small"
               name="totalAmount"
+              type="number"
               value={formData.totalAmount}
               onChange={handleChange}
             />
@@ -762,6 +770,7 @@ const Embroidery = () => {
               fullWidth
               size="small"
               name="costPerComponent"
+              type="number"
               value={formData.costPerComponent}
               onChange={handleChange}
             />
@@ -792,6 +801,7 @@ const Embroidery = () => {
                   fullWidth
                   size="small"
                   name="threadStitches"
+                  type="number"
                   value={formData.threadStitches}
                   onChange={handleChange}
                 />
@@ -801,6 +811,7 @@ const Embroidery = () => {
                   label="Rate"
                   fullWidth
                   size="small"
+                  type="number"
                   name="threadRate"
                   value={formData.threadRate}
                   onChange={handleChange}
@@ -812,6 +823,7 @@ const Embroidery = () => {
                   fullWidth
                   size="small"
                   name="threadAmount"
+                  type="number"
                   value={formData.threadAmount}
                   onChange={handleChange}
                 />
@@ -832,6 +844,7 @@ const Embroidery = () => {
                   fullWidth
                   size="small"
                   name="tillaStitches"
+                  type="number"
                   value={formData.tillaStitches}
                   onChange={handleChange}
                 />
@@ -842,6 +855,7 @@ const Embroidery = () => {
                   fullWidth
                   size="small"
                   name="tillaRate"
+                  type="number"
                   value={formData.tillaRate}
                   onChange={handleChange}
                 />
@@ -852,6 +866,7 @@ const Embroidery = () => {
                   fullWidth
                   size="small"
                   name="tillaAmount"
+                  type="number"
                   value={formData.tillaAmount}
                   onChange={handleChange}
                 />
@@ -871,6 +886,7 @@ const Embroidery = () => {
                   fullWidth
                   size="small"
                   name="sequenceStitches"
+                  type="number"
                   value={formData.sequenceStitches}
                   onChange={handleChange}
                 />
@@ -881,6 +897,7 @@ const Embroidery = () => {
                   fullWidth
                   size="small"
                   name="sequenceRate"
+                  type="number"
                   value={formData.sequenceRate}
                   onChange={handleChange}
                 />
@@ -891,6 +908,7 @@ const Embroidery = () => {
                   fullWidth
                   size="small"
                   name="sequenceAmount"
+                  type="number"
                   value={formData.sequenceAmount}
                   onChange={handleChange}
                 />
@@ -911,6 +929,7 @@ const Embroidery = () => {
                     fullWidth
                     size="small"
                     name="solvingLayers"
+                    type="number"
                     value={formData.solvingLayers}
                     onChange={handleChange}
                   />
@@ -921,6 +940,7 @@ const Embroidery = () => {
                     fullWidth
                     size="small"
                     name="solvingInMeters"
+                    type="number"
                     value={formData.solvingInMeters}
                     onChange={handleChange}
                   />
@@ -931,6 +951,7 @@ const Embroidery = () => {
                     fullWidth
                     size="small"
                     name="solvingRate"
+                    type="number"
                     value={formData.solvingRate}
                     onChange={handleChange}
                   />
@@ -941,6 +962,7 @@ const Embroidery = () => {
                     fullWidth
                     size="small"
                     name="solvingAmount"
+                    type="number"
                     value={formData.solvingAmount}
                     onChange={handleChange}
                   />
