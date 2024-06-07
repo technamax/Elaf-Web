@@ -40,6 +40,7 @@ import '../../assets/scss/style.scss';
 const Fabrication = () => {
   const [formData, setFormData] = useState({
     designId: '',
+    planningHeaderId: '',
     batchNo: '',
     baseColorId: '',
     baseColorName: '',
@@ -92,6 +93,7 @@ const Fabrication = () => {
   const [Fabrications, setFabrications] = useState([]);
   const [uoms, setUoms] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
+  console.log('planningHeaderId', formData.planningHeaderId);
   useEffect(() => {
     if (designData) {
       setDesignList(designData.result);
@@ -231,6 +233,17 @@ const Fabrication = () => {
       }))
     },
     {
+      field: 'fabricId',
+      headerName: 'Fabric',
+      editable: true,
+      flex: 2,
+      type: 'singleSelect',
+      valueOptions: Fabrications.map((option) => ({
+        value: option.fabricId,
+        label: option.fabric
+      }))
+    },
+    {
       field: 'poPcs',
       headerName: 'PO. Pieces',
       flex: 1,
@@ -273,7 +286,7 @@ const Fabrication = () => {
         const quantity = row.quantity ?? 0;
         const rate = row.rate ?? 0;
         const total = quantity * rate;
-        console.log('total', total);
+        // console.log('total', total);
         return { ...row, total };
       }
       // valueSetter: (params, row) => {
@@ -297,7 +310,7 @@ const Fabrication = () => {
         const total = row.total ?? 0;
         const poPcs = row.poPcs ?? 0;
         const unitPrice = total / poPcs;
-        console.log('unitPrice', unitPrice);
+        // console.log('unitPrice', unitPrice);
         return { ...row, unitPrice };
       }
       // valueSetter: (params, row) => {
@@ -327,7 +340,7 @@ const Fabrication = () => {
         const total = row.total ?? 0;
         const gst = row.gst ?? 0;
         const totalInclGst = total * (1 + gst / 100);
-        console.log('totalInclGst', totalInclGst);
+        // console.log('totalInclGst', totalInclGst);
         return { ...row, totalInclGst };
       }
     }
