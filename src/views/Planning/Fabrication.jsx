@@ -539,17 +539,6 @@ const Fabrication = () => {
             </Grid>
             <Grid item xs={12} md={3}>
               <TextField
-                label="Base Color"
-                fullWidth
-                size="small"
-                name="baseColorName"
-                value={formData.baseColorName}
-                onChange={handleChange}
-                disabled
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <TextField
                 fullWidth
                 select
                 label="Batch No."
@@ -564,6 +553,17 @@ const Fabrication = () => {
                   </MenuItem>
                 ))}
               </TextField>{' '}
+            </Grid>
+            <Grid item xs={12} md={3}>
+              <TextField
+                label="Base Color"
+                fullWidth
+                size="small"
+                name="baseColorName"
+                value={formData.baseColorName}
+                onChange={handleChange}
+                disabled
+              />
             </Grid>
           </Grid>
         </Card>

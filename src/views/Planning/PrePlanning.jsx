@@ -553,7 +553,11 @@ const PrePlanning = () => {
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1-content"
             id="panel1-header"
-          ></AccordionSummary>
+          >
+            {/* <Typography variant="h6" gutterBottom>
+              Add Planning Fields
+            </Typography> */}
+          </AccordionSummary>
           <AccordionDetails>
             <Grid
               container

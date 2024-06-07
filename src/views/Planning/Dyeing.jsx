@@ -26,9 +26,11 @@ import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 import { Card, CardHeader, Avatar } from '@mui/material';
-
+import dyeing from '../../assets/images/planningicons/dyeing.png';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 
@@ -468,7 +470,7 @@ const Dyeing = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={<Avatar src={fabric} />}
+          avatar={<Avatar src={dyeing} sx={{ background: 'transparent' }} />}
           title="Dyeing "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
@@ -480,11 +482,11 @@ const Dyeing = () => {
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
-          <Grid item xs={12} md={12}>
+          {/* <Grid item xs={12} md={12}>
             <Typography variant="h3" gutterBottom>
-              Dyeing/Printing
+            Dyeing/Printing
             </Typography>
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12} md={3}>
             <TextField
@@ -623,7 +625,7 @@ const Dyeing = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={<Avatar src={fabric} />}
+          avatar={<AddOutlinedIcon />}
           title="Add Dyeing "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
@@ -820,7 +822,7 @@ const Dyeing = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={<Avatar src={fabric} />}
+          avatar={<VisibilityOutlinedIcon />}
           title="View Dyeing "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>{' '}
