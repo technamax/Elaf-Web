@@ -29,7 +29,7 @@ import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-
+import loadingGif from '../../assets/images/loadingGif.gif';
 // import CardHeader from '@mui/material/CardHeader';
 import '../../assets/scss/style.scss';
 const PrePlanning = () => {
@@ -54,6 +54,7 @@ const PrePlanning = () => {
 
   const collectionList = collectionData?.result || [];
   // const designList = designData?.result || [];
+  const [loading, setLoading] = useState(false); // State for loading
 
   const [components, setComponents] = useState([]);
   const [Fabrications, setFabrications] = useState([]);
@@ -130,6 +131,7 @@ const PrePlanning = () => {
     };
 
     const GetPrePlanningByPlanningHeaderId = async (id) => {
+      // setLoading(true);
       try {
         const response = await axios.get(
           `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
@@ -148,6 +150,7 @@ const PrePlanning = () => {
     if (formData.designId) {
       GetPrePlanningByPlanningHeaderId(formData.planningHeaderId);
     }
+    // setLoading(false);
   }, [formData.designId, formData.planningHeaderId]);
 
   useEffect(() => {
@@ -833,22 +836,41 @@ const PrePlanning = () => {
           title="View"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
-        <Grid
-          // container
-          // spacing={2}
-          // width="Inherit"
-          sx={{ paddingY: 1, paddingX: 1 }}
-        >
+        <Grid sx={{ paddingY: 1, paddingX: 1 }}>
           <Grid sx={{}} item xs={12}>
-            <EditAbleDataGrid
-              ncolumns={columns}
-              initialRows={initialRows}
-              formData={formData}
-              editAPi={editAPi}
-              deleteApi={deleteApi}
-              deleteBy="planningId"
-              disableAddRecord={true}
-            />
+            {loading ? (
+              <div
+                style={{
+                  display: 'flex',
+                  // justifyContent: 'center',
+                  // alignItems: 'center'
+                  // height: '100vh'
+                  top: '40%',
+                  position: 'absolute',
+                  left: '45%'
+                }}
+              >
+                <img
+                  src={loadingGif}
+                  alt="Loading"
+                  style={{
+                    width: 300
+                    // height: 300
+                    // opacity: 0.8
+                  }}
+                />
+              </div>
+            ) : (
+              <EditAbleDataGrid
+                ncolumns={columns}
+                initialRows={initialRows}
+                formData={formData}
+                editAPi={editAPi}
+                deleteApi={deleteApi}
+                deleteBy="planningId"
+                disableAddRecord={true}
+              />
+            )}
           </Grid>
         </Grid>
       </Card>
