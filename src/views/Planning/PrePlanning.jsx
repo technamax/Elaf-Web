@@ -415,7 +415,7 @@ const PrePlanning = () => {
         const shrinkage = row.shrinkage ?? 0;
         const wastage = row.wastage ?? 0;
         const totalFabric = row.totalFabric ?? 0;
-        const total = (totalFabric * (100 - (shrinkage + wastage))) / 100;
+        const total = (totalFabric * (100 + (shrinkage + wastage))) / 100;
 
         console.log('totalFabric', totalFabric);
         return { ...row, total };

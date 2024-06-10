@@ -673,17 +673,7 @@ const Schiffli = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Base Color"
-              fullWidth
-              size="small"
-              name="baseColorName"
-              value={formData.baseColorName}
-              onChange={handleChange}
-              disabled
-            />
-          </Grid>
+
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -717,6 +707,17 @@ const Schiffli = () => {
                 </MenuItem>
               ))}
             </TextField>{' '}
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Base Color"
+              fullWidth
+              size="small"
+              name="baseColorName"
+              value={formData.baseColorName}
+              onChange={handleChange}
+              disabled
+            />
           </Grid>
           <Grid item xs={12} textAlign="right">
             <Button variant="contained" size="small" onClick={handleSave}>
@@ -790,16 +791,6 @@ const Schiffli = () => {
 
               <Grid item xs={12} md={3}>
                 <TextField
-                  label="Po Pcs"
-                  fullWidth
-                  size="small"
-                  name="poPcs"
-                  value={formData.poPcs}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
                   fullWidth
                   select
                   label="Color"
@@ -815,7 +806,17 @@ const Schiffli = () => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Po Pcs"
+                  fullWidth
+                  size="small"
+                  name="poPcs"
+                  value={formData.poPcs}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Available Quantity"
                   fullWidth
@@ -827,7 +828,7 @@ const Schiffli = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Thaan Quantity"
                   fullWidth
@@ -838,7 +839,7 @@ const Schiffli = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   fullWidth
                   select
@@ -856,7 +857,7 @@ const Schiffli = () => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   fullWidth
                   select
@@ -875,7 +876,7 @@ const Schiffli = () => {
                 </TextField>
               </Grid>
 
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Cutting Size"
                   fullWidth
@@ -886,7 +887,7 @@ const Schiffli = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Rate"
                   type="number"
@@ -897,7 +898,7 @@ const Schiffli = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="No. Of Stiches Per Yard"
                   fullWidth
@@ -909,7 +910,7 @@ const Schiffli = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="No. Of Items Per Thaan"
                   fullWidth
@@ -920,7 +921,7 @@ const Schiffli = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Total Embroidry"
                   fullWidth
@@ -931,7 +932,7 @@ const Schiffli = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Amount Per Yard"
                   fullWidth
@@ -943,7 +944,7 @@ const Schiffli = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Total Pcs"
                   fullWidth
@@ -953,7 +954,7 @@ const Schiffli = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Cost Per Component"
                   fullWidth
@@ -964,7 +965,7 @@ const Schiffli = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Total Amount"
                   fullWidth
@@ -975,22 +976,11 @@ const Schiffli = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={formData.laserCut}
-                      onChange={handleCheckboxChange}
-                      name="laserCut"
-                    />
-                  }
-                  label="Laser Cut"
-                />
-              </Grid>
+
               {formData.laserCut ? (
                 <Grid item xs={12} md={6}>
                   <Grid container spacing={1} width="Inherit">
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={3}>
                       <TextField
                         label="Laser Cut Rate"
                         fullWidth
@@ -1000,7 +990,7 @@ const Schiffli = () => {
                         onChange={handleChange}
                       />
                     </Grid>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={3}>
                       <TextField
                         label="Pcs For LaserCut"
                         fullWidth
@@ -1013,6 +1003,18 @@ const Schiffli = () => {
                   </Grid>
                 </Grid>
               ) : null}
+              <Grid item xs={12} md={2}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.laserCut}
+                      onChange={handleCheckboxChange}
+                      name="laserCut"
+                    />
+                  }
+                  label="Laser Cut"
+                />
+              </Grid>
             </Grid>
           </AccordionDetails>
         </Accordion>

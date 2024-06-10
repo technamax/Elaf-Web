@@ -794,16 +794,6 @@ const Embroidery = () => {
               </Grid>
               <Grid item xs={12} md={3}>
                 <TextField
-                  label="Po Pcs"
-                  fullWidth
-                  size="small"
-                  name="poPcs"
-                  value={formData.poPcs}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
                   fullWidth
                   select
                   label="Color"
@@ -819,7 +809,17 @@ const Embroidery = () => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Po Pcs"
+                  fullWidth
+                  size="small"
+                  name="poPcs"
+                  value={formData.poPcs}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Available Quantity"
                   fullWidth
@@ -830,7 +830,7 @@ const Embroidery = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Repeats"
                   type="number"
@@ -841,7 +841,7 @@ const Embroidery = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   fullWidth
                   select
@@ -859,7 +859,7 @@ const Embroidery = () => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Cutting Size"
                   fullWidth
@@ -870,7 +870,7 @@ const Embroidery = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="itemsPerRepeat"
                   fullWidth
@@ -881,7 +881,7 @@ const Embroidery = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="total Pcs."
                   fullWidth
@@ -892,7 +892,7 @@ const Embroidery = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Total Amount"
                   fullWidth
@@ -903,7 +903,7 @@ const Embroidery = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Cost Per Component"
                   fullWidth
@@ -915,26 +915,18 @@ const Embroidery = () => {
                 />
               </Grid>
               <Grid item xs={12} md={3}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={formData.isSolving}
-                      onChange={handleCheckboxChange}
-                      name="isSolving"
-                    />
-                  }
-                  label="isSolving"
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
                 {/* <FormControl fullWidth> */}
-                <InputLabel>Additional</InputLabel>
-                <Select
+
+                {/* <Select
                   multiple
+                  labelId="thread-additional-label"
                   value={formData.threadAdditional}
                   name="threadAdditional"
+                  size="small"
+                  label="Additional"
+                  // focused
                   onChange={handleChange}
-                  input={<OutlinedInput label="Additional" />}
+                  // input={<OutlinedInput label="Additional" />}
                   fullWidth
                   // MenuProps={MenuProps}
                 >
@@ -947,64 +939,36 @@ const Embroidery = () => {
                       {name}
                     </MenuItem>
                   ))}
-                </Select>
+                </Select> */}
+                <TextField
+                  select
+                  label="Additional"
+                  value={formData.threadAdditional}
+                  name="threadAdditional"
+                  size="small"
+                  onChange={handleChange}
+                  fullWidth
+                  SelectProps={{
+                    multiple: true
+                  }}
+                >
+                  {additionals.map((name) => (
+                    <MenuItem
+                      key={name}
+                      value={name}
+                      style={getStyles(name, formData.threadAdditional, theme)}
+                    >
+                      {name}
+                    </MenuItem>
+                  ))}
+                </TextField>
                 {/* </FormControl> */}
               </Grid>
-              {formData.isSolving ? (
-                <Grid item xs={12} md={6}>
-                  <Grid container spacing={1} width="Inherit">
-                    <Grid item xs={12} md={12}>
-                      <Typography variant="h5" gutterBottom>
-                        Solving
-                      </Typography>
-                    </Grid>{' '}
-                    <Grid item xs={12} md={3}>
-                      <TextField
-                        label="Layers"
-                        fullWidth
-                        size="small"
-                        type="number"
-                        name="solvingLayers"
-                        value={formData.solvingLayers}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                      <TextField
-                        label="Meters"
-                        type="number"
-                        fullWidth
-                        size="small"
-                        name="solvingInMeters"
-                        value={formData.solvingInMeters}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                      <TextField
-                        label="Rate"
-                        fullWidth
-                        type="number"
-                        size="small"
-                        name="solvingRate"
-                        value={formData.solvingRate}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                      <TextField
-                        label="Amount"
-                        fullWidth
-                        size="small"
-                        type="number"
-                        name="solvingAmount"
-                        value={formData.solvingAmount}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-              ) : null}
+              <Grid item xs={12} md={4}></Grid>
+              {/* <Divider
+                color="#cc8587"
+                sx={{ height: 1, width: '100%', mt: 2 }}
+              /> */}
               <Grid item xs={12} md={6}>
                 <Grid container spacing={1} width="Inherit">
                   <Grid item xs={12} md={12}>
@@ -1089,13 +1053,7 @@ const Embroidery = () => {
                 </Grid>
               </Grid>
               <Grid item xs={12} md={6}>
-                <Grid
-                  container
-                  spacing={2}
-                  width="Inherit"
-                  sx={{ paddingY: 2, paddingX: 2 }}
-                >
-                  {' '}
+                <Grid container spacing={1} width="Inherit">
                   <Grid item xs={12} md={12}>
                     <Typography variant="h5" gutterBottom>
                       Sequence
@@ -1133,7 +1091,74 @@ const Embroidery = () => {
                       onChange={handleChange}
                     />
                   </Grid>
+                </Grid>{' '}
+              </Grid>
+              {formData.isSolving ? (
+                <Grid item xs={12} md={6}>
+                  <Grid container spacing={1} width="Inherit">
+                    <Grid item xs={12} md={12}>
+                      <Typography variant="h5" gutterBottom>
+                        Solving
+                      </Typography>
+                    </Grid>{' '}
+                    <Grid item xs={12} md={3}>
+                      <TextField
+                        label="Layers"
+                        fullWidth
+                        size="small"
+                        type="number"
+                        name="solvingLayers"
+                        value={formData.solvingLayers}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                      <TextField
+                        label="Meters"
+                        type="number"
+                        fullWidth
+                        size="small"
+                        name="solvingInMeters"
+                        value={formData.solvingInMeters}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                      <TextField
+                        label="Rate"
+                        fullWidth
+                        type="number"
+                        size="small"
+                        name="solvingRate"
+                        value={formData.solvingRate}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={3}>
+                      <TextField
+                        label="Amount"
+                        fullWidth
+                        size="small"
+                        type="number"
+                        name="solvingAmount"
+                        value={formData.solvingAmount}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                  </Grid>
                 </Grid>
+              ) : null}
+              <Grid item xs={12} md={12}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.isSolving}
+                      onChange={handleCheckboxChange}
+                      name="isSolving"
+                    />
+                  }
+                  label="isSolving"
+                />
               </Grid>
             </Grid>{' '}
           </AccordionDetails>{' '}

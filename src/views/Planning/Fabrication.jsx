@@ -628,7 +628,7 @@ const Fabrication = () => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={2}>
                 <TextField
                   fullWidth
                   select
@@ -647,7 +647,7 @@ const Fabrication = () => {
                 </TextField>
               </Grid>
 
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Po Pcs"
                   fullWidth
@@ -658,7 +658,7 @@ const Fabrication = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Quantity"
                   fullWidth
@@ -669,7 +669,7 @@ const Fabrication = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Rate"
                   fullWidth
@@ -681,7 +681,7 @@ const Fabrication = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Total"
                   fullWidth
@@ -692,7 +692,7 @@ const Fabrication = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Unit Price"
                   fullWidth
