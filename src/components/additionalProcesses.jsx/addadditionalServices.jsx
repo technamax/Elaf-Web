@@ -41,7 +41,7 @@ export default function AddAdditionalServices(onSaveSuccess) {
 
     const [formData, setFormData] = useState({
         serviceTypeId: '',
-        serviceList: '',
+        serviceListId: '',
         vendorId: '',
         poPcs: '',
         qty: '',
@@ -75,7 +75,7 @@ export default function AddAdditionalServices(onSaveSuccess) {
           console.log('Form data saved:', response.data);
           setFormData({
             serviceTypeId: '',
-            serviceList: '',
+            serviceListId: '',
             vendorId: '',
             poPcs: '',
             qty: '',
@@ -139,8 +139,8 @@ export default function AddAdditionalServices(onSaveSuccess) {
                         <TextField
                             id="outlined-select-option"
                             select
-                            label="Service List"
-                            name="serviceList"
+                            label="Service List Id"
+                            name="serviceListId"
                             value={formData.serviceList}
                             onChange={handleChange}
                             defaultValue="Elaf PVC Zipper Bag"
@@ -278,7 +278,7 @@ export default function AddAdditionalServices(onSaveSuccess) {
 
                     
                          {/* grid-10*/}
-                         <Grid item md={4} width="inherit" paddingX={1}>
+                         {/* <Grid item md={4} width="inherit" paddingX={1}>
                         <TextField
                             id="outlined-required"
                             label="UOM"
@@ -289,11 +289,11 @@ export default function AddAdditionalServices(onSaveSuccess) {
                             size="small"
                             required
                         />
-                    </Grid>
+                    </Grid> */}
                     {/* grid-10 ends */}
 
-                                             {/* grid-11*/}
-                                             <Grid item md={4} width="inherit" paddingX={1}>
+                                              {/* grid-11*/}
+                                            {/* <Grid item md={4} width="inherit" paddingX={1}>
                         <TextField
                             id="outlined-required"
                             label="Vendor"
@@ -304,11 +304,11 @@ export default function AddAdditionalServices(onSaveSuccess) {
                             size="small"
                             required
                         />
-                    </Grid>
+                    </Grid> */}
                     {/* grid-11 ends */}
 
                     {/* grid-12*/}
-                    <Grid item md={4} width="inherit" paddingX={1}>
+                    {/* <Grid item md={4} width="inherit" paddingX={1}>
                         <TextField
                             id="outlined-required"
                             label="Service Type"
@@ -319,12 +319,12 @@ export default function AddAdditionalServices(onSaveSuccess) {
                             size="small"
                             required
                         />
-                    </Grid>
+                    </Grid> */}
                     {/* grid-12 ends */}
 
                     
                     {/* grid-13*/}
-                    <Grid item md={4} width="inherit" paddingX={1}>
+                    {/* <Grid item md={4} width="inherit" paddingX={1}>
                         <TextField
                             id="outlined-required"
                             label="Service List Name"
@@ -335,7 +335,7 @@ export default function AddAdditionalServices(onSaveSuccess) {
                             size="small"
                             required
                         />
-                    </Grid>
+                    </Grid> */}
                     {/* grid-13 ends */}
 
                     {/* grid-button */}
