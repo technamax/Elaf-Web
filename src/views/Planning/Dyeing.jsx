@@ -85,21 +85,20 @@ const Dyeing = () => {
       color: initialData?.color || '', //from dying screen coming from fabricAPi
       vendorId: initialData?.vendorId || '',
       processType: initialData?.processType || '',
-      AvailableQty: initialData?.AvailableQty || '',
-      Shrinkage: initialData?.Shrinkage || '',
-      Wastage: initialData?.Wastage || '',
-      OutputQty: initialData?.OutputQty || 0,
-      UOM: initialData?.UOM || 0,
+      AvailableQty: initialData?.availableQty || '',
+      Shrinkage: initialData?.shrinkage || '',
+      Wastage: initialData?.wastage || '',
+      OutputQty: initialData?.outputQty || 0,
+      UOM: initialData?.uom || 0,
       uomId: initialData?.uomId || '',
-      RatePerUOM: initialData?.RatePerUOM || 0,
-      UnitRatePerPo: initialData?.UnitRatePerPo || '',
-      TotalExclGst: initialData?.TotalExclGst || '',
-      GST: initialData?.GST || '',
-      TotalIncludingGst: initialData?.TotalIncludingGst || '',
+      RatePerUOM: initialData?.ratePerUOM || 0,
+      UnitRatePerPo: initialData?.unitRatePerPo || '',
+      TotalExclGst: initialData?.totalExclGst || '',
+      GST: initialData?.gst || '',
+      TotalIncludingGst: initialData?.totalIncludingGst || '',
       createdBy: initialData?.createdBy || 0,
       poPcs: initialData?.poPcs || 0,
-      baseColorName: initialData?.baseColorName || 0,
-      planningHeaderId: initialData?.planningHeaderId || 0
+      baseColorName: initialData?.baseColorName || 0
     });
   }, [initialData]);
   const { enqueueSnackbar } = useSnackbar();
@@ -144,7 +143,7 @@ const Dyeing = () => {
   const [colors, setColors] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
-  console.log('initialRows', initialRows);
+  console.log('batchList', batchList);
   console.log('formData', formData);
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(isExpanded);
@@ -207,8 +206,8 @@ const Dyeing = () => {
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
-        collectionId: value,
-        poPcs: selectedCollection ? selectedCollection.poPcs : ''
+        collectionId: value
+        // poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
     } else if (name === 'designId') {
       const selectedDesign = designList.find(
@@ -398,8 +397,8 @@ const Dyeing = () => {
           TotalIncludingGst: '',
           createdBy: 0,
           poPcs: '',
-          baseColorName: '',
-          planningHeaderId: ''
+          baseColorName: ''
+          // planningHeaderId: ''
         }));
         refetchDyeingPrintingData();
         setInitialData((prevFormData) => ({
@@ -426,8 +425,8 @@ const Dyeing = () => {
           TotalIncludingGst: '',
           createdBy: 0,
           poPcs: '',
-          baseColorName: '',
-          planningHeaderId: ''
+          baseColorName: ''
+          // planningHeaderId: ''
         }));
         // Handle success (e.g., show a success message or reset the form)
       } else {
