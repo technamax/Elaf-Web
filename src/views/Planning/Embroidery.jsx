@@ -674,17 +674,6 @@ const Embroidery = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
-              label="Base Color"
-              fullWidth
-              size="small"
-              name="baseColorName"
-              value={formData.baseColorName}
-              onChange={handleChange}
-              disabled
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
               fullWidth
               select
               label="Batch No."
@@ -699,13 +688,25 @@ const Embroidery = () => {
                 </MenuItem>
               ))}
             </TextField>{' '}
-            <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-              <Button variant="contained" size="small" onClick={handleSave}>
-                Save
-              </Button>
-            </Grid>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Base Color"
+              fullWidth
+              size="small"
+              name="baseColorName"
+              value={formData.baseColorName}
+              onChange={handleChange}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
+            <Button variant="contained" size="small" onClick={handleSave}>
+              Save
+            </Button>
           </Grid>
         </Grid>
+        {/* </Grid> */}
       </Card>
       <Grid item xs={12} md={12}>
         <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
