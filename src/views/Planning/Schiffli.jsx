@@ -822,6 +822,7 @@ const Schiffli = () => {
                   size="small"
                   name="availableQty"
                   value={formData.availableQty}
+                  // type="number"
                   onChange={handleChange}
                 />
               </Grid>
@@ -830,6 +831,7 @@ const Schiffli = () => {
                 <TextField
                   label="Thaan Quantity"
                   fullWidth
+                  type="number"
                   size="small"
                   name="thaanQty"
                   value={formData.thaanQty}
@@ -877,6 +879,7 @@ const Schiffli = () => {
                 <TextField
                   label="Cutting Size"
                   fullWidth
+                  type="number"
                   size="small"
                   name="cuttingSize"
                   value={formData.cuttingSize}
@@ -886,6 +889,7 @@ const Schiffli = () => {
               <Grid item xs={12} md={3}>
                 <TextField
                   label="Rate"
+                  type="number"
                   fullWidth
                   size="small"
                   name="rate"
@@ -897,6 +901,7 @@ const Schiffli = () => {
                 <TextField
                   label="No. Of Stiches Per Yard"
                   fullWidth
+                  type="number"
                   size="small"
                   name="noOfStichesPerYard"
                   value={formData.noOfStichesPerYard}
@@ -909,6 +914,7 @@ const Schiffli = () => {
                   label="No. Of Items Per Thaan"
                   fullWidth
                   size="small"
+                  type="number"
                   name="noOfItemPerThaan"
                   value={formData.noOfItemPerThaan}
                   onChange={handleChange}
@@ -920,6 +926,7 @@ const Schiffli = () => {
                   fullWidth
                   size="small"
                   name="totalEmbroidry"
+                  type="number"
                   value={formData.totalEmbroidry}
                   onChange={handleChange}
                 />
@@ -928,6 +935,7 @@ const Schiffli = () => {
                 <TextField
                   label="Amount Per Yard"
                   fullWidth
+                  type="number"
                   size="small"
                   name="amountPerYard"
                   value={formData.amountPerYard}
@@ -961,6 +969,7 @@ const Schiffli = () => {
                   label="Total Amount"
                   fullWidth
                   size="small"
+                  type="number"
                   name="totalAmount"
                   value={formData.totalAmount}
                   onChange={handleChange}

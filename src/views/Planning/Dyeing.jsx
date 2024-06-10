@@ -707,6 +707,7 @@ const Dyeing = () => {
                   label="AvailableQty"
                   fullWidth
                   size="small"
+                  type="number"
                   name="AvailableQty"
                   value={formData.AvailableQty}
                   // focused
@@ -715,6 +716,7 @@ const Dyeing = () => {
               <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Shrinkage%"
+                  type="number"
                   fullWidth
                   size="small"
                   name="Shrinkage"
@@ -727,6 +729,7 @@ const Dyeing = () => {
                   label="Wastage%"
                   fullWidth
                   size="small"
+                  type="number"
                   name="Wastage"
                   value={formData.Wastage}
                   // focused
@@ -738,6 +741,7 @@ const Dyeing = () => {
                   fullWidth
                   size="small"
                   name="OutputQty"
+                  type="number"
                   value={formData.OutputQty}
                   // focused
                 />
@@ -747,6 +751,7 @@ const Dyeing = () => {
                   label="Rate"
                   fullWidth
                   size="small"
+                  type="number"
                   name="RatePerUOM"
                   value={formData.RatePerUOM}
                   onChange={handleChange}
@@ -755,6 +760,7 @@ const Dyeing = () => {
               <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Total Excluding GST"
+                  type="number"
                   fullWidth
                   size="small"
                   name="TotalExclGst"
@@ -766,6 +772,7 @@ const Dyeing = () => {
                 <TextField
                   label="GST"
                   fullWidth
+                  type="number"
                   size="small"
                   name="GST"
                   value={formData.GST}

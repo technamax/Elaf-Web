@@ -665,6 +665,7 @@ const PrePlanning = () => {
                   fullWidth
                   size="small"
                   name="cuttingSize"
+                  type="number"
                   value={formData.cuttingSize}
                   onChange={handleChange}
                 />
@@ -738,6 +739,7 @@ const PrePlanning = () => {
                   fullWidth
                   size="small"
                   name="repeats"
+                  type="number"
                   value={formData.repeats}
                   onChange={handleChange}
                 />
@@ -746,6 +748,7 @@ const PrePlanning = () => {
                 <TextField
                   label="Repeat Size"
                   fullWidth
+                  type="number"
                   size="small"
                   name="repeatSize"
                   value={formData.repeatSize}
@@ -767,6 +770,7 @@ const PrePlanning = () => {
                   fullWidth
                   select
                   label="UOM"
+                  type="number"
                   defaultValue=""
                   size="small"
                   name="uomId"
@@ -785,6 +789,7 @@ const PrePlanning = () => {
                   label="Shrinkage %"
                   fullWidth
                   size="small"
+                  type="number"
                   name="shrinkage"
                   value={formData.shrinkage}
                   onChange={handleChange}
@@ -795,6 +800,7 @@ const PrePlanning = () => {
                   label="Wastage %"
                   fullWidth
                   size="small"
+                  type="number"
                   name="wastage"
                   value={formData.wastage}
                   onChange={handleChange}
@@ -804,6 +810,7 @@ const PrePlanning = () => {
                 <TextField
                   label="Total"
                   fullWidth
+                  type="number"
                   size="small"
                   name="total"
                   value={formData.total}

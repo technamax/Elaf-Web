@@ -651,6 +651,7 @@ const Fabrication = () => {
                 <TextField
                   label="Po Pcs"
                   fullWidth
+                  type="number"
                   size="small"
                   name="poPcs"
                   value={formData.poPcs}
@@ -662,6 +663,7 @@ const Fabrication = () => {
                   label="Quantity"
                   fullWidth
                   size="small"
+                  type="number"
                   name="quantity"
                   value={formData.quantity}
                   onChange={handleChange}
@@ -684,6 +686,7 @@ const Fabrication = () => {
                   label="Total"
                   fullWidth
                   size="small"
+                  type="number"
                   name="total"
                   value={formData.total}
                   onChange={handleChange}
@@ -704,6 +707,7 @@ const Fabrication = () => {
                   label="GST"
                   fullWidth
                   size="small"
+                  type="number"
                   name="gst"
                   value={formData.gst}
                   onChange={handleChange}
@@ -714,6 +718,7 @@ const Fabrication = () => {
                   label="Total Inc GSt."
                   fullWidth
                   size="small"
+                  type="number"
                   name="totalInclGst"
                   value={formData.totalInclGst}
                   onChange={handleChange}

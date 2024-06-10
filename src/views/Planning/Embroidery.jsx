@@ -825,6 +825,7 @@ const Embroidery = () => {
                   fullWidth
                   size="small"
                   name="availableQty"
+                  type="number"
                   value={formData.availableQty}
                   onChange={handleChange}
                 />
@@ -832,6 +833,7 @@ const Embroidery = () => {
               <Grid item xs={12} md={3}>
                 <TextField
                   label="Repeats"
+                  type="number"
                   fullWidth
                   size="small"
                   name="repeats"
@@ -863,6 +865,7 @@ const Embroidery = () => {
                   fullWidth
                   size="small"
                   name="cuttingSize"
+                  type="number"
                   value={formData.cuttingSize}
                   onChange={handleChange}
                 />
@@ -871,6 +874,7 @@ const Embroidery = () => {
                 <TextField
                   label="itemsPerRepeat"
                   fullWidth
+                  type="number"
                   size="small"
                   name="itemsPerRepeat"
                   value={formData.itemsPerRepeat}
@@ -882,6 +886,7 @@ const Embroidery = () => {
                   label="total Pcs."
                   fullWidth
                   size="small"
+                  type="number"
                   name="totalPcs"
                   value={formData.totalPcs}
                   onChange={handleChange}
@@ -891,6 +896,7 @@ const Embroidery = () => {
                 <TextField
                   label="Total Amount"
                   fullWidth
+                  type="number"
                   size="small"
                   name="totalAmount"
                   value={formData.totalAmount}
@@ -901,6 +907,7 @@ const Embroidery = () => {
                 <TextField
                   label="Cost Per Component"
                   fullWidth
+                  // type="number"
                   size="small"
                   name="costPerComponent"
                   value={formData.costPerComponent}
@@ -956,6 +963,7 @@ const Embroidery = () => {
                         label="Layers"
                         fullWidth
                         size="small"
+                        type="number"
                         name="solvingLayers"
                         value={formData.solvingLayers}
                         onChange={handleChange}
@@ -964,6 +972,7 @@ const Embroidery = () => {
                     <Grid item xs={12} md={3}>
                       <TextField
                         label="Meters"
+                        type="number"
                         fullWidth
                         size="small"
                         name="solvingInMeters"
@@ -975,6 +984,7 @@ const Embroidery = () => {
                       <TextField
                         label="Rate"
                         fullWidth
+                        type="number"
                         size="small"
                         name="solvingRate"
                         value={formData.solvingRate}
@@ -986,6 +996,7 @@ const Embroidery = () => {
                         label="Amount"
                         fullWidth
                         size="small"
+                        type="number"
                         name="solvingAmount"
                         value={formData.solvingAmount}
                         onChange={handleChange}
@@ -1006,6 +1017,7 @@ const Embroidery = () => {
                       label="Stitches"
                       fullWidth
                       size="small"
+                      type="number"
                       name="threadStiches"
                       value={formData.threadStiches}
                       onChange={handleChange}
@@ -1014,6 +1026,7 @@ const Embroidery = () => {
                   <Grid item xs={12} md={4}>
                     <TextField
                       label="Rate"
+                      type="number"
                       fullWidth
                       size="small"
                       name="threadRate"
@@ -1026,6 +1039,7 @@ const Embroidery = () => {
                       label="Amount"
                       fullWidth
                       size="small"
+                      type="number"
                       name="threadAmount"
                       value={formData.threadAmount}
                       onChange={handleChange}
@@ -1045,6 +1059,7 @@ const Embroidery = () => {
                       label="Stitches"
                       fullWidth
                       size="small"
+                      type="number"
                       name="tillaStiches"
                       value={formData.tillaStiches}
                       onChange={handleChange}
@@ -1055,6 +1070,7 @@ const Embroidery = () => {
                       label="Rate"
                       fullWidth
                       size="small"
+                      type="number"
                       name="tilaRate"
                       value={formData.tilaRate}
                       onChange={handleChange}
@@ -1091,6 +1107,7 @@ const Embroidery = () => {
                       fullWidth
                       size="small"
                       name="sequence"
+                      type="number"
                       value={formData.sequence}
                       onChange={handleChange}
                     />
@@ -1099,6 +1116,7 @@ const Embroidery = () => {
                     <TextField
                       label="Rate"
                       fullWidth
+                      type="number"
                       size="small"
                       name="sequenceRate"
                       value={formData.sequenceRate}
