@@ -12,15 +12,26 @@ import {
   Divider,
   Accordion,
   AccordionDetails,
-  AccordionSummary
+  AccordionSummary,
+  Box,
+  ButtonGroup,
+  IconButton
 } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+
 import Autocomplete from '@mui/lab/Autocomplete';
 import {
   useGetCollectionFromPlanningHeaderQuery,
   useGetFabricFromPrePlanningByBatchNoQuery,
-  useGetFabricRequisitionListByBatchNoQuery
+  useGetFabricRequisitionListByBatchNoQuery,
+  useGetDyeingPrintingListByBatchNoQuery
 } from 'api/store/Apis/prePlanningHeaderApi';
-import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
+import {
+  useGetDesignFromPlanningHeaderByCollectionIdQuery,
+  useGetFabricColorFromPrePlanningByFabricIdQuery
+} from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetPrePlanningHeaderByDesignIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
@@ -35,12 +46,14 @@ import dyeing from '../../assets/images/planningicons/dyeing.png';
 import MainCard from 'ui-component/cards/MainCard';
 
 const Dyeing = () => {
+  const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
-    DPId: '',
+    dpId: 0,
     designId: '',
     batchNo: '',
+    planningHeaderId: '',
     fabricId: '',
-    ColorId: '',
+    colorId: '',
     color: '',
     vendorId: '',
     processType: '',
@@ -49,18 +62,45 @@ const Dyeing = () => {
     Wastage: '',
     OutputQty: '',
     UOM: '',
+    uomId: '',
     RatePerUOM: '',
     UnitRatePerPo: '',
     TotalExclGst: '',
     GST: '0',
-    GSTAmount: '',
+    // GSTAmount: '',
     TotalIncludingGst: '',
     createdBy: 0,
     poPcs: '',
-    baseColorName: '',
-    planningHeaderId: ''
+    baseColorName: ''
     // fabricId: ''
   });
+  useEffect(() => {
+    setFormData({
+      dpId: initialData.dpId || 0,
+      designId: initialData?.designId || '',
+      planningHeaderId: initialData?.planningHeaderId || 0,
+      batchNo: initialData?.batchNo || '',
+      fabricId: initialData?.fabricId || '',
+      colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
+      color: initialData?.color || '', //from dying screen coming from fabricAPi
+      vendorId: initialData?.vendorId || '',
+      processType: initialData?.processType || '',
+      AvailableQty: initialData?.availableQty || '',
+      Shrinkage: initialData?.shrinkage || '',
+      Wastage: initialData?.wastage || '',
+      OutputQty: initialData?.outputQty || 0,
+      UOM: initialData?.uom || 0,
+      uomId: initialData?.uomId || '',
+      RatePerUOM: initialData?.ratePerUOM || 0,
+      UnitRatePerPo: initialData?.unitRatePerPo || '',
+      TotalExclGst: initialData?.totalExclGst || '',
+      GST: initialData?.gst || '',
+      TotalIncludingGst: initialData?.totalIncludingGst || '',
+      createdBy: initialData?.createdBy || 0,
+      poPcs: initialData?.poPcs || 0,
+      baseColorName: initialData?.baseColorName || 0
+    });
+  }, [initialData]);
   const { enqueueSnackbar } = useSnackbar();
 
   console.log('Dyeing form data to send', formData);
@@ -81,8 +121,17 @@ const Dyeing = () => {
       skip: !formData.planningHeaderId
     }
   );
-  const { data: fabricRequisitionData, refetch: refetchFabricRequisitionData } =
-    useGetFabricRequisitionListByBatchNoQuery(formData.planningHeaderId, {
+  const { data: colorData } = useGetFabricColorFromPrePlanningByFabricIdQuery(
+    {
+      fabricId: formData.fabricId,
+      planningHeaderId: formData.planningHeaderId
+    },
+    {
+      skip: !formData.fabricId || !formData.planningHeaderId
+    }
+  );
+  const { data: dyeingPrintingData, refetch: refetchDyeingPrintingData } =
+    useGetDyeingPrintingListByBatchNoQuery(formData.planningHeaderId, {
       skip: !formData.planningHeaderId
     });
 
@@ -94,6 +143,8 @@ const Dyeing = () => {
   const [colors, setColors] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
+  console.log('batchList', batchList);
+  console.log('formData', formData);
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(isExpanded);
   };
@@ -116,21 +167,26 @@ const Dyeing = () => {
     }
   }, [fabricData]);
   useEffect(() => {
+    if (colorData) {
+      setColors(colorData.result);
+    }
+  }, [colorData]);
+  useEffect(() => {
     if (lookupData) {
       setVendors(lookupData.result[0].vendorList);
     }
   }, [fabricData]);
   console.log(vendors);
   useEffect(() => {
-    if (fabricRequisitionData) {
+    if (dyeingPrintingData) {
       setInitialRows(
-        fabricRequisitionData.result.map((row, index) => ({
+        dyeingPrintingData.result.map((row, index) => ({
           id: index,
           ...row
         }))
       );
     }
-  }, [fabricRequisitionData]);
+  }, [dyeingPrintingData, refetchDyeingPrintingData]);
 
   useEffect(() => {
     if (lookupData) {
@@ -150,8 +206,8 @@ const Dyeing = () => {
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
-        collectionId: value,
-        poPcs: selectedCollection ? selectedCollection.poPcs : ''
+        collectionId: value
+        // poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
     } else if (name === 'designId') {
       const selectedDesign = designList.find(
@@ -179,11 +235,24 @@ const Dyeing = () => {
       console.log('Selected Fabric:', Fabrications); // Add this line to check selected fabric
       setFormData({
         ...formData,
-        fabricId: value,
-        OutputQty: selectedFabric ? selectedFabric.total : ''
+        fabricId: value
+        // OutputQty: selectedFabric ? selectedFabric.total : ''
       });
-      fetchFabricColorData(value); // Pass formData.fabricId instead of value
+      // fetchFabricColorData(value); // Pass formData.fabricId instead of value
       // setAccordionExpanded(true);
+    } else if (name === 'ColorId') {
+      const selectedColor = colors.find(
+        (color) => color.colorId === value.colorId
+      );
+      setFormData({
+        ...formData,
+        ColorId: value.colorId,
+        color: selectedColor.color,
+        AvailableQty: selectedColor.total,
+        UOM: selectedColor.uom,
+        Shrinkage: selectedColor.shrinkage,
+        Wastage: selectedColor.wastage
+      });
     } else if (name === 'processType') {
       // Update formData for processType
       setFormData({
@@ -201,48 +270,48 @@ const Dyeing = () => {
     }
   };
 
-  const fetchFabricColorData = async (fabricId) => {
-    try {
-      const response = await axios.get(
-        `https://gecxc.com:4041/api/DyeingPrinting/GetFabricColorFromPrePlanningByFabricId?fabricId=${fabricId}`
-      );
-      const data = response.data.result;
-      console.log('Dyeing Color Data', data);
+  // const fetchFabricColorData = async (fabricId) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `https://gecxc.com:4041/api/DyeingPrinting/GetFabricColorFromPrePlanningByFabricId?fabricId=${fabricId}`
+  //     );
+  //     const data = response.data.result;
+  //     console.log('Dyeing Color Data', data);
 
-      if (data.length > 0) {
-        const fabricInfo = data[0]; // Assuming only one fabric info is returned
+  //     if (data.length > 0) {
+  //       const fabricInfo = data[0]; // Assuming only one fabric info is returned
 
-        // Update form data with fabric info
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          Shrinkage: fabricInfo.shrinkage.toFixed(2), // Assuming shrinkage is returned as a decimal
-          Wastage: fabricInfo.wastage.toFixed(2), // Assuming wastage is returned as a decimal
-          UOM: fabricInfo.uom,
-          AvailableQty: fabricInfo.total.toString() // Convert total to string to set in TextField
-          // Assuming uomId is not needed in the form
-        }));
-      }
+  //       // Update form data with fabric info
+  //       setFormData((prevFormData) => ({
+  //         ...prevFormData,
+  //         Shrinkage: fabricInfo.shrinkage.toFixed(2), // Assuming shrinkage is returned as a decimal
+  //         Wastage: fabricInfo.wastage.toFixed(2), // Assuming wastage is returned as a decimal
+  //         UOM: fabricInfo.uom,
+  //         AvailableQty: fabricInfo.total.toString() // Convert total to string to set in TextField
+  //         // Assuming uomId is not needed in the form
+  //       }));
+  //     }
 
-      const colorOptions = data.map((item) => ({
-        label: item.color,
-        value: item.colorId
-      }));
+  //     const colorOptions = data.map((item) => ({
+  //       label: item.color,
+  //       value: item.colorId
+  //     }));
 
-      setColors(colorOptions);
-      // Assuming the first color is automatically selected
-      if (colorOptions.length > 0) {
-        const firstColor = colorOptions[0];
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          ColorId: firstColor.value,
-          color: firstColor.label
-        }));
-        setAccordionExpanded(true);
-      }
-    } catch (error) {
-      console.error('Error fetching fabric color data:', error);
-    }
-  };
+  //     setColors(colorOptions);
+  //     // Assuming the first color is automatically selected
+  //     if (colorOptions.length > 0) {
+  //       const firstColor = colorOptions[0];
+  //       setFormData((prevFormData) => ({
+  //         ...prevFormData,
+  //         ColorId: firstColor.value,
+  //         color: firstColor.label
+  //       }));
+  //       setAccordionExpanded(true);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching fabric color data:', error);
+  //   }
+  // };
   useEffect(() => {
     const calculateOutputQty = () => {
       const AvailableQty = parseFloat(formData.AvailableQty) || 0;
@@ -292,38 +361,10 @@ const Dyeing = () => {
       return;
     }
 
-    // Log formData to debug
-    console.log('Form Data:', formData);
-
-    const payload = {
-      dpId: parseInt(formData.DPId) || 0,
-      designId: parseInt(formData.designId),
-      batchNo: formData.batchNo,
-      fabricId: parseInt(formData.fabricId),
-      colorId: parseInt(formData.ColorId) || 0,
-      vendorId: formData.vendorId || 0,
-      processType: formData.processType,
-      availableQty: parseFloat(formData.AvailableQty) || 0,
-      shrinkage: parseFloat(formData.Shrinkage) || 0,
-      wastage: parseFloat(formData.Wastage) || 0,
-      outputQty: parseFloat(formData.OutputQty) || 0,
-      uomId: parseInt(formData.UOM) || 0,
-      ratePerUOM: parseFloat(formData.RatePerUOM) || 0,
-      unitRatePerPo: parseFloat(formData.UnitRatePerPo) || 0,
-      totalExclGst: parseFloat(formData.TotalExclGst) || 0,
-      gst: parseFloat(formData.GST) || 0,
-      gstAmount: parseFloat(formData.GSTAmount) || 0,
-      totalIncludingGst: parseFloat(formData.TotalIncludingGst) || 0,
-      createdBy: formData.createdBy
-    };
-
-    // Log payload to debug
-    console.log('Payload:', payload);
-
     try {
       const response = await axios.post(
         'https://gecxc.com:4041/api/DyeingPrinting/SaveDyeingPrinting',
-        payload
+        formData
       );
 
       if (response.status === 200) {
@@ -332,12 +373,13 @@ const Dyeing = () => {
           variant: 'success',
           autoHideDuration: 5000
         });
-        setFormData({
-          DPId: '',
-          designId: '',
-          batchNo: '',
+        setFormData((prevFormData) => ({
+          designId: prevFormData.designId,
+          planningHeaderId: prevFormData.planningHeaderId,
+          batchNo: prevFormData.batchNo,
+          dpId: 0,
           fabricId: '',
-          ColorId: '',
+          colorId: '',
           color: '',
           vendorId: '',
           processType: '',
@@ -346,15 +388,46 @@ const Dyeing = () => {
           Wastage: '',
           OutputQty: '',
           UOM: '',
+          uomId: '',
           RatePerUOM: '',
           UnitRatePerPo: '',
           TotalExclGst: '',
           GST: '0',
-          GSTAmount: '',
+          // GSTAmount: '',
           TotalIncludingGst: '',
           createdBy: 0,
-          poPcs: ''
-        });
+          poPcs: '',
+          baseColorName: ''
+          // planningHeaderId: ''
+        }));
+        refetchDyeingPrintingData();
+        setInitialData((prevFormData) => ({
+          designId: prevFormData.designId,
+          planningHeaderId: prevFormData.planningHeaderId,
+          batchNo: prevFormData.batchNo,
+          dpId: 0,
+          fabricId: '',
+          colorId: '',
+          color: '',
+          vendorId: '',
+          processType: '',
+          AvailableQty: '',
+          Shrinkage: '',
+          Wastage: '',
+          OutputQty: '',
+          UOM: '',
+          uomId: '',
+          RatePerUOM: '',
+          UnitRatePerPo: '',
+          TotalExclGst: '',
+          GST: '0',
+          // GSTAmount: '',
+          TotalIncludingGst: '',
+          createdBy: 0,
+          poPcs: '',
+          baseColorName: ''
+          // planningHeaderId: ''
+        }));
         // Handle success (e.g., show a success message or reset the form)
       } else {
         console.error('Failed to save data:', response.data);
@@ -371,79 +444,12 @@ const Dyeing = () => {
     }
   };
 
-  const columns = [
-    { field: 'name', headerName: 'Order Number', editable: true, flex: 2 },
-    {
-      field: 'DesignId',
-      headerName: 'Design',
-      type: 'number',
-      flex: 1,
-      align: 'left',
-      headerAlign: 'left',
-      editable: true
-    },
-    {
-      field: 'FabricId',
-      headerName: 'Fabric',
-      type: 'date',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'ProcessType',
-      headerName: 'Process',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'ColorId',
-      headerName: 'Color',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'role',
-      headerName: 'Po Pcs',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'AvailableQty',
-      headerName: 'Qty',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'UOM',
-      headerName: 'UOM',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'RatePerUOM',
-      headerName: 'Rate',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'UnitRatePerPo',
-      headerName: 'Unit Price',
-      flex: 1,
-      editable: true
-    },
-    {
-      field: 'TotalIncludingGst',
-      headerName: 'Total W/ GST',
-      flex: 1,
-      editable: true
-    }
-  ];
-  const handleAutocompleteChange = (event, newValue, name) => {
-    setFormData({
-      ...formData,
-      [name]: newValue ? newValue.value : ''
-    });
-  };
+  // const handleAutocompleteChange = (event, newValue, name) => {
+  //   setFormData({
+  //     ...formData,
+  //     [name]: newValue ? newValue.value : ''
+  //   });
+  // };
   const design = [
     {
       value: 'D',
@@ -452,6 +458,110 @@ const Dyeing = () => {
     {
       value: 'P',
       label: 'Printing'
+    }
+  ];
+  const handleEdit = (row) => {
+    setInitialData(row);
+  };
+
+  console.log('initialData', initialData);
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(
+        `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingById?DPId=${id}`
+      );
+
+      refetchDyeingPrintingData();
+      console.log('deleted');
+    } catch (error) {
+      console.error('Error deleting data:', error);
+    }
+    // Handle delete logic
+  };
+
+  const columns = [
+    {
+      field: 'fabricName',
+      headerName: 'Fabric'
+    },
+    {
+      field: 'colorName',
+      headerName: 'Color'
+    },
+    {
+      field: 'vendorName',
+      headerName: 'Vendor'
+    },
+
+    {
+      field: 'processType',
+      headerName: 'Process Type'
+    },
+    {
+      field: 'uom',
+      headerName: 'uom'
+    },
+    {
+      field: 'availableQty',
+      headerName: 'Available Quantitity'
+    },
+    {
+      field: 'shrinkage',
+      headerName: 'Shrinkage'
+    },
+    {
+      field: 'wastage',
+      headerName: 'Wastage'
+    },
+    {
+      field: 'outputQty',
+      headerName: 'Output Qty'
+    },
+    {
+      field: 'ratePerUOM',
+      headerName: 'Rate'
+    },
+    {
+      field: 'totalExclGst',
+      headerName: 'Total Excl. Gst'
+    },
+    {
+      field: 'gst',
+      headerName: 'GST'
+    },
+    {
+      field: 'totalIncludingGst',
+      headerName: 'Total Including GST'
+    },
+    {
+      field: 'unitRatePerPo',
+      headerName: 'UnitRate Per Po.'
+    },
+
+    {
+      field: 'Action',
+      headerName: 'Actions',
+
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup size="small" variant="text">
+            <IconButton
+              aria-label="Edit"
+              // color="primary"
+              onClick={() => handleEdit(params.row)}
+            >
+              <EditIcon />
+            </IconButton>
+            <IconButton
+              aria-label="delete"
+              color="primary"
+              onClick={() => handleDelete(params.row.dpId)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </ButtonGroup>
+        </div>
+      )
     }
   ];
 
@@ -570,34 +680,56 @@ const Dyeing = () => {
             </TextField>
           </Grid>
           <Grid item xs={12} md={3}>
-            {/* <Autocomplete
-                fullWidth
-                options={colors}
-                getOptionLabel={(option) => option.label || ''}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Color"
-                    name="ColorId"
-                    size="small"
-                    // value={formData.color}
-                  />
-                )}
-                value={
-                  colors.find((color) => color.value === formData.color) || null
-                }
-                onChange={(event, newValue) => {
-                  setFormData((prevFormData) => ({
-                    ...prevFormData,
-                    ColorId: newValue ? newValue.value : '',
-                    color: newValue ? newValue.value : ''
-                  }));
-                }}
-              /> */}
+            {/* <TextField
+              fullWidth
+              select
+              label="Select Color"
+              // defaultValue=""
+              size="small"
+              name="ColorId"
+              value={formData.ColorId}
+              onChange={handleChange}
+            >
+              {colors.map((option) => (
+                <MenuItem key={option.colorId} value={option.colorId}>
+                  {option.color}
+                </MenuItem>
+              ))}
+            </TextField> */}
             <Autocomplete
               fullWidth
               options={colors}
-              getOptionLabel={(option) => option.label || ''}
+              getOptionLabel={(option) => option.color || ''}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Color"
+                  name="colorId"
+                  size="small"
+                  // value={formData.color}
+                />
+              )}
+              value={
+                colors.find((color) => color.colorId === formData.colorId) ||
+                null
+              }
+              onChange={(event, newValue) => {
+                setFormData((prevFormData) => ({
+                  ...prevFormData,
+                  colorId: newValue ? newValue.colorId : '',
+                  color: newValue ? newValue.color : '',
+                  AvailableQty: newValue ? newValue.total : '',
+                  UOM: newValue ? newValue.uom : '',
+                  uomId: newValue ? newValue.uomId : '',
+                  Shrinkage: newValue ? newValue.shrinkage : '',
+                  Wastage: newValue ? newValue.wastage : ''
+                }));
+              }}
+            />
+            {/* <Autocomplete
+              fullWidth
+              options={colors}
+              getOptionLabel={(option) => option.color}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -607,16 +739,11 @@ const Dyeing = () => {
                 />
               )}
               value={
-                colors.find((color) => color.value === formData.ColorId) || null
+                colors.find((color) => color.colorId === formData.ColorId) ||
+                null
               }
-              onChange={(event, newValue) => {
-                setFormData((prevFormData) => ({
-                  ...prevFormData,
-                  ColorId: newValue ? newValue.value : '',
-                  color: newValue ? newValue.label : '' // Update to newValue.label
-                }));
-              }}
-            />
+              onChange={handleChange}
+            /> */}
           </Grid>
         </Grid>
       </Card>
@@ -700,6 +827,7 @@ const Dyeing = () => {
                   name="UOM"
                   value={formData.UOM}
                   // focused
+                  onChange={handleChange}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -710,6 +838,7 @@ const Dyeing = () => {
                   type="number"
                   name="AvailableQty"
                   value={formData.AvailableQty}
+                  onChange={handleChange}
                   // focused
                 />
               </Grid>
@@ -721,6 +850,7 @@ const Dyeing = () => {
                   size="small"
                   name="Shrinkage"
                   value={formData.Shrinkage}
+                  onChange={handleChange}
                   // focused
                 />
               </Grid>
@@ -732,6 +862,7 @@ const Dyeing = () => {
                   type="number"
                   name="Wastage"
                   value={formData.Wastage}
+                  onChange={handleChange}
                   // focused
                 />
               </Grid>
@@ -743,6 +874,7 @@ const Dyeing = () => {
                   name="OutputQty"
                   type="number"
                   value={formData.OutputQty}
+                  onChange={handleChange}
                   // focused
                 />
               </Grid>
@@ -840,7 +972,34 @@ const Dyeing = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid item xs={12} md={12} paddingTop={1}>
-            <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} />
+            <Box
+              sx={{
+                height: 500,
+                width: 'inherit',
+                '& .actions': {
+                  color: 'text.secondary'
+                },
+                '& .textPrimary': {
+                  color: 'text.primary'
+                }
+              }}
+            >
+              <DataGrid
+                // {...data}
+                rows={initialRows}
+                columns={columns}
+                rowLength={100}
+                sx={{
+                  boxShadow: 2,
+                  border: 2,
+                  borderColor: 'primary.light',
+                  '& .MuiDataGrid-cell:hover': {
+                    color: 'primary.main'
+                  }
+                }}
+              />
+            </Box>
+            {/* <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} /> */}
           </Grid>
         </Grid>
       </Card>
