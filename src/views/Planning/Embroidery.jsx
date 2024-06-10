@@ -415,8 +415,8 @@ const Embroidery = () => {
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
-        collectionId: value,
-        poPcs: selectedCollection ? selectedCollection.poPcs : ''
+        collectionId: value
+        // poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
     } else if (name === 'designId') {
       const selectedDesign = designList.find(
@@ -442,7 +442,8 @@ const Embroidery = () => {
       setFormData({
         ...formData,
         batchNo: value,
-        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
+        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
+        poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
     } else {
       setFormData({ ...formData, [name]: value });

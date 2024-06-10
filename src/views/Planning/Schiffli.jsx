@@ -326,9 +326,9 @@ const Schiffli = () => {
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
-        collectionId: value,
+        collectionId: value
 
-        poPcs: selectedCollection ? selectedCollection.poPcs : ''
+        // poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
     } else if (name === 'designId') {
       const selectedDesign = designList.find(
@@ -345,7 +345,8 @@ const Schiffli = () => {
       setFormData({
         ...formData,
         batchNo: value,
-        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
+        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
+        poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
     } else if (name === 'colorId') {
       const selectedcolor = colors.find((color) => color.colorId === value);

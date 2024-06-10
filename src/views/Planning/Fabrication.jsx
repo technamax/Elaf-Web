@@ -68,7 +68,7 @@ const Fabrication = () => {
     useGetFabricRequisitionListByBatchNoQuery(formData.planningHeaderId, {
       skip: !formData.planningHeaderId // Skip the query if no collection is selected
     });
-  console.log('fabricRequisitionData', fabricRequisitionData);
+  console.log('batchData', batchData);
 
   const [designList, setDesignList] = useState([]);
   const [batchList, setBatchList] = useState([]);
@@ -168,9 +168,7 @@ const Fabrication = () => {
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
-        collectionId: value,
-
-        poPcs: selectedCollection ? selectedCollection.poPcs : ''
+        collectionId: value
       });
     } else if (name === 'designId') {
       const selectedDesign = designList.find(
@@ -187,7 +185,8 @@ const Fabrication = () => {
       setFormData({
         ...formData,
         batchNo: value,
-        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
+        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
+        poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
     } else if (name === 'fabricId') {
       const selectedFabric = Fabrications.find(
