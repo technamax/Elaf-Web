@@ -536,6 +536,7 @@ const PrePlanning = () => {
             <TextField
               label="Cutting Size"
               fullWidth
+              type="number"
               size="small"
               name="cuttingSize"
               value={formData.cuttingSize}
