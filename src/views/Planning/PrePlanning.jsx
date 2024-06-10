@@ -9,6 +9,9 @@ import {
   FormControl,
   Typography,
   Divider,
+  FormControlLabel,
+  Checkbox,
+  ButtonGroup,
   Autocomplete,
   Accordion,
   AccordionDetails,
@@ -94,7 +97,9 @@ const PrePlanning = () => {
     createdOn: new Date().toISOString(),
     createdBy: 0,
     lastUpdatedBy: 0,
-    lastUpdatedOn: new Date().toISOString()
+    lastUpdatedOn: new Date().toISOString(),
+    isSchiffili: false,
+    repeatsInMtr: ''
   });
 
   useEffect(() => {
@@ -164,6 +169,7 @@ const PrePlanning = () => {
       ...prevData,
       totalFabric: calculateTotalFabric()
     }));
+
     const calculateTotal = () => {
       const totalFabric = parseFloat(formData.totalFabric) || 0;
       const shrinkage = parseFloat(formData.shrinkage) || 0;
@@ -175,13 +181,42 @@ const PrePlanning = () => {
       ...prevData,
       total: calculateTotal()
     }));
+
+    const calculateSizeinMeter = () => {
+      const repeats = parseFloat(formData.repeats) || 0;
+      const repeatSize = parseFloat(formData.repeatSize) || 0;
+      return 0.9144 * repeatSize;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      repeatsInMtr: calculateSizeinMeter()
+    }));
+    const calculateSizeinMeterChecked = () => {
+      const repeats = parseFloat(formData.repeats) || 0;
+      const repeatsInMtr = parseFloat(formData.repeatsInMtr) || 0;
+      return repeatsInMtr * repeats;
+    };
+    setFormData((prevData) => ({
+      ...prevData,
+      totalFabric: prevData.isSchiffili
+        ? calculateSizeinMeterChecked()
+        : calculateTotalFabric(prevData)
+    }));
   }, [
     formData.repeats,
     formData.repeatSize,
     formData.totalFabric,
     formData.shrinkage,
-    formData.wastage
+    formData.wastage,
+    formData.repeatsInMtr,
+    formData.isSchiffili
   ]);
+  const calculateTotalFabric = (data) => {
+    const repeats = parseFloat(data.repeats) || 0;
+    const repeatSize = parseFloat(data.repeatSize) || 0;
+    return repeats * repeatSize;
+  };
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
   const [expanded, setExpanded] = useState(false);
 
@@ -247,7 +282,9 @@ const PrePlanning = () => {
           createdOn: formData.createdOn,
           createdBy: formData.createdBy,
           lastUpdatedBy: formData.lastUpdatedBy,
-          lastUpdatedOn: formData.lastUpdatedOn
+          lastUpdatedOn: formData.lastUpdatedOn,
+          isSchiffili: formData.isSchiffili,
+          repeatsInMtr: formData.repeatsInMtr
         }
       );
       console.log('Data saved successfully:', response.data);
@@ -280,7 +317,9 @@ const PrePlanning = () => {
         createdOn: new Date().toISOString(),
         createdBy: 0,
         lastUpdatedBy: 0,
-        lastUpdatedOn: new Date().toISOString()
+        lastUpdatedOn: new Date().toISOString(),
+        isSchiffili: false,
+        repeatsInMtr: ''
       });
 
       // Fetch the latest data
@@ -304,6 +343,26 @@ const PrePlanning = () => {
     }
   };
 
+  const handleCheckboxChange = (event) => {
+    // const calculateSizeinMeterChecked = () => {
+    //   const repeats = parseFloat(formData.repeats) || 0;
+    //   const repeatsInMtr = parseFloat(formData.repeatsInMtr) || 0;
+    //   return repeatsInMtr * repeats;
+    // };
+    const { name, checked } = event.target;
+    setFormData((prevState) => ({
+      ...prevState,
+
+      [name]: checked,
+      uomId: checked ? 139 : prevState.uomId // Set uomId to meters if checked
+      // totalFabric: checked
+      //   ? calculateSizeinMeterChecked()
+      //   : calculateTotalFabric(prevState)
+      // repeatsInMtr: checked
+      //   ? calculateSizeinMeterChecked()
+      //   : prevState.repeatsInMtr
+    }));
+  };
   const columns = [
     {
       field: 'componentId',
@@ -776,6 +835,7 @@ const PrePlanning = () => {
                   name="uomId"
                   value={formData.uomId}
                   onChange={handleChange}
+                  disabled={formData.isSchiffili} // Disable when isSchiffili is checked
                 >
                   {uoms.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -817,6 +877,35 @@ const PrePlanning = () => {
                   onChange={handleChange}
                 />
               </Grid>
+              <Grid item xs={12} md={1} textAlign="right">
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.isSchiffili}
+                      onChange={handleCheckboxChange}
+                      name="isSchiffili"
+                    />
+                  }
+                  label="Is Schiffli"
+                />
+              </Grid>
+              {formData.isSchiffili ? (
+                <Grid item xs={12} md={3}>
+                  <Grid container spacing={1} width="Inherit">
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="repeat in mtr"
+                        fullWidth
+                        size="small"
+                        name="repeatsInMtr"
+                        disabled
+                        value={formData.repeatsInMtr}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
+              ) : null}
               <Grid item xs={12} textAlign="right">
                 <Button variant="contained" size="small" onClick={handleSave}>
                   Save
