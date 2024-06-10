@@ -1,19 +1,49 @@
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import React, { useState, useEffect } from "react";
-
+import React, { useState, useEffect, useCallback } from "react";
+import axios from 'axios';
 export default function AdditionalServiceTable() {
   const [rows, setRows] = useState([]);
 
 
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `https://gecxc.com:4041/api/AdditionalServices/GetdditionalServicesListByServiceTypeId?serviceTypeId=1`
+      );
+
+    
+      const dataWithId = response.data.result.map((row, index) => ({
+        id: index, 
+        ...row,
+      }));
+
+      setRows(dataWithId); // Set the fetched data to the rows state
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData(); // Fetch data when the component mounts
+  }, [fetchData]);
+
 
   const columns = [
-    { field: "Service Type", headerName: "Service Type", width: 150 },
-    { field: "Service List", headerName: "Service List", width:200 },
-    { field: "Vendor", headerName: "Vendor", minWidth: 120 },
-    { field: "Qty", headerName: "Qty", minWidth: 120 },
-    { field: "UOM", headerName: "UOM", minWidth: 120 },
-    { field: "Rate", headerName: "Rate", minWidth: 120 },
-    { field: "Total Amount", headerName: "Total Amount", minWidth: 120 }
+    { field: "serviceTypeId", headerName: "Service Type", width: 150 },
+    { field: "serviceList", headerName: "Service List", width:200 },
+    { field: "vendorId", headerName: "Vendor", minWidth: 120 },
+    { field: "qty", headerName: "Qty", minWidth: 120 },
+    { field: "uom", headerName: "UOM", minWidth: 120 },
+    { field: "rate", headerName: "Rate", minWidth: 120 },
+    { field: "totalAmount", headerName: "Total Amount", minWidth: 120 },
+    { field: "uomId", headerName: "UOM Id", minWidth: 120 },
+    { field: "quantity", headerName: "quantity", minWidth: 120 },
+    { field: "ratePerPcs", headerName: "rate Per Pcs", minWidth: 120 },
+    { field: "costperPiece", headerName: "cost per Piece", minWidth: 120 },
+    { field: "vendor", headerName: "Vendor", minWidth: 120 },
+    { field: "serviceType", headerName: "Service Type", minWidth: 120 },
+    { field: "serviceListName", headerName: "Service List Name", minWidth: 120 }
+
   ];
 
   return (
