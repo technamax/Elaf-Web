@@ -12,11 +12,16 @@ import {
   Checkbox,
   ButtonGroup,
   Box,
-  IconButton
+  IconButton,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import { Card, CardHeader, Avatar } from '@mui/material';
+import '../../assets/scss/style.scss';
 
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 // import { useGetDesignListQuery } from 'api/store/Apis/designApi';
@@ -33,7 +38,7 @@ import { useGetPrePlanningHeaderByDesignIdQuery } from 'api/store/Apis/prePlanni
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { useGetComponentsByBatchNoQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetFabricByComponentsAndBatchNoQuery } from 'api/store/Apis/prePlanningHeaderApi';
-
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
 import { AlignHorizontalCenter } from '@mui/icons-material';
@@ -109,6 +114,11 @@ const Schiffli = () => {
       LastUpdatedBy: 0
     });
   }, [initialData]);
+  const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
+  const handleAccordionToggle = (event, isExpanded) => {
+    setAccordionExpanded(isExpanded);
+  };
+
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const { data: lookupData } = useGetLookUpListQuery();
@@ -326,9 +336,9 @@ const Schiffli = () => {
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
-        collectionId: value,
+        collectionId: value
 
-        poPcs: selectedCollection ? selectedCollection.poPcs : ''
+        // poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
     } else if (name === 'designId') {
       const selectedDesign = designList.find(
@@ -345,8 +355,10 @@ const Schiffli = () => {
       setFormData({
         ...formData,
         batchNo: value,
-        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
+        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
+        poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
+      setAccordionExpanded(true);
     } else if (name === 'colorId') {
       const selectedcolor = colors.find((color) => color.colorId === value);
       setFormData({
@@ -419,7 +431,10 @@ const Schiffli = () => {
         lastUpdatedOn: new Date().toISOString(),
         LastUpdatedBy: 0
       }));
+
       refetchSchiffliList();
+      setAccordionExpanded(false);
+
       setInitialData((prevFormData) => ({
         designId: prevFormData.designId,
         planningHeaderId: prevFormData.planningHeaderId,
@@ -608,28 +623,21 @@ const Schiffli = () => {
   ];
 
   return (
-    <MainCard
-      style={{
-        borderWidth: 2,
-        borderStyle: 'dotted',
-        borderColor: '#a11f23',
-        width: 'auto',
-        maxHeight: { xs: '80vh', md: 'auto' },
-        overflow: 'auto'
-      }}
-    >
-      <FormControl>
-        <Grid container spacing={2} width="Inherit">
-          <Grid item xs={9} md={9}>
-            <Typography variant="h3" gutterBottom>
-              Schiffli
-            </Typography>
-          </Grid>
-          <Grid item xs={3} textAlign="right">
-            <Button variant="contained" size="small" onClick={handleSave}>
-              Save
-            </Button>
-          </Grid>
+    <>
+      <Card variant="outlined">
+        <CardHeader
+          className="css-4rfrnx-MuiCardHeader-root"
+          // avatar={<Avatar src={dyeing} sx={{ background: 'transparent' }} />}
+          title="Schiffli "
+          titleTypographyProps={{ style: { color: 'white' } }}
+        ></CardHeader>
+
+        <Grid
+          container
+          spacing={2}
+          width="Inherit"
+          sx={{ paddingY: 2, paddingX: 2 }}
+        >
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -710,296 +718,341 @@ const Schiffli = () => {
               ))}
             </TextField>{' '}
           </Grid>
-
-          <Grid item xs={12} md={12}>
-            <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
+          <Grid item xs={12} textAlign="right">
+            <Button variant="contained" size="small" onClick={handleSave}>
+              Save
+            </Button>
           </Grid>
-
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Select Fabric"
-              defaultValue=""
-              size="small"
-              name="fabricId"
-              value={formData.fabricId}
-              onChange={handleChange}
-            >
-              {Fabrications.map((option) => (
-                <MenuItem key={option.fabricId} value={option.fabricId}>
-                  {option.fabric}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Vendors"
-              defaultValue=""
-              size="small"
-              name="vendorId"
-              value={formData.vendorId}
-              onChange={handleChange}
-            >
-              {vendors.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Po Pcs"
-              fullWidth
-              size="small"
-              name="poPcs"
-              value={formData.poPcs}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Color"
-              size="small"
-              name="colorId"
-              value={formData.colorId}
-              onChange={handleChange}
-            >
-              {colors.map((option) => (
-                <MenuItem key={option.colorId} value={option.colorId}>
-                  {option.color}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Available Quantity"
-              fullWidth
-              size="small"
-              name="availableQty"
-              value={formData.availableQty}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Thaan Quantity"
-              fullWidth
-              size="small"
-              name="thaanQty"
-              value={formData.thaanQty}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="operatingMachineId"
-              defaultValue=""
-              size="small"
-              name="operatingMachineId"
-              value={formData.operatingMachineId}
-              onChange={handleChange}
-            >
-              {operatingMachineList.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="workingHeadId"
-              defaultValue=""
-              size="small"
-              name="workingHeadId"
-              value={formData.workingHeadId}
-              onChange={handleChange}
-            >
-              {workingHeadList.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Cutting Size"
-              fullWidth
-              size="small"
-              name="cuttingSize"
-              value={formData.cuttingSize}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Rate"
-              fullWidth
-              size="small"
-              name="rate"
-              value={formData.rate}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="No. Of Stiches Per Yard"
-              fullWidth
-              size="small"
-              name="noOfStichesPerYard"
-              value={formData.noOfStichesPerYard}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="No. Of Items Per Thaan"
-              fullWidth
-              size="small"
-              name="noOfItemPerThaan"
-              value={formData.noOfItemPerThaan}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Total Embroidry"
-              fullWidth
-              size="small"
-              name="totalEmbroidry"
-              value={formData.totalEmbroidry}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Amount Per Yard"
-              fullWidth
-              size="small"
-              name="amountPerYard"
-              value={formData.amountPerYard}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Total Pcs"
-              fullWidth
-              size="small"
-              name="totalPcs"
-              value={formData.totalPcs}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Cost Per Component"
-              fullWidth
-              size="small"
-              name="costPerComponent"
-              value={formData.costPerComponent}
-              onChange={handleChange}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Total Amount"
-              fullWidth
-              size="small"
-              name="totalAmount"
-              value={formData.totalAmount}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={formData.laserCut}
-                  onChange={handleCheckboxChange}
-                  name="laserCut"
-                />
-              }
-              label="Laser Cut"
-            />
-          </Grid>
-          {formData.laserCut ? (
-            <Grid item xs={12} md={6}>
-              <Grid container spacing={1} width="Inherit">
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    label="Laser Cut Rate"
-                    fullWidth
-                    size="small"
-                    name="laserCutRate"
-                    value={formData.laserCutRate}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    label="Pcs For LaserCut"
-                    fullWidth
-                    size="small"
-                    name="pcsForLaserCut"
-                    value={formData.pcsForLaserCut}
-                    onChange={handleChange}
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
-          ) : null}
         </Grid>
-      </FormControl>
-      <Grid container spacing={2} width="Inherit">
-        <Grid sx={{ marginTop: 2 }} item xs={12}>
-          <Box
-            sx={{
-              height: 500,
-              width: 'inherit',
-              '& .actions': {
-                color: 'text.secondary'
-              },
-              '& .textPrimary': {
-                color: 'text.primary'
-              }
-            }}
-          >
-            <DataGrid
-              // {...data}
-              rows={initialRows}
-              columns={columns}
-              rowLength={100}
+      </Card>
+      <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
+
+      <Card variant="outlined">
+        <CardHeader
+          className="css-4rfrnx-MuiCardHeader-root"
+          // avatar={<Avatar src={dyeing} sx={{ background: 'transparent' }} />}
+          title="Add Schiffli "
+          titleTypographyProps={{ style: { color: 'white' } }}
+        ></CardHeader>
+        <Accordion
+          expanded={accordionExpanded}
+          onChange={handleAccordionToggle}
+          sx={{}}
+        >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          ></AccordionSummary>
+          <AccordionDetails>
+            <Grid
+              container
+              spacing={2}
+              width="Inherit"
+              sx={{ paddingY: 2, paddingX: 2 }}
+            >
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Select Fabric"
+                  defaultValue=""
+                  size="small"
+                  name="fabricId"
+                  value={formData.fabricId}
+                  onChange={handleChange}
+                >
+                  {Fabrications.map((option) => (
+                    <MenuItem key={option.fabricId} value={option.fabricId}>
+                      {option.fabric}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Vendors"
+                  defaultValue=""
+                  size="small"
+                  name="vendorId"
+                  value={formData.vendorId}
+                  onChange={handleChange}
+                >
+                  {vendors.map((option) => (
+                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                      {option.lookUpName}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Po Pcs"
+                  fullWidth
+                  size="small"
+                  name="poPcs"
+                  value={formData.poPcs}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Color"
+                  size="small"
+                  name="colorId"
+                  value={formData.colorId}
+                  onChange={handleChange}
+                >
+                  {colors.map((option) => (
+                    <MenuItem key={option.colorId} value={option.colorId}>
+                      {option.color}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Available Quantity"
+                  fullWidth
+                  size="small"
+                  name="availableQty"
+                  value={formData.availableQty}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Thaan Quantity"
+                  fullWidth
+                  size="small"
+                  name="thaanQty"
+                  value={formData.thaanQty}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  select
+                  label="operatingMachineId"
+                  defaultValue=""
+                  size="small"
+                  name="operatingMachineId"
+                  value={formData.operatingMachineId}
+                  onChange={handleChange}
+                >
+                  {operatingMachineList.map((option) => (
+                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                      {option.lookUpName}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  select
+                  label="workingHeadId"
+                  defaultValue=""
+                  size="small"
+                  name="workingHeadId"
+                  value={formData.workingHeadId}
+                  onChange={handleChange}
+                >
+                  {workingHeadList.map((option) => (
+                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                      {option.lookUpName}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Cutting Size"
+                  fullWidth
+                  size="small"
+                  name="cuttingSize"
+                  value={formData.cuttingSize}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Rate"
+                  fullWidth
+                  size="small"
+                  name="rate"
+                  value={formData.rate}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="No. Of Stiches Per Yard"
+                  fullWidth
+                  size="small"
+                  name="noOfStichesPerYard"
+                  value={formData.noOfStichesPerYard}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="No. Of Items Per Thaan"
+                  fullWidth
+                  size="small"
+                  name="noOfItemPerThaan"
+                  value={formData.noOfItemPerThaan}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Total Embroidry"
+                  fullWidth
+                  size="small"
+                  name="totalEmbroidry"
+                  value={formData.totalEmbroidry}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Amount Per Yard"
+                  fullWidth
+                  size="small"
+                  name="amountPerYard"
+                  value={formData.amountPerYard}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Total Pcs"
+                  fullWidth
+                  size="small"
+                  name="totalPcs"
+                  value={formData.totalPcs}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Cost Per Component"
+                  fullWidth
+                  size="small"
+                  name="costPerComponent"
+                  value={formData.costPerComponent}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={3}>
+                <TextField
+                  label="Total Amount"
+                  fullWidth
+                  size="small"
+                  name="totalAmount"
+                  value={formData.totalAmount}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.laserCut}
+                      onChange={handleCheckboxChange}
+                      name="laserCut"
+                    />
+                  }
+                  label="Laser Cut"
+                />
+              </Grid>
+              {formData.laserCut ? (
+                <Grid item xs={12} md={6}>
+                  <Grid container spacing={1} width="Inherit">
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        label="Laser Cut Rate"
+                        fullWidth
+                        size="small"
+                        name="laserCutRate"
+                        value={formData.laserCutRate}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        label="Pcs For LaserCut"
+                        fullWidth
+                        size="small"
+                        name="pcsForLaserCut"
+                        value={formData.pcsForLaserCut}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                  </Grid>
+                </Grid>
+              ) : null}
+            </Grid>
+          </AccordionDetails>
+        </Accordion>
+        {/* </Grid> */}
+      </Card>
+      <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
+      <Card variant="outlined">
+        <CardHeader
+          className="css-4rfrnx-MuiCardHeader-root"
+          // avatar={<Avatar src={dyeing} sx={{ background: 'transparent' }} />}
+          title="View Schiffli "
+          titleTypographyProps={{ style: { color: 'white' } }}
+        ></CardHeader>
+
+        <Grid
+          container
+          spacing={2}
+          width="Inherit"
+          sx={{ paddingY: 2, paddingX: 2 }}
+        >
+          <Grid sx={{ marginTop: 2 }} item xs={12}>
+            <Box
               sx={{
-                boxShadow: 2,
-                border: 2,
-                borderColor: 'primary.light',
-                '& .MuiDataGrid-cell:hover': {
-                  color: 'primary.main'
+                height: 500,
+                width: 'inherit',
+                '& .actions': {
+                  color: 'text.secondary'
+                },
+                '& .textPrimary': {
+                  color: 'text.primary'
                 }
               }}
-            />
-          </Box>
-          {/* <EditAbleDataGrid
+            >
+              <DataGrid
+                // {...data}
+                rows={initialRows}
+                columns={columns}
+                rowLength={100}
+                sx={{
+                  boxShadow: 2,
+                  border: 2,
+                  borderColor: 'primary.light',
+                  '& .MuiDataGrid-cell:hover': {
+                    color: 'primary.main'
+                  }
+                }}
+              />
+            </Box>
+            {/* <EditAbleDataGrid
             ncolumns={columns}
             initialRows={initialRows}
             formData={formData}
@@ -1009,9 +1062,10 @@ const Schiffli = () => {
             // deleteBy="fabricationId"
             disableAddRecord={true}
           /> */}
+          </Grid>
         </Grid>
-      </Grid>
-    </MainCard>
+      </Card>
+    </>
   );
 };
 

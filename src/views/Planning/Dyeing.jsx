@@ -168,7 +168,8 @@ const Dyeing = () => {
       setFormData({
         ...formData,
         batchNo: value,
-        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
+        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
+        poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
       // Fetch data from API when batchNo changes
     } else if (name === 'fabricId') {
@@ -475,7 +476,6 @@ const Dyeing = () => {
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
 
-        {/* <FormControl> */}
         <Grid
           container
           spacing={2}

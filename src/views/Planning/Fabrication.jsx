@@ -184,9 +184,9 @@ const Fabrication = () => {
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
-        collectionId: value,
+        collectionId: value
 
-        poPcs: selectedCollection ? selectedCollection.poPcs : ''
+        // poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
     } else if (name === 'designId') {
       const selectedDesign = designList.find(
@@ -203,7 +203,8 @@ const Fabrication = () => {
       setFormData({
         ...formData,
         batchNo: value,
-        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
+        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
+        poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
       setAccordionExpanded(true);
     } else if (name === 'fabricId') {
