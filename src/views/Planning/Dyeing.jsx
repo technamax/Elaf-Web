@@ -401,33 +401,33 @@ const Dyeing = () => {
           // planningHeaderId: ''
         }));
         refetchDyeingPrintingData();
-        setInitialData((prevFormData) => ({
-          designId: prevFormData.designId,
-          planningHeaderId: prevFormData.planningHeaderId,
-          batchNo: prevFormData.batchNo,
-          dpId: 0,
-          fabricId: '',
-          colorId: '',
-          color: '',
-          vendorId: '',
-          processType: '',
-          AvailableQty: '',
-          Shrinkage: '',
-          Wastage: '',
-          OutputQty: '',
-          UOM: '',
-          uomId: '',
-          RatePerUOM: '',
-          UnitRatePerPo: '',
-          TotalExclGst: '',
-          GST: '0',
-          // GSTAmount: '',
-          TotalIncludingGst: '',
-          createdBy: 0,
-          poPcs: '',
-          baseColorName: ''
-          // planningHeaderId: ''
-        }));
+        // setInitialData((prevFormData) => ({
+        //   designId: prevFormData.designId,
+        //   planningHeaderId: prevFormData.planningHeaderId,
+        //   batchNo: prevFormData.batchNo,
+        //   dpId: 0,
+        //   fabricId: '',
+        //   colorId: '',
+        //   color: '',
+        //   vendorId: '',
+        //   processType: '',
+        //   AvailableQty: '',
+        //   Shrinkage: '',
+        //   Wastage: '',
+        //   OutputQty: '',
+        //   UOM: '',
+        //   uomId: '',
+        //   RatePerUOM: '',
+        //   UnitRatePerPo: '',
+        //   TotalExclGst: '',
+        //   GST: '0',
+        //   // GSTAmount: '',
+        //   TotalIncludingGst: '',
+        //   createdBy: 0,
+        //   poPcs: '',
+        //   baseColorName: ''
+        //   // planningHeaderId: ''
+        // }));
         // Handle success (e.g., show a success message or reset the form)
       } else {
         console.error('Failed to save data:', response.data);

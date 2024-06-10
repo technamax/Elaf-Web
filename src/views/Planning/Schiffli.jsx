@@ -402,10 +402,10 @@ const Schiffli = () => {
         designId: prevFormData.designId,
         planningHeaderId: prevFormData.planningHeaderId,
         batchNo: prevFormData.batchNo,
+        baseColorName: prevFormData.baseColorName,
         schiffiliId: 0,
         componentId: '',
         poPcs: '',
-        baseColorName: prevFormData.baseColorName,
         fabricId: '',
         vendorId: '',
         colorId: '', // from dying screen coming from fabricAPI
@@ -433,41 +433,41 @@ const Schiffli = () => {
       }));
 
       refetchSchiffliList();
-      setAccordionExpanded(false);
 
-      setInitialData((prevFormData) => ({
-        designId: prevFormData.designId,
-        planningHeaderId: prevFormData.planningHeaderId,
-        batchNo: prevFormData.batchNo,
-        schiffiliId: 0,
-        componentId: '',
-        poPcs: '',
-        baseColorName: prevFormData.baseColorName,
-        fabricId: '',
-        vendorId: '',
-        colorId: '', // from dying screen coming from fabricAPI
-        availableQty: '',
-        thaanQty: 0,
-        operatingMachineId: 0,
-        operatingMachine: '',
-        workingHeadId: 0,
-        cuttingSize: '',
-        rate: '',
-        costPerComponent: '',
-        totalEmbroidry: 0,
-        noOfItemPerThaan: 0,
-        noOfStichesPerYard: 0,
-        amountPerYard: 0,
-        totalPcs: 0,
-        laserCut: false,
-        laserCutRate: 0,
-        pcsForLaserCut: 0,
-        totalAmount: 0,
-        createdOn: new Date().toISOString(),
-        createdBy: 0,
-        lastUpdatedOn: new Date().toISOString(),
-        LastUpdatedBy: 0
-      }));
+      // setInitialData((prevFormData) => ({
+      //   designId: prevFormData.designId,
+      //   planningHeaderId: prevFormData.planningHeaderId,
+      //   batchNo: prevFormData.batchNo,
+      //   baseColorName: prevFormData.baseColorName,
+      //   schiffiliId: 0,
+      //   componentId: '',
+      //   poPcs: '',
+      //   fabricId: '',
+      //   vendorId: '',
+      //   colorId: '', // from dying screen coming from fabricAPI
+      //   availableQty: '',
+      //   thaanQty: 0,
+      //   operatingMachineId: 0,
+      //   operatingMachine: '',
+      //   workingHeadId: 0,
+      //   cuttingSize: '',
+      //   rate: '',
+      //   costPerComponent: '',
+      //   totalEmbroidry: 0,
+      //   noOfItemPerThaan: 0,
+      //   noOfStichesPerYard: 0,
+      //   amountPerYard: 0,
+      //   totalPcs: 0,
+      //   laserCut: false,
+      //   laserCutRate: 0,
+      //   pcsForLaserCut: 0,
+      //   totalAmount: 0,
+      //   createdOn: new Date().toISOString(),
+      //   createdBy: 0,
+      //   lastUpdatedOn: new Date().toISOString(),
+      //   LastUpdatedBy: 0
+      // }));
+      setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
     }
