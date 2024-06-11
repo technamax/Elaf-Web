@@ -20,7 +20,12 @@ import {
   AccordionDetails,
   IconButton
 } from '@mui/material';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import embroidery from '../../assets/images/planningicons/embroidery.png';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 
@@ -627,7 +632,9 @@ const Embroidery = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={<AddOutlinedIcon />}
+          avatar={
+            <Avatar src={embroidery} sx={{ background: 'transparent' }} />
+          }
           title="Embroidery  "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
@@ -715,7 +722,7 @@ const Embroidery = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={<AddOutlinedIcon />}
+          avatar={<AddOutlinedIcon />}
           title="Add Embroidery"
           titleTypographyProps={{ style: { color: 'white' } }}
           action={
@@ -1181,7 +1188,7 @@ const Embroidery = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={<VisibilityOutlinedIcon />}
+          avatar={<VisibilityOutlinedIcon />}
           title="View Embroidery "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>{' '}

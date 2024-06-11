@@ -38,7 +38,12 @@ import { useGetPrePlanningHeaderByDesignIdQuery } from 'api/store/Apis/prePlanni
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { useGetComponentsByBatchNoQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetFabricByComponentsAndBatchNoQuery } from 'api/store/Apis/prePlanningHeaderApi';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import schiffli from '../../assets/images/planningicons/schiffli.png';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
 import { AlignHorizontalCenter } from '@mui/icons-material';
@@ -627,7 +632,7 @@ const Schiffli = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={<Avatar src={dyeing} sx={{ background: 'transparent' }} />}
+          avatar={<Avatar src={schiffli} sx={{ background: 'transparent' }} />}
           title="Schiffli "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
@@ -731,7 +736,7 @@ const Schiffli = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={<Avatar src={dyeing} sx={{ background: 'transparent' }} />}
+          avatar={<AddOutlinedIcon />}
           title="Add Schiffli "
           titleTypographyProps={{ style: { color: 'white' } }}
           action={
@@ -1035,7 +1040,7 @@ const Schiffli = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={<Avatar src={dyeing} sx={{ background: 'transparent' }} />}
+          avatar={<VisibilityOutlinedIcon />}
           title="View Schiffli "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>

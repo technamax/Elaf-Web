@@ -38,7 +38,12 @@ import { useGetPrePlanningHeaderByDesignIdQuery } from 'api/store/Apis/prePlanni
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { useGetComponentsByBatchNoQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetFabricByComponentsAndBatchNoQuery } from 'api/store/Apis/prePlanningHeaderApi';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import process from '../../assets/images/planningicons/process.png';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
 import { AlignHorizontalCenter } from '@mui/icons-material';
@@ -604,7 +609,7 @@ const AdditionalProcess = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={<Avatar src={dyeing} sx={{ background: 'transparent' }} />}
+          avatar={<Avatar src={process} sx={{ background: 'transparent' }} />}
           title="Additional Process "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
@@ -708,7 +713,7 @@ const AdditionalProcess = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={<Avatar src={dyeing} sx={{ background: 'transparent' }} />}
+          avatar={<AddOutlinedIcon />}
           title="Add Additional Process "
           titleTypographyProps={{ style: { color: 'white' } }}
           action={
@@ -877,7 +882,7 @@ const AdditionalProcess = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={<Avatar src={dyeing} sx={{ background: 'transparent' }} />}
+          avatar={<VisibilityOutlinedIcon />}
           title="View Additional Process "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>

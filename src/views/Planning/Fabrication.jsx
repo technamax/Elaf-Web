@@ -24,7 +24,7 @@ import {
 import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetPrePlanningHeaderByDesignIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
-import fabric from '../../assets/images/planningicons/fabric.png';
+
 // import dyeing1 from '../../assets/images/planningicons/dyeing1.png';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 
@@ -36,6 +36,7 @@ import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import fabric from '../../assets/images/planningicons/fabric.png';
 import '../../assets/scss/style.scss';
 
 const Fabrication = () => {
