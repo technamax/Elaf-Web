@@ -227,6 +227,8 @@ const Dyeing = () => {
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
+      setAccordionExpanded(true);
+
       // Fetch data from API when batchNo changes
     } else if (name === 'fabricId') {
       const selectedFabric = Fabrications.find(
