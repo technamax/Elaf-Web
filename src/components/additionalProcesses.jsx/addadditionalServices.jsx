@@ -200,7 +200,7 @@ export default function AddAdditionalServices(onSaveSuccess) {
       </Grid>
       {/* grid-3 ends */}
       {/* grid-4*/}
-      <Grid item md={4} width="inherit" paddingX={1}>
+      <Grid item md={2} width="inherit" paddingX={1}>
         <TextField
           id="outlined-required"
           label="PO PC's"
@@ -215,7 +215,7 @@ export default function AddAdditionalServices(onSaveSuccess) {
       </Grid>
       {/* grid-4 ends */}
       {/* grid-5*/}
-      <Grid item md={4} width="inherit" paddingX={1}>
+      <Grid item md={2} width="inherit" paddingX={1}>
         <TextField
           id="outlined-required"
           label="Qty"
@@ -230,7 +230,7 @@ export default function AddAdditionalServices(onSaveSuccess) {
       </Grid>
       {/* grid-5 ends */}
       {/* grid-6*/}
-      <Grid item md={4} width="inherit" paddingX={1}>
+      <Grid item md={2} width="inherit" paddingX={1}>
         <TextField
           id="outlined-required"
           label="UOM"
@@ -244,7 +244,7 @@ export default function AddAdditionalServices(onSaveSuccess) {
       </Grid>
       {/* grid-6 ends */}
       {/* grid-7*/}
-      <Grid item md={4} width="inherit" paddingX={1}>
+      <Grid item md={2} width="inherit" paddingX={1}>
         <TextField
           id="outlined-required"
           label="Rate"
@@ -259,7 +259,7 @@ export default function AddAdditionalServices(onSaveSuccess) {
       </Grid>
       {/* grid-7 ends */}
       {/* grid-8*/}
-      <Grid item md={4} width="inherit" paddingX={1}>
+      <Grid item md={2} width="inherit" paddingX={1}>
         <TextField
           id="outlined-required"
           label="Total Amount"
@@ -274,7 +274,7 @@ export default function AddAdditionalServices(onSaveSuccess) {
       </Grid>
       {/* grid-8 ends */}
       {/* grid-9*/}
-      <Grid item md={4} width="inherit" paddingX={1}>
+      <Grid item md={2} width="inherit" paddingX={1}>
         <TextField
           id="outlined-required"
           label="Cost per Piece"
