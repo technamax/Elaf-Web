@@ -393,13 +393,13 @@ const PrePlanning = () => {
     },
     {
       field: 'shrinkage',
-      headerName: 'Shrinkage',
+      headerName: 'Shrinkage %',
       flex: 1,
       editable: true
     },
     {
       field: 'wastage',
-      headerName: 'Wastage',
+      headerName: 'Wastage %',
       flex: 1,
       editable: true
     },
