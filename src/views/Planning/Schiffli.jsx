@@ -38,12 +38,7 @@ import { useGetPrePlanningHeaderByDesignIdQuery } from 'api/store/Apis/prePlanni
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { useGetComponentsByBatchNoQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetFabricByComponentsAndBatchNoQuery } from 'api/store/Apis/prePlanningHeaderApi';
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import schiffli from '../../assets/images/planningicons/schiffli.png';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
 import { AlignHorizontalCenter } from '@mui/icons-material';
@@ -121,7 +116,7 @@ const Schiffli = () => {
   }, [initialData]);
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
   const handleAccordionToggle = (event, isExpanded) => {
-    setAccordionExpanded(!accordionExpanded);
+    setAccordionExpanded(isExpanded);
   };
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
@@ -632,7 +627,7 @@ const Schiffli = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          avatar={<Avatar src={schiffli} sx={{ background: 'transparent' }} />}
+          // avatar={<Avatar src={dyeing} sx={{ background: 'transparent' }} />}
           title="Schiffli "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
@@ -724,11 +719,11 @@ const Schiffli = () => {
               disabled
             />
           </Grid>
-          {/* <Grid item xs={12} textAlign="right">
+          <Grid item xs={12} textAlign="right">
             <Button variant="contained" size="small" onClick={handleSave}>
               Save
             </Button>
-          </Grid> */}
+          </Grid>
         </Grid>
       </Card>
       <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
@@ -736,20 +731,10 @@ const Schiffli = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          avatar={<AddOutlinedIcon />}
+          // avatar={<Avatar src={dyeing} sx={{ background: 'transparent' }} />}
           title="Add Schiffli "
           titleTypographyProps={{ style: { color: 'white' } }}
-          action={
-            <IconButton onClick={handleAccordionToggle}>
-              <ExpandMoreIcon style={{ color: 'white' }} />
-            </IconButton>
-          }
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}
-        ></CardHeader>{' '}
+        ></CardHeader>
         <Accordion
           expanded={accordionExpanded}
           onChange={handleAccordionToggle}
@@ -759,7 +744,6 @@ const Schiffli = () => {
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1-content"
             id="panel1-header"
-            sx={{ display: 'none' }} // Hide this since we're using the icon in the CardHeader
           ></AccordionSummary>
           <AccordionDetails>
             <Grid
@@ -992,11 +976,23 @@ const Schiffli = () => {
                   onChange={handleChange}
                 />
               </Grid>
+              <Grid item xs={12} md={1.5}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.laserCut}
+                      onChange={handleCheckboxChange}
+                      name="laserCut"
+                    />
+                  }
+                  label="Laser Cut"
+                />
+              </Grid>
 
               {formData.laserCut ? (
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={4.5}>
                   <Grid container spacing={1} width="Inherit">
-                    <Grid item xs={12} md={3}>
+                    <Grid item xs={12} md={6}>
                       <TextField
                         label="Laser Cut Rate"
                         fullWidth
@@ -1006,7 +1002,7 @@ const Schiffli = () => {
                         onChange={handleChange}
                       />
                     </Grid>
-                    <Grid item xs={12} md={3}>
+                    <Grid item xs={12} md={6}>
                       <TextField
                         label="Pcs For LaserCut"
                         fullWidth
@@ -1019,23 +1015,6 @@ const Schiffli = () => {
                   </Grid>
                 </Grid>
               ) : null}
-              <Grid item xs={12} md={2}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={formData.laserCut}
-                      onChange={handleCheckboxChange}
-                      name="laserCut"
-                    />
-                  }
-                  label="Laser Cut"
-                />
-              </Grid>
-              <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-                <Button variant="contained" size="small" onClick={handleSave}>
-                  Save
-                </Button>
-              </Grid>
             </Grid>
           </AccordionDetails>
         </Accordion>
@@ -1045,7 +1024,7 @@ const Schiffli = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          avatar={<VisibilityOutlinedIcon />}
+          // avatar={<Avatar src={dyeing} sx={{ background: 'transparent' }} />}
           title="View Schiffli "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
