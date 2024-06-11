@@ -347,7 +347,7 @@ export default function AddAdditionalServices(onSaveSuccess) {
       {/* grid-button */}
       <Grid item md={12} width="inherit" paddingX={1} textAlign="right">
         <Button variant="contained" color="primary" size="small">
-          Add
+          Save
         </Button>
       </Grid>
     </Grid>

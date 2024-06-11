@@ -724,11 +724,11 @@ const Schiffli = () => {
               disabled
             />
           </Grid>
-          <Grid item xs={12} textAlign="right">
+          {/* <Grid item xs={12} textAlign="right">
             <Button variant="contained" size="small" onClick={handleSave}>
               Save
             </Button>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Card>
       <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
@@ -1030,6 +1030,11 @@ const Schiffli = () => {
                   }
                   label="Laser Cut"
                 />
+              </Grid>
+              <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
+                <Button variant="contained" size="small" onClick={handleSave}>
+                  Save
+                </Button>
               </Grid>
             </Grid>
           </AccordionDetails>

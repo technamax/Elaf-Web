@@ -701,11 +701,6 @@ const AdditionalProcess = () => {
               disabled
             />
           </Grid>
-          <Grid item xs={12} textAlign="right">
-            <Button variant="contained" size="small" onClick={handleSave}>
-              Save
-            </Button>
-          </Grid>
         </Grid>
       </Card>
       <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
@@ -872,6 +867,11 @@ const AdditionalProcess = () => {
                   value={formData.totalAmount}
                   onChange={handleChange}
                 />
+              </Grid>
+              <Grid item xs={12} textAlign="right">
+                <Button variant="contained" size="small" onClick={handleSave}>
+                  Save
+                </Button>
               </Grid>
             </Grid>
           </AccordionDetails>

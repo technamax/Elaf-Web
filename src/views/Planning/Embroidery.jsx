@@ -708,11 +708,6 @@ const Embroidery = () => {
               disabled
             />
           </Grid>
-          <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-            <Button variant="contained" size="small" onClick={handleSave}>
-              Save
-            </Button>
-          </Grid>
         </Grid>
         {/* </Grid> */}
       </Card>
@@ -1178,6 +1173,11 @@ const Embroidery = () => {
                   }
                   label="isSolving"
                 />
+              </Grid>
+              <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
+                <Button variant="contained" size="small" onClick={handleSave}>
+                  Save
+                </Button>
               </Grid>
             </Grid>{' '}
           </AccordionDetails>{' '}
