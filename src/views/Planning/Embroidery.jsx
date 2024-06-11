@@ -282,6 +282,7 @@ const Embroidery = () => {
         id: index + 1
       }));
       setInitialRows(rowsWithId);
+      console.log('fetchEmbroideryData', data);
       console.log('initialRows', initialRows);
     } catch (err) {
       console.error(err.message);
@@ -552,12 +553,12 @@ const Embroidery = () => {
   const columns = [
     { field: 'designId', headerName: 'Design Id' },
     { field: 'batchNo', headerName: 'Batch No.' },
-    { field: 'componentId', headerName: 'Component Id' },
-    { field: 'fabricId', headerName: 'Fabric Id' },
+    { field: 'componentName', headerName: 'Component Id' },
+    { field: 'fabricName', headerName: 'Fabric Id' },
     { field: 'vendorId', headerName: 'Vendor Id' },
     { field: 'poPcs', headerName: 'Po Pcs' },
     { field: 'baseColorName', headerName: 'Base Color' },
-    { field: 'colorId', headerName: 'Color' },
+    { field: 'colourName', headerName: 'Color' },
     { field: 'availableQty', headerName: 'Available Qty' },
     { field: 'noOfHead', headerName: 'No. Of Heads' },
     { field: 'repeats', headerName: 'Repeats' },
