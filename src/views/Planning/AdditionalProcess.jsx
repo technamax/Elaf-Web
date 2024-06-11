@@ -783,16 +783,7 @@ const AdditionalProcess = () => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Po Pcs"
-                  fullWidth
-                  size="small"
-                  name="poPcs"
-                  value={formData.poPcs}
-                  onChange={handleChange}
-                />
-              </Grid>
+
               <Grid item xs={12} md={3}>
                 <TextField
                   fullWidth
@@ -809,6 +800,16 @@ const AdditionalProcess = () => {
                     </MenuItem>
                   ))}
                 </TextField>
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Po Pcs"
+                  fullWidth
+                  size="small"
+                  name="poPcs"
+                  value={formData.poPcs}
+                  onChange={handleChange}
+                />
               </Grid>
               <Grid item xs={12} md={1.5}>
                 <TextField
