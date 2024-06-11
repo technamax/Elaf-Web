@@ -976,11 +976,23 @@ const Schiffli = () => {
                   onChange={handleChange}
                 />
               </Grid>
+              <Grid item xs={12} md={1.5}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.laserCut}
+                      onChange={handleCheckboxChange}
+                      name="laserCut"
+                    />
+                  }
+                  label="Laser Cut"
+                />
+              </Grid>
 
               {formData.laserCut ? (
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={4.5}>
                   <Grid container spacing={1} width="Inherit">
-                    <Grid item xs={12} md={3}>
+                    <Grid item xs={12} md={6}>
                       <TextField
                         label="Laser Cut Rate"
                         fullWidth
@@ -990,7 +1002,7 @@ const Schiffli = () => {
                         onChange={handleChange}
                       />
                     </Grid>
-                    <Grid item xs={12} md={3}>
+                    <Grid item xs={12} md={6}>
                       <TextField
                         label="Pcs For LaserCut"
                         fullWidth
@@ -1003,18 +1015,6 @@ const Schiffli = () => {
                   </Grid>
                 </Grid>
               ) : null}
-              <Grid item xs={12} md={2}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={formData.laserCut}
-                      onChange={handleCheckboxChange}
-                      name="laserCut"
-                    />
-                  }
-                  label="Laser Cut"
-                />
-              </Grid>
             </Grid>
           </AccordionDetails>
         </Accordion>

@@ -84,9 +84,16 @@ const NewDesign = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'collectionId') {
+      const selectedCollection = collectionList.find(
+        (collection) => collection.collectionId === parseInt(value)
+      );
       setSelectedCollectionId(value);
-    }
-    setFormData({ ...formData, [name]: value });
+      setFormData({
+        ...formData,
+        collectionId: value,
+        poPcs: selectedCollection ? selectedCollection.poPcs : ''
+      });
+    } else setFormData({ ...formData, [name]: value });
   };
 
   const initialRows = designList.map((design, index) => ({

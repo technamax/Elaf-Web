@@ -551,11 +551,11 @@ const Embroidery = () => {
     // Handle delete logic
   };
   const columns = [
-    { field: 'designId', headerName: 'Design Id' },
+    { field: 'designId', headerName: 'Design' },
     { field: 'batchNo', headerName: 'Batch No.' },
-    { field: 'componentName', headerName: 'Component Id' },
-    { field: 'fabricName', headerName: 'Fabric Id' },
-    { field: 'vendorId', headerName: 'Vendor Id' },
+    { field: 'componentName', headerName: 'Component ' },
+    { field: 'fabricName', headerName: 'Fabric ' },
+    { field: 'vendorId', headerName: 'Vendor' },
     { field: 'poPcs', headerName: 'Po Pcs' },
     { field: 'baseColorName', headerName: 'Base Color' },
     { field: 'colourName', headerName: 'Color' },
