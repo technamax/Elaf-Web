@@ -44,6 +44,7 @@ import { Card, CardHeader, Avatar } from '@mui/material';
 import dyeing from '../../assets/images/planningicons/dyeing.png';
 import dye from '../../assets/images/planningicons/dye.png';
 // project imports
+import roller from '../../assets/images/roller-ezgif.com-instagif.gif';
 import MainCard from 'ui-component/cards/MainCard';
 
 const Dyeing = () => {
@@ -584,7 +585,7 @@ const Dyeing = () => {
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          avatar={<Avatar src={dye} sx={{ background: 'transparent' }} />}
+          avatar={<Avatar src={roller} sx={{ background: 'transparent' }} />}
           title="Dyeing "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
