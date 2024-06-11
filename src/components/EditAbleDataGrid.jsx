@@ -15,6 +15,7 @@ import {
 } from '@mui/x-data-grid';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import ExcelExport from './ExcelExport';
 
 import { TextField, Grid } from '@mui/material';
 
@@ -57,15 +58,17 @@ export default function FullFeaturedCrudGrid({
     };
 
     return (
-      <GridToolbarContainer>
+      <GridToolbarContainer sx={{ justifyContent: 'space-between' }}>
         <Button
           color="primary"
           startIcon={<AddIcon />}
           onClick={handleClick}
+          disabled={disableAddRecord}
           disab
         >
           Add record
         </Button>
+        <ExcelExport data={initialRows} fileName="collection" />
       </GridToolbarContainer>
     );
   }
@@ -235,7 +238,8 @@ export default function FullFeaturedCrudGrid({
         onRowModesModelChange={handleRowModesModelChange}
         onRowEditStop={handleRowEditStop}
         processRowUpdate={processRowUpdate}
-        slots={{ toolbar: !disableAddRecord ? EditToolbar : null }}
+        // slots={{ toolbar: !disableAddRecord ? EditToolbar : null }}
+        slots={{ toolbar: EditToolbar }}
         slotProps={{ toolbar: { setRows, setRowModesModel } }}
         getRowId={(row) => row.id}
         onCellDoubleClick={handleCellDoubleClick}

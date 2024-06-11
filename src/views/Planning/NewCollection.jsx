@@ -34,7 +34,10 @@ const NewCollection = () => {
   const { data: lookupData } = useGetLookUpListQuery();
   const [brands, setBrands] = useState([]);
   const [seasons, setSeasons] = useState([]);
-
+  const [searchData, setSearchData] = useState({
+    searchPlanningDateFrom: '',
+    searchPlanningDateTo: ''
+  });
   const [formData, setFormData] = useState({
     collectionName: '',
     brandId: '',
@@ -124,6 +127,28 @@ const NewCollection = () => {
       flex: 2
     },
     {
+      field: 'brandId',
+      headerName: 'Brand',
+      editable: true,
+      flex: 1,
+      type: 'singleSelect',
+      valueOptions: brands.map((collection) => ({
+        value: collection.lookUpId,
+        label: collection.lookUpName
+      }))
+    },
+    {
+      field: 'seasonId',
+      headerName: 'Season',
+      editable: true,
+      flex: 1,
+      type: 'singleSelect',
+      valueOptions: seasons.map((collection) => ({
+        value: collection.lookUpId,
+        label: collection.lookUpName
+      }))
+    },
+    {
       field: 'volume',
       headerName: 'Volume',
       flex: 1,
@@ -166,7 +191,7 @@ const NewCollection = () => {
       }
     },
     {
-      field: 'isReapetCollection',
+      field: 'isRepeatCollection',
       headerName: 'Repeat',
       flex: 1,
       editable: true,
@@ -182,6 +207,12 @@ const NewCollection = () => {
     {
       field: 'noOfDesigns',
       headerName: 'No Of Designs',
+      editable: true,
+      flex: 1
+    },
+    {
+      field: 'poPcs',
+      headerName: 'Po Pcs',
       editable: true,
       flex: 1
     }
@@ -204,7 +235,10 @@ const NewCollection = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
+  const handlesearchChange = (e) => {
+    const { name, value } = e.target;
+    setSearchData({ ...searchData, [name]: value });
+  };
   const handleSave = async () => {
     console.log(formData);
     try {
@@ -240,6 +274,33 @@ const NewCollection = () => {
       });
     }
   };
+  const [searchResult, setSearchResult] = useState([]);
+  const handleSearch = async () => {
+    try {
+      const response = await axios.get(
+        `https://gecxc.com:4041/API/CollectionRegistration/GetCollectionListByPlanningDate?startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}&appId=1`
+      );
+      enqueueSnackbar('Collection saved successfully!', {
+        variant: 'success',
+        autoHideDuration: 5000
+      });
+
+      console.log('Response Data:', response.data);
+      setSearchResult(
+        response.data.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+    } catch (error) {
+      console.error('Error saving data:', error);
+      enqueueSnackbar('Collection not saved !', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+    }
+  };
+  console.log('searchData', searchData);
   const deleteApi =
     'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
   const editAPi =
@@ -300,7 +361,7 @@ const NewCollection = () => {
                   </Button>
                 </Grid>
 
-                <Grid item xs={12} md={2}>
+                <Grid item xs={12} md={3}>
                   <TextField
                     fullWidth
                     select
@@ -477,7 +538,7 @@ const NewCollection = () => {
                 </Typography>
               </Grid>
               <Grid item xs={3} textAlign="right">
-                <Button variant="contained" size="small" onClick={handleSave}>
+                <Button variant="contained" size="small" onClick={handleSearch}>
                   Search
                 </Button>
               </Grid>
@@ -487,9 +548,9 @@ const NewCollection = () => {
                   size="small"
                   type="date"
                   label="Date From"
-                  name="planningDate"
-                  value={formData.planningDate}
-                  onChange={handleChange}
+                  name="searchPlanningDateFrom"
+                  value={searchData.searchPlanningDateFrom}
+                  onChange={handlesearchChange}
                   fullWidth
                   focused
                 />
@@ -499,9 +560,9 @@ const NewCollection = () => {
                   size="small"
                   type="date"
                   label="Date to"
-                  name="launchDate"
-                  value={formData.launchDate}
-                  onChange={handleChange}
+                  name="searchPlanningDateTo"
+                  value={searchData.searchPlanningDateTo}
+                  onChange={handlesearchChange}
                   fullWidth
                   focused
                 />
@@ -515,7 +576,7 @@ const NewCollection = () => {
             <Grid container spacing={2} width="inherit" paddingTop={2}>
               <Grid item xs={12}>
                 <EditAbleDataGrid
-                  initialRows={initialRows}
+                  initialRows={searchResult}
                   ncolumns={columns}
                   formData={formData}
                   // deleteApi={deleteApi}
