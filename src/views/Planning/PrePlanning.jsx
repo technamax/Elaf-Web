@@ -15,7 +15,8 @@ import {
   Autocomplete,
   Accordion,
   AccordionDetails,
-  AccordionSummary
+  AccordionSummary,
+  IconButton
 } from '@mui/material';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 // import { useGetDesignListQuery } from 'api/store/Apis/designApi';
@@ -485,7 +486,7 @@ const PrePlanning = () => {
   const editAPi = `https://gecxc.com:4041/api/PrePlanning/SavePrePlanning`;
   const deleteApi = `https://gecxc.com:4041/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
   const handleAccordionToggle = (event, isExpanded) => {
-    setAccordionExpanded(isExpanded); // Toggle accordion state based on the icon click
+    setAccordionExpanded(!accordionExpanded); // Toggle accordion state based on the icon click
   };
   return (
     <>
@@ -605,21 +606,33 @@ const PrePlanning = () => {
           avatar={<AddOutlinedIcon />}
           title="Add Pre Planning"
           titleTypographyProps={{ style: { color: 'white' } }}
+          action={
+            <IconButton onClick={handleAccordionToggle}>
+              <ExpandMoreIcon style={{ color: 'white' }} />
+            </IconButton>
+          }
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
         ></CardHeader>
         <Accordion
           expanded={accordionExpanded}
           onChange={handleAccordionToggle}
           sx={{}}
         >
+          {/* <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          ></AccordionSummary> */}
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1-content"
             id="panel1-header"
-          >
-            {/* <Typography variant="h6" gutterBottom>
-              Add Planning Fields
-            </Typography> */}
-          </AccordionSummary>
+            sx={{ display: 'none' }} // Hide this since we're using the icon in the CardHeader
+          ></AccordionSummary>
           <AccordionDetails>
             <Grid
               container

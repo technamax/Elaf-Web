@@ -10,7 +10,8 @@ import {
   Divider,
   Accordion,
   AccordionDetails,
-  AccordionSummary
+  AccordionSummary,
+  IconButton
 } from '@mui/material';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 // import { useGetDesignListQuery } from 'api/store/Apis/designApi';
@@ -61,7 +62,7 @@ const Fabrication = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
   const handleAccordionToggle = (event, isExpanded) => {
-    setAccordionExpanded(isExpanded);
+    setAccordionExpanded(!accordionExpanded);
   };
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
@@ -593,6 +594,16 @@ const Fabrication = () => {
           avatar={<AddOutlinedIcon />}
           title="Add Fabric Requisition"
           titleTypographyProps={{ style: { color: 'white' } }}
+          action={
+            <IconButton onClick={handleAccordionToggle}>
+              <ExpandMoreIcon style={{ color: 'white' }} />
+            </IconButton>
+          }
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
         ></CardHeader>
         <Accordion
           expanded={accordionExpanded}
@@ -603,6 +614,7 @@ const Fabrication = () => {
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1-content"
             id="panel1-header"
+            sx={{ display: 'none' }} // Hide this since we're using the icon in the CardHeader
           ></AccordionSummary>
           <AccordionDetails>
             <Grid

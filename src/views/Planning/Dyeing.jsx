@@ -146,7 +146,7 @@ const Dyeing = () => {
   console.log('batchList', batchList);
   console.log('formData', formData);
   const handleAccordionToggle = (event, isExpanded) => {
-    setAccordionExpanded(isExpanded);
+    setAccordionExpanded(!accordionExpanded);
   };
 
   useEffect(() => {
@@ -757,6 +757,16 @@ const Dyeing = () => {
           avatar={<AddOutlinedIcon />}
           title="Add Dyeing "
           titleTypographyProps={{ style: { color: 'white' } }}
+          action={
+            <IconButton onClick={handleAccordionToggle}>
+              <ExpandMoreIcon style={{ color: 'white' }} />
+            </IconButton>
+          }
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
         ></CardHeader>
         <Accordion
           expanded={accordionExpanded}
@@ -767,6 +777,7 @@ const Dyeing = () => {
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1-content"
             id="panel1-header"
+            sx={{ display: 'none' }} // Hide this since we're using the icon in the CardHeader
           ></AccordionSummary>
           <AccordionDetails>
             {/* <FormControl> */}

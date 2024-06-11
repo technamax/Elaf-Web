@@ -192,7 +192,7 @@ const Embroidery = () => {
   console.log('collectionData', collectionData);
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
   const handleAccordionToggle = (event, isExpanded) => {
-    setAccordionExpanded(isExpanded);
+    setAccordionExpanded(!accordionExpanded);
   };
 
   const [designList, setDesignList] = useState([]);
@@ -718,7 +718,17 @@ const Embroidery = () => {
           // avatar={<AddOutlinedIcon />}
           title="Add Embroidery"
           titleTypographyProps={{ style: { color: 'white' } }}
-        ></CardHeader>
+          action={
+            <IconButton onClick={handleAccordionToggle}>
+              <ExpandMoreIcon style={{ color: 'white' }} />
+            </IconButton>
+          }
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        ></CardHeader>{' '}
         <Accordion
           expanded={accordionExpanded}
           onChange={handleAccordionToggle}
@@ -728,6 +738,7 @@ const Embroidery = () => {
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1-content"
             id="panel1-header"
+            sx={{ display: 'none' }} // Hide this since we're using the icon in the CardHeader
           ></AccordionSummary>
           <AccordionDetails>
             <Grid
