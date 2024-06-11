@@ -877,7 +877,7 @@ const PrePlanning = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={1} textAlign="right">
+              <Grid item xs={12} md={2} textAlign="right">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -890,7 +890,7 @@ const PrePlanning = () => {
                 />
               </Grid>
               {formData.isSchiffili ? (
-                <Grid item xs={12} md={3}>
+                <Grid item xs={12} md={6}>
                   <Grid container spacing={1} width="Inherit">
                     <Grid item xs={12} md={4}>
                       <TextField

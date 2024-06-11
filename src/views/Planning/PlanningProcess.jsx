@@ -260,7 +260,14 @@ export default function PlanningProcess() {
           }
           return (
             <Step key={label} {...stepProps}>
-              <StepLabel {...labelProps}>{label}</StepLabel>
+              <StepLabel
+                {...labelProps}
+                onClick={() => setActiveStep(index)}
+                style={{ cursor: 'pointer' }}
+              >
+                {' '}
+                {label}
+              </StepLabel>
             </Step>
           );
         })}

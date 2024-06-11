@@ -50,7 +50,7 @@ const Fabrication = () => {
     rate: '',
     uomId: 'string',
     total: '',
-    unitPrice: '',
+    unitPrice: '0',
     gst: '', //// not in api
     totalInclGst: '', ///// not in api total*gst
     createdOn: new Date().toISOString(),
@@ -166,7 +166,8 @@ const Fabrication = () => {
     const calculateUnitPrice = () => {
       const total = parseFloat(formData.total) || 0;
       const poPcs = parseFloat(formData.poPcs) || 0;
-      return total / poPcs;
+      const unitPrice = total / poPcs;
+      return isNaN(unitPrice) ? 0 : unitPrice;
     };
 
     setFormData((prevData) => ({
@@ -713,7 +714,7 @@ const Fabrication = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={1.5}>
+              <Grid item xs={12} md={2}>
                 <TextField
                   label="Total Inc GSt."
                   fullWidth
