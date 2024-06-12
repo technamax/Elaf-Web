@@ -44,10 +44,7 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import schiffli from '../../assets/images/planningicons/schiffli.png';
-import EditAbleDataGrid from 'components/EditAbleDataGrid';
-import MainCard from 'ui-component/cards/MainCard';
-import { AlignHorizontalCenter } from '@mui/icons-material';
-import loadingGif from '../../assets/images/loading1.svg';
+import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
 const Schiffli = () => {
   const [initialData, setInitialData] = useState([]);
@@ -124,7 +121,6 @@ const Schiffli = () => {
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded);
   };
-  const [loading, setLoading] = useState(false); // State for loading
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
@@ -341,8 +337,6 @@ const Schiffli = () => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
-      setLoading(true);
-
       setFormData({
         ...formData,
         collectionId: value
@@ -368,7 +362,6 @@ const Schiffli = () => {
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
       setAccordionExpanded(true);
-      setLoading(false);
     } else if (name === 'colorId') {
       const selectedcolor = colors.find((color) => color.colorId === value);
       setFormData({
@@ -484,34 +477,6 @@ const Schiffli = () => {
   };
   console.log('formData', formData);
 
-  const handleEdit = (row) => {
-    // Convert the comma-separated string to an array
-    setInitialData(row);
-    // const threadAdditionalArray = row.threadAdditional
-    //   ? row.threadAdditional.split(',').map((item) => item.trim())
-    //   : [];
-
-    // setInitialData({
-    //   ...row,
-    //   threadAdditional: threadAdditionalArray
-    // });
-  };
-
-  console.log('initialData', initialData);
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(
-        `https://gecxc.com:4041/api/Schiffli/DeleteSchiffiById?schiffiId=${id}`
-      );
-      // refetchEmbroideryList();
-      refetchSchiffliList();
-      console.log('deleted');
-    } catch (error) {
-      console.error('Error deleting data:', error);
-    }
-    // Handle delete logic
-  };
-
   const columns = [
     {
       field: 'componentName',
@@ -590,47 +555,9 @@ const Schiffli = () => {
     {
       field: 'pcsForLaserCut',
       headerName: 'Pcs.For Laser Cut'
-    },
-    {
-      field: 'Action',
-      headerName: 'Actions',
-
-      renderCell: (params) => (
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <ButtonGroup size="small" variant="text">
-            {/* <Button
-              variant="contained"
-              size="small"
-              onClick={() => handleEdit(params.row)}
-            >
-              Edit
-            </Button> */}
-            <IconButton
-              aria-label="Edit"
-              // color="primary"
-              onClick={() => handleEdit(params.row)}
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              aria-label="delete"
-              color="primary"
-              onClick={() => handleDelete(params.row.schiffiliId)}
-            >
-              <DeleteIcon />
-            </IconButton>
-            {/* <Button
-              variant="contained"
-              size="small"
-              onClick={() => handleDelete(params.row.schiffiliId)}
-            >
-              Delete
-            </Button> */}
-          </ButtonGroup>
-        </div>
-      )
     }
   ];
+  const deleteApi = `https://gecxc.com:4041/api/Schiffli/DeleteSchiffiById?schiffiId=`;
 
   return (
     <>
@@ -1062,53 +989,43 @@ const Schiffli = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
-            {loading ? (
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                <img
-                  src={loadingGif}
-                  alt="Loading"
-                  style={{
-                    width: 200,
-                    height: 200
-                    // opacity: 0.8
-                  }}
-                />
-              </div>
-            ) : (
-              <Box
+            <ReuseableDataGrid
+              iColumns={columns}
+              initialRows={initialRows}
+              setInitialData={setInitialData}
+              deleteApi={deleteApi}
+              deleteBy="schiffiliId"
+              refetch={refetchSchiffliList}
+              setAccordionExpanded={setAccordionExpanded}
+              fileName="Schffili List"
+            />
+            {/* <Box
+              sx={{
+                height: 500,
+                width: 'inherit',
+                '& .actions': {
+                  color: 'text.secondary'
+                },
+                '& .textPrimary': {
+                  color: 'text.primary'
+                }
+              }}
+            >
+              <DataGrid
+                // {...data}
+                rows={initialRows}
+                columns={columns}
+                rowLength={100}
                 sx={{
-                  height: 500,
-                  width: 'inherit',
-                  '& .actions': {
-                    color: 'text.secondary'
-                  },
-                  '& .textPrimary': {
-                    color: 'text.primary'
+                  boxShadow: 2,
+                  border: 2,
+                  borderColor: 'primary.light',
+                  '& .MuiDataGrid-cell:hover': {
+                    color: 'primary.main'
                   }
                 }}
-              >
-                <DataGrid
-                  // {...data}
-                  rows={initialRows}
-                  columns={columns}
-                  rowLength={100}
-                  sx={{
-                    boxShadow: 2,
-                    border: 2,
-                    borderColor: 'primary.light',
-                    '& .MuiDataGrid-cell:hover': {
-                      color: 'primary.main'
-                    }
-                  }}
-                />
-              </Box>
-            )}
+              />
+            </Box> */}
             {/* <EditAbleDataGrid
             ncolumns={columns}
             initialRows={initialRows}

@@ -28,8 +28,7 @@ import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 // import dyeing1 from '../../assets/images/planningicons/dyeing1.png';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 
-import EditAbleDataGrid from 'components/EditAbleDataGrid';
-import MainCard from 'ui-component/cards/MainCard';
+import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { Card, CardHeader, Avatar } from '@mui/material';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
@@ -38,10 +37,11 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import fabric from '../../assets/images/planningicons/fabric.png';
 import '../../assets/scss/style.scss';
-import loadingGif from '../../assets/images/loading1.svg';
 
 const Fabrication = () => {
+  const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
+    fabricationId: 0,
     designId: '',
     planningHeaderId: '',
     batchNo: '',
@@ -51,7 +51,7 @@ const Fabrication = () => {
     poPcs: '',
     quantity: '',
     rate: '',
-    uomId: 'string',
+    uomId: '',
     total: '',
     unitPrice: '0',
     gst: '', //// not in api
@@ -61,12 +61,34 @@ const Fabrication = () => {
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: 0
   });
+  useEffect(() => {
+    setFormData({
+      fabricationId: initialData.fabricationId || 0,
+      designId: initialData.designId || '',
+      planningHeaderId: initialData.planningHeaderId || '',
+      batchNo: initialData.batchNo || '',
+      baseColorId: initialData.baseColorId || '',
+      baseColorName: initialData.baseColorName || '',
+      fabricId: initialData.fabricId || '',
+      poPcs: initialData.poPcs || '',
+      quantity: initialData.quantity || '',
+      rate: initialData.rate || '',
+      uomId: initialData.uomId || '',
+      total: initialData.total || '',
+      unitPrice: initialData.unitPrice || '0',
+      gst: initialData.gst || '', //// not in api
+      totalInclGst: initialData.totalInclGst || '', ///// not in api total*gst
+      createdOn: initialData.createdOn || new Date().toISOString(),
+      createdBy: initialData.createdBy || 0,
+      lastUpdatedOn: initialData.lastUpdatedOn || new Date().toISOString(),
+      LastUpdatedBy: initialData.LastUpdatedBy || 0
+    });
+  }, [initialData]);
   const { enqueueSnackbar } = useSnackbar();
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded);
   };
-  const [loading, setLoading] = useState(false); // State for loading
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   console.log(collectionData);
@@ -126,7 +148,7 @@ const Fabrication = () => {
       );
       // refetchBatches();
     }
-  }, [fabricRequisitionData]);
+  }, [fabricRequisitionData, refetchFabricRequisitionData]);
 
   useEffect(() => {
     // fetchData();
@@ -187,8 +209,6 @@ const Fabrication = () => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
-      setLoading(true);
-
       setFormData({
         ...formData,
         collectionId: value
@@ -213,8 +233,6 @@ const Fabrication = () => {
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
-      setLoading(false);
-
       setAccordionExpanded(true);
     } else if (name === 'fabricId') {
       const selectedFabric = Fabrications.find(
@@ -232,223 +250,46 @@ const Fabrication = () => {
 
   const columns = [
     {
-      field: 'designId',
-      headerName: 'Design',
-      editable: true,
-      flex: 1,
-      type: 'singleSelect',
-      valueOptions: designList.map((collection) => ({
-        value: collection.designId,
-        label: collection.designNo
-      }))
+      field: 'designNo',
+      headerName: 'Design'
     },
     {
-      field: 'fabricId',
-      headerName: 'Fabric',
-      editable: true,
-      flex: 2,
-      type: 'singleSelect',
-      valueOptions: Fabrications.map((option) => ({
-        value: option.fabricId,
-        label: option.fabric
-      }))
+      field: 'fabricName',
+      headerName: 'Fabric'
     },
     {
       field: 'poPcs',
-      headerName: 'PO. Pieces',
-      flex: 1,
-      editable: true
+      headerName: 'PO. Pieces'
     },
     {
       field: 'quantity',
-      headerName: 'Quantity',
-      flex: 1,
-      editable: true
+      headerName: 'Quantity'
     },
     {
       field: 'rate',
-      headerName: 'Rate',
-      editable: true,
-      flex: 1
+      headerName: 'Rate'
     },
     {
-      field: 'uomId',
-      headerName: 'UOM',
-      editable: true,
-      flex: 1,
-      type: 'singleSelect',
-      valueOptions: uoms.map((collection) => ({
-        value: collection.lookUpId,
-        label: collection.lookUpName
-      }))
+      field: 'uomName',
+      headerName: 'UOM'
     },
     {
       field: 'total',
-      headerName: 'Total',
-      flex: 1,
-      editable: true,
-      // valueGetter: (params, row) => {
-      //   const quantity = parseFloat(row.quantity) || 0;
-      //   const rate = parseFloat(row.rate) || 0;
-      //   return quantity * rate;
-      // }
-      valueSetter: (params, row) => {
-        const quantity = row.quantity ?? 0;
-        const rate = row.rate ?? 0;
-        const total = quantity * rate;
-        // console.log('total', total);
-        return { ...row, total };
-      }
-      // valueSetter: (params, row) => {
-      //   console.log('row', row);
-      //   const quantity = row.quantity || 0;
-      //   const rate = row.rate || 0;
-      //   return quantity * rate;
-      // }
+      headerName: 'Total'
     },
     {
       field: 'unitPrice',
-      headerName: 'Unit Price',
-      flex: 1,
-      editable: true,
-      // valueGetter: (params, row) => {
-      //   const total = parseFloat(row.total) || 0;
-      //   const poPcs = parseFloat(row.poPcs) || 0;
-      //   return total / poPcs;
-      // }
-      valueSetter: (params, row) => {
-        const total = row.total ?? 0;
-        const poPcs = row.poPcs ?? 0;
-        const unitPrice = total / poPcs;
-        // console.log('unitPrice', unitPrice);
-        return { ...row, unitPrice };
-      }
-      // valueSetter: (params, row) => {
-      //   const total = row.total || 0;
-      //   const poPcs = row.poPcs || 0;
-      //   return total / poPcs;
-      // }
+      headerName: 'Unit Price'
     },
     {
       field: 'gst',
-      headerName: 'GST',
-      flex: 1,
-      editable: true
+      headerName: 'GST'
     },
     {
       field: 'totalInclGst',
-      headerName: 'Total Inc. GST',
-      flex: 1,
-      editable: true,
-      // valueGetter: (params, row) => {
-      //   console.log(row);
-      //   const total = parseFloat(row.total) || 0;
-      //   const gst = parseFloat(row.gst) || 0;
-      //   return total * (1 + gst / 100);
-      // }
-      valueSetter: (params, row) => {
-        const total = row.total ?? 0;
-        const gst = row.gst ?? 0;
-        const totalInclGst = total * (1 + gst / 100);
-        // console.log('totalInclGst', totalInclGst);
-        return { ...row, totalInclGst };
-      }
+      headerName: 'Total Inc. GST'
     }
   ];
-
-  // const columns = [
-  //   // {
-  //   //   field: 'OrderNumber ',
-  //   //   headerName: 'Component',
-  //   //   editable: true,
-  //   //   flex: 1,
-  //   //   type: 'singleSelect',
-  //   //   valueOptions: components.map((collection) => ({
-  //   //     value: collection.lookUpId,
-  //   //     label: collection.lookUpName
-  //   //   }))
-  //   // },
-  //   {
-  //     field: 'designId',
-  //     headerName: 'Design',
-  //     editable: true,
-  //     flex: 1,
-  //     type: 'singleSelect',
-  //     valueOptions: designList.map((collection) => ({
-  //       value: collection.designId,
-  //       label: collection.designNo
-  //     }))
-  //   },
-  //   {
-  //     field: 'poPcs',
-  //     headerName: 'PO. Pieces',
-  //     flex: 1,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'quantity',
-  //     headerName: 'quantity',
-  //     flex: 1,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'rate',
-  //     headerName: 'Rate',
-  //     editable: true,
-  //     flex: 1
-  //   },
-  //   {
-  //     field: 'uomId',
-  //     headerName: 'UOM',
-  //     editable: true,
-  //     flex: 1,
-  //     type: 'singleSelect',
-  //     valueOptions: uoms.map((collection) => ({
-  //       value: collection.lookUpId,
-  //       label: collection.lookUpName
-  //     }))
-  //   },
-
-  //   {
-  //     field: 'total',
-  //     headerName: 'total',
-  //     flex: 1,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'unitPrice',
-  //     headerName: 'Unit Price',
-  //     flex: 1,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'gst',
-  //     headerName: 'GST',
-  //     flex: 1,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'totalInclGst',
-  //     headerName: 'Total Inc. GST',
-  //     flex: 1,
-  //     editable: true
-  //   }
-
-  //   // {
-  //   //   field: 'totalFabric',
-  //   //   headerName: 'Total Fabric',
-  //   //   flex: 1,
-  //   //   editable: true,
-
-  //   //   valueSetter: (params, row) => {
-  //   //     const repeats = row.repeats ?? 0;
-  //   //     const repeatSize = row.repeatSize ?? 0;
-  //   //     const totalFabric = repeats * repeatSize;
-  //   //     console.log('totalFabric', totalFabric);
-  //   //     return { ...row, totalFabric };
-  //   //   }
-  //   // },
-  // ];
 
   const handleSave = async () => {
     try {
@@ -457,7 +298,6 @@ const Fabrication = () => {
         'https://gecxc.com:4041/api/Fabrication/SaveFabrication',
         formData
       );
-      refetchFabricRequisitionData();
 
       // Handle the response if needed
       console.log('Save response:', response.data);
@@ -467,25 +307,28 @@ const Fabrication = () => {
       });
 
       // Clear the form after successful save
-      setFormData({
-        designId: formData.designId,
-        batchNo: '',
+      setFormData((prevFormData) => ({
+        designId: prevFormData.designId,
+        batchNo: prevFormData.batchNo,
+        planningHeaderId: prevFormData.planningHeaderId,
+        fabricationId: 0,
         baseColorId: '',
         baseColorName: '',
         fabricId: '',
         poPcs: '',
         quantity: '',
         rate: '',
-        uomId: 'string',
+        uomId: '',
         total: '',
-        unitPrice: '',
-        gst: '',
-        totalInclGst: '',
-        createdOn: '2024-05-29T09:56:23.916Z',
+        unitPrice: '0',
+        gst: '', //// not in api
+        totalInclGst: '', ///// not in api total*gst
+        createdOn: new Date().toISOString(),
         createdBy: 0,
-        lastUpdatedOn: '2024-05-29T09:56:23.916Z',
+        lastUpdatedOn: new Date().toISOString(),
         LastUpdatedBy: 0
-      });
+      }));
+
       refetchFabricRequisitionData();
       setAccordionExpanded(false);
     } catch (error) {
@@ -774,36 +617,26 @@ const Fabrication = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
-            {loading ? (
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                <img
-                  src={loadingGif}
-                  alt="Loading"
-                  style={{
-                    width: 200,
-                    height: 200
-                    // opacity: 0.8
-                  }}
-                />
-              </div>
-            ) : (
-              <EditAbleDataGrid
-                ncolumns={columns}
-                initialRows={initialRows}
-                formData={formData}
-                editAPi={editAPi}
-                refetch={refetchFabricRequisitionData}
-                deleteApi={deleteApi}
-                deleteBy="fabricationId"
-                disableAddRecord={true}
-              />
-            )}
+            <ReuseableDataGrid
+              iColumns={columns}
+              initialRows={initialRows}
+              setInitialData={setInitialData}
+              deleteApi={deleteApi}
+              deleteBy="fabricationId"
+              refetch={refetchFabricRequisitionData}
+              setAccordionExpanded={setAccordionExpanded}
+              fileName="Fabrication Requistion List"
+            />
+            {/* <EditAbleDataGrid
+              ncolumns={columns}
+              initialRows={initialRows}
+              formData={formData}
+              editAPi={editAPi}
+              refetch={refetchFabricRequisitionData}
+              deleteApi={deleteApi}
+              deleteBy="fabricationId"
+              disableAddRecord={true}
+            /> */}
           </Grid>
         </Grid>
       </Card>

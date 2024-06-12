@@ -28,6 +28,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import embroidery from '../../assets/images/planningicons/embroidery.png';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
 import { DataGrid } from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles';
@@ -47,7 +48,6 @@ import { Card, CardHeader, Avatar } from '@mui/material';
 import '../../assets/scss/style.scss';
 // import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MainCard from 'ui-component/cards/MainCard';
-import loadingGif from '../../assets/images/loading1.svg';
 
 const Embroidery = () => {
   const theme = useTheme();
@@ -148,7 +148,6 @@ const Embroidery = () => {
           : theme.typography.fontWeightMedium
     };
   }
-  const [loading, setLoading] = useState(false); // State for loading
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
@@ -185,10 +184,10 @@ const Embroidery = () => {
       }
     );
 
-  // const { data: embroideryList, refetch: refetchEmbroideryList } =
-  //   useGetEmbroideryListByBatchNoQuery(formData.planningHeaderId, {
-  //     skip: !formData.planningHeaderId // Skip the query if no collection is selected
-  //   });
+  const { data: embroideryList, refetch: refetchEmbroideryList } =
+    useGetEmbroideryListByBatchNoQuery(formData.planningHeaderId, {
+      skip: !formData.planningHeaderId // Skip the query if no collection is selected
+    });
   const { data: componentsByBatch } = useGetComponentsByBatchNoQuery(
     formData.planningHeaderId,
     {
@@ -243,17 +242,17 @@ const Embroidery = () => {
       setComponents(componentsByBatch.result);
     }
   }, [componentsByBatch]);
-  // useEffect(() => {
-  //   if (embroideryList) {
-  //     setInitialRows(
-  //       embroideryList.result.map((row, index) => ({
-  //         id: index,
-  //         ...row
-  //       }))
-  //     );
-  //   }
-  // }, [embroideryList]);
-  // console.log('embroideryList', embroideryList);
+  useEffect(() => {
+    if (embroideryList) {
+      setInitialRows(
+        embroideryList.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+    }
+  }, [embroideryList, refetchEmbroideryList]);
+  console.log('embroideryList', embroideryList);
   console.log('initialRows', initialRows);
 
   useEffect(() => {
@@ -268,37 +267,37 @@ const Embroidery = () => {
 
   const collectionList = collectionData?.result || [];
 
-  const fetchEmbroideryData = async (batchNo) => {
-    const url = `https://gecxc.com:4041/api/Embroidery/GetEmbroideryListByBatchNo?batchNo=${batchNo}`;
-    try {
-      const response = await axios.get(url);
-      return response.data; // Assuming the API returns JSON data
-    } catch (error) {
-      console.error('Error fetching embroidery data:', error);
-      throw error; // Re-throw the error if you want to handle it further up the call stack
-    }
-  };
-  const fetchEmbroidery = async () => {
-    if (!formData.planningHeaderId) {
-      return;
-    }
-    try {
-      const data = await fetchEmbroideryData(formData.planningHeaderId);
-      const rowsWithId = data.result.map((row, index) => ({
-        ...row,
-        id: index + 1
-      }));
-      setInitialRows(rowsWithId);
-      console.log('fetchEmbroideryData', data);
-      console.log('initialRows', initialRows);
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
+  // const fetchEmbroideryData = async (batchNo) => {
+  //   const url = `https://gecxc.com:4041/api/Embroidery/GetEmbroideryListByBatchNo?batchNo=${batchNo}`;
+  //   try {
+  //     const response = await axios.get(url);
+  //     return response.data; // Assuming the API returns JSON data
+  //   } catch (error) {
+  //     console.error('Error fetching embroidery data:', error);
+  //     throw error; // Re-throw the error if you want to handle it further up the call stack
+  //   }
+  // };
+  // const fetchEmbroidery = async () => {
+  //   if (!formData.planningHeaderId) {
+  //     return;
+  //   }
+  //   try {
+  //     const data = await fetchEmbroideryData(formData.planningHeaderId);
+  //     const rowsWithId = data.result.map((row, index) => ({
+  //       ...row,
+  //       id: index + 1
+  //     }));
+  //     setInitialRows(rowsWithId);
+  //     console.log('fetchEmbroideryData', data);
+  //     console.log('initialRows', initialRows);
+  //   } catch (err) {
+  //     console.error(err.message);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchEmbroidery();
-  }, [formData.planningHeaderId]);
+  // useEffect(() => {
+  //   fetchEmbroidery();
+  // }, [formData.planningHeaderId]);
 
   useEffect(() => {
     const calculateTotalPcs = () => {
@@ -427,8 +426,6 @@ const Embroidery = () => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
-      setLoading(true);
-
       setFormData({
         ...formData,
         collectionId: value
@@ -462,7 +459,6 @@ const Embroidery = () => {
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
       setAccordionExpanded(true);
-      setLoading(false);
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -479,15 +475,14 @@ const Embroidery = () => {
       );
 
       console.log('Save response:', response.data);
-      fetchEmbroidery();
-      setInitialData({});
+      // fetchEmbroidery();
+      // setInitialData({});
       setAccordionExpanded(false);
-
-      setFormData({
+      setFormData((prevFormData) => ({
         embroideryId: 0,
-        // designId: response.data.result.designId,
-        // batchNo: response.data.result.batchNo,
-        // planningHeaderId: response.data.result.planningHeaderId,
+        designId: prevFormData.designId,
+        batchNo: prevFormData.batchNo,
+        planningHeaderId: prevFormData.planningHeaderId,
         componentId: '',
         fabricId: '',
         vendorId: '',
@@ -516,50 +511,90 @@ const Embroidery = () => {
         solvingInMeters: '',
         solvingRate: 0,
         solvingAmount: '',
-        // additional: '',
         threadAdditional: [],
-
         costPerComponent: '', //
-        // costPerComponent: '', //
         createdOn: new Date().toISOString(),
         createdBy: 0,
         lastUpdatedOn: new Date().toISOString(),
         LastUpdatedBy: 0
-      });
+      }));
+      // setFormData({
+      //   embroideryId: 0,
+      //   // designId: response.data.result.designId,
+      //   // batchNo: response.data.result.batchNo,
+      //   // planningHeaderId: response.data.result.planningHeaderId,
+      //   componentId: '',
+      //   fabricId: '',
+      //   vendorId: '',
+      //   poPcs: '', // coming from getcollectionapi
+      //   baseColorId: '', // coming from getcollectionapi
+      //   baseColorName: '',
+      //   colorId: '', //from dying screen coming from fabricAPi
+      //   availableQty: '',
+      //   noOfHead: '',
+      //   repeats: '',
+      //   cuttingSize: '',
+      //   itemsPerRepeat: '',
+      //   totalPcs: '', //repeat*itemsPerRepeat
+      //   totalAmount: '', //
+      //   threadStiches: '',
+      //   threadRate: '',
+      //   threadAmount: '',
+      //   tillaStiches: '',
+      //   tilaRate: '',
+      //   tilaAmount: '',
+      //   sequence: '',
+      //   sequenceRate: '',
+      //   sequenceAmount: '',
+      //   isSolving: false,
+      //   solvingLayers: 0,
+      //   solvingInMeters: '',
+      //   solvingRate: 0,
+      //   solvingAmount: '',
+      //   // additional: '',
+      //   threadAdditional: [],
+
+      //   costPerComponent: '', //
+      //   // costPerComponent: '', //
+      //   createdOn: new Date().toISOString(),
+      //   createdBy: 0,
+      //   lastUpdatedOn: new Date().toISOString(),
+      //   LastUpdatedBy: 0
+      // });
       // setInitialRows([]);
-      // refetchEmbroideryList();
+      refetchEmbroideryList();
     } catch (error) {
       console.error('Error saving data:', error);
     }
   };
 
   console.log('initialRows', initialRows);
-  const handleEdit = (row) => {
-    // Convert the comma-separated string to an array
-    const threadAdditionalArray = row.threadAdditional
-      ? row.threadAdditional.split(',').map((item) => item.trim())
-      : [];
+  // const handleEdit = (row) => {
+  //   // Convert the comma-separated string to an array
+  //   const threadAdditionalArray = row.threadAdditional
+  //     ? row.threadAdditional.split(',').map((item) => item.trim())
+  //     : [];
 
-    setInitialData({
-      ...row,
-      threadAdditional: threadAdditionalArray
-    });
-  };
+  //   setInitialData({
+  //     ...row,
+  //     threadAdditional: threadAdditionalArray
+  //   });
+  // };
 
-  console.log('initialData', initialData);
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(
-        `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=${id}`
-      );
-      // refetchEmbroideryList();
-      fetchEmbroidery();
-      console.log('deleted');
-    } catch (error) {
-      console.error('Error deleting data:', error);
-    }
-    // Handle delete logic
-  };
+  // console.log('initialData', initialData);
+  // const handleDelete = async (id) => {
+  //   try {
+  //     await axios.delete(
+  //       `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=${id}`
+  //     );
+  //     // refetchEmbroideryList();
+  //     fetchEmbroidery();
+  //     console.log('deleted');
+  //   } catch (error) {
+  //     console.error('Error deleting data:', error);
+  //   }
+  //   // Handle delete logic
+  // };
   const columns = [
     { field: 'designId', headerName: 'Design' },
     { field: 'batchNo', headerName: 'Batch No.' },
@@ -590,47 +625,47 @@ const Embroidery = () => {
     { field: 'solvingRate', headerName: 'Solving Rate' },
     { field: 'solvingAmount', headerName: 'Solving Amount' },
     { field: 'threadAdditional', headerName: 'ThreadAdditional' },
-    { field: 'costPerComponent', headerName: 'Cost Per Component' },
-    {
-      field: 'Action',
-      headerName: 'Actions',
-      renderCell: (params) => (
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <ButtonGroup size="small" variant="text">
-            <IconButton
-              aria-label="Edit"
-              // color="primary"
-              onClick={() => handleEdit(params.row)}
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              aria-label="delete"
-              color="primary"
-              onClick={() => handleDelete(params.row.embroideryId)}
-            >
-              <DeleteIcon />
-            </IconButton>
-            {/* <Button
-              variant="contained"
-              size="small"
-              onClick={() => handleEdit(params.row)}
-            >
-              Edit
-            </Button>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={() => handleDelete(params.row.embroideryId)}
-            >
-              Delete
-            </Button> */}
-          </ButtonGroup>
-        </div>
-      )
-    }
+    { field: 'costPerComponent', headerName: 'Cost Per Component' }
+    // {
+    //   field: 'Action',
+    //   headerName: 'Actions',
+    //   renderCell: (params) => (
+    //     <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+    //       <ButtonGroup size="small" variant="text">
+    //         <IconButton
+    //           aria-label="Edit"
+    //           // color="primary"
+    //           onClick={() => handleEdit(params.row)}
+    //         >
+    //           <EditIcon />
+    //         </IconButton>
+    //         <IconButton
+    //           aria-label="delete"
+    //           color="primary"
+    //           onClick={() => handleDelete(params.row.embroideryId)}
+    //         >
+    //           <DeleteIcon />
+    //         </IconButton>
+    //         {/* <Button
+    //           variant="contained"
+    //           size="small"
+    //           onClick={() => handleEdit(params.row)}
+    //         >
+    //           Edit
+    //         </Button>
+    //         <Button
+    //           variant="contained"
+    //           size="small"
+    //           onClick={() => handleDelete(params.row.embroideryId)}
+    //         >
+    //           Delete
+    //         </Button> */}
+    //       </ButtonGroup>
+    //     </div>
+    //   )
+    // }
   ];
-
+  const deleteApi = `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=`;
   return (
     <>
       {/* <div className="CardHeader"> */}
@@ -1204,53 +1239,43 @@ const Embroidery = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
-            {loading ? (
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                <img
-                  src={loadingGif}
-                  alt="Loading"
-                  style={{
-                    width: 200,
-                    height: 200
-                    // opacity: 0.8
-                  }}
-                />
-              </div>
-            ) : (
-              <Box
+            <ReuseableDataGrid
+              iColumns={columns}
+              initialRows={initialRows}
+              setInitialData={setInitialData}
+              deleteApi={deleteApi}
+              deleteBy="embroideryId"
+              refetch={refetchEmbroideryList}
+              setAccordionExpanded={setAccordionExpanded}
+              fileName="Embroidery List"
+            />
+            {/* <Box
+              sx={{
+                height: 500,
+                width: 'inherit',
+                '& .actions': {
+                  color: 'text.secondary'
+                },
+                '& .textPrimary': {
+                  color: 'text.primary'
+                }
+              }}
+            >
+              <DataGrid
+                // {...data}
+                rows={initialRows}
+                columns={columns}
+                rowLength={100}
                 sx={{
-                  height: 500,
-                  width: 'inherit',
-                  '& .actions': {
-                    color: 'text.secondary'
-                  },
-                  '& .textPrimary': {
-                    color: 'text.primary'
+                  boxShadow: 2,
+                  border: 2,
+                  borderColor: 'primary.light',
+                  '& .MuiDataGrid-cell:hover': {
+                    color: 'primary.main'
                   }
                 }}
-              >
-                <DataGrid
-                  // {...data}
-                  rows={initialRows}
-                  columns={columns}
-                  rowLength={100}
-                  sx={{
-                    boxShadow: 2,
-                    border: 2,
-                    borderColor: 'primary.light',
-                    '& .MuiDataGrid-cell:hover': {
-                      color: 'primary.main'
-                    }
-                  }}
-                />
-              </Box>
-            )}
+              />
+            </Box> */}
             {/* <EditAbleDataGrid
             ncolumns={columns}
             initialRows={initialRows}
