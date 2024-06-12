@@ -1,75 +1,40 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
-import Typography from '@mui/material/Typography';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
-import { Card, CardHeader, Avatar } from '@mui/material';
 import '../../assets/scss/style.scss';
 
-export default function AddAdditionalServices(onSaveSuccess) {
+export default function AddAdditionalServices({ onSaveSuccess }) {
   const { data: lookupData } = useGetLookUpListQuery();
-  const [serviceType, setserviceType] = useState([]);
-  const [serviceList, setserviceList] = useState([]);
+  const [serviceType, setServiceType] = useState([]);
+  const [serviceList, setServiceList] = useState([]);
   const [vendors, setVendors] = useState([]);
+  const [plannedCollection, setPlannedCollection] = useState([]);
+
   useEffect(() => {
     if (lookupData) {
       setVendors(lookupData.result[0].vendorList);
-      setserviceList(lookupData.result[0].serviceList);
-      setserviceType(lookupData.result[0].serviceTypeList);
+      setServiceList(lookupData.result[0].serviceList);
+      setServiceType(lookupData.result[0].serviceTypeList);
     }
   }, [lookupData]);
 
-  const options = [
-    {
-      //
-      value: 'Card Printing',
-      label: 'Card Printing'
-    },
-    {
-      value: 'Additional Service',
-      label: 'Additional Service'
-    }
-  ];
-  const option2 = [
-    {
-      value: 'Elaf PVC Zipper Bag',
-      label: 'Elaf PVC Zipper Bag'
-    },
-    {
-      value: 'No',
-      label: 'No'
-    }
-  ];
-  const option1 = [
-    {
-      value: 'Mudassir Hussain Packaging Service',
-      label: 'Mudassir Hussain Packaging Service'
-    },
-    {
-      value: 'No',
-      label: 'No'
-    }
-  ];
-
   const [formData, setFormData] = useState({
-    serviceType: '',
-    serviceList: '',
+    plannedCollectionId: '',
+    serviceTypeId: '',
+    serviceListId: '',
     vendorId: '',
     poPcs: '',
     qty: '',
     uomId: '',
     rate: '',
     totalAmount: '',
-    quantity: '',
     ratePerPcs: '',
-    // totalAmount: '',
     costperPiece: '',
     uom: '',
-    vendor: null,
-    serviceType: null,
-    serviceListName: null,
     createdBy: 0,
     createdOn: new Date().toISOString()
   });
@@ -77,6 +42,18 @@ export default function AddAdditionalServices(onSaveSuccess) {
   const handleChange = async (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+
+    if (name === 'plannedCollectionId') {
+      const selectedCollection = plannedCollection.find(
+        (collection) => collection.collectionId === value
+      );
+      if (selectedCollection) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          poPcs: selectedCollection.poPcs
+        }));
+      }
+    }
   };
 
   const handleSave = async () => {
@@ -88,8 +65,8 @@ export default function AddAdditionalServices(onSaveSuccess) {
       );
       console.log('Form data saved:', response.data);
       setFormData({
-        serviceType: '',
-        serviceList: '',
+        serviceTypeId: '',
+        serviceListId: '',
         vendorId: '',
         poPcs: '',
         qty: '',
@@ -101,7 +78,6 @@ export default function AddAdditionalServices(onSaveSuccess) {
         costperPiece: '',
         uom: '',
         vendor: null,
-        serviceType: null,
         serviceListName: null
       });
       if (onSaveSuccess) onSaveSuccess(); // Call the success handler to refresh data
@@ -110,6 +86,21 @@ export default function AddAdditionalServices(onSaveSuccess) {
     }
   };
 
+  useEffect(() => {
+    const getCollectionFromPlanningHeader = async () => {
+      try {
+        const response = await axios.get(
+          'https://gecxc.com:4041/api/CollectionRegistration/GetCollectionList?appId=1'
+        );
+        console.log('GetCollectionFromPlanningHeader', response);
+        setPlannedCollection(response.data.result);
+      } catch (error) {
+        console.error('Error fetching design options:', error);
+      }
+    };
+    getCollectionFromPlanningHeader();
+  }, []);
+
   return (
     <Grid
       container
@@ -117,22 +108,43 @@ export default function AddAdditionalServices(onSaveSuccess) {
       width="Inherit"
       sx={{ paddingY: 2, paddingX: 2 }}
     >
-      {' '}
-      {/* grid-1 */}
+      <Grid item xs={12} md={4}>
+        <TextField
+          fullWidth
+          select
+          label="Select Collection"
+          name="plannedCollectionId"
+          value={formData.plannedCollectionId}
+          onChange={handleChange}
+          size="small"
+        >
+          {plannedCollection.length > 0 ? (
+            plannedCollection.map((option) => (
+              <MenuItem
+                id="ddlCollection"
+                key={option.collectionId}
+                value={option.collectionId}
+              >
+                {option.collectionName}
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem disabled>No Collections Available</MenuItem>
+          )}
+        </TextField>
+      </Grid>
       <Grid item md={4} width="inherit" paddingX={1}>
         <TextField
           id="outlined-select-option"
           select
           label="Service Type"
-          name="serviceType"
-          value={formData.serviceType}
+          name="serviceTypeId"
+          value={formData.serviceTypeId}
           onChange={handleChange}
-          // helperText="Service Type"
           variant="outlined"
           size="small"
           fullWidth
         >
-          {/* serviceType */}
           {serviceType.map((option) => (
             <MenuItem key={option.lookUpId} value={option.lookUpId}>
               {option.lookUpName}
@@ -140,17 +152,14 @@ export default function AddAdditionalServices(onSaveSuccess) {
           ))}
         </TextField>
       </Grid>
-      {/* grid-1 ends */}
-      {/* grid-2 starts */}
       <Grid item md={4} width="inherit" paddingX={1}>
         <TextField
           id="outlined-select-option"
           select
           label="Service List Id"
-          name="serviceList"
-          value={formData.serviceList}
+          name="serviceListId"
+          value={formData.serviceListId}
           onChange={handleChange}
-          // helperText="Service List"
           variant="outlined"
           size="small"
           fullWidth
@@ -162,29 +171,6 @@ export default function AddAdditionalServices(onSaveSuccess) {
           ))}
         </TextField>
       </Grid>
-      {/* grid-2 ends */}
-      {/* grid-3 starts */}
-      {/* <Grid item md={4} width="inherit" paddingX={1}>
-        <TextField
-          id="outlined-select-option"
-          select
-          label="Vendor Name"
-          name="vendorId"
-          value={formData.vendorId}
-          onChange={handleChange}
-          defaultValue="Mudassir Hussain Packaging Service"
-          helperText="Service List"
-          variant="outlined"
-          size="small"
-          fullWidth
-        >
-          {option1.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Grid> */}
       <Grid item xs={12} md={4}>
         <TextField
           fullWidth
@@ -193,7 +179,7 @@ export default function AddAdditionalServices(onSaveSuccess) {
           size="small"
           name="vendorId"
           value={formData.vendorId}
-          onChange={handleChange} // Change handleChange to handleAutocompleteChange
+          onChange={handleChange}
         >
           {vendors.map((option) => (
             <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -202,8 +188,6 @@ export default function AddAdditionalServices(onSaveSuccess) {
           ))}
         </TextField>
       </Grid>
-      {/* grid-3 ends */}
-      {/* grid-4*/}
       <Grid item md={2} width="inherit" paddingX={1}>
         <TextField
           id="outlined-required"
@@ -217,8 +201,6 @@ export default function AddAdditionalServices(onSaveSuccess) {
           disabled
         />
       </Grid>
-      {/* grid-4 ends */}
-      {/* grid-5*/}
       <Grid item md={2} width="inherit" paddingX={1}>
         <TextField
           id="outlined-required"
@@ -232,8 +214,6 @@ export default function AddAdditionalServices(onSaveSuccess) {
           fullWidth
         />
       </Grid>
-      {/* grid-5 ends */}
-      {/* grid-6*/}
       <Grid item md={2} width="inherit" paddingX={1}>
         <TextField
           id="outlined-required"
@@ -246,8 +226,6 @@ export default function AddAdditionalServices(onSaveSuccess) {
           fullWidth
         />
       </Grid>
-      {/* grid-6 ends */}
-      {/* grid-7*/}
       <Grid item md={2} width="inherit" paddingX={1}>
         <TextField
           id="outlined-required"
@@ -261,8 +239,6 @@ export default function AddAdditionalServices(onSaveSuccess) {
           required
         />
       </Grid>
-      {/* grid-7 ends */}
-      {/* grid-8*/}
       <Grid item md={2} width="inherit" paddingX={1}>
         <TextField
           id="outlined-required"
@@ -276,8 +252,6 @@ export default function AddAdditionalServices(onSaveSuccess) {
           required
         />
       </Grid>
-      {/* grid-8 ends */}
-      {/* grid-9*/}
       <Grid item md={2} width="inherit" paddingX={1}>
         <TextField
           id="outlined-required"
@@ -291,66 +265,13 @@ export default function AddAdditionalServices(onSaveSuccess) {
           fullWidth
         />
       </Grid>
-      {/* grid-9 ends */}
-      {/* grid-10*/}
-      {/* <Grid item md={4} width="inherit" paddingX={1}>
-                        <TextField
-                            id="outlined-required"
-                            label="UOM"
-                            name="uom"
-                            value={formData.uom}
-                            onChange={handleChange}
-                            type="number"
-                            size="small"
-                            required
-                        />
-                    </Grid> */}
-      {/* grid-10 ends */}
-      {/* grid-11*/}
-      {/* <Grid item md={4} width="inherit" paddingX={1}>
-                        <TextField
-                            id="outlined-required"
-                            label="Vendor"
-                            name="vendor"
-                            value={formData.vendor}
-                            onChange={handleChange}
-                            type="number"
-                            size="small"
-                            required
-                        />
-                    </Grid> */}
-      {/* grid-11 ends */}
-      {/* grid-12*/}
-      {/* <Grid item md={4} width="inherit" paddingX={1}>
-                        <TextField
-                            id="outlined-required"
-                            label="Service Type"
-                            name="serviceType"
-                            value={formData.serviceType}
-                            onChange={handleChange}
-                            type="number"
-                            size="small"
-                            required
-                        />
-                    </Grid> */}
-      {/* grid-12 ends */}
-      {/* grid-13*/}
-      {/* <Grid item md={4} width="inherit" paddingX={1}>
-                        <TextField
-                            id="outlined-required"
-                            label="Service List Name"
-                            name="serviceListName"
-                            value={formData.serviceListName}
-                            onChange={handleChange}
-                            type="number"
-                            size="small"
-                            required
-                        />
-                    </Grid> */}
-      {/* grid-13 ends */}
-      {/* grid-button */}
       <Grid item md={12} width="inherit" paddingX={1} textAlign="right">
-        <Button variant="contained" color="primary" size="small">
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={handleSave}
+        >
           Save
         </Button>
       </Grid>
