@@ -19,15 +19,11 @@ import {
   AccordionSummary,
   IconButton
 } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
-// import { useGetDesignListQuery } from 'api/store/Apis/designApi';
-import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
+
 import { useGetCollectionFromPlanningHeaderQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
-import EditAbleDataGrid from 'components/EditAbleDataGrid';
-import MainCard from 'ui-component/cards/MainCard';
-// import Card from '@mui/material/Card';
+import { useGetPrePlanningByPlanningHeaderIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
+
 import { Card, CardHeader, Avatar } from '@mui/material';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
@@ -35,47 +31,15 @@ import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import loadingGif from '../../assets/images/loading1.svg';
-// import CardHeader from '@mui/material/CardHeader';
+import loadingGif from '../../assets/images/loadingGif.gif';
 import '../../assets/scss/style.scss';
+import ReuseableDataGrid from 'components/ReuseableDataGrid';
+
 const PrePlanning = () => {
-  const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
-  const [selectedCollectionId, setSelectedCollectionId] = useState('');
-  const { data: designData, refetch } =
-    useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
-      skip: !selectedCollectionId // Skip the query if no collection is selected
-    });
-
-  const [designList, setDesignList] = useState([]);
-  const { enqueueSnackbar } = useSnackbar();
-
-  useEffect(() => {
-    if (designData) {
-      setDesignList(designData.result);
-      refetch();
-    }
-  }, [designData]);
-  console.log('designList', designList);
-  console.log('collectionData', collectionData);
-
-  const collectionList = collectionData?.result || [];
-  // const designList = designData?.result || [];
-  const [loading, setLoading] = useState(false); // State for loading
-
-  const [components, setComponents] = useState([]);
-  const [Fabrications, setFabrications] = useState([]);
-  const [colors, setColors] = useState([]);
-  const [uoms, setUoms] = useState([]);
-  const [heads, setHeads] = useState([]);
-  const [batchList, setBatchList] = useState([]);
-  // console.log('components:', components);
-  // console.log('Fabrications:', Fabrications);
-  // console.log('colors:', colors);
-  // console.log('uoms:', uoms);
-  // console.log('heads:', heads);
+  const [initialData, setInitialData] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
-
   const [formData, setFormData] = useState({
+    planningId: 0,
     collectionId: '',
     baseColorId: '', // not in api
     baseColorName: '', // not in api
@@ -104,6 +68,89 @@ const PrePlanning = () => {
     isSchiffili: false,
     repeatsInMtr: ''
   });
+
+  useEffect(() => {
+    setFormData({
+      planningId: initialData?.planningId || 0,
+      collectionId: initialData?.collectionId || '',
+      baseColorId: initialData?.baseColorId || '', // not in api
+      baseColorName: initialData?.baseColorName || '', // not in api
+      noOfDesigns: initialData?.noOfDesigns || '', // not in apis
+      noOfColors: initialData?.noOfColors || '', // not in api
+      planningHeaderId: initialData?.planningHeaderId || '',
+      designId: initialData?.designId || '',
+      batchNo: initialData?.batchNo || '',
+      componentId: initialData?.componentId || '',
+      cuttingSize: initialData?.cuttingSize || '', // not in api
+      colorId: initialData?.colorId || '',
+      fabricId: initialData?.fabricId || '',
+      noOfHeads: initialData?.noOfHeads || '',
+      repeats: initialData?.repeats || '',
+      repeatSize: initialData?.repeatSize || '',
+      uomId: initialData?.uomId || '',
+      totalFabric: initialData?.totalFabric || '',
+      shrinkage: initialData?.shrinkage || '',
+      wastage: initialData?.wastage || '',
+      total: initialData?.total || '',
+      appId: 1,
+      createdOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || 0,
+      lastUpdatedBy: initialData?.lastUpdatedBy || 0,
+      lastUpdatedOn: initialData?.lastUpdatedOn || new Date().toISOString(),
+      isSchiffili: initialData?.isSchiffili || false,
+      repeatsInMtr: initialData?.repeatsInMtr || ''
+    });
+  }, [initialData]);
+
+  const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
+  const [selectedCollectionId, setSelectedCollectionId] = useState('');
+  const { data: designData, refetch } =
+    useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
+      skip: !selectedCollectionId // Skip the query if no collection is selected
+    });
+
+  const { data: prePlanningList, refetch: refetchPrePlanningList } =
+    useGetPrePlanningByPlanningHeaderIdQuery(formData.planningHeaderId, {
+      skip: !formData.planningHeaderId // Skip the query if no collection is selected
+    });
+  const [designList, setDesignList] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    if (designData) {
+      setDesignList(designData.result);
+      refetch();
+    }
+  }, [designData]);
+  useEffect(() => {
+    if (prePlanningList) {
+      setInitialRows(
+        prePlanningList.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+      // refetchBatches();
+    }
+  }, [prePlanningList, refetchPrePlanningList]);
+  console.log('designList', designList);
+  console.log('collectionData', collectionData);
+
+  const collectionList = collectionData?.result || [];
+  // const designList = designData?.result || [];
+  const [loading, setLoading] = useState(false); // State for loading
+
+  const [components, setComponents] = useState([]);
+  const [Fabrications, setFabrications] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [uoms, setUoms] = useState([]);
+  const [heads, setHeads] = useState([]);
+  const [batchList, setBatchList] = useState([]);
+  // console.log('components:', components);
+  // console.log('Fabrications:', Fabrications);
+  // console.log('colors:', colors);
+  // console.log('uoms:', uoms);
+  // console.log('heads:', heads);
 
   useEffect(() => {
     const fetchPrePlanningLookUp = async () => {
@@ -138,28 +185,27 @@ const PrePlanning = () => {
       }
     };
 
-    const GetPrePlanningByPlanningHeaderId = async (id) => {
-      // setLoading(true);
-
-      try {
-        const response = await axios.get(
-          `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
-        );
-        console.log('GetPrePlanningByPlanningHeaderI', response.data.result);
-        setInitialRows(
-          response.data.result.map((item, index) => ({ ...item, id: index }))
-        );
-      } catch (error) {
-        console.error('Error fetching pre-planning lookup data:', error);
-      }
-    };
+    // const GetPrePlanningByPlanningHeaderId = async (id) => {
+    //   // setLoading(true);
+    //   try {
+    //     const response = await axios.get(
+    //       `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
+    //     );
+    //     console.log('GetPrePlanningByPlanningHeaderI', response.data.result);
+    //     setInitialRows(
+    //       response.data.result.map((item, index) => ({ ...item, id: index }))
+    //     );
+    //   } catch (error) {
+    //     console.error('Error fetching pre-planning lookup data:', error);
+    //   }
+    // };
     if (formData.designId) {
       GetPrePlanningHeaderByDesignId(formData.designId);
     }
-    if (formData.designId) {
-      GetPrePlanningByPlanningHeaderId(formData.planningHeaderId);
-    }
-    //
+    // if (formData.designId) {
+    //   GetPrePlanningByPlanningHeaderId(formData.planningHeaderId);
+    // }
+    // setLoading(false);
   }, [formData.designId, formData.planningHeaderId]);
 
   useEffect(() => {
@@ -231,8 +277,6 @@ const PrePlanning = () => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
-      setLoading(true);
-
       setFormData({
         ...formData,
         collectionId: value,
@@ -256,7 +300,6 @@ const PrePlanning = () => {
         batchNo: value,
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
       });
-      setLoading(false);
       setAccordionExpanded(true);
     } else {
       setFormData({ ...formData, [name]: value });
@@ -268,48 +311,25 @@ const PrePlanning = () => {
     try {
       const response = await axios.post(
         'https://gecxc.com:4041/api/PrePlanning/SavePrePlanning',
-        {
-          designId: parseInt(formData.designId),
-          planningHeaderId: parseInt(formData.planningHeaderId),
-          componentId: parseInt(formData.componentId),
-          colorId: parseInt(formData.colorId),
-          batchNo: formData.batchNo,
-          baseColorId: parseInt(formData.baseColorId),
-          cuttingSize: parseFloat(formData.cuttingSize),
-          fabricId: parseInt(formData.fabricId),
-          noOfHeads: parseInt(formData.noOfHeads),
-          repeats: parseFloat(formData.repeats),
-          repeatSize: parseFloat(formData.repeatSize),
-          uomId: parseInt(formData.uomId),
-          totalFabric: parseFloat(formData.totalFabric),
-          shrinkage: parseFloat(formData.shrinkage),
-          wastage: parseFloat(formData.wastage),
-          total: parseFloat(formData.total),
-          appId: formData.appId,
-          createdOn: formData.createdOn,
-          createdBy: formData.createdBy,
-          lastUpdatedBy: formData.lastUpdatedBy,
-          lastUpdatedOn: formData.lastUpdatedOn,
-          isSchiffili: formData.isSchiffili,
-          repeatsInMtr: formData.repeatsInMtr
-        }
+        formData
       );
       console.log('Data saved successfully:', response.data);
       enqueueSnackbar('Pre Planning saved successfully!', {
         variant: 'success',
         autoHideDuration: 5000
       });
-      setFormData({
-        collectionId: formData.collectionId,
-        designId: formData.designId,
-        batchNo: formData.batchNo,
-        baseColorName: formData.baseColorName,
-        planningHeaderId: formData.planningHeaderId,
-        noOfDesigns: formData.noOfDesigns,
-        noOfColors: formData.noOfColors,
-        // Clear other fields
+      setFormData((prevFormData) => ({
+        planningId: 0,
+        collectionId: prevFormData.collectionId,
+        designId: prevFormData.designId,
+        batchNo: prevFormData.batchNo,
+        planningHeaderId: prevFormData.planningHeaderId,
+        baseColorId: '', // not in api
+        baseColorName: '', // not in api
+        noOfDesigns: '', // not in apis
+        noOfColors: '', // not in api
         componentId: '',
-        cuttingSize: '',
+        cuttingSize: '', // not in api
         colorId: '',
         fabricId: '',
         noOfHeads: '',
@@ -327,18 +347,9 @@ const PrePlanning = () => {
         lastUpdatedOn: new Date().toISOString(),
         isSchiffili: false,
         repeatsInMtr: ''
-      });
+      }));
 
-      // Fetch the latest data
-      const newRowsResponse = await axios.get(
-        `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${formData.planningHeaderId}`
-      );
-      setInitialRows(
-        newRowsResponse.data.result.map((item, index) => ({
-          ...item,
-          id: index
-        }))
-      );
+      refetchPrePlanningList();
 
       setAccordionExpanded(false);
     } catch (error) {
@@ -351,23 +362,12 @@ const PrePlanning = () => {
   };
 
   const handleCheckboxChange = (event) => {
-    // const calculateSizeinMeterChecked = () => {
-    //   const repeats = parseFloat(formData.repeats) || 0;
-    //   const repeatsInMtr = parseFloat(formData.repeatsInMtr) || 0;
-    //   return repeatsInMtr * repeats;
-    // };
     const { name, checked } = event.target;
     setFormData((prevState) => ({
       ...prevState,
 
       [name]: checked,
       uomId: checked ? 139 : prevState.uomId // Set uomId to meters if checked
-      // totalFabric: checked
-      //   ? calculateSizeinMeterChecked()
-      //   : calculateTotalFabric(prevState)
-      // repeatsInMtr: checked
-      //   ? calculateSizeinMeterChecked()
-      //   : prevState.repeatsInMtr
     }));
   };
 
@@ -438,7 +438,7 @@ const PrePlanning = () => {
       field: 'color',
       headerName: 'Color',
       // editable: true,
-      flex: 1,
+      // flex: 1,
       ...baseColumnOptions
       // type: 'singleSelect',
       // valueOptions: colors.map((collection) => ({
@@ -449,7 +449,7 @@ const PrePlanning = () => {
     {
       field: 'cuttingSize',
       headerName: 'Cutting Size',
-      flex: 1,
+      // flex: 1,
       ...baseColumnOptions
       // editable: true/
     },
@@ -457,8 +457,8 @@ const PrePlanning = () => {
       field: 'fabric',
       headerName: 'Fabrication',
       // editable: true,
-      ...baseColumnOptions,
-      flex: 2
+      ...baseColumnOptions
+      // flex: 2
       // type: 'singleSelect',
       // valueOptions: Fabrications.map((collection) => ({
       //   value: collection.lookUpId,
@@ -469,8 +469,8 @@ const PrePlanning = () => {
       field: 'noOfHeadName',
       headerName: 'No. Of Heads',
       // editable: true,
-      ...baseColumnOptions,
-      flex: 1
+      ...baseColumnOptions
+      // flex: 1
       // type: 'singleSelect',
       // valueOptions: heads.map((collection) => ({
       //   value: collection.lookUpId,
@@ -494,8 +494,8 @@ const PrePlanning = () => {
     {
       field: 'totalFabric',
       headerName: 'Total Fabric',
-      ...baseColumnOptions,
-      flex: 1
+      ...baseColumnOptions
+      // flex: 1
       // editable: true,
       // valueGetter: (params, row) => row.totalFabric ?? 0,
       // valueSetter: (params, row) => {
@@ -531,23 +531,231 @@ const PrePlanning = () => {
     },
     {
       field: 'shrinkage',
-      headerName: 'Shrinkage %',
-      flex: 1
+      headerName: 'Shrinkage %'
+      // flex: 1
       // editable: true
     },
     {
       field: 'wastage',
-      headerName: 'Wastage %',
-      flex: 1
+      headerName: 'Wastage %'
+      // flex: 1
       // editable: true
     },
     {
       field: 'total',
-      headerName: 'Total',
-      flex: 1
+      headerName: 'Total'
+      // flex: 1
+      // editable: true,
+      // valueGetter: (params, row) => row.total ?? 0,
+      // valueSetter: (params, row) => {
+      //   const shrinkage = row.shrinkage ?? 0;
+      //   const wastage = row.wastage ?? 0;
+      //   const totalFabric = row.totalFabric ?? 0;
+      //   const total = (totalFabric * (100 + (shrinkage + wastage))) / 100;
+      //   return { ...row, total };
+      // }
     }
+    // {
+    //   field: 'total',
+    //   headerName: 'Overall Total',
+    //   flex: 1,
+    //   ...baseColumnOptions,
+    //   valueGetter: (params, row) =>
+    //     row.id === 'TOTAL_FABRIC' ? row.total : undefined,
+    //   renderCell: (params, row) => {
+    //     if (row.id === 'TOTAL_FABRIC') {
+    //       console.log('params', params);
+    //       return params;
+    //     }
+    //     return null;
+    //   }
+    // }
   ];
 
+  // const columns = [
+  //   {
+  //     field: 'componentId',
+  //     headerName: 'Component',
+  //     editable: true,
+  //     flex: 1,
+  //     ...baseColumnOptions,
+  //     type: 'singleSelect',
+  //     valueOptions: components.map((collection) => ({
+  //       value: collection.lookUpId,
+  //       label: collection.lookUpName
+  //     })),
+  //     colSpan: (value, row) => {
+  //       if (row.id === 'TOTAL_FABRIC') {
+  //         return 7;
+  //       }
+  //       return undefined;
+  //     },
+  //     valueGetter: (value, row) => {
+  //       if (row.id === 'TOTAL_FABRIC') {
+  //         console.log('row', row.label);
+  //         return row.label;
+  //       }
+  //       return value;
+  //     },
+  //     valueSetter: (params, row) => {
+  //       if (row.id === 'TOTAL_FABRIC') {
+  //         // console.log('row', row.label);
+  //         return row.label;
+  //       }
+  //       return value;
+  //     }
+  //     // colSpan: (params, row) => (row.id === 'TOTAL_FABRIC' ? 8 : undefined),
+  //     // valueGetter: (params, row) => {
+  //     //   if (row.id === 'TOTAL_FABRIC') {
+  //     //     return row.label;
+  //     //   }
+  //     //   return row.componentId;
+  //     // }
+  //   },
+  //   {
+  //     field: 'colorId',
+  //     headerName: 'Color',
+  //     editable: true,
+  //     flex: 1,
+  //     ...baseColumnOptions,
+  //     type: 'singleSelect',
+  //     valueOptions: colors.map((collection) => ({
+  //       value: collection.lookUpId,
+  //       label: collection.lookUpName
+  //     }))
+  //   },
+  //   {
+  //     field: 'cuttingSize',
+  //     headerName: 'Cutting Size',
+  //     flex: 1,
+  //     ...baseColumnOptions,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'fabricId',
+  //     headerName: 'Fabrication',
+  //     editable: true,
+  //     ...baseColumnOptions,
+  //     flex: 1,
+  //     type: 'singleSelect',
+  //     valueOptions: Fabrications.map((collection) => ({
+  //       value: collection.lookUpId,
+  //       label: collection.lookUpName
+  //     }))
+  //   },
+  //   {
+  //     field: 'noOfHeads',
+  //     headerName: 'No. Of Heads',
+  //     editable: true,
+  //     ...baseColumnOptions,
+  //     flex: 1,
+  //     type: 'singleSelect',
+  //     valueOptions: heads.map((collection) => ({
+  //       value: collection.lookUpId,
+  //       label: collection.lookUpName
+  //     }))
+  //   },
+  //   {
+  //     field: 'repeats',
+  //     headerName: 'Repeats',
+  //     ...baseColumnOptions,
+  //     flex: 1,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'repeatSize',
+  //     headerName: 'Repeat Size',
+  //     ...baseColumnOptions,
+  //     flex: 1,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'totalFabric',
+  //     headerName: 'Total Fabric',
+  //     ...baseColumnOptions,
+  //     flex: 1,
+  //     editable: true,
+  //     valueGetter: (params, row) => row.totalFabric ?? 0,
+  //     valueSetter: (params, row) => {
+  //       const repeats = row.repeats ?? 0;
+  //       const repeatSize = row.repeatSize ?? 0;
+  //       const totalFabric = repeats * repeatSize;
+  //       return { ...row, totalFabric };
+  //     }
+  //   },
+  //   {
+  //     field: 'uomId',
+  //     headerName: 'UOM',
+  //     editable: true,
+  //     flex: 1,
+  //     type: 'singleSelect',
+  //     valueOptions: uoms.map((collection) => ({
+  //       value: collection.lookUpId,
+  //       label: collection.lookUpName
+  //     })),
+  //     colSpan: (value, row) => {
+  //       if (row.id === 'TOTAL_FABRIC') {
+  //         return 3;
+  //       }
+  //       return undefined;
+  //     },
+  //     valueGetter: (value, row) => {
+  //       if (row.id === 'TOTAL_FABRIC') {
+  //         console.log('row', row.label);
+  //         return row.label;
+  //       }
+  //       return value;
+  //     }
+  //   },
+  //   {
+  //     field: 'shrinkage',
+  //     headerName: 'Shrinkage %',
+  //     flex: 1,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'wastage',
+  //     headerName: 'Wastage %',
+  //     flex: 1,
+  //     editable: true
+  //   },
+  //   {
+  //     field: 'total',
+  //     headerName: 'Total',
+  //     flex: 1,
+  //     editable: true,
+  //     valueGetter: (params, row) => row.total ?? 0,
+  //     valueSetter: (params, row) => {
+  //       const shrinkage = row.shrinkage ?? 0;
+  //       const wastage = row.wastage ?? 0;
+  //       const totalFabric = row.totalFabric ?? 0;
+  //       const total = (totalFabric * (100 + (shrinkage + wastage))) / 100;
+  //       return { ...row, total };
+  //     }
+  //   }
+  //   // {
+  //   //   field: 'total',
+  //   //   headerName: 'Overall Total',
+  //   //   flex: 1,
+  //   //   ...baseColumnOptions,
+  //   //   valueGetter: (params, row) =>
+  //   //     row.id === 'TOTAL_FABRIC' ? row.total : undefined,
+  //   //   renderCell: (params, row) => {
+  //   //     if (row.id === 'TOTAL_FABRIC') {
+  //   //       console.log('params', params);
+  //   //       return params;
+  //   //     }
+  //   //     return null;
+  //   //   }
+  //   // }
+  // ];
+
+  // const getCellClassName = (params) => {
+  //   if (params.row.id === 'TOTAL_FABRIC' && params.field === 'componentId') {
+  //     return 'bold';
+  //   }
+  //   return '';
+  // };
   const getCellClassName = ({ row, field }) => {
     if (row.id === 'TOTAL_FABRIC') {
       if (field === 'componentName' || field === 'uom') {
@@ -558,7 +766,7 @@ const PrePlanning = () => {
     return '';
   };
   console.log('batchList:', batchList);
-  const editAPi = `https://gecxc.com:4041/api/PrePlanning/SavePrePlanning`;
+
   const deleteApi = `https://gecxc.com:4041/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded); // Toggle accordion state based on the icon click
@@ -1026,52 +1234,67 @@ const PrePlanning = () => {
               <div
                 style={{
                   display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
+                  // justifyContent: 'center',
+                  // alignItems: 'center'
+                  // height: '100vh'
+                  top: '40%',
+                  position: 'absolute',
+                  left: '45%'
                 }}
               >
                 <img
                   src={loadingGif}
                   alt="Loading"
                   style={{
-                    width: 200,
-                    height: 200
+                    width: 300
+                    // height: 300
                     // opacity: 0.8
                   }}
                 />
               </div>
             ) : (
-              <Box
-                sx={{
-                  height: 500,
-                  width: 'inherit',
-                  '& .actions': {
-                    color: 'text.secondary'
-                  },
-                  '& .textPrimary': {
-                    color: 'text.primary'
-                  },
-                  '& .bold': {
-                    fontWeight: 600
-                  }
-                }}
-              >
-                <DataGrid
-                  // {...data}
-                  rows={rows}
-                  columns={columns}
-                  rowLength={100}
-                  getCellClassName={getCellClassName}
-                  sx={{
-                    boxShadow: 2,
-                    border: 2,
-                    borderColor: 'primary.light',
-                    '& .MuiDataGrid-cell:hover': {
-                      color: 'primary.main'
-                    }
-                  }}
-                />{' '}
-              </Box>
+              // <Box
+              //   sx={{
+              //     height: 500,
+              //     width: 'inherit',
+              //     '& .actions': {
+              //       color: 'text.secondary'
+              //     },
+              //     '& .textPrimary': {
+              //       color: 'text.primary'
+              //     },
+              //     '& .bold': {
+              //       fontWeight: 600
+              //     }
+              //   }}
+              // >
+              //   <DataGrid
+              //     // {...data}
+              //     rows={rows}
+              //     columns={columns}
+              //     rowLength={100}
+              //     getCellClassName={getCellClassName}
+              //     sx={{
+              //       boxShadow: 2,
+              //       border: 2,
+              //       borderColor: 'primary.light',
+              //       '& .MuiDataGrid-cell:hover': {
+              //         color: 'primary.main'
+              //       }
+              //     }}
+              //   />{' '}
+              // </Box>
+              <ReuseableDataGrid
+                iColumns={columns}
+                initialRows={rows}
+                setInitialData={setInitialData}
+                deleteApi={deleteApi}
+                deleteBy="planningId"
+                refetch={refetchPrePlanningList}
+                getCellClassName={getCellClassName}
+                setAccordionExpanded={setAccordionExpanded}
+                fileName="PrePlanningList"
+              />
               // <EditAbleDataGrid
               //   ncolumns={columns}
               //   initialRows={rows}

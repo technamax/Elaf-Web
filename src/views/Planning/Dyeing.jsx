@@ -17,9 +17,10 @@ import {
   ButtonGroup,
   IconButton
 } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+// import { DataGrid } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
 import Autocomplete from '@mui/lab/Autocomplete';
 import {
@@ -46,7 +47,6 @@ import dye from '../../assets/images/planningicons/dye.png';
 // project imports
 import roller from '../../assets/images/roller-ezgif.com-instagif.gif';
 import MainCard from 'ui-component/cards/MainCard';
-import loadingGif from '../../assets/images/loading1.svg';
 
 const Dyeing = () => {
   const [initialData, setInitialData] = useState([]);
@@ -137,7 +137,6 @@ const Dyeing = () => {
     useGetDyeingPrintingListByBatchNoQuery(formData.planningHeaderId, {
       skip: !formData.planningHeaderId
     });
-  const [loading, setLoading] = useState(false); // State for loading
 
   const [designList, setDesignList] = useState([]);
   const [batchList, setBatchList] = useState([]);
@@ -207,8 +206,6 @@ const Dyeing = () => {
       const selectedCollection = collectionList.find(
         (collection) => collection.collectionId === parseInt(value)
       );
-      setLoading(true);
-
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
@@ -233,8 +230,6 @@ const Dyeing = () => {
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
-      setLoading(false);
-
       setAccordionExpanded(true);
 
       // Fetch data from API when batchNo changes
@@ -470,24 +465,24 @@ const Dyeing = () => {
       label: 'Printing'
     }
   ];
-  const handleEdit = (row) => {
-    setInitialData(row);
-  };
+  // const handleEdit = (row) => {
+  //   setInitialData(row);
+  // };
 
-  console.log('initialData', initialData);
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(
-        `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingById?DPId=${id}`
-      );
+  // console.log('initialData', initialData);
+  // const handleDelete = async (id) => {
+  //   try {
+  //     await axios.delete(
+  //       `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingById?DPId=${id}`
+  //     );
 
-      refetchDyeingPrintingData();
-      console.log('deleted');
-    } catch (error) {
-      console.error('Error deleting data:', error);
-    }
-    // Handle delete logic
-  };
+  //     refetchDyeingPrintingData();
+  //     console.log('deleted');
+  //   } catch (error) {
+  //     console.error('Error deleting data:', error);
+  //   }
+  //   // Handle delete logic
+  // };
 
   const columns = [
     {
@@ -546,34 +541,35 @@ const Dyeing = () => {
     {
       field: 'unitRatePerPo',
       headerName: 'UnitRate Per Po.'
-    },
-
-    {
-      field: 'Action',
-      headerName: 'Actions',
-
-      renderCell: (params) => (
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <ButtonGroup size="small" variant="text">
-            <IconButton
-              aria-label="Edit"
-              // color="primary"
-              onClick={() => handleEdit(params.row)}
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              aria-label="delete"
-              color="primary"
-              onClick={() => handleDelete(params.row.dpId)}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </ButtonGroup>
-        </div>
-      )
     }
+
+    // {
+    //   field: 'Action',
+    //   headerName: 'Actions',
+
+    //   renderCell: (params) => (
+    //     <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+    //       <ButtonGroup size="small" variant="text">
+    //         <IconButton
+    //           aria-label="Edit"
+    //           // color="primary"
+    //           onClick={() => handleEdit(params.row)}
+    //         >
+    //           <EditIcon />
+    //         </IconButton>
+    //         <IconButton
+    //           aria-label="delete"
+    //           color="primary"
+    //           onClick={() => handleDelete(params.row.dpId)}
+    //         >
+    //           <DeleteIcon />
+    //         </IconButton>
+    //       </ButtonGroup>
+    //     </div>
+    //   )
+    // }
   ];
+  const deleteApi = `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingById?DPId=`;
 
   return (
     // <MainCard
@@ -993,53 +989,43 @@ const Dyeing = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid item xs={12} md={12} paddingTop={1}>
-            {loading ? (
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                <img
-                  src={loadingGif}
-                  alt="Loading"
-                  style={{
-                    width: 200,
-                    height: 200
-                    // opacity: 0.8
-                  }}
-                />
-              </div>
-            ) : (
-              <Box
+            <ReuseableDataGrid
+              iColumns={columns}
+              initialRows={initialRows}
+              setInitialData={setInitialData}
+              deleteApi={deleteApi}
+              deleteBy="dpId"
+              refetch={refetchDyeingPrintingData}
+              setAccordionExpanded={setAccordionExpanded}
+              fileName="Dyeing&PrintingList"
+            />
+            {/* <Box
+              sx={{
+                height: 500,
+                width: 'inherit',
+                '& .actions': {
+                  color: 'text.secondary'
+                },
+                '& .textPrimary': {
+                  color: 'text.primary'
+                }
+              }}
+            >
+              <DataGrid
+                // {...data}
+                rows={initialRows}
+                columns={columns}
+                rowLength={100}
                 sx={{
-                  height: 500,
-                  width: 'inherit',
-                  '& .actions': {
-                    color: 'text.secondary'
-                  },
-                  '& .textPrimary': {
-                    color: 'text.primary'
+                  boxShadow: 2,
+                  border: 2,
+                  borderColor: 'primary.light',
+                  '& .MuiDataGrid-cell:hover': {
+                    color: 'primary.main'
                   }
                 }}
-              >
-                <DataGrid
-                  // {...data}
-                  rows={initialRows}
-                  columns={columns}
-                  rowLength={100}
-                  sx={{
-                    boxShadow: 2,
-                    border: 2,
-                    borderColor: 'primary.light',
-                    '& .MuiDataGrid-cell:hover': {
-                      color: 'primary.main'
-                    }
-                  }}
-                />
-              </Box>
-            )}
+              />
+            </Box> */}
             {/* <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} /> */}
           </Grid>
         </Grid>

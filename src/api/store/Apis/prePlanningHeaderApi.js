@@ -48,6 +48,10 @@ export const prePlanningHeaderApi = createApi({
     getDyeingPrintingListByBatchNo: builder.query({
       query: (batchNo) =>
         `DyeingPrinting/GetDyeingPrintingListByBatchNo?batchNo=${batchNo}`
+    }),
+    getPrePlanningByPlanningHeaderId: builder.query({
+      query: (planningHeaderId) =>
+        `PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${planningHeaderId}`
     })
   })
 });
@@ -64,5 +68,6 @@ export const {
   useGetEmbroideryListByBatchNoQuery,
   useGetSchffiliListByBatchNoQuery,
   useGetFabricColorFromPrePlanningByFabricIdQuery,
-  useGetDyeingPrintingListByBatchNoQuery
+  useGetDyeingPrintingListByBatchNoQuery,
+  useGetPrePlanningByPlanningHeaderIdQuery
 } = prePlanningHeaderApi;
