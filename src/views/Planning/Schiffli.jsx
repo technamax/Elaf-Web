@@ -44,9 +44,7 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import schiffli from '../../assets/images/planningicons/schiffli.png';
-import EditAbleDataGrid from 'components/EditAbleDataGrid';
-import MainCard from 'ui-component/cards/MainCard';
-import { AlignHorizontalCenter } from '@mui/icons-material';
+import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
 const Schiffli = () => {
   const [initialData, setInitialData] = useState([]);
@@ -479,34 +477,6 @@ const Schiffli = () => {
   };
   console.log('formData', formData);
 
-  const handleEdit = (row) => {
-    // Convert the comma-separated string to an array
-    setInitialData(row);
-    // const threadAdditionalArray = row.threadAdditional
-    //   ? row.threadAdditional.split(',').map((item) => item.trim())
-    //   : [];
-
-    // setInitialData({
-    //   ...row,
-    //   threadAdditional: threadAdditionalArray
-    // });
-  };
-
-  console.log('initialData', initialData);
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(
-        `https://gecxc.com:4041/api/Schiffli/DeleteSchiffiById?schiffiId=${id}`
-      );
-      // refetchEmbroideryList();
-      refetchSchiffliList();
-      console.log('deleted');
-    } catch (error) {
-      console.error('Error deleting data:', error);
-    }
-    // Handle delete logic
-  };
-
   const columns = [
     {
       field: 'componentName',
@@ -585,47 +555,9 @@ const Schiffli = () => {
     {
       field: 'pcsForLaserCut',
       headerName: 'Pcs.For Laser Cut'
-    },
-    {
-      field: 'Action',
-      headerName: 'Actions',
-
-      renderCell: (params) => (
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <ButtonGroup size="small" variant="text">
-            {/* <Button
-              variant="contained"
-              size="small"
-              onClick={() => handleEdit(params.row)}
-            >
-              Edit
-            </Button> */}
-            <IconButton
-              aria-label="Edit"
-              // color="primary"
-              onClick={() => handleEdit(params.row)}
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              aria-label="delete"
-              color="primary"
-              onClick={() => handleDelete(params.row.schiffiliId)}
-            >
-              <DeleteIcon />
-            </IconButton>
-            {/* <Button
-              variant="contained"
-              size="small"
-              onClick={() => handleDelete(params.row.schiffiliId)}
-            >
-              Delete
-            </Button> */}
-          </ButtonGroup>
-        </div>
-      )
     }
   ];
+  const deleteApi = `https://gecxc.com:4041/api/Schiffli/DeleteSchiffiById?schiffiId=`;
 
   return (
     <>
@@ -1057,7 +989,17 @@ const Schiffli = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
-            <Box
+            <ReuseableDataGrid
+              iColumns={columns}
+              initialRows={initialRows}
+              setInitialData={setInitialData}
+              deleteApi={deleteApi}
+              deleteBy="schiffiliId"
+              refetch={refetchSchiffliList}
+              setAccordionExpanded={setAccordionExpanded}
+              fileName="Schffili List"
+            />
+            {/* <Box
               sx={{
                 height: 500,
                 width: 'inherit',
@@ -1083,7 +1025,7 @@ const Schiffli = () => {
                   }
                 }}
               />
-            </Box>
+            </Box> */}
             {/* <EditAbleDataGrid
             ncolumns={columns}
             initialRows={initialRows}
