@@ -13,34 +13,51 @@ export default function AddAdditionalServices({ onSaveSuccess }) {
   const [serviceList, setServiceList] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [plannedCollection, setPlannedCollection] = useState([]);
+  const [uoms, setUoms] = useState([]);
 
   useEffect(() => {
     if (lookupData) {
       setVendors(lookupData.result[0].vendorList);
       setServiceList(lookupData.result[0].serviceList);
       setServiceType(lookupData.result[0].serviceTypeList);
+      setUoms(lookupData.result[0].uomList);
     }
   }, [lookupData]);
 
   const [formData, setFormData] = useState({
     collectionId: '',
-    serviceTypeId: '',
+    serviceTypeId: 0,
     serviceListId: '',
     vendorId: '',
     poPcs: '',
     qty: '',
-    uomId: '',
+    uomId: 'string',
     rate: '',
     totalAmount: '',
-    ratePerPcs: '',
     costperPiece: '',
     uom: '',
     createdBy: 0,
     createdOn: new Date().toISOString()
   });
 
+  // "collectionId":42,
+  // "serviceTypeId": 0,
+  // "serviceListId": 0,
+  // "vendorId": 0,
+  // "poPcs": 0,
+  // "qty": 0,
+  // "uomId": 0,
+  // "rate": 0,
+  // "totalAmount": 0,
+  // "costperPiece": 0,
+  // "createdBy": 0,
+  // "createdOn": "2024-06-10T05:33:54.791Z",
+  // "lastUpdatedBy": 0,
+  // "lastUpdatedOn": "2024-06-10T05:33:54.791Z"
+
   const handleChange = async (e) => {
     const { name, value } = e.target;
+    console.log(`Updating ${name} to ${value}`);
     setFormData({ ...formData, [name]: value });
 
     if (name === 'collectionId') {
@@ -57,29 +74,25 @@ export default function AddAdditionalServices({ onSaveSuccess }) {
   };
 
   const handleSave = async () => {
-    console.log(formData);
+    const formDataToSend = { ...formData, serviceTypeId: 0 }; // Override serviceTypeId to be 0
+    console.log(formDataToSend);
     try {
       const response = await axios.post(
         'https://gecxc.com:4041/api/AdditionalServices/SaveAdditionalServices',
-        formData
+        formDataToSend
       );
       console.log('Form data saved:', response.data);
       setFormData({
         collectionId: '',
-        serviceTypeId: '',
+        serviceTypeId: 0,
         serviceListId: '',
         vendorId: '',
         poPcs: '',
         qty: '',
-        uomId: '',
+        uomId: 'string',
         rate: '',
-        quantity: '',
-        ratePerPcs: '',
         totalAmount: '',
-        costperPiece: '',
-        uom: '',
-        vendor: null,
-        serviceListName: null
+        costperPiece: ''
       });
       if (onSaveSuccess) onSaveSuccess(); // Call the success handler to refresh data
     } catch (error) {
@@ -122,7 +135,7 @@ export default function AddAdditionalServices({ onSaveSuccess }) {
           {plannedCollection.length > 0 ? (
             plannedCollection.map((option) => (
               <MenuItem
-                id="ddlCollection"
+                id="collectionId"
                 key={option.collectionId}
                 value={option.collectionId}
               >
@@ -217,15 +230,21 @@ export default function AddAdditionalServices({ onSaveSuccess }) {
       </Grid>
       <Grid item md={2} width="inherit" paddingX={1}>
         <TextField
-          id="outlined-required"
+          fullWidth
+          select
           label="UOM"
+          defaultValue=""
+          size="small"
           name="uomId"
           value={formData.uomId}
           onChange={handleChange}
-          size="small"
-          required
-          fullWidth
-        />
+        >
+          {uoms.map((option) => (
+            <MenuItem key={option.lookUpId} value={option.lookUpId}>
+              {option.lookUpName}
+            </MenuItem>
+          ))}
+        </TextField>
       </Grid>
       <Grid item md={2} width="inherit" paddingX={1}>
         <TextField
