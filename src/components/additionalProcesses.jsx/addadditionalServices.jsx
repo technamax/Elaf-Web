@@ -10,12 +10,17 @@ import '../../assets/scss/style.scss';
 
 export default function AddAdditionalServices(onSaveSuccess) {
   const { data: lookupData } = useGetLookUpListQuery();
+  const [serviceType, setserviceType] = useState([]);
+  const [serviceList, setserviceList] = useState([]);
   const [vendors, setVendors] = useState([]);
   useEffect(() => {
     if (lookupData) {
       setVendors(lookupData.result[0].vendorList);
+      setserviceList(lookupData.result[0].serviceList);
+      setserviceType(lookupData.result[0].serviceTypeList);
     }
   }, [lookupData]);
+
   const options = [
     {
       //
@@ -49,8 +54,8 @@ export default function AddAdditionalServices(onSaveSuccess) {
   ];
 
   const [formData, setFormData] = useState({
-    serviceTypeId: '',
-    serviceListId: '',
+    serviceType: '',
+    serviceList: '',
     vendorId: '',
     poPcs: '',
     qty: '',
@@ -83,8 +88,8 @@ export default function AddAdditionalServices(onSaveSuccess) {
       );
       console.log('Form data saved:', response.data);
       setFormData({
-        serviceTypeId: '',
-        serviceListId: '',
+        serviceType: '',
+        serviceList: '',
         vendorId: '',
         poPcs: '',
         qty: '',
@@ -119,18 +124,18 @@ export default function AddAdditionalServices(onSaveSuccess) {
           id="outlined-select-option"
           select
           label="Service Type"
-          name="serviceTypeId"
-          value={formData.serviceTypeId}
+          name="serviceType"
+          value={formData.serviceType}
           onChange={handleChange}
-          defaultValue="Card Printing"
           // helperText="Service Type"
           variant="outlined"
           size="small"
           fullWidth
         >
-          {options.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
+          {/* serviceType */}
+          {serviceType.map((option) => (
+            <MenuItem key={option.lookUpId} value={option.lookUpId}>
+              {option.lookUpName}
             </MenuItem>
           ))}
         </TextField>
@@ -142,18 +147,17 @@ export default function AddAdditionalServices(onSaveSuccess) {
           id="outlined-select-option"
           select
           label="Service List Id"
-          name="serviceListId"
+          name="serviceList"
           value={formData.serviceList}
           onChange={handleChange}
-          defaultValue="Elaf PVC Zipper Bag"
           // helperText="Service List"
           variant="outlined"
           size="small"
           fullWidth
         >
-          {option2.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
+          {serviceList.map((option) => (
+            <MenuItem key={option.lookUpId} value={option.lookUpId}>
+              {option.lookUpName}
             </MenuItem>
           ))}
         </TextField>
