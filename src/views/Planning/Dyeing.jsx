@@ -46,6 +46,7 @@ import dye from '../../assets/images/planningicons/dye.png';
 // project imports
 import roller from '../../assets/images/roller-ezgif.com-instagif.gif';
 import MainCard from 'ui-component/cards/MainCard';
+import loadingGif from '../../assets/images/loading1.svg';
 
 const Dyeing = () => {
   const [initialData, setInitialData] = useState([]);
@@ -136,6 +137,7 @@ const Dyeing = () => {
     useGetDyeingPrintingListByBatchNoQuery(formData.planningHeaderId, {
       skip: !formData.planningHeaderId
     });
+  const [loading, setLoading] = useState(false); // State for loading
 
   const [designList, setDesignList] = useState([]);
   const [batchList, setBatchList] = useState([]);
@@ -205,6 +207,8 @@ const Dyeing = () => {
       const selectedCollection = collectionList.find(
         (collection) => collection.collectionId === parseInt(value)
       );
+      setLoading(true);
+
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
@@ -229,6 +233,8 @@ const Dyeing = () => {
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
+      setLoading(false);
+
       setAccordionExpanded(true);
 
       // Fetch data from API when batchNo changes
@@ -987,33 +993,53 @@ const Dyeing = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid item xs={12} md={12} paddingTop={1}>
-            <Box
-              sx={{
-                height: 500,
-                width: 'inherit',
-                '& .actions': {
-                  color: 'text.secondary'
-                },
-                '& .textPrimary': {
-                  color: 'text.primary'
-                }
-              }}
-            >
-              <DataGrid
-                // {...data}
-                rows={initialRows}
-                columns={columns}
-                rowLength={100}
+            {loading ? (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <img
+                  src={loadingGif}
+                  alt="Loading"
+                  style={{
+                    width: 200,
+                    height: 200
+                    // opacity: 0.8
+                  }}
+                />
+              </div>
+            ) : (
+              <Box
                 sx={{
-                  boxShadow: 2,
-                  border: 2,
-                  borderColor: 'primary.light',
-                  '& .MuiDataGrid-cell:hover': {
-                    color: 'primary.main'
+                  height: 500,
+                  width: 'inherit',
+                  '& .actions': {
+                    color: 'text.secondary'
+                  },
+                  '& .textPrimary': {
+                    color: 'text.primary'
                   }
                 }}
-              />
-            </Box>
+              >
+                <DataGrid
+                  // {...data}
+                  rows={initialRows}
+                  columns={columns}
+                  rowLength={100}
+                  sx={{
+                    boxShadow: 2,
+                    border: 2,
+                    borderColor: 'primary.light',
+                    '& .MuiDataGrid-cell:hover': {
+                      color: 'primary.main'
+                    }
+                  }}
+                />
+              </Box>
+            )}
             {/* <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} /> */}
           </Grid>
         </Grid>

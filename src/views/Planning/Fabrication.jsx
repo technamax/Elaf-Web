@@ -38,6 +38,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import fabric from '../../assets/images/planningicons/fabric.png';
 import '../../assets/scss/style.scss';
+import loadingGif from '../../assets/images/loading1.svg';
 
 const Fabrication = () => {
   const [formData, setFormData] = useState({
@@ -65,6 +66,7 @@ const Fabrication = () => {
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded);
   };
+  const [loading, setLoading] = useState(false); // State for loading
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   console.log(collectionData);
@@ -185,6 +187,8 @@ const Fabrication = () => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
+      setLoading(true);
+
       setFormData({
         ...formData,
         collectionId: value
@@ -209,6 +213,8 @@ const Fabrication = () => {
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
+      setLoading(false);
+
       setAccordionExpanded(true);
     } else if (name === 'fabricId') {
       const selectedFabric = Fabrications.find(
@@ -768,16 +774,36 @@ const Fabrication = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
-            <EditAbleDataGrid
-              ncolumns={columns}
-              initialRows={initialRows}
-              formData={formData}
-              editAPi={editAPi}
-              refetch={refetchFabricRequisitionData}
-              deleteApi={deleteApi}
-              deleteBy="fabricationId"
-              disableAddRecord={true}
-            />
+            {loading ? (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <img
+                  src={loadingGif}
+                  alt="Loading"
+                  style={{
+                    width: 200,
+                    height: 200
+                    // opacity: 0.8
+                  }}
+                />
+              </div>
+            ) : (
+              <EditAbleDataGrid
+                ncolumns={columns}
+                initialRows={initialRows}
+                formData={formData}
+                editAPi={editAPi}
+                refetch={refetchFabricRequisitionData}
+                deleteApi={deleteApi}
+                deleteBy="fabricationId"
+                disableAddRecord={true}
+              />
+            )}
           </Grid>
         </Grid>
       </Card>

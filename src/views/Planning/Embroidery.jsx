@@ -47,6 +47,7 @@ import { Card, CardHeader, Avatar } from '@mui/material';
 import '../../assets/scss/style.scss';
 // import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MainCard from 'ui-component/cards/MainCard';
+import loadingGif from '../../assets/images/loading1.svg';
 
 const Embroidery = () => {
   const theme = useTheme();
@@ -147,6 +148,7 @@ const Embroidery = () => {
           : theme.typography.fontWeightMedium
     };
   }
+  const [loading, setLoading] = useState(false); // State for loading
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
@@ -425,6 +427,8 @@ const Embroidery = () => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
+      setLoading(true);
+
       setFormData({
         ...formData,
         collectionId: value
@@ -458,6 +462,7 @@ const Embroidery = () => {
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
       setAccordionExpanded(true);
+      setLoading(false);
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -1199,33 +1204,53 @@ const Embroidery = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
-            <Box
-              sx={{
-                height: 500,
-                width: 'inherit',
-                '& .actions': {
-                  color: 'text.secondary'
-                },
-                '& .textPrimary': {
-                  color: 'text.primary'
-                }
-              }}
-            >
-              <DataGrid
-                // {...data}
-                rows={initialRows}
-                columns={columns}
-                rowLength={100}
+            {loading ? (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <img
+                  src={loadingGif}
+                  alt="Loading"
+                  style={{
+                    width: 200,
+                    height: 200
+                    // opacity: 0.8
+                  }}
+                />
+              </div>
+            ) : (
+              <Box
                 sx={{
-                  boxShadow: 2,
-                  border: 2,
-                  borderColor: 'primary.light',
-                  '& .MuiDataGrid-cell:hover': {
-                    color: 'primary.main'
+                  height: 500,
+                  width: 'inherit',
+                  '& .actions': {
+                    color: 'text.secondary'
+                  },
+                  '& .textPrimary': {
+                    color: 'text.primary'
                   }
                 }}
-              />
-            </Box>
+              >
+                <DataGrid
+                  // {...data}
+                  rows={initialRows}
+                  columns={columns}
+                  rowLength={100}
+                  sx={{
+                    boxShadow: 2,
+                    border: 2,
+                    borderColor: 'primary.light',
+                    '& .MuiDataGrid-cell:hover': {
+                      color: 'primary.main'
+                    }
+                  }}
+                />
+              </Box>
+            )}
             {/* <EditAbleDataGrid
             ncolumns={columns}
             initialRows={initialRows}
