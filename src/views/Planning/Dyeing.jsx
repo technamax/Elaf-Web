@@ -47,6 +47,7 @@ import dye from '../../assets/images/planningicons/dye.png';
 // project imports
 import roller from '../../assets/images/roller-ezgif.com-instagif.gif';
 import MainCard from 'ui-component/cards/MainCard';
+import loadingGif from '../../assets/images/loading1.svg';
 
 const Dyeing = () => {
   const [initialData, setInitialData] = useState([]);
@@ -105,6 +106,7 @@ const Dyeing = () => {
     });
   }, [initialData]);
   const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false); // State for loading
 
   console.log('Dyeing form data to send', formData);
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
@@ -207,6 +209,8 @@ const Dyeing = () => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
+      setLoading(true);
+
       setFormData({
         ...formData,
         collectionId: value
@@ -231,6 +235,7 @@ const Dyeing = () => {
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
       setAccordionExpanded(true);
+      setLoading(false);
 
       // Fetch data from API when batchNo changes
     } else if (name === 'fabricId') {
@@ -989,16 +994,36 @@ const Dyeing = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid item xs={12} md={12} paddingTop={1}>
-            <ReuseableDataGrid
-              iColumns={columns}
-              initialRows={initialRows}
-              setInitialData={setInitialData}
-              deleteApi={deleteApi}
-              deleteBy="dpId"
-              refetch={refetchDyeingPrintingData}
-              setAccordionExpanded={setAccordionExpanded}
-              fileName="Dyeing&PrintingList"
-            />
+            {loading ? (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <img
+                  src={loadingGif}
+                  alt="Loading"
+                  style={{
+                    width: 200,
+                    height: 200
+                    // opacity: 0.8
+                  }}
+                />
+              </div>
+            ) : (
+              <ReuseableDataGrid
+                iColumns={columns}
+                initialRows={initialRows}
+                setInitialData={setInitialData}
+                deleteApi={deleteApi}
+                deleteBy="dpId"
+                refetch={refetchDyeingPrintingData}
+                setAccordionExpanded={setAccordionExpanded}
+                fileName="Dyeing&PrintingList"
+              />
+            )}
             {/* <Box
               sx={{
                 height: 500,

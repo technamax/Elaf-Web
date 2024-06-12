@@ -48,10 +48,12 @@ import { Card, CardHeader, Avatar } from '@mui/material';
 import '../../assets/scss/style.scss';
 // import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MainCard from 'ui-component/cards/MainCard';
+import loadingGif from '../../assets/images/loading1.svg';
 
 const Embroidery = () => {
   const theme = useTheme();
   const [initialData, setInitialData] = useState([]);
+  const [loading, setLoading] = useState(false); // State for loading
 
   const [formData, setFormData] = useState({
     embroideryId: initialData?.embroideryId || 0,
@@ -426,6 +428,8 @@ const Embroidery = () => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
+      setLoading(true);
+
       setFormData({
         ...formData,
         collectionId: value
@@ -459,6 +463,7 @@ const Embroidery = () => {
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
       setAccordionExpanded(true);
+      setLoading(false);
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -1239,16 +1244,37 @@ const Embroidery = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
-            <ReuseableDataGrid
-              iColumns={columns}
-              initialRows={initialRows}
-              setInitialData={setInitialData}
-              deleteApi={deleteApi}
-              deleteBy="embroideryId"
-              refetch={refetchEmbroideryList}
-              setAccordionExpanded={setAccordionExpanded}
-              fileName="Embroidery List"
-            />
+            {' '}
+            {loading ? (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <img
+                  src={loadingGif}
+                  alt="Loading"
+                  style={{
+                    width: 200,
+                    height: 200
+                    // opacity: 0.8
+                  }}
+                />
+              </div>
+            ) : (
+              <ReuseableDataGrid
+                iColumns={columns}
+                initialRows={initialRows}
+                setInitialData={setInitialData}
+                deleteApi={deleteApi}
+                deleteBy="embroideryId"
+                refetch={refetchEmbroideryList}
+                setAccordionExpanded={setAccordionExpanded}
+                fileName="Embroidery List"
+              />
+            )}
             {/* <Box
               sx={{
                 height: 500,

@@ -31,9 +31,9 @@ import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import loadingGif from '../../assets/images/loadingGif.gif';
 import '../../assets/scss/style.scss';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
+import loadingGif from '../../assets/images/loading1.svg';
 
 const PrePlanning = () => {
   const [initialData, setInitialData] = useState([]);
@@ -276,6 +276,8 @@ const PrePlanning = () => {
       const selectedCollection = collectionList.find(
         (collection) => collection.collectionId === parseInt(value)
       );
+      setLoading(true);
+
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
@@ -301,6 +303,7 @@ const PrePlanning = () => {
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
       });
       setAccordionExpanded(true);
+      setLoading(false);
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -1234,20 +1237,16 @@ const PrePlanning = () => {
               <div
                 style={{
                   display: 'flex',
-                  // justifyContent: 'center',
-                  // alignItems: 'center'
-                  // height: '100vh'
-                  top: '40%',
-                  position: 'absolute',
-                  left: '45%'
+                  justifyContent: 'center',
+                  alignItems: 'center'
                 }}
               >
                 <img
                   src={loadingGif}
                   alt="Loading"
                   style={{
-                    width: 300
-                    // height: 300
+                    width: 200,
+                    height: 200
                     // opacity: 0.8
                   }}
                 />

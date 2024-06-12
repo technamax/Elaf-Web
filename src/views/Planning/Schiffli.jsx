@@ -45,6 +45,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import schiffli from '../../assets/images/planningicons/schiffli.png';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
+import loadingGif from '../../assets/images/loading1.svg';
 
 const Schiffli = () => {
   const [initialData, setInitialData] = useState([]);
@@ -121,6 +122,7 @@ const Schiffli = () => {
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded);
   };
+  const [loading, setLoading] = useState(false); // State for loading
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
@@ -337,6 +339,8 @@ const Schiffli = () => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
+      setLoading(true);
+
       setFormData({
         ...formData,
         collectionId: value
@@ -362,6 +366,7 @@ const Schiffli = () => {
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
       setAccordionExpanded(true);
+      setLoading(false);
     } else if (name === 'colorId') {
       const selectedcolor = colors.find((color) => color.colorId === value);
       setFormData({
@@ -989,16 +994,36 @@ const Schiffli = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
-            <ReuseableDataGrid
-              iColumns={columns}
-              initialRows={initialRows}
-              setInitialData={setInitialData}
-              deleteApi={deleteApi}
-              deleteBy="schiffiliId"
-              refetch={refetchSchiffliList}
-              setAccordionExpanded={setAccordionExpanded}
-              fileName="Schffili List"
-            />
+            {loading ? (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <img
+                  src={loadingGif}
+                  alt="Loading"
+                  style={{
+                    width: 200,
+                    height: 200
+                    // opacity: 0.8
+                  }}
+                />
+              </div>
+            ) : (
+              <ReuseableDataGrid
+                iColumns={columns}
+                initialRows={initialRows}
+                setInitialData={setInitialData}
+                deleteApi={deleteApi}
+                deleteBy="schiffiliId"
+                refetch={refetchSchiffliList}
+                setAccordionExpanded={setAccordionExpanded}
+                fileName="Schffili List"
+              />
+            )}
             {/* <Box
               sx={{
                 height: 500,
