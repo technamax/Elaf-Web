@@ -11,6 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import ExcelExport from './ExcelExport';
+import loadingGif from '../assets/images/loading1.svg';
 
 import axios from 'axios';
 
@@ -25,6 +26,7 @@ const ReuseableDataGrid = ({
   getCellClassName,
   fileName
 }) => {
+  console.log('type of initial rows', typeof initialRows.length);
   const [open, setOpen] = React.useState(false);
   const [deleteId, setDeleteId] = React.useState(null);
   function EditToolbar() {
@@ -114,7 +116,24 @@ const ReuseableDataGrid = ({
     }
   ];
 
-  return (
+  return initialRows.length === 0 ? (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+    >
+      <img
+        src={loadingGif}
+        alt="Loading"
+        style={{
+          width: 200,
+          height: 200
+        }}
+      />
+    </div>
+  ) : (
     <Box
       sx={{
         height: 500,
