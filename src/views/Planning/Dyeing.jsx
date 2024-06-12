@@ -17,9 +17,10 @@ import {
   ButtonGroup,
   IconButton
 } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+// import { DataGrid } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
 import Autocomplete from '@mui/lab/Autocomplete';
 import {
@@ -464,24 +465,24 @@ const Dyeing = () => {
       label: 'Printing'
     }
   ];
-  const handleEdit = (row) => {
-    setInitialData(row);
-  };
+  // const handleEdit = (row) => {
+  //   setInitialData(row);
+  // };
 
-  console.log('initialData', initialData);
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(
-        `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingById?DPId=${id}`
-      );
+  // console.log('initialData', initialData);
+  // const handleDelete = async (id) => {
+  //   try {
+  //     await axios.delete(
+  //       `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingById?DPId=${id}`
+  //     );
 
-      refetchDyeingPrintingData();
-      console.log('deleted');
-    } catch (error) {
-      console.error('Error deleting data:', error);
-    }
-    // Handle delete logic
-  };
+  //     refetchDyeingPrintingData();
+  //     console.log('deleted');
+  //   } catch (error) {
+  //     console.error('Error deleting data:', error);
+  //   }
+  //   // Handle delete logic
+  // };
 
   const columns = [
     {
@@ -540,34 +541,35 @@ const Dyeing = () => {
     {
       field: 'unitRatePerPo',
       headerName: 'UnitRate Per Po.'
-    },
-
-    {
-      field: 'Action',
-      headerName: 'Actions',
-
-      renderCell: (params) => (
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <ButtonGroup size="small" variant="text">
-            <IconButton
-              aria-label="Edit"
-              // color="primary"
-              onClick={() => handleEdit(params.row)}
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              aria-label="delete"
-              color="primary"
-              onClick={() => handleDelete(params.row.dpId)}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </ButtonGroup>
-        </div>
-      )
     }
+
+    // {
+    //   field: 'Action',
+    //   headerName: 'Actions',
+
+    //   renderCell: (params) => (
+    //     <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+    //       <ButtonGroup size="small" variant="text">
+    //         <IconButton
+    //           aria-label="Edit"
+    //           // color="primary"
+    //           onClick={() => handleEdit(params.row)}
+    //         >
+    //           <EditIcon />
+    //         </IconButton>
+    //         <IconButton
+    //           aria-label="delete"
+    //           color="primary"
+    //           onClick={() => handleDelete(params.row.dpId)}
+    //         >
+    //           <DeleteIcon />
+    //         </IconButton>
+    //       </ButtonGroup>
+    //     </div>
+    //   )
+    // }
   ];
+  const deleteApi = `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingById?DPId=`;
 
   return (
     // <MainCard
@@ -987,7 +989,17 @@ const Dyeing = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid item xs={12} md={12} paddingTop={1}>
-            <Box
+            <ReuseableDataGrid
+              iColumns={columns}
+              initialRows={initialRows}
+              setInitialData={setInitialData}
+              deleteApi={deleteApi}
+              deleteBy="dpId"
+              refetch={refetchDyeingPrintingData}
+              setAccordionExpanded={setAccordionExpanded}
+              fileName="Dyeing&PrintingList"
+            />
+            {/* <Box
               sx={{
                 height: 500,
                 width: 'inherit',
@@ -1013,7 +1025,7 @@ const Dyeing = () => {
                   }
                 }}
               />
-            </Box>
+            </Box> */}
             {/* <EditAbleDataGrid initialRows={initialRows} ncolumns={columns} /> */}
           </Grid>
         </Grid>

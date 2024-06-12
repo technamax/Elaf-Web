@@ -1,121 +1,3 @@
-// import React from 'react';
-// import {
-//   Grid,
-//   TextField,
-//   Button,
-//   MenuItem,
-//   FormControl,
-//   Typography,
-//   Divider,
-//   FormControlLabel,
-//   Checkbox,
-//   ButtonGroup,
-//   Box,
-//   IconButton,
-//   Accordion,
-//   AccordionDetails,
-//   AccordionSummary
-// } from '@mui/material';
-// import { DataGrid } from '@mui/x-data-grid';
-// import EditIcon from '@mui/icons-material/Edit';
-// import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-// import axios from 'axios';
-
-// const ReuseableDataGrid = ({
-//   iColumns,
-//   initialRows,
-//   setInitialData,
-//   deleteApi,
-//   deleteBy,
-//   refetch,
-//   setAccordionExpanded
-// }) => {
-//   const handleEdit = (row) => {
-//     setAccordionExpanded(true);
-//     setInitialData(row);
-//   };
-
-//   // console.log('initialData', initialData);
-//   const handleDelete = async (id) => {
-//     console.log('deleteby', id);
-//     try {
-//       await axios.delete(`${deleteApi}${id}`);
-//       // refetchEmbroideryList();
-//       refetch();
-//       console.log('deleted');
-//     } catch (error) {
-//       console.error('Error deleting data:', error);
-//     }
-//     // Handle delete logic
-//   };
-
-//   const columns = [
-//     ...iColumns,
-//     {
-//       field: 'Action',
-//       headerName: 'Actions',
-
-//       renderCell: (params) => (
-//         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-//           <ButtonGroup size="small" variant="text">
-//             <IconButton
-//               aria-label="Edit"
-//               // color="primary"
-//               onClick={() => handleEdit(params.row)}
-//             >
-//               <EditIcon />
-//             </IconButton>
-//             <IconButton
-//               aria-label="delete"
-//               color="primary"
-//               // onClick={() => handleDelete(params.row.schiffiliId)}
-//               onClick={() => handleDelete(params.row[deleteBy])}
-//               // onClick={() => console.log('DELETEBY', params.row[deleteBy])}
-//             >
-//               <DeleteIcon />
-//             </IconButton>
-//           </ButtonGroup>
-//         </div>
-//       )
-//     }
-//   ];
-//   return (
-//     <Box
-//       sx={{
-//         height: 500,
-//         width: 'inherit',
-//         '& .actions': {
-//           color: 'text.secondary'
-//         },
-//         '& .textPrimary': {
-//           color: 'text.primary'
-//         }
-//       }}
-//     >
-//       <DataGrid
-//         // {...data}
-//         rows={initialRows}
-//         columns={columns}
-//         rowLength={100}
-//         sx={{
-//           boxShadow: 2,
-//           border: 2,
-//           borderColor: 'primary.light',
-//           '& .MuiDataGrid-cell:hover': {
-//             color: 'primary.main'
-//           }
-//         }}
-//       />
-//     </Box>
-//   );
-// };
-
-// export default ReuseableDataGrid;
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////
-
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -177,8 +59,20 @@ const ReuseableDataGrid = ({
   };
 
   const handleEdit = (row) => {
-    setAccordionExpanded(true);
-    setInitialData(row);
+    console.log('row.embroideryId', row.embroideryId);
+    if (row.embroideryId) {
+      const threadAdditionalArray = row.threadAdditional
+        ? row.threadAdditional.split(',').map((item) => item.trim())
+        : [];
+
+      setInitialData({
+        ...row,
+        threadAdditional: threadAdditionalArray
+      });
+    } else {
+      setAccordionExpanded(true);
+      setInitialData(row);
+    }
   };
 
   const handleDelete = async () => {
