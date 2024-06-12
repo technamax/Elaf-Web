@@ -23,7 +23,7 @@ export default function AddAdditionalServices({ onSaveSuccess }) {
   }, [lookupData]);
 
   const [formData, setFormData] = useState({
-    plannedCollectionId: '',
+    collectionId: '',
     serviceTypeId: '',
     serviceListId: '',
     vendorId: '',
@@ -43,7 +43,7 @@ export default function AddAdditionalServices({ onSaveSuccess }) {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
 
-    if (name === 'plannedCollectionId') {
+    if (name === 'collectionId') {
       const selectedCollection = plannedCollection.find(
         (collection) => collection.collectionId === value
       );
@@ -65,6 +65,7 @@ export default function AddAdditionalServices({ onSaveSuccess }) {
       );
       console.log('Form data saved:', response.data);
       setFormData({
+        collectionId: '',
         serviceTypeId: '',
         serviceListId: '',
         vendorId: '',
@@ -113,8 +114,8 @@ export default function AddAdditionalServices({ onSaveSuccess }) {
           fullWidth
           select
           label="Select Collection"
-          name="plannedCollectionId"
-          value={formData.plannedCollectionId}
+          name="collectionId"
+          value={formData.collectionId}
           onChange={handleChange}
           size="small"
         >
