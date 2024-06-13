@@ -45,8 +45,13 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import schiffli from '../../assets/images/planningicons/schiffli.png';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
+import { useUser } from 'context/User';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 const Schiffli = () => {
+  const { user } = useUser();
+  const { enqueueSnackbar } = useSnackbar();
+
   const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
     schiffiliId: 0,
@@ -77,10 +82,10 @@ const Schiffli = () => {
     pcsForLaserCut: 0,
     totalAmount: 0,
 
+    createdBy: user.empId,
     createdOn: new Date().toISOString(),
-    createdBy: 0,
     lastUpdatedOn: new Date().toISOString(),
-    LastUpdatedBy: 0
+    lastUpdatedBy: user.empId
   });
   useEffect(() => {
     setFormData({
@@ -111,10 +116,10 @@ const Schiffli = () => {
       laserCutRate: initialData?.laserCutRate || 0,
       pcsForLaserCut: initialData?.pcsForLaserCut || 0,
       totalAmount: initialData?.totalAmount || 0,
-      reatedOn: initialData?.createdOn || new Date().toISOString(),
-      createdBy: initialData?.createdBy || 0,
+      createdOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || user.empId,
       lastUpdatedOn: new Date().toISOString(),
-      LastUpdatedBy: 0
+      lastUpdatedBy: user.empId
     });
   }, [initialData]);
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
@@ -396,9 +401,18 @@ const Schiffli = () => {
 
       // Handle the response if needed
       console.log('Save response:', response.data);
-
-      // Clear the form after successful save
-      // refetchFabricRequisitionData();
+      if (!response.data.success) {
+        enqueueSnackbar(`${response.data.message} !`, {
+          variant: 'error',
+          autoHideDuration: 5000
+        });
+        console.log('response.message', response.data.message);
+      } else {
+        enqueueSnackbar('Fabrication saved successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+      }
 
       // Assuming designId, planningHeaderId, and batchNo are part of the formData state
       setFormData((prevFormData) => ({
@@ -430,49 +444,20 @@ const Schiffli = () => {
         pcsForLaserCut: 0,
         totalAmount: 0,
         createdOn: new Date().toISOString(),
-        createdBy: 0,
+        createdBy: user.empId,
         lastUpdatedOn: new Date().toISOString(),
-        LastUpdatedBy: 0
+        lastUpdatedBy: user.empId
       }));
 
       refetchSchiffliList();
 
-      // setInitialData((prevFormData) => ({
-      //   designId: prevFormData.designId,
-      //   planningHeaderId: prevFormData.planningHeaderId,
-      //   batchNo: prevFormData.batchNo,
-      //   baseColorName: prevFormData.baseColorName,
-      //   schiffiliId: 0,
-      //   componentId: '',
-      //   poPcs: '',
-      //   fabricId: '',
-      //   vendorId: '',
-      //   colorId: '', // from dying screen coming from fabricAPI
-      //   availableQty: '',
-      //   thaanQty: 0,
-      //   operatingMachineId: 0,
-      //   operatingMachine: '',
-      //   workingHeadId: 0,
-      //   cuttingSize: '',
-      //   rate: '',
-      //   costPerComponent: '',
-      //   totalEmbroidry: 0,
-      //   noOfItemPerThaan: 0,
-      //   noOfStichesPerYard: 0,
-      //   amountPerYard: 0,
-      //   totalPcs: 0,
-      //   laserCut: false,
-      //   laserCutRate: 0,
-      //   pcsForLaserCut: 0,
-      //   totalAmount: 0,
-      //   createdOn: new Date().toISOString(),
-      //   createdBy: 0,
-      //   lastUpdatedOn: new Date().toISOString(),
-      //   LastUpdatedBy: 0
-      // }));
       setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
+      enqueueSnackbar('Dyeing not saved successfully!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
     }
   };
   console.log('formData', formData);
@@ -761,6 +746,7 @@ const Schiffli = () => {
                   size="small"
                   name="poPcs"
                   value={formData.poPcs}
+                  disabled
                   onChange={handleChange}
                 />
               </Grid>

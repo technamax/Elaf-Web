@@ -124,10 +124,25 @@ const PrePlanningCreation = () => {
     { value: 'Yes', label: 'Yes' },
     { value: 'No', label: 'No' }
   ];
-
+  console.log('collectionList', collectionList);
   const handleChange = async (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (name === 'collectionId') {
+      const selectedCollection = collectionList.find(
+        (collection) => collection.collectionId === parseInt(value)
+      );
+      // setSelectedCollectionId(value);
+      setFormData({
+        ...formData,
+        collectionId: value,
+        poPcs: selectedCollection ? selectedCollection.poPcs : ''
+        // collectionName: selectedCollection
+        //   ? selectedCollection.collectionName
+        //   : ''
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSave = async () => {

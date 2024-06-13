@@ -162,7 +162,7 @@ const AdditionalProcess = () => {
   const [colors, setColors] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   const [components, setComponents] = useState([]);
-
+  console.log('batchData', batchData);
   useEffect(() => {
     if (designData) {
       setDesignList(designData.result);
@@ -221,83 +221,56 @@ const AdditionalProcess = () => {
 
   const collectionList = collectionData?.result || [];
   // console.log('collectionList', collectionList);
+  const iniPcsPerComponent = formData.pcsPerComponent;
+  useEffect(() => {
+    const calculatePcsPerComponent = () => {
+      const quantity = parseFloat(formData.quantity) || 0;
 
-  // useEffect(() => {
-  //   const calculateTotalEmbroidey = () => {
-  //     const thaanQty = parseFloat(formData.thaanQty) || 0;
-  //     const operatingMachine = parseFloat(formData.operatingMachine) || 0;
-  //     return thaanQty * operatingMachine;
-  //   };
+      return iniPcsPerComponent - quantity;
+    };
 
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     totalEmbroidry: calculateTotalEmbroidey()
-  //   }));
-  //   const calculateTotalPcs = () => {
-  //     const thaanQty = parseFloat(formData.thaanQty) || 0;
-  //     const noOfStichesPerYard = parseFloat(formData.noOfStichesPerYard) || 0;
-
-  //     return thaanQty * noOfStichesPerYard;
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     totalPcs: calculateTotalPcs()
-  //   }));
-  //   const calculateAmountPerYard = () => {
-  //     const noOfStichesPerYard = parseFloat(formData.noOfStichesPerYard) || 0;
-  //     const rate = parseFloat(formData.rate) || 0;
-
-  //     return (noOfStichesPerYard / 1000) * rate;
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     amountPerYard: calculateAmountPerYard()
-  //   }));
-  //   const calculateCostPerComponent = () => {
-  //     const totalAmount = parseFloat(formData.totalAmount) || 0;
-  //     const totalPcs = parseFloat(formData.totalPcs) || 0;
-
-  //     return totalAmount / totalPcs;
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     costPerComponent: calculateCostPerComponent()
-  //   }));
-  //   const calculateTotalamount = () => {
-  //     const amountPerYard = parseFloat(formData.amountPerYard) || 0;
-  //     const totalEmbroidry = parseFloat(formData.totalEmbroidry) || 0;
-  //     const laserCutRate = parseFloat(formData.laserCutRate) || 0;
-  //     const pcsForLaserCut = parseFloat(formData.pcsForLaserCut) || 0;
-  //     return amountPerYard * totalEmbroidry + pcsForLaserCut * laserCutRate;
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     totalAmount: calculateTotalamount()
-  //   }));
-  // }, [
-  //   formData.thaanQty,
-  //   formData.operatingMachine,
-  //   formData.noOfStichesPerYard,
-  //   formData.rate,
-  //   formData.totalAmount,
-  //   formData.totalPcs,
-  //   formData.amountPerYard,
-  //   formData.totalEmbroidry,
-  //   formData.laserCutRate,
-  //   formData.pcsForLaserCut
-  // ]);
-
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: checked
+      pcsPerComponent: calculatePcsPerComponent()
     }));
-  };
+    const calculateTotalamount = () => {
+      const quantity = parseFloat(formData.quantity) || 0;
+      const ratePerPcs = parseFloat(formData.ratePerPcs) || 0;
+
+      return quantity * ratePerPcs;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      totalAmount: calculateTotalamount()
+    }));
+    const calculateCostPerComponent = () => {
+      const totalAmount = parseFloat(formData.totalAmount) || 0;
+      const poPcs = parseFloat(formData.poPcs) || 0;
+
+      return totalAmount / poPcs;
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      costPerComponent: calculateCostPerComponent()
+    }));
+  }, [
+    formData.quantity,
+    formData.ratePerPcs,
+    formData.totalAmount,
+    formData.poPcs
+    // formData.poPcs,
+    // formData.pcsPerComponent
+  ]);
+
+  // const handleCheckboxChange = (e) => {
+  //   const { name, checked } = e.target;
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     [name]: checked
+  //   }));
+  // };
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'collectionId') {
@@ -330,24 +303,6 @@ const AdditionalProcess = () => {
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
       setAccordionExpanded(true);
-    } else if (name === 'colorId') {
-      const selectedcolor = colors.find((color) => color.colorId === value);
-      setFormData({
-        ...formData,
-        colorId: value,
-        availableQty: selectedcolor ? selectedcolor.total : '',
-        cuttingSize: selectedcolor ? selectedcolor.cuttingSize : '',
-        repeats: selectedcolor ? selectedcolor.repeats : ''
-      });
-    } else if (name === 'operatingMachineId') {
-      const selectedMachine = operatingMachineList.find(
-        (machine) => machine.lookUpId === value
-      );
-      setFormData({
-        ...formData,
-        operatingMachineId: value,
-        operatingMachine: selectedMachine ? selectedMachine.lookUpName : ''
-      });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -487,7 +442,7 @@ const AdditionalProcess = () => {
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
           avatar={<Avatar src={schiffli} sx={{ background: 'transparent' }} />}
-          title="Schiffli "
+          title="Additional Process "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
 
@@ -586,7 +541,7 @@ const AdditionalProcess = () => {
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
           avatar={<AddOutlinedIcon />}
-          title="Add Schiffli "
+          title="Add Additional Process "
           titleTypographyProps={{ style: { color: 'white' } }}
           action={
             <IconButton onClick={handleAccordionToggle}>
@@ -679,6 +634,7 @@ const AdditionalProcess = () => {
                   name="poPcs"
                   value={formData.poPcs}
                   onChange={handleChange}
+                  disabled
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -756,100 +712,7 @@ const AdditionalProcess = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              {/* <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Total Embroidry"
-                  fullWidth
-                  size="small"
-                  name="totalEmbroidry"
-                  type="number"
-                  value={formData.totalEmbroidry}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Amount Per Yard"
-                  fullWidth
-                  type="number"
-                  size="small"
-                  name="amountPerYard"
-                  value={formData.amountPerYard}
-                  onChange={handleChange}
-                />
-              </Grid>
 
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Total Pcs"
-                  fullWidth
-                  size="small"
-                  name="totalPcs"
-                  value={formData.totalPcs}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Cost Per Component"
-                  fullWidth
-                  size="small"
-                  name="costPerComponent"
-                  value={formData.costPerComponent}
-                  onChange={handleChange}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Total Amount"
-                  fullWidth
-                  size="small"
-                  type="number"
-                  name="totalAmount"
-                  value={formData.totalAmount}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={formData.laserCut}
-                      onChange={handleCheckboxChange}
-                      name="laserCut"
-                    />
-                  }
-                  label="Laser Cut"
-                />
-              </Grid>
-
-              {formData.laserCut ? (
-                <Grid item xs={12} md={4.5}>
-                  <Grid container spacing={1} width="Inherit">
-                    <Grid item xs={12} md={6}>
-                      <TextField
-                        label="Laser Cut Rate"
-                        fullWidth
-                        size="small"
-                        name="laserCutRate"
-                        value={formData.laserCutRate}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                      <TextField
-                        label="Pcs For LaserCut"
-                        fullWidth
-                        size="small"
-                        name="pcsForLaserCut"
-                        value={formData.pcsForLaserCut}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-              ) : null} */}
               <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
                 <Button variant="contained" size="small" onClick={handleSave}>
                   Save
@@ -864,7 +727,7 @@ const AdditionalProcess = () => {
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
           avatar={<VisibilityOutlinedIcon />}
-          title="View Schiffli "
+          title="View Additional Process "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
 
