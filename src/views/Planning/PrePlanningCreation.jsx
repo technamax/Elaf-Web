@@ -3,9 +3,7 @@ import axios from 'axios';
 import {
   Button,
   MenuItem,
-  FormControl,
   Typography,
-  Divider,
   Grid,
   TextField,
   Box,
@@ -21,27 +19,30 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import '../../App.css';
-// project imports
-import MainCard from 'ui-component/cards/MainCard';
-import { GetCollectionList } from 'api/apis';
-
-// ==============================|| SAMPLE PAGE ||============================== //
 
 const PrePlanningCreation = () => {
-  const { data, error, isLoading, refetch } = useGetCollectionListQuery();
-  const { data: collectionData } = useGetCollectionListQuery();
-  const { data: designData } = useGetDesignListByCollectionIdQuery();
-  const [loading, setLoading] = useState(true);
+  const { data: collectionData, refetch: refetchCollection } =
+    useGetCollectionListQuery();
+  const { data: designData, refetch } = useGetDesignListByCollectionIdQuery();
+  // selectedCollectionId,
+  // {
+  //   skip: !selectedCollectionId // Skip the query if no collection is selected
+  // }
   const { enqueueSnackbar } = useSnackbar();
-
+  const [designList, setDesignList] = useState([]);
+  useEffect(() => {
+    if (designData) {
+      setDesignList(designData.result);
+      refetch();
+    }
+  }, [designData]);
   const collectionList = collectionData?.result || [];
-  const designList = designData || [];
+  // const designList = designData || [];
   const [formData, setFormData] = useState({
     collectionName: '',
     collectionId: '',
     plannedCollectionId: '',
     plannedDesignedId: '',
-
     designId: '',
     poPcs: '',
     batchNo: '',
@@ -49,36 +50,33 @@ const PrePlanningCreation = () => {
     createdOn: new Date().toISOString()
   });
   const [designOptions, setDesignOptions] = useState([]);
-
-  //   const [collectionList, setCollectionList] = useState([]);
   const [plannedCollection, setPlannedCollection] = useState([]);
-  //   const [collectionListPassed, setCollectionListPassed] = useState([]);
   const [plannedDesign, setPlannedDesign] = useState([]);
   const [gridData, setGridData] = useState([]);
+  const [value, setValue] = useState('1');
 
   const fetchData = useCallback(async () => {
     try {
-      const response = await axios.get(
-        `https://gecxc.com:4041/api/PrePlanning/GetPlanningHeaderListByDesignId?designId=${formData.plannedDesignedId}`
-      );
-      console.log('DataGridResponse', response);
-      const rowsWithId = response.data.result.map((row, index) => ({
-        ...row,
-        id: index + 1
-      }));
-
-      setGridData(rowsWithId);
+      if (formData.plannedDesignedId) {
+        const response = await axios.get(
+          `https://gecxc.com:4041/api/PrePlanning/GetPlanningHeaderListByDesignId?designId=${formData.plannedDesignedId}`
+        );
+        const rowsWithId = response.data.result.map((row, index) => ({
+          ...row,
+          id: index + 1
+        }));
+        setGridData(rowsWithId);
+        refetch();
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
-      setGridData([]); // Ensure gridData is an array even in case of error
+      setGridData([]);
     }
   }, [formData.plannedDesignedId]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  const initialRows = setGridData;
 
   const columns = [
     {
@@ -106,39 +104,27 @@ const PrePlanningCreation = () => {
       editable: true
     }
   ];
-  const [value, setValue] = useState('1');
 
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
   };
 
-  const volume = [
-    { value: 'Volume 1', label: 'Volume 1' },
-    { value: 'Volume 2', label: 'Volume 2' },
-    { value: 'Volume 3', label: 'Volume 3' },
-    { value: 'Volume 4', label: 'Volume 4' },
-    { value: 'Volume 5', label: 'Volume 5' }
-  ];
-
-  const enabled = [
-    { value: 'Yes', label: 'Yes' },
-    { value: 'No', label: 'No' }
-  ];
-  console.log('collectionList', collectionList);
   const handleChange = async (e) => {
     const { name, value } = e.target;
     if (name === 'collectionId') {
       const selectedCollection = collectionList.find(
         (collection) => collection.collectionId === parseInt(value)
       );
-      // setSelectedCollectionId(value);
       setFormData({
         ...formData,
         collectionId: value,
         poPcs: selectedCollection ? selectedCollection.poPcs : ''
-        // collectionName: selectedCollection
-        //   ? selectedCollection.collectionName
-        //   : ''
+      });
+    } else if (name === 'designId') {
+      setFormData({
+        ...formData,
+        designId: value,
+        plannedDesignedId: value // Update plannedDesignedId as well
       });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -146,13 +132,11 @@ const PrePlanningCreation = () => {
   };
 
   const handleSave = async () => {
-    console.log(formData);
     try {
       const response = await axios.post(
         'https://gecxc.com:4041/api/PrePlanning/SavePrePlanningHeader',
         formData
       );
-      console.log('Form data saved:', response.data);
       enqueueSnackbar('Planning Batch saved successfully!', {
         variant: 'success',
         autoHideDuration: 5000
@@ -165,7 +149,8 @@ const PrePlanningCreation = () => {
         poPcs: '',
         batchNo: ''
       });
-      refetch();
+      await refetchCollection();
+      await fetchData();
     } catch (error) {
       console.error('Error saving data:', error);
       enqueueSnackbar('Planning Batch not saved successfully!', {
@@ -175,11 +160,6 @@ const PrePlanningCreation = () => {
     }
   };
 
-  // const deleteApi =
-  //   'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
-  // const editAPi =
-  //   'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection';
-
   useEffect(() => {
     const getDesignListByCollectionId = async () => {
       if (formData.collectionId) {
@@ -187,8 +167,6 @@ const PrePlanningCreation = () => {
           const response = await axios.get(
             `https://gecxc.com:4041/API/DesignRegistration/GetDesignListByCollectionId?CollectionId=${formData.collectionId}`
           );
-          console.log(formData.collectionId);
-          console.log(response);
           setDesignOptions(response.data.result);
         } catch (error) {
           console.error('Error fetching design options:', error);
@@ -204,10 +182,9 @@ const PrePlanningCreation = () => {
         const response = await axios.get(
           'https://gecxc.com:4041/api/PrePlanning/GetCollectionListFromPlanningHeader'
         );
-        console.log('GetCollectionFromPlanningHeader', response);
         setPlannedCollection(response.data.result);
       } catch (error) {
-        console.error('Error fetching design options:', error);
+        console.error('Error fetching planned collections:', error);
       }
     };
     GetCollectionFromPlanningHeader();
@@ -220,16 +197,14 @@ const PrePlanningCreation = () => {
           const response = await axios.get(
             `https://gecxc.com:4041/api/PrePlanning/GetDesignFromPlanningHeaderByCollectionId?collectionid=${formData.plannedCollectionId}`
           );
-          console.log('GetDesignFromPlanningHeaderByCollectionId', response);
           setPlannedDesign(response.data.result);
         } catch (error) {
-          console.error('Error fetching design options:', error);
+          console.error('Error fetching planned designs:', error);
         }
       }
     };
     GetDesignFromPlanningHeaderByCollectionId();
-  }, [formData.plannedCollectionId]); // Effect depends on collectionId
-  console.log('formData', formData);
+  }, [formData.plannedCollectionId]);
 
   return (
     <>
@@ -246,11 +221,6 @@ const PrePlanningCreation = () => {
         <Card variant="outlined">
           <CardHeader
             className="css-4rfrnx-MuiCardHeader-root"
-            // style={{
-            //   backgroundColor: '#a31f23',
-            //   color: 'white',
-            //   maxHeight: '30px'
-            // }}
             title="Create Batch Planning"
             titleTypographyProps={{ style: { color: 'white' } }}
           ></CardHeader>
@@ -353,14 +323,81 @@ const PrePlanningCreation = () => {
                       Save
                     </Button>
                   </Grid>
+                  <Grid item xs={12} paddingTop={1}>
+                    <EditAbleDataGrid
+                      initialRows={gridData}
+                      ncolumns={columns}
+                      formData={formData}
+                      fetchData={fetchData}
+                      refetch={refetchCollection}
+                    />
+                  </Grid>
                 </Grid>
               </TabPanel>
               <TabPanel value="2">
-                <Grid container spacing={2} width="inherit">
-                  <Grid item xs={9} md={9}>
+                {/* <Grid item xs={9} md={9}>
                     <Typography variant="h3" gutterBottom>
                       Search Collection
                     </Typography>
+                  </Grid> */}
+                <Grid
+                  container
+                  spacing={2}
+                  width="inherit"
+                  sx={{ paddingX: 2 }}
+                >
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      fullWidth
+                      select
+                      label="Select Collection"
+                      name="plannedCollectionId"
+                      value={formData.plannedCollectionId}
+                      onChange={handleChange}
+                      size="small"
+                    >
+                      {plannedCollection.length > 0 ? (
+                        plannedCollection.map((option) => (
+                          <MenuItem
+                            id="ddlCollection"
+                            key={option.planningHeaderId}
+                            value={option.collectionId}
+                          >
+                            {option.collectionName}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem disabled>No Collections Available</MenuItem>
+                      )}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      fullWidth
+                      select
+                      label="Design"
+                      name="plannedDesignedId"
+                      value={formData.plannedDesignedId}
+                      onChange={handleChange}
+                      size="small"
+                    >
+                      {plannedDesign.map((option) => (
+                        <MenuItem
+                          key={option.planningHeaderId}
+                          value={option.designId}
+                        >
+                          {option.designNo}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} paddingTop={1}>
+                    <EditAbleDataGrid
+                      initialRows={gridData}
+                      ncolumns={columns}
+                      formData={formData}
+                      fetchData={fetchData}
+                    />
                   </Grid>
                 </Grid>
               </TabPanel>
@@ -368,76 +405,6 @@ const PrePlanningCreation = () => {
           </Box>
         </Card>
       </div>
-
-      <MainCard
-        style={{
-          borderWidth: 1,
-          borderStyle: 'dotted',
-          borderColor: '#a11f23'
-        }}
-      >
-        {/* <FormControl> */}
-        <Grid container spacing={2} width="inherit">
-          <Grid item xs={12} md={12}>
-            <Typography variant="h4" gutterBottom>
-              Search
-            </Typography>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              select
-              label="Select Collection"
-              name="plannedCollectionId"
-              value={formData.plannedCollectionId}
-              onChange={handleChange}
-              size="small"
-            >
-              {plannedCollection.length > 0 ? (
-                plannedCollection.map((option) => (
-                  <MenuItem
-                    id="ddlCollection"
-                    key={option.planningHeaderId}
-                    value={option.collectionId}
-                  >
-                    {option.collectionName}
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem disabled>No Collections Available</MenuItem>
-              )}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              select
-              label="Design"
-              name="plannedDesignedId"
-              value={formData.plannedDesignedId}
-              onChange={handleChange}
-              size="small"
-            >
-              {plannedDesign.map((option) => (
-                <MenuItem key={option.planningHeaderId} value={option.designId}>
-                  {option.designNo}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} paddingTop={1}>
-            <EditAbleDataGrid
-              initialRows={gridData}
-              ncolumns={columns}
-              formData={formData}
-              fetchData={fetchData}
-              // deleteApi={deleteApi}
-              //   editApi={editApi}
-            />
-          </Grid>
-        </Grid>
-        {/* </FormControl> */}
-      </MainCard>
     </>
   );
 };

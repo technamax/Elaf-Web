@@ -37,6 +37,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import fabric from '../../assets/images/planningicons/fabric.png';
 import '../../assets/scss/style.scss';
+import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
 
 const Fabrication = () => {
@@ -92,6 +93,7 @@ const Fabrication = () => {
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded);
   };
+  const [loading, setLoading] = useState(false); // State for loading
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   console.log(collectionData);
@@ -213,6 +215,8 @@ const Fabrication = () => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
+      setLoading(true);
+
       setFormData({
         ...formData,
         collectionId: value
@@ -238,6 +242,7 @@ const Fabrication = () => {
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
       setAccordionExpanded(true);
+      setLoading(false);
     } else if (name === 'fabricId') {
       const selectedFabric = Fabrications.find(
         (fabric) => fabric.fabricId === value
@@ -635,16 +640,36 @@ const Fabrication = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
-            <ReuseableDataGrid
-              iColumns={columns}
-              initialRows={initialRows}
-              setInitialData={setInitialData}
-              deleteApi={deleteApi}
-              deleteBy="fabricationId"
-              refetch={refetchFabricRequisitionData}
-              setAccordionExpanded={setAccordionExpanded}
-              fileName="Fabrication Requistion List"
-            />
+            {loading ? (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
+                <img
+                  src={loadingGif}
+                  alt="Loading"
+                  style={{
+                    width: 200,
+                    height: 200
+                    // opacity: 0.8
+                  }}
+                />
+              </div>
+            ) : (
+              <ReuseableDataGrid
+                iColumns={columns}
+                initialRows={initialRows}
+                setInitialData={setInitialData}
+                deleteApi={deleteApi}
+                deleteBy="fabricationId"
+                refetch={refetchFabricRequisitionData}
+                setAccordionExpanded={setAccordionExpanded}
+                fileName="Fabrication Requistion List"
+              />
+            )}
             {/* <EditAbleDataGrid
               ncolumns={columns}
               initialRows={initialRows}
