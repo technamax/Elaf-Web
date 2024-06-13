@@ -29,6 +29,7 @@ import embroidery from '../../assets/images/planningicons/embroidery.png';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 import { DataGrid } from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles';
@@ -49,9 +50,12 @@ import '../../assets/scss/style.scss';
 // import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MainCard from 'ui-component/cards/MainCard';
 import loadingGif from '../../assets/images/loading1.svg';
+import { useUser } from 'context/User';
 
 const Embroidery = () => {
   const theme = useTheme();
+  const { user } = useUser();
+  const { enqueueSnackbar } = useSnackbar();
   const [initialData, setInitialData] = useState([]);
   const [loading, setLoading] = useState(false); // State for loading
 
@@ -93,10 +97,10 @@ const Embroidery = () => {
 
     costPerComponent: initialData?.costPerComponent || '', //
     // costPerComponent:  initialData?.tilaRate || '', //
-    createdOn: initialData?.createdOn || new Date().toISOString(),
-    createdBy: initialData?.createdBy || 0,
+    createdBy: user.empId,
+    createdOn: new Date().toISOString(),
     lastUpdatedOn: new Date().toISOString(),
-    LastUpdatedBy: 0
+    lastUpdatedBy: user.empId
   });
 
   useEffect(() => {
@@ -136,9 +140,9 @@ const Embroidery = () => {
       threadAdditional: initialData?.threadAdditional || [],
       costPerComponent: initialData?.costPerComponent || '', //
       createdOn: initialData?.createdOn || new Date().toISOString(),
-      createdBy: initialData?.createdBy || 0,
+      createdBy: initialData?.createdBy || user.empId,
       lastUpdatedOn: new Date().toISOString(),
-      LastUpdatedBy: 0
+      lastUpdatedBy: user.empId
     });
   }, [initialData]);
   const additionals = ['Boring', 'Pooni', 'Laser', 'Doori', 'Dissolving'];
@@ -480,6 +484,24 @@ const Embroidery = () => {
       );
 
       console.log('Save response:', response.data);
+
+      if (!response.data.success) {
+        enqueueSnackbar(
+          `${response.data.message} !`,
+
+          {
+            variant: 'error',
+            autoHideDuration: 5000
+          }
+        );
+        console.log('response.message', response.data.message);
+      } else {
+        enqueueSnackbar('Fabrication saved successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+      }
+
       // fetchEmbroidery();
       // setInitialData({});
       setAccordionExpanded(false);
@@ -519,98 +541,34 @@ const Embroidery = () => {
         threadAdditional: [],
         costPerComponent: '', //
         createdOn: new Date().toISOString(),
-        createdBy: 0,
+        createdBy: user.empId,
         lastUpdatedOn: new Date().toISOString(),
-        LastUpdatedBy: 0
+        lastUpdatedBy: user.empId
       }));
-      // setFormData({
-      //   embroideryId: 0,
-      //   // designId: response.data.result.designId,
-      //   // batchNo: response.data.result.batchNo,
-      //   // planningHeaderId: response.data.result.planningHeaderId,
-      //   componentId: '',
-      //   fabricId: '',
-      //   vendorId: '',
-      //   poPcs: '', // coming from getcollectionapi
-      //   baseColorId: '', // coming from getcollectionapi
-      //   baseColorName: '',
-      //   colorId: '', //from dying screen coming from fabricAPi
-      //   availableQty: '',
-      //   noOfHead: '',
-      //   repeats: '',
-      //   cuttingSize: '',
-      //   itemsPerRepeat: '',
-      //   totalPcs: '', //repeat*itemsPerRepeat
-      //   totalAmount: '', //
-      //   threadStiches: '',
-      //   threadRate: '',
-      //   threadAmount: '',
-      //   tillaStiches: '',
-      //   tilaRate: '',
-      //   tilaAmount: '',
-      //   sequence: '',
-      //   sequenceRate: '',
-      //   sequenceAmount: '',
-      //   isSolving: false,
-      //   solvingLayers: 0,
-      //   solvingInMeters: '',
-      //   solvingRate: 0,
-      //   solvingAmount: '',
-      //   // additional: '',
-      //   threadAdditional: [],
 
-      //   costPerComponent: '', //
-      //   // costPerComponent: '', //
-      //   createdOn: new Date().toISOString(),
-      //   createdBy: 0,
-      //   lastUpdatedOn: new Date().toISOString(),
-      //   LastUpdatedBy: 0
-      // });
-      // setInitialRows([]);
       refetchEmbroideryList();
     } catch (error) {
       console.error('Error saving data:', error);
+      enqueueSnackbar('Dyeing not saved successfully!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
     }
   };
 
   console.log('initialRows', initialRows);
-  // const handleEdit = (row) => {
-  //   // Convert the comma-separated string to an array
-  //   const threadAdditionalArray = row.threadAdditional
-  //     ? row.threadAdditional.split(',').map((item) => item.trim())
-  //     : [];
 
-  //   setInitialData({
-  //     ...row,
-  //     threadAdditional: threadAdditionalArray
-  //   });
-  // };
-
-  // console.log('initialData', initialData);
-  // const handleDelete = async (id) => {
-  //   try {
-  //     await axios.delete(
-  //       `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=${id}`
-  //     );
-  //     // refetchEmbroideryList();
-  //     fetchEmbroidery();
-  //     console.log('deleted');
-  //   } catch (error) {
-  //     console.error('Error deleting data:', error);
-  //   }
-  //   // Handle delete logic
-  // };
   const columns = [
-    { field: 'designId', headerName: 'Design' },
+    { field: 'designNo', headerName: 'Design' },
     { field: 'batchNo', headerName: 'Batch No.' },
     { field: 'componentName', headerName: 'Component ' },
     { field: 'fabricName', headerName: 'Fabric ' },
     { field: 'vendorId', headerName: 'Vendor' },
     { field: 'poPcs', headerName: 'Po Pcs' },
-    { field: 'baseColorName', headerName: 'Base Color' },
+    // { field: 'baseColorName', headerName: 'Base Color' },
     { field: 'colourName', headerName: 'Color' },
     { field: 'availableQty', headerName: 'Available Qty' },
-    { field: 'noOfHead', headerName: 'No. Of Heads' },
+    { field: 'noOfHeadsName', headerName: 'No. Of Heads' },
     { field: 'repeats', headerName: 'Repeats' },
     { field: 'cuttingSize', headerName: 'Cutting Size' },
     { field: 'itemsPerRepeat', headerName: 'Items Per Repeat' },
@@ -631,44 +589,6 @@ const Embroidery = () => {
     { field: 'solvingAmount', headerName: 'Solving Amount' },
     { field: 'threadAdditional', headerName: 'ThreadAdditional' },
     { field: 'costPerComponent', headerName: 'Cost Per Component' }
-    // {
-    //   field: 'Action',
-    //   headerName: 'Actions',
-    //   renderCell: (params) => (
-    //     <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-    //       <ButtonGroup size="small" variant="text">
-    //         <IconButton
-    //           aria-label="Edit"
-    //           // color="primary"
-    //           onClick={() => handleEdit(params.row)}
-    //         >
-    //           <EditIcon />
-    //         </IconButton>
-    //         <IconButton
-    //           aria-label="delete"
-    //           color="primary"
-    //           onClick={() => handleDelete(params.row.embroideryId)}
-    //         >
-    //           <DeleteIcon />
-    //         </IconButton>
-    //         {/* <Button
-    //           variant="contained"
-    //           size="small"
-    //           onClick={() => handleEdit(params.row)}
-    //         >
-    //           Edit
-    //         </Button>
-    //         <Button
-    //           variant="contained"
-    //           size="small"
-    //           onClick={() => handleDelete(params.row.embroideryId)}
-    //         >
-    //           Delete
-    //         </Button> */}
-    //       </ButtonGroup>
-    //     </div>
-    //   )
-    // }
   ];
   const deleteApi = `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=`;
   return (
@@ -876,6 +796,7 @@ const Embroidery = () => {
                   name="poPcs"
                   value={formData.poPcs}
                   onChange={handleChange}
+                  disabled
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>

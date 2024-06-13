@@ -48,8 +48,12 @@ import dye from '../../assets/images/planningicons/dye.png';
 import roller from '../../assets/images/roller-ezgif.com-instagif.gif';
 import MainCard from 'ui-component/cards/MainCard';
 import loadingGif from '../../assets/images/loading1.svg';
+import { useUser } from 'context/User';
 
 const Dyeing = () => {
+  const { user } = useUser();
+  console.log('user', user);
+
   const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
     dpId: 0,
@@ -73,9 +77,13 @@ const Dyeing = () => {
     GST: '0',
     // GSTAmount: '',
     TotalIncludingGst: '',
-    createdBy: 0,
+    // createdBy: 0,
     poPcs: '',
-    baseColorName: ''
+    baseColorName: '',
+    createdBy: user.empId,
+    createdOn: new Date().toISOString(),
+    lastUpdatedOn: new Date().toISOString(),
+    lastUpdatedBy: user.empId
     // fabricId: ''
   });
   useEffect(() => {
@@ -100,9 +108,13 @@ const Dyeing = () => {
       TotalExclGst: initialData?.totalExclGst || '',
       GST: initialData?.gst || '',
       TotalIncludingGst: initialData?.totalIncludingGst || '',
-      createdBy: initialData?.createdBy || 0,
+      // createdBy: initialData?.createdBy || 0,
       poPcs: initialData?.poPcs || 0,
-      baseColorName: initialData?.baseColorName || 0
+      baseColorName: initialData?.baseColorName || 0,
+      createdOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || user.empId,
+      lastUpdatedOn: new Date().toISOString(),
+      lastUpdatedBy: user.empId
     });
   }, [initialData]);
   const { enqueueSnackbar } = useSnackbar();
@@ -376,80 +388,62 @@ const Dyeing = () => {
         'https://gecxc.com:4041/api/DyeingPrinting/SaveDyeingPrinting',
         formData
       );
+      console.log('Save response:', response.data);
 
-      if (response.status === 200) {
-        console.log('Data saved successfully:', response.data);
-        enqueueSnackbar('Dyeing saved successfully!', {
-          variant: 'success',
-          autoHideDuration: 5000
-        });
-        setFormData((prevFormData) => ({
-          designId: prevFormData.designId,
-          planningHeaderId: prevFormData.planningHeaderId,
-          batchNo: prevFormData.batchNo,
-          dpId: 0,
-          fabricId: '',
-          colorId: '',
-          color: '',
-          vendorId: '',
-          processType: '',
-          AvailableQty: '',
-          Shrinkage: '',
-          Wastage: '',
-          OutputQty: '',
-          UOM: '',
-          uomId: '',
-          RatePerUOM: '',
-          UnitRatePerPo: '',
-          TotalExclGst: '',
-          GST: '0',
-          // GSTAmount: '',
-          TotalIncludingGst: '',
-          createdBy: 0,
-          poPcs: '',
-          baseColorName: ''
-          // planningHeaderId: ''
-        }));
-        refetchDyeingPrintingData();
-        // setInitialData((prevFormData) => ({
-        //   designId: prevFormData.designId,
-        //   planningHeaderId: prevFormData.planningHeaderId,
-        //   batchNo: prevFormData.batchNo,
-        //   dpId: 0,
-        //   fabricId: '',
-        //   colorId: '',
-        //   color: '',
-        //   vendorId: '',
-        //   processType: '',
-        //   AvailableQty: '',
-        //   Shrinkage: '',
-        //   Wastage: '',
-        //   OutputQty: '',
-        //   UOM: '',
-        //   uomId: '',
-        //   RatePerUOM: '',
-        //   UnitRatePerPo: '',
-        //   TotalExclGst: '',
-        //   GST: '0',
-        //   // GSTAmount: '',
-        //   TotalIncludingGst: '',
-        //   createdBy: 0,
-        //   poPcs: '',
-        //   baseColorName: ''
-        //   // planningHeaderId: ''
-        // }));
-        // Handle success (e.g., show a success message or reset the form)
-      } else {
-        console.error('Failed to save data:', response.data);
-        enqueueSnackbar('Dyeing not saved successfully!', {
+      if (!response.data.success) {
+        enqueueSnackbar(`${response.data.message} !`, {
           variant: 'error',
           autoHideDuration: 5000
         });
-        // Handle error (e.g., show an error message)
+        console.log('response.message', response.data.message);
+      } else {
+        enqueueSnackbar('Fabrication saved successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
       }
+
+      setFormData((prevFormData) => ({
+        designId: prevFormData.designId,
+        planningHeaderId: prevFormData.planningHeaderId,
+        batchNo: prevFormData.batchNo,
+        dpId: 0,
+        fabricId: '',
+        colorId: '',
+        color: '',
+        vendorId: '',
+        processType: '',
+        AvailableQty: '',
+        Shrinkage: '',
+        Wastage: '',
+        OutputQty: '',
+        UOM: '',
+        uomId: '',
+        RatePerUOM: '',
+        UnitRatePerPo: '',
+        TotalExclGst: '',
+        GST: '0',
+        // GSTAmount: '',
+        TotalIncludingGst: '',
+        // createdBy: 0,
+        poPcs: '',
+        baseColorName: '',
+        createdOn: new Date().toISOString(),
+        createdBy: user.empId,
+        lastUpdatedOn: new Date().toISOString(),
+        lastUpdatedBy: user.empId
+        // planningHeaderId: ''
+      }));
+      refetchDyeingPrintingData();
       setAccordionExpanded(false);
     } catch (error) {
+      // Handle error (e.g., show an error message)
+
       console.error('Error saving data:', error);
+      enqueueSnackbar('Dyeing not saved successfully!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
       // Handle error (e.g., show an error message)
     }
   };
@@ -462,11 +456,11 @@ const Dyeing = () => {
   // };
   const design = [
     {
-      value: 'D',
+      value: 'Dyeing',
       label: 'Dyeing'
     },
     {
-      value: 'P',
+      value: 'Printing',
       label: 'Printing'
     }
   ];
@@ -839,6 +833,7 @@ const Dyeing = () => {
                   name="poPcs"
                   value={formData.poPcs}
                   onChange={handleChange}
+                  disabled
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>

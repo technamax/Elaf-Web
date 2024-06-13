@@ -34,8 +34,11 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import '../../assets/scss/style.scss';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import loadingGif from '../../assets/images/loading1.svg';
+import { useUser } from 'context/User';
 
 const PrePlanning = () => {
+  const { user } = useUser();
+  console.log('user', user);
   const [initialData, setInitialData] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   const [formData, setFormData] = useState({
@@ -62,12 +65,13 @@ const PrePlanning = () => {
     total: '',
     appId: 1,
     createdOn: new Date().toISOString(),
-    createdBy: 0,
-    lastUpdatedBy: 0,
+    createdBy: user.empId,
+    lastUpdatedBy: user.empId,
     lastUpdatedOn: new Date().toISOString(),
     isSchiffili: false,
     repeatsInMtr: ''
   });
+  console.log('formData', formData);
 
   useEffect(() => {
     setFormData({
@@ -94,9 +98,9 @@ const PrePlanning = () => {
       total: initialData?.total || '',
       appId: 1,
       createdOn: initialData?.createdOn || new Date().toISOString(),
-      createdBy: initialData?.createdBy || 0,
-      lastUpdatedBy: initialData?.lastUpdatedBy || 0,
-      lastUpdatedOn: initialData?.lastUpdatedOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || user.empId,
+      lastUpdatedBy: user.empId,
+      lastUpdatedOn: new Date().toISOString(),
       isSchiffili: initialData?.isSchiffili || false,
       repeatsInMtr: initialData?.repeatsInMtr || ''
     });
@@ -317,20 +321,37 @@ const PrePlanning = () => {
         formData
       );
       console.log('Data saved successfully:', response.data);
-      enqueueSnackbar('Pre Planning saved successfully!', {
-        variant: 'success',
-        autoHideDuration: 5000
-      });
+      console.log('Save response:', response.data);
+      if (!response.data.success) {
+        enqueueSnackbar(
+          `${response.data.message} !`,
+
+          {
+            variant: 'error',
+            autoHideDuration: 5000
+          }
+        );
+        console.log('response.message', response.data.message);
+      } else {
+        enqueueSnackbar('Fabrication saved successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+      }
+      // enqueueSnackbar('Pre Planning saved successfully!', {
+      //   variant: 'success',
+      //   autoHideDuration: 5000
+      // });
       setFormData((prevFormData) => ({
         planningId: 0,
         collectionId: prevFormData.collectionId,
         designId: prevFormData.designId,
         batchNo: prevFormData.batchNo,
         planningHeaderId: prevFormData.planningHeaderId,
-        baseColorId: '', // not in api
-        baseColorName: '', // not in api
-        noOfDesigns: '', // not in apis
-        noOfColors: '', // not in api
+        baseColorId: prevFormData.baseColorId, // not in api
+        baseColorName: prevFormData.baseColorName, // not in api
+        noOfDesigns: prevFormData.noOfDesigns, // not in apis
+        noOfColors: prevFormData.noOfColors, // not in api
         componentId: '',
         cuttingSize: '', // not in api
         colorId: '',
@@ -345,9 +366,9 @@ const PrePlanning = () => {
         total: '',
         appId: 1,
         createdOn: new Date().toISOString(),
-        createdBy: 0,
-        lastUpdatedBy: 0,
+        createdBy: user.empId,
         lastUpdatedOn: new Date().toISOString(),
+        lastUpdatedBy: user.empId,
         isSchiffili: false,
         repeatsInMtr: ''
       }));
@@ -375,13 +396,14 @@ const PrePlanning = () => {
   };
 
   console.log('initialRows', initialRows);
-  const totalFabric = initialRows.reduce(
-    (sum, row) => sum + (row.totalFabric ?? 0),
-    0
-  );
+  const totalFabric = initialRows
+    .reduce((sum, row) => sum + (row.totalFabric ?? 0), 0)
+    .toFixed(2);
 
   // Calculate the overall total sum
-  const total = initialRows.reduce((sum, row) => sum + (row.total ?? 0), 0);
+  const total = initialRows
+    .reduce((sum, row) => sum + (row.total ?? 0), 0)
+    .toFixed(2);
 
   // Add custom total fabric row
   const rows = [
@@ -401,14 +423,9 @@ const PrePlanning = () => {
     {
       field: 'componentName',
       headerName: 'Component',
-      // editable: true,
-      // flex: 1,
+
       ...baseColumnOptions,
-      // type: 'singleSelect',
-      // valueOptions: components.map((collection) => ({
-      //   value: collection.lookUpId,
-      //   label: collection.lookUpName
-      // })),
+
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
           return 7;
@@ -417,25 +434,11 @@ const PrePlanning = () => {
       },
       valueGetter: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
-          console.log('row', row.label);
+          // console.log('row', row.label);
           return row.label;
         }
         return value;
       }
-      // valueSetter: (params, row) => {
-      //   if (row.id === 'TOTAL_FABRIC') {
-      //     // console.log('row', row.label);
-      //     return row.label;
-      //   }
-      //   return value;
-      // }
-      // colSpan: (params, row) => (row.id === 'TOTAL_FABRIC' ? 8 : undefined),
-      // valueGetter: (params, row) => {
-      //   if (row.id === 'TOTAL_FABRIC') {
-      //     return row.label;
-      //   }
-      //   return row.componentId;
-      // }
     },
     {
       field: 'color',
@@ -443,11 +446,6 @@ const PrePlanning = () => {
       // editable: true,
       // flex: 1,
       ...baseColumnOptions
-      // type: 'singleSelect',
-      // valueOptions: colors.map((collection) => ({
-      //   value: collection.lookUpId,
-      //   label: collection.lookUpName
-      // }))
     },
     {
       field: 'cuttingSize',
@@ -461,24 +459,12 @@ const PrePlanning = () => {
       headerName: 'Fabrication',
       // editable: true,
       ...baseColumnOptions
-      // flex: 2
-      // type: 'singleSelect',
-      // valueOptions: Fabrications.map((collection) => ({
-      //   value: collection.lookUpId,
-      //   label: collection.lookUpName
-      // }))
     },
     {
       field: 'noOfHeadName',
       headerName: 'No. Of Heads',
       // editable: true,
       ...baseColumnOptions
-      // flex: 1
-      // type: 'singleSelect',
-      // valueOptions: heads.map((collection) => ({
-      //   value: collection.lookUpId,
-      //   label: collection.lookUpName
-      // }))
     },
     {
       field: 'repeats',
@@ -498,26 +484,11 @@ const PrePlanning = () => {
       field: 'totalFabric',
       headerName: 'Total Fabric',
       ...baseColumnOptions
-      // flex: 1
-      // editable: true,
-      // valueGetter: (params, row) => row.totalFabric ?? 0,
-      // valueSetter: (params, row) => {
-      //   const repeats = row.repeats ?? 0;
-      //   const repeatSize = row.repeatSize ?? 0;
-      //   const totalFabric = repeats * repeatSize;
-      //   return { ...row, totalFabric };
-      // }
     },
     {
       field: 'uom',
       headerName: 'UOM',
-      // editable: true,
-      // flex: 1,
-      // type: 'singleSelect',
-      // valueOptions: uoms.map((collection) => ({
-      //   value: collection.lookUpId,
-      //   label: collection.lookUpName
-      // })),
+
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
           return 3;
@@ -526,7 +497,7 @@ const PrePlanning = () => {
       },
       valueGetter: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
-          console.log('row', row.label);
+          // console.log('row', row.label);
           return 'OverAll Total';
         }
         return value;
@@ -547,222 +518,13 @@ const PrePlanning = () => {
     {
       field: 'total',
       headerName: 'Total'
-      // flex: 1
-      // editable: true,
-      // valueGetter: (params, row) => row.total ?? 0,
-      // valueSetter: (params, row) => {
-      //   const shrinkage = row.shrinkage ?? 0;
-      //   const wastage = row.wastage ?? 0;
-      //   const totalFabric = row.totalFabric ?? 0;
-      //   const total = (totalFabric * (100 + (shrinkage + wastage))) / 100;
-      //   return { ...row, total };
-      // }
     }
-    // {
-    //   field: 'total',
-    //   headerName: 'Overall Total',
-    //   flex: 1,
-    //   ...baseColumnOptions,
-    //   valueGetter: (params, row) =>
-    //     row.id === 'TOTAL_FABRIC' ? row.total : undefined,
-    //   renderCell: (params, row) => {
-    //     if (row.id === 'TOTAL_FABRIC') {
-    //       console.log('params', params);
-    //       return params;
-    //     }
-    //     return null;
-    //   }
-    // }
   ];
 
-  // const columns = [
-  //   {
-  //     field: 'componentId',
-  //     headerName: 'Component',
-  //     editable: true,
-  //     flex: 1,
-  //     ...baseColumnOptions,
-  //     type: 'singleSelect',
-  //     valueOptions: components.map((collection) => ({
-  //       value: collection.lookUpId,
-  //       label: collection.lookUpName
-  //     })),
-  //     colSpan: (value, row) => {
-  //       if (row.id === 'TOTAL_FABRIC') {
-  //         return 7;
-  //       }
-  //       return undefined;
-  //     },
-  //     valueGetter: (value, row) => {
-  //       if (row.id === 'TOTAL_FABRIC') {
-  //         console.log('row', row.label);
-  //         return row.label;
-  //       }
-  //       return value;
-  //     },
-  //     valueSetter: (params, row) => {
-  //       if (row.id === 'TOTAL_FABRIC') {
-  //         // console.log('row', row.label);
-  //         return row.label;
-  //       }
-  //       return value;
-  //     }
-  //     // colSpan: (params, row) => (row.id === 'TOTAL_FABRIC' ? 8 : undefined),
-  //     // valueGetter: (params, row) => {
-  //     //   if (row.id === 'TOTAL_FABRIC') {
-  //     //     return row.label;
-  //     //   }
-  //     //   return row.componentId;
-  //     // }
-  //   },
-  //   {
-  //     field: 'colorId',
-  //     headerName: 'Color',
-  //     editable: true,
-  //     flex: 1,
-  //     ...baseColumnOptions,
-  //     type: 'singleSelect',
-  //     valueOptions: colors.map((collection) => ({
-  //       value: collection.lookUpId,
-  //       label: collection.lookUpName
-  //     }))
-  //   },
-  //   {
-  //     field: 'cuttingSize',
-  //     headerName: 'Cutting Size',
-  //     flex: 1,
-  //     ...baseColumnOptions,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'fabricId',
-  //     headerName: 'Fabrication',
-  //     editable: true,
-  //     ...baseColumnOptions,
-  //     flex: 1,
-  //     type: 'singleSelect',
-  //     valueOptions: Fabrications.map((collection) => ({
-  //       value: collection.lookUpId,
-  //       label: collection.lookUpName
-  //     }))
-  //   },
-  //   {
-  //     field: 'noOfHeads',
-  //     headerName: 'No. Of Heads',
-  //     editable: true,
-  //     ...baseColumnOptions,
-  //     flex: 1,
-  //     type: 'singleSelect',
-  //     valueOptions: heads.map((collection) => ({
-  //       value: collection.lookUpId,
-  //       label: collection.lookUpName
-  //     }))
-  //   },
-  //   {
-  //     field: 'repeats',
-  //     headerName: 'Repeats',
-  //     ...baseColumnOptions,
-  //     flex: 1,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'repeatSize',
-  //     headerName: 'Repeat Size',
-  //     ...baseColumnOptions,
-  //     flex: 1,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'totalFabric',
-  //     headerName: 'Total Fabric',
-  //     ...baseColumnOptions,
-  //     flex: 1,
-  //     editable: true,
-  //     valueGetter: (params, row) => row.totalFabric ?? 0,
-  //     valueSetter: (params, row) => {
-  //       const repeats = row.repeats ?? 0;
-  //       const repeatSize = row.repeatSize ?? 0;
-  //       const totalFabric = repeats * repeatSize;
-  //       return { ...row, totalFabric };
-  //     }
-  //   },
-  //   {
-  //     field: 'uomId',
-  //     headerName: 'UOM',
-  //     editable: true,
-  //     flex: 1,
-  //     type: 'singleSelect',
-  //     valueOptions: uoms.map((collection) => ({
-  //       value: collection.lookUpId,
-  //       label: collection.lookUpName
-  //     })),
-  //     colSpan: (value, row) => {
-  //       if (row.id === 'TOTAL_FABRIC') {
-  //         return 3;
-  //       }
-  //       return undefined;
-  //     },
-  //     valueGetter: (value, row) => {
-  //       if (row.id === 'TOTAL_FABRIC') {
-  //         console.log('row', row.label);
-  //         return row.label;
-  //       }
-  //       return value;
-  //     }
-  //   },
-  //   {
-  //     field: 'shrinkage',
-  //     headerName: 'Shrinkage %',
-  //     flex: 1,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'wastage',
-  //     headerName: 'Wastage %',
-  //     flex: 1,
-  //     editable: true
-  //   },
-  //   {
-  //     field: 'total',
-  //     headerName: 'Total',
-  //     flex: 1,
-  //     editable: true,
-  //     valueGetter: (params, row) => row.total ?? 0,
-  //     valueSetter: (params, row) => {
-  //       const shrinkage = row.shrinkage ?? 0;
-  //       const wastage = row.wastage ?? 0;
-  //       const totalFabric = row.totalFabric ?? 0;
-  //       const total = (totalFabric * (100 + (shrinkage + wastage))) / 100;
-  //       return { ...row, total };
-  //     }
-  //   }
-  //   // {
-  //   //   field: 'total',
-  //   //   headerName: 'Overall Total',
-  //   //   flex: 1,
-  //   //   ...baseColumnOptions,
-  //   //   valueGetter: (params, row) =>
-  //   //     row.id === 'TOTAL_FABRIC' ? row.total : undefined,
-  //   //   renderCell: (params, row) => {
-  //   //     if (row.id === 'TOTAL_FABRIC') {
-  //   //       console.log('params', params);
-  //   //       return params;
-  //   //     }
-  //   //     return null;
-  //   //   }
-  //   // }
-  // ];
-
-  // const getCellClassName = (params) => {
-  //   if (params.row.id === 'TOTAL_FABRIC' && params.field === 'componentId') {
-  //     return 'bold';
-  //   }
-  //   return '';
-  // };
   const getCellClassName = ({ row, field }) => {
     if (row.id === 'TOTAL_FABRIC') {
       if (field === 'componentName' || field === 'uom') {
-        console.log(`Applying bold class to row ${row.id} and field ${field}`); // Debugging log
+        // console.log(`Applying bold class to row ${row.id} and field ${field}`); // Debugging log
         return 'bold';
       }
     }

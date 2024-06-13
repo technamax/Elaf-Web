@@ -91,7 +91,12 @@ const NewDesign = () => {
       setFormData({
         ...formData,
         collectionId: value,
-        poPcs: selectedCollection ? selectedCollection.poPcs : ''
+        poPcs: selectedCollection ? selectedCollection.poPcs : '',
+        designNo: '',
+        designerName: '',
+
+        dateOfPlanning: '',
+        colorId: ''
       });
     } else setFormData({ ...formData, [name]: value });
   };
@@ -321,6 +326,7 @@ const NewDesign = () => {
                   name="poPcs"
                   type="number"
                   value={formData.poPcs}
+                  disabled
                   onChange={handleChange}
                 />
               </Grid>
@@ -405,6 +411,7 @@ const NewDesign = () => {
                   ncolumns={columns}
                   formData={formData}
                   editAPi={editAPi}
+                  disableAddRecord={true}
                   // disableEdit={true}
                 />
               </Grid>

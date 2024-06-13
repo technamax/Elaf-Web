@@ -12,9 +12,11 @@ import { IconButton } from '@mui/material';
 import { Visibility } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { SnackbarProvider, useSnackbar } from 'notistack';
+import { useUser } from 'context/User';
 
 import loading from '../../../../assets/images/eloading.gif';
 const AuthLogin = ({ ...others }) => {
+  const { setUser } = useUser();
   const theme = useTheme();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
   const customization = useSelector((state) => state.customization);
@@ -63,6 +65,7 @@ const AuthLogin = ({ ...others }) => {
 
         console.log('Stored empId:', empId); // Log stored empId
         console.log('Stored token:', token); // Log stored token
+        setUser(response.data);
 
         navigate('/dashboard');
         console.log('Authentication successful', response.data);

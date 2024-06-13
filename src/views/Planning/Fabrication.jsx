@@ -38,8 +38,11 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import fabric from '../../assets/images/planningicons/fabric.png';
 import '../../assets/scss/style.scss';
 import loadingGif from '../../assets/images/loading1.svg';
+import { useUser } from 'context/User';
 
 const Fabrication = () => {
+  const { user } = useUser();
+
   const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
     fabricationId: 0,
@@ -58,9 +61,9 @@ const Fabrication = () => {
     gst: '', //// not in api
     totalInclGst: '', ///// not in api total*gst
     createdOn: new Date().toISOString(),
-    createdBy: 0,
+    createdBy: user.empId,
     lastUpdatedOn: new Date().toISOString(),
-    LastUpdatedBy: 0
+    lastUpdatedBy: user.empId
   });
   useEffect(() => {
     setFormData({
@@ -79,10 +82,10 @@ const Fabrication = () => {
       unitPrice: initialData.unitPrice || '0',
       gst: initialData.gst || '', //// not in api
       totalInclGst: initialData.totalInclGst || '', ///// not in api total*gst
-      createdOn: initialData.createdOn || new Date().toISOString(),
-      createdBy: initialData.createdBy || 0,
-      lastUpdatedOn: initialData.lastUpdatedOn || new Date().toISOString(),
-      LastUpdatedBy: initialData.LastUpdatedBy || 0
+      createdOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || user.empId,
+      lastUpdatedOn: new Date().toISOString(),
+      lastUpdatedBy: user.empId
     });
   }, [initialData]);
   const { enqueueSnackbar } = useSnackbar();
@@ -122,6 +125,7 @@ const Fabrication = () => {
   const [uoms, setUoms] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   console.log('planningHeaderId', formData.planningHeaderId);
+  console.log('Fabrications', Fabrications);
   useEffect(() => {
     if (designData) {
       setDesignList(designData.result);
@@ -174,7 +178,7 @@ const Fabrication = () => {
     const calculateTotal = () => {
       const quantity = parseFloat(formData.quantity) || 0;
       const rate = parseFloat(formData.rate) || 0;
-      return quantity * rate;
+      return (quantity * rate).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -184,7 +188,7 @@ const Fabrication = () => {
     const calculateTotalWithGst = () => {
       const total = parseFloat(formData.total) || 0;
       const gst = parseFloat(formData.gst) || 0;
-      return total * (1 + gst / 100);
+      return (total * (1 + gst / 100)).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -194,7 +198,7 @@ const Fabrication = () => {
     const calculateUnitPrice = () => {
       const total = parseFloat(formData.total) || 0;
       const poPcs = parseFloat(formData.poPcs) || 0;
-      const unitPrice = total / poPcs;
+      const unitPrice = (total / poPcs).toFixed(2);
       return isNaN(unitPrice) ? 0 : unitPrice;
     };
 
@@ -306,10 +310,23 @@ const Fabrication = () => {
 
       // Handle the response if needed
       console.log('Save response:', response.data);
-      enqueueSnackbar('Fabrication saved successfully!', {
-        variant: 'success',
-        autoHideDuration: 5000
-      });
+
+      if (!response.data.success) {
+        enqueueSnackbar(
+          `${response.data.message} !`,
+
+          {
+            variant: 'error',
+            autoHideDuration: 5000
+          }
+        );
+        console.log('response.message', response.data.message);
+      } else {
+        enqueueSnackbar('Fabrication saved successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+      }
 
       // Clear the form after successful save
       setFormData((prevFormData) => ({
@@ -329,9 +346,9 @@ const Fabrication = () => {
         gst: '', //// not in api
         totalInclGst: '', ///// not in api total*gst
         createdOn: new Date().toISOString(),
-        createdBy: 0,
+        createdBy: user.empId,
         lastUpdatedOn: new Date().toISOString(),
-        LastUpdatedBy: 0
+        lastUpdatedBy: user.empId
       }));
 
       refetchFabricRequisitionData();
@@ -524,6 +541,7 @@ const Fabrication = () => {
                   name="poPcs"
                   value={formData.poPcs}
                   onChange={handleChange}
+                  disabled
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>

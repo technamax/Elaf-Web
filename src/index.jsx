@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import store from './api/store/store';
+import { UserProvider } from 'context/User';
 
 // project imports
 import App from './App';
@@ -42,7 +43,9 @@ const root = createRoot(container); // createRoot(container!) if you use TypeScr
 root.render(
   <Provider store={store}>
     <SnackbarProvider>
-      <App />
+      <UserProvider>
+        <App />
+      </UserProvider>
     </SnackbarProvider>
   </Provider>
 );

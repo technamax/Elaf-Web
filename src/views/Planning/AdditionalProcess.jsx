@@ -43,10 +43,8 @@ import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import process from '../../assets/images/planningicons/process.png';
-import EditAbleDataGrid from 'components/EditAbleDataGrid';
-import MainCard from 'ui-component/cards/MainCard';
-import { AlignHorizontalCenter } from '@mui/icons-material';
+import schiffli from '../../assets/images/planningicons/schiffli.png';
+import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
 const AdditionalProcess = () => {
   const [initialData, setInitialData] = useState([]);
@@ -56,41 +54,44 @@ const AdditionalProcess = () => {
     planningHeaderId: 0,
     batchNo: '',
     componentId: '',
-    poPcs: '',
-    baseColorName: '',
+    colorId: '',
     fabricId: '',
-    vendorId: '',
-    colorId: '', //from dying screen coming from fabricAPi
-    availableQty: '',
-    ratePerPcs: '',
-    costPerComponent: '',
-    totalAmount: '',
-    processType: '',
-    uomId: '',
+    vendorId: '', /////////////checkapi
+    baseColorName: '',
+    poPcs: '',
     pcsPerComponent: '',
+    processTypeId: '',
+    quantity: '',
+    ratePerPcs: 0,
+    totalAmount: 0,
+    costPerComponent: '',
+
     createdOn: new Date().toISOString(),
     createdBy: 0,
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: 0
   });
+
   useEffect(() => {
     setFormData({
-      additionalProcessId: initialData.additionalProcessId || 0,
+      additionalProcessId: initialData?.additionalProcessId || 0,
       designId: initialData?.designId || '',
       planningHeaderId: initialData?.planningHeaderId || 0,
       batchNo: initialData?.batchNo || '',
       componentId: initialData?.componentId || '',
+      vendorId: initialData?.vendorId || '',
+      fabricId: initialData?.fabricId || '',
+      colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
       poPcs: initialData?.poPcs || '',
       baseColorName: initialData?.baseColorName || '',
-      fabricId: initialData?.fabricId || '',
-      vendorId: initialData?.vendorId || '',
-      colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
-      availableQty: initialData?.availableQty || '',
-      ratePerPcs: initialData?.ratePerPcs || '',
-      costPerComponent: initialData?.costPerComponent || '',
-      pcsPerComponent: initialData?.pcsPerComponent || 0,
+      pcsPerComponent: initialData?.baseColorName || '',
+      processTypeId: initialData?.processTypeId || '',
+      quantity: initialData?.quantity || '',
+      ratePerPcs: initialData?.ratePerPcs || 0,
       totalAmount: initialData?.totalAmount || 0,
-      reatedOn: initialData?.createdOn || new Date().toISOString(),
+      costPerComponent: initialData?.costPerComponent || '',
+
+      createdOn: initialData?.createdOn || new Date().toISOString(),
       createdBy: initialData?.createdBy || 0,
       lastUpdatedOn: new Date().toISOString(),
       LastUpdatedBy: 0
@@ -161,7 +162,7 @@ const AdditionalProcess = () => {
   const [colors, setColors] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   const [components, setComponents] = useState([]);
-
+  console.log('batchData', batchData);
   useEffect(() => {
     if (designData) {
       setDesignList(designData.result);
@@ -215,86 +216,53 @@ const AdditionalProcess = () => {
     }
   }, [lookupData]);
 
-  // console.log('designList', designList);
-  // console.log('selectedCollectionId', selectedCollectionId);
-  // console.log('batchList', batchList);
-  // console.log('uom', uoms);
-  // console.log('Fabrications', Fabrications);
   console.log('initialRows', initialRows);
   // console.log('components', components);
 
   const collectionList = collectionData?.result || [];
-
   // console.log('collectionList', collectionList);
+  const iniPcsPerComponent = formData.pcsPerComponent;
+  useEffect(() => {
+    const calculatePcsPerComponent = () => {
+      const quantity = parseFloat(formData.quantity) || 0;
 
-  // useEffect(() => {
-  //   const calculateTotalEmbroidey = () => {
-  //     const thaanQty = parseFloat(formData.thaanQty) || 0;
-  //     const operatingMachine = parseFloat(formData.operatingMachine) || 0;
-  //     return thaanQty * operatingMachine;
-  //   };
+      return iniPcsPerComponent - quantity;
+    };
 
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     totalEmbroidry: calculateTotalEmbroidey()
-  //   }));
-  //   const calculateTotalPcs = () => {
-  //     const thaanQty = parseFloat(formData.thaanQty) || 0;
-  //     const noOfStichesPerYard = parseFloat(formData.noOfStichesPerYard) || 0;
+    setFormData((prevData) => ({
+      ...prevData,
+      pcsPerComponent: calculatePcsPerComponent()
+    }));
+    const calculateTotalamount = () => {
+      const quantity = parseFloat(formData.quantity) || 0;
+      const ratePerPcs = parseFloat(formData.ratePerPcs) || 0;
 
-  //     return thaanQty * noOfStichesPerYard;
-  //   };
+      return quantity * ratePerPcs;
+    };
 
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     totalPcs: calculateTotalPcs()
-  //   }));
-  //   const calculateAmountPerYard = () => {
-  //     const noOfStichesPerYard = parseFloat(formData.noOfStichesPerYard) || 0;
-  //     const rate = parseFloat(formData.rate) || 0;
+    setFormData((prevData) => ({
+      ...prevData,
+      totalAmount: calculateTotalamount()
+    }));
+    const calculateCostPerComponent = () => {
+      const totalAmount = parseFloat(formData.totalAmount) || 0;
+      const poPcs = parseFloat(formData.poPcs) || 0;
 
-  //     return (noOfStichesPerYard / 1000) * rate;
-  //   };
+      return totalAmount / poPcs;
+    };
 
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     amountPerYard: calculateAmountPerYard()
-  //   }));
-  //   const calculateCostPerComponent = () => {
-  //     const totalAmount = parseFloat(formData.totalAmount) || 0;
-  //     const totalPcs = parseFloat(formData.totalPcs) || 0;
-
-  //     return totalAmount / totalPcs;
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     costPerComponent: calculateCostPerComponent()
-  //   }));
-  //   const calculateTotalamount = () => {
-  //     const amountPerYard = parseFloat(formData.amountPerYard) || 0;
-  //     const totalEmbroidry = parseFloat(formData.totalEmbroidry) || 0;
-  //     const laserCutRate = parseFloat(formData.laserCutRate) || 0;
-  //     const pcsForLaserCut = parseFloat(formData.pcsForLaserCut) || 0;
-  //     return amountPerYard * totalEmbroidry + pcsForLaserCut * laserCutRate;
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     totalAmount: calculateTotalamount()
-  //   }));
-  // }, [
-  //   formData.thaanQty,
-  //   formData.operatingMachine,
-  //   formData.noOfStichesPerYard,
-  //   formData.rate,
-  //   formData.totalAmount,
-  //   formData.totalPcs,
-  //   formData.amountPerYard,
-  //   formData.totalEmbroidry,
-  //   formData.laserCutRate,
-  //   formData.pcsForLaserCut
-  // ]);
+    setFormData((prevData) => ({
+      ...prevData,
+      costPerComponent: calculateCostPerComponent()
+    }));
+  }, [
+    formData.quantity,
+    formData.ratePerPcs,
+    formData.totalAmount,
+    formData.poPcs
+    // formData.poPcs,
+    // formData.pcsPerComponent
+  ]);
 
   // const handleCheckboxChange = (e) => {
   //   const { name, checked } = e.target;
@@ -303,13 +271,6 @@ const AdditionalProcess = () => {
   //     [name]: checked
   //   }));
   // };
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: checked
-    }));
-  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'collectionId') {
@@ -342,24 +303,6 @@ const AdditionalProcess = () => {
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
       setAccordionExpanded(true);
-    } else if (name === 'colorId') {
-      const selectedcolor = colors.find((color) => color.colorId === value);
-      setFormData({
-        ...formData,
-        colorId: value,
-        availableQty: selectedcolor ? selectedcolor.total : '',
-        cuttingSize: selectedcolor ? selectedcolor.cuttingSize : '',
-        repeats: selectedcolor ? selectedcolor.repeats : ''
-      });
-    } else if (name === 'operatingMachineId') {
-      const selectedMachine = operatingMachineList.find(
-        (machine) => machine.lookUpId === value
-      );
-      setFormData({
-        ...formData,
-        operatingMachineId: value,
-        operatingMachine: selectedMachine ? selectedMachine.lookUpName : ''
-      });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -367,123 +310,50 @@ const AdditionalProcess = () => {
   console.log('colors', colors);
 
   const handleSave = async () => {
-    try {
-      // Make the API call
-      const response = await axios.post(
-        'https://gecxc.com:4041/api/AdditionalProcess/SaveAdditionalProcess',
-        formData
-      );
+    console.log('formData', formData);
+    // try {
+    //   // Make the API call
+    //   const response = await axios.post(
+    //     'https://gecxc.com:4041/api/Schiffli/SaveSchiffili',
+    //     formData
+    //   );
 
-      // Handle the response if needed
-      console.log('Save response:', response.data);
+    //   console.log('Save response:', response.data);
 
-      // Clear the form after successful save
-      // refetchFabricRequisitionData();
+    //   // setFormData((prevFormData) => ({
+    //   //   additionalProcessId: 0,
+    //   //   designId: prevFormData.designId,
+    //   //   planningHeaderId: prevFormData.planningHeaderId,
+    //   //   batchNo: prevFormData.batchNo,
+    //   //   baseColorName: prevFormData.baseColorName,
+    //   //   componentId: '',
+    //   //   colorId: '',
+    //   //   fabricId: '',
+    //   //   vendorId: '', /////////////checkapi
+    //   //   // baseColorName: '',
+    //   //   poPcs: '',
+    //   //   pcsPerComponent: '',
+    //   //   processTypeId: '',
+    //   //   quantity: '',
+    //   //   ratePerPcs: 0,
+    //   //   totalAmount: 0,
+    //   //   costPerComponent: '',
 
-      // Assuming designId, planningHeaderId, and batchNo are part of the formData state
-      setFormData((prevFormData) => ({
-        designId: prevFormData.designId,
-        planningHeaderId: prevFormData.planningHeaderId,
-        batchNo: prevFormData.batchNo,
-        baseColorName: prevFormData.baseColorName,
-        additionalProcessId: 0,
-        // componentId: '',
-        poPcs: '',
-        fabricId: '',
-        vendorId: '',
-        colorId: '', // from dying screen coming from fabricAPI
-        availableQty: '',
-        ratePerPcs: '',
-        costPerComponent: '',
-        uomId: 0,
-        pcsPerComponent: 0,
+    //   //   createdOn: new Date().toISOString(),
+    //   //   createdBy: 0,
+    //   //   lastUpdatedOn: new Date().toISOString(),
+    //   //   LastUpdatedBy: 0
+    //   // }));
 
-        totalAmount: '',
-        createdOn: new Date().toISOString(),
-        createdBy: 0,
-        lastUpdatedOn: new Date().toISOString(),
-        LastUpdatedBy: 0
-      }));
+    //   // refetchSchiffliList();
 
-      refetchSchiffliList();
-
-      // setInitialData((prevFormData) => ({
-      //   designId: prevFormData.designId,
-      //   planningHeaderId: prevFormData.planningHeaderId,
-      //   batchNo: prevFormData.batchNo,
-      //   baseColorName: prevFormData.baseColorName,
-      //   schiffiliId: 0,
-      //   componentId: '',
-      //   poPcs: '',
-      //   fabricId: '',
-      //   vendorId: '',
-      //   colorId: '', // from dying screen coming from fabricAPI
-      //   availableQty: '',
-      //   thaanQty: 0,
-      //   operatingMachineId: 0,
-      //   operatingMachine: '',
-      //   workingHeadId: 0,
-      //   cuttingSize: '',
-      //   rate: '',
-      //   costPerComponent: '',
-      //   totalEmbroidry: 0,
-      //   noOfItemPerThaan: 0,
-      //   noOfStichesPerYard: 0,
-      //   amountPerYard: 0,
-      //   totalPcs: 0,
-      //   laserCut: false,
-      //   laserCutRate: 0,
-      //   pcsForLaserCut: 0,
-      //   totalAmount: 0,
-      //   createdOn: new Date().toISOString(),
-      //   createdBy: 0,
-      //   lastUpdatedOn: new Date().toISOString(),
-      //   LastUpdatedBy: 0
-      // }));
-      setAccordionExpanded(false);
-    } catch (error) {
-      console.error('Error saving data:', error);
-    }
+    //   setAccordionExpanded(false);
+    // } catch (error) {
+    //   console.error('Error saving data:', error);
+    // }
   };
   console.log('formData', formData);
 
-  const handleEdit = (row) => {
-    // Convert the comma-separated string to an array
-    setInitialData(row);
-    // const threadAdditionalArray = row.threadAdditional
-    //   ? row.threadAdditional.split(',').map((item) => item.trim())
-    //   : [];
-
-    // setInitialData({
-    //   ...row,
-    //   threadAdditional: threadAdditionalArray
-    // });
-  };
-
-  console.log('initialData', initialData);
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(
-        `https://gecxc.com:4041/api/Schiffli/DeleteSchiffiById?schiffiId=${id}`
-      );
-      // refetchEmbroideryList();
-      refetchSchiffliList();
-      console.log('deleted');
-    } catch (error) {
-      console.error('Error deleting data:', error);
-    }
-    // Handle delete logic
-  };
-  const design = [
-    {
-      value: 'D',
-      label: 'Dyeing'
-    },
-    {
-      value: 'P',
-      label: 'Printing'
-    }
-  ];
   const columns = [
     {
       field: 'componentName',
@@ -562,54 +432,16 @@ const AdditionalProcess = () => {
     {
       field: 'pcsForLaserCut',
       headerName: 'Pcs.For Laser Cut'
-    },
-    {
-      field: 'Action',
-      headerName: 'Actions',
-
-      renderCell: (params) => (
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <ButtonGroup size="small" variant="text">
-            {/* <Button
-              variant="contained"
-              size="small"
-              onClick={() => handleEdit(params.row)}
-            >
-              Edit
-            </Button> */}
-            <IconButton
-              aria-label="Edit"
-              // color="primary"
-              onClick={() => handleEdit(params.row)}
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              aria-label="delete"
-              color="primary"
-              onClick={() => handleDelete(params.row.schiffiliId)}
-            >
-              <DeleteIcon />
-            </IconButton>
-            {/* <Button
-              variant="contained"
-              size="small"
-              onClick={() => handleDelete(params.row.schiffiliId)}
-            >
-              Delete
-            </Button> */}
-          </ButtonGroup>
-        </div>
-      )
     }
   ];
+  const deleteApi = `https://gecxc.com:4041/api/Schiffli/DeleteSchiffiById?schiffiId=`;
 
   return (
     <>
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          avatar={<Avatar src={process} sx={{ background: 'transparent' }} />}
+          avatar={<Avatar src={schiffli} sx={{ background: 'transparent' }} />}
           title="Additional Process "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
@@ -794,24 +626,6 @@ const AdditionalProcess = () => {
                   ))}
                 </TextField>
               </Grid>
-
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Process Type"
-                  size="small"
-                  name="processType"
-                  value={formData.processType}
-                  onChange={handleChange} // Change handleChange to handleAutocompleteChange
-                >
-                  {design.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
               <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Po Pcs"
@@ -820,55 +634,86 @@ const AdditionalProcess = () => {
                   name="poPcs"
                   value={formData.poPcs}
                   onChange={handleChange}
+                  disabled
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
                 <TextField
-                  label=" Quantity"
+                  label="Pcs. Per Component"
                   fullWidth
                   size="small"
-                  name="availableQty"
-                  value={formData.availableQty}
+                  name="pcsPerComponent"
+                  value={formData.pcsPerComponent}
                   // type="number"
                   onChange={handleChange}
                 />
               </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Process Type"
+                  defaultValue=""
+                  size="small"
+                  name="processTypeId"
+                  value={formData.processTypeId}
+                  onChange={handleChange}
+                >
+                  {operatingMachineList.map((option) => (
+                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                      {option.lookUpName}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
 
               <Grid item xs={12} md={1.5}>
                 <TextField
-                  label="Rate"
+                  label="Quantity"
+                  fullWidth
+                  type="number"
+                  size="small"
+                  name="quantity"
+                  value={formData.quantity}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Rate Per Pcs"
                   type="number"
                   fullWidth
                   size="small"
-                  name="rate"
-                  value={formData.rate}
+                  name="ratePerPcs"
+                  value={formData.ratePerPcs}
                   onChange={handleChange}
                 />
               </Grid>
-
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Total Pcs"
-                  fullWidth
-                  size="small"
-                  name="totalPcs"
-                  value={formData.totalPcs}
-                  onChange={handleChange}
-                />
-              </Grid>
-
               <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Total Amount"
                   fullWidth
-                  size="small"
                   type="number"
+                  size="small"
                   name="totalAmount"
                   value={formData.totalAmount}
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} textAlign="right">
+
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Cost Per Component"
+                  fullWidth
+                  size="small"
+                  type="number"
+                  name="costPerComponent"
+                  value={formData.costPerComponent}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
                 <Button variant="contained" size="small" onClick={handleSave}>
                   Save
                 </Button>
@@ -876,7 +721,6 @@ const AdditionalProcess = () => {
             </Grid>
           </AccordionDetails>
         </Accordion>
-        {/* </Grid> */}
       </Card>
       <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
       <Card variant="outlined">
@@ -894,43 +738,16 @@ const AdditionalProcess = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
-            <Box
-              sx={{
-                height: 500,
-                width: 'inherit',
-                '& .actions': {
-                  color: 'text.secondary'
-                },
-                '& .textPrimary': {
-                  color: 'text.primary'
-                }
-              }}
-            >
-              <DataGrid
-                // {...data}
-                rows={initialRows}
-                columns={columns}
-                rowLength={100}
-                sx={{
-                  boxShadow: 2,
-                  border: 2,
-                  borderColor: 'primary.light',
-                  '& .MuiDataGrid-cell:hover': {
-                    color: 'primary.main'
-                  }
-                }}
-              />
-            </Box>
-            {/* <EditAbleDataGrid
-            ncolumns={columns}
-            initialRows={initialRows}
-            formData={formData}
-            editAPi={editAPi}
-            refetch={refetchSchiffliList}
-            // deleteApi={deleteApi}
-            // deleteBy="fabricationId"
-            disableAddRecord={true}
-          /> */}
+            <ReuseableDataGrid
+              iColumns={columns}
+              initialRows={initialRows}
+              setInitialData={setInitialData}
+              deleteApi={deleteApi}
+              deleteBy="additionalProcessId"
+              refetch={refetchSchiffliList}
+              setAccordionExpanded={setAccordionExpanded}
+              fileName="AdditionalProcess"
+            />
           </Grid>
         </Grid>
       </Card>

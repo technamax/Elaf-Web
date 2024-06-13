@@ -25,12 +25,10 @@ const ReuseableDataGrid = ({
   setAccordionExpanded,
   getCellClassName,
   fileName
-  // loadingGif
 }) => {
-  console.log('type of initial rows', typeof initialRows.length);
+  // console.log('type of initial rows', typeof initialRows.length);
   const [open, setOpen] = React.useState(false);
   const [deleteId, setDeleteId] = React.useState(null);
-
   function EditToolbar() {
     // const handleClick = () => {
     //   setAccordionExpanded(true);
@@ -63,7 +61,7 @@ const ReuseableDataGrid = ({
   };
 
   const handleEdit = (row) => {
-    console.log('row.embroideryId', row.embroideryId);
+    // console.log('row.embroideryId', row.embroideryId);
     if (row.embroideryId) {
       const threadAdditionalArray = row.threadAdditional
         ? row.threadAdditional.split(',').map((item) => item.trim())
@@ -80,11 +78,11 @@ const ReuseableDataGrid = ({
   };
 
   const handleDelete = async () => {
-    console.log('deleteby', deleteId);
+    // console.log('deleteby', deleteId);
     try {
       await axios.delete(`${deleteApi}${deleteId}`);
       refetch();
-      console.log('deleted');
+      // console.log('deleted');
     } catch (error) {
       console.error('Error deleting data:', error);
     }
