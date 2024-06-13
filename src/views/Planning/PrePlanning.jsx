@@ -488,7 +488,7 @@ const PrePlanning = () => {
 
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
-          return 3;
+          return 4;
         }
         return undefined;
       },
@@ -499,6 +499,11 @@ const PrePlanning = () => {
         }
         return value;
       }
+    },
+    {
+      field: 'isSchiffili',
+      headerName: 'Is Schiffili',
+      ...baseColumnOptions
     },
     {
       field: 'shrinkage',

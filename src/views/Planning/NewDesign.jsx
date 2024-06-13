@@ -209,8 +209,7 @@ const NewDesign = () => {
     }
   };
 
-  const deleteApi =
-    'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
+  const deleteApi = `https://gecxc.com:4041/api/DesignRegistration/DeleteDesignById?designId=`;
   const editAPi = 'https://gecxc.com:4041/API/DesignRegistration/SaveDesign';
   const handleSearch = () => {
     //search api call
@@ -357,6 +356,9 @@ const NewDesign = () => {
                   ncolumns={columns}
                   formData={formData}
                   editAPi={editAPi}
+                  deleteApi={deleteApi}
+                  deleteBy="designId"
+                  refetch={refetch}
                 />
               </Grid>
             </Grid>
@@ -412,6 +414,7 @@ const NewDesign = () => {
                   formData={formData}
                   editAPi={editAPi}
                   disableAddRecord={true}
+
                   // disableEdit={true}
                 />
               </Grid>

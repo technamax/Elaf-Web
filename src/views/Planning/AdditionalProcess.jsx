@@ -45,8 +45,11 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import schiffli from '../../assets/images/planningicons/schiffli.png';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
+import { useUser } from 'context/User';
 
 const AdditionalProcess = () => {
+  const { user } = useUser();
+
   const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
     additionalProcessId: 0,
@@ -67,9 +70,9 @@ const AdditionalProcess = () => {
     costPerComponent: '',
 
     createdOn: new Date().toISOString(),
-    createdBy: 0,
-    lastUpdatedOn: new Date().toISOString(),
-    LastUpdatedBy: 0
+    createdBy: user.empId,
+    lastUpdatedBy: user.empId,
+    lastUpdatedOn: new Date().toISOString()
   });
 
   useEffect(() => {
@@ -92,9 +95,9 @@ const AdditionalProcess = () => {
       costPerComponent: initialData?.costPerComponent || '',
 
       createdOn: initialData?.createdOn || new Date().toISOString(),
-      createdBy: initialData?.createdBy || 0,
-      lastUpdatedOn: new Date().toISOString(),
-      LastUpdatedBy: 0
+      createdBy: initialData?.createdBy || user.empId,
+      lastUpdatedBy: user.empId,
+      lastUpdatedOn: new Date().toISOString()
     });
   }, [initialData]);
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
@@ -339,10 +342,10 @@ const AdditionalProcess = () => {
     //   //   totalAmount: 0,
     //   //   costPerComponent: '',
 
-    //   //   createdOn: new Date().toISOString(),
-    //   //   createdBy: 0,
-    //   //   lastUpdatedOn: new Date().toISOString(),
-    //   //   LastUpdatedBy: 0
+    //   //    createdOn: new Date().toISOString(),
+    // createdBy: user.empId,
+    // lastUpdatedOn: new Date().toISOString(),
+    // lastUpdatedBy: user.empId,
     //   // }));
 
     //   // refetchSchiffliList();
