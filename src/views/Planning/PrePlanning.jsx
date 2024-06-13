@@ -393,13 +393,14 @@ const PrePlanning = () => {
   };
 
   console.log('initialRows', initialRows);
-  const totalFabric = initialRows.reduce(
-    (sum, row) => sum + (row.totalFabric ?? 0),
-    0
-  );
+  const totalFabric = initialRows
+    .reduce((sum, row) => sum + (row.totalFabric ?? 0), 0)
+    .toFixed(2);
 
   // Calculate the overall total sum
-  const total = initialRows.reduce((sum, row) => sum + (row.total ?? 0), 0);
+  const total = initialRows
+    .reduce((sum, row) => sum + (row.total ?? 0), 0)
+    .toFixed(2);
 
   // Add custom total fabric row
   const rows = [
