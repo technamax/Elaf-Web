@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Grid, TextField, Button, Box } from '@mui/material';
 
-const assignVendorFormTable = ({ additionalProcessData }) => {
+const AssignVendorFormTable = ({ additionalProcessData }) => {
   const [formData, setFormData] = useState({
     additionalProcessId: additionalProcessData.additionalProcessId || 0,
     designId: additionalProcessData.designId || '',
@@ -34,6 +34,7 @@ const assignVendorFormTable = ({ additionalProcessData }) => {
   const handleSave = () => {
     console.log(formData);
   };
+
   return (
     <Box
       noValidate
@@ -42,7 +43,7 @@ const assignVendorFormTable = ({ additionalProcessData }) => {
         display: 'flex',
         flexDirection: 'column',
         m: 'auto',
-        width: 'fit-content'
+        width: 'Inherit'
       }}
     >
       <Grid
@@ -54,10 +55,9 @@ const assignVendorFormTable = ({ additionalProcessData }) => {
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
-            select
             label="Select Collection"
             name="collectionId"
-            value={selectedCollectionId}
+            value={formData.selectedCollectionId}
             onChange={handleChange}
             size="small"
             disabled
@@ -73,7 +73,7 @@ const assignVendorFormTable = ({ additionalProcessData }) => {
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
-            select
+            // select
             label="Select Design"
             name="designId"
             value={formData.designId}
@@ -92,7 +92,7 @@ const assignVendorFormTable = ({ additionalProcessData }) => {
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
-            select
+            // select
             label="Batch No."
             name="batchNo"
             value={formData.batchNo}
@@ -110,7 +110,6 @@ const assignVendorFormTable = ({ additionalProcessData }) => {
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
-            select
             label="Components"
             name="componentId"
             value={formData.componentId}
@@ -174,11 +173,11 @@ const assignVendorFormTable = ({ additionalProcessData }) => {
             onChange={handleChange}
             disabled
           >
-            {colors.map((option) => (
+            {/* {colors.map((option) => (
               <MenuItem key={option.colorId} value={option.colorId}>
                 {option.color}
               </MenuItem>
-            ))}
+            ))} */}
           </TextField>
         </Grid>
         <Grid item xs={12} md={1.5}>
@@ -232,11 +231,11 @@ const assignVendorFormTable = ({ additionalProcessData }) => {
             value={formData.processTypeId}
             onChange={handleChange}
           >
-            {operatingMachineList.map((option) => (
+            {/* {operatingMachineList.map((option) => (
               <MenuItem key={option.lookUpId} value={option.lookUpId}>
                 {option.lookUpName}
               </MenuItem>
-            ))}
+            ))} */}
           </TextField>
         </Grid>
 
@@ -296,4 +295,4 @@ const assignVendorFormTable = ({ additionalProcessData }) => {
   );
 };
 
-export default assignVendorFormTable;
+export default AssignVendorFormTable;

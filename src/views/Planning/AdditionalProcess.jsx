@@ -45,7 +45,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import schiffli from '../../assets/images/planningicons/schiffli.png';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
-import assignVendorFormTable from 'components/AdditionalProcess/assignVendorFormTable';
+import AssignVendorFormTable from 'components/assignVendorFormTable';
 
 //////
 import * as React from 'react';
@@ -173,7 +173,7 @@ const AdditionalProcess = () => {
   const [workingHeadList, setWorkingHeadList] = useState([]);
 
   const [colors, setColors] = useState([]);
-  const [initialRows, setInitialRows] = useState([]);
+  // const [initialRows, setInitialRows] = useState([]);
   const [components, setComponents] = useState([]);
   console.log('batchData', batchData);
   useEffect(() => {
@@ -205,17 +205,17 @@ const AdditionalProcess = () => {
       setComponents(componentsByBatch.result);
     }
   }, [componentsByBatch]);
-  useEffect(() => {
-    if (schiffliList) {
-      setInitialRows(
-        schiffliList.result.map((row, index) => ({
-          id: index,
-          ...row
-        }))
-      );
-      // refetchBatches();
-    }
-  }, [schiffliList, refetchSchiffliList]);
+  // useEffect(() => {
+  //   if (schiffliList) {
+  //     setInitialRows(
+  //       schiffliList.result.map((row, index) => ({
+  //         id: index,
+  //         ...row
+  //       }))
+  //     );
+  //     // refetchBatches();
+  //   }
+  // }, [schiffliList, refetchSchiffliList]);
 
   useEffect(() => {
     // fetchData();
@@ -228,6 +228,32 @@ const AdditionalProcess = () => {
       setWorkingHeadList(data.workingHeadList);
     }
   }, [lookupData]);
+  const initialRows = [
+    {
+      id: 1,
+      additionalProcessId: 0,
+      designId: 321,
+      planningHeaderId: 34,
+      batchNo: '3453',
+      componentId: '345',
+      colorId: 345,
+      fabricId: '345',
+      vendorId: 'gefg', /////////////checkapi
+      baseColorName: 'g4cgd',
+      poPcs: 'dfgdf',
+      pcsPerComponent: 345,
+      processTypeId: 'dfg',
+      quantity: 'dfg',
+      ratePerPcs: 40,
+      totalAmount: 40,
+      costPerComponent: '453',
+
+      createdOn: new Date().toISOString(),
+      createdBy: 0,
+      lastUpdatedOn: new Date().toISOString(),
+      LastUpdatedBy: 0
+    }
+  ];
 
   console.log('initialRows', initialRows);
   // console.log('components', components);
@@ -793,8 +819,9 @@ const AdditionalProcess = () => {
             <Dialog
               open={open}
               onClose={handleClose}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
+              // aria-labelledby="alert-dialog-title"
+              // aria-describedby="alert-dialog-description"
+              fullWidth
             >
               <DialogTitle>{"Use Google's location service?"}</DialogTitle>
               <DialogContent>
@@ -803,14 +830,14 @@ const AdditionalProcess = () => {
                   anonymous location data to Google, even when no apps are
                   running.
                 </DialogContentText>
-                <assignVendorFormTable
+                <AssignVendorFormTable
                   additionalProcessData={additionalProcessData}
                 />
               </DialogContent>
-              <DialogActions>
+              {/* <DialogActions>
                 <Button onClick={handleClose}>Disagree</Button>
                 <Button onClick={handleClose}>Agree</Button>
-              </DialogActions>
+              </DialogActions> */}
             </Dialog>
           </Grid>
         </Grid>
