@@ -313,8 +313,15 @@ const PrePlanning = () => {
     }
   };
   // console.log('noOfDesigns', formData.noOfDesigns); colorId
+  const [formErrors, setFormErrors] = useState({});
 
   const handleSave = async () => {
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     try {
       const response = await axios.post(
         'https://gecxc.com:4041/api/PrePlanning/SavePrePlanning',
@@ -383,6 +390,40 @@ const PrePlanning = () => {
         autoHideDuration: 5000
       });
     }
+  };
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.componentId) {
+      errors.componentId = 'componentId is required';
+    }
+    if (!formData.colorId) {
+      errors.colorId = 'colorId is required';
+    }
+    if (!formData.fabricId) {
+      errors.fabricId = 'fabricId is required';
+    }
+    if (!formData.cuttingSize) {
+      errors.cuttingSize = 'cuttingSize is required';
+    }
+    if (!formData.noOfHeads) {
+      errors.noOfHeads = 'noOfHeads is required';
+    }
+    if (!formData.repeats) {
+      errors.repeats = 'repeats is required';
+    }
+    if (!formData.repeatSize) {
+      errors.repeatSize = 'repeatSize is required';
+    }
+    if (!formData.uomId) {
+      errors.uomId = 'uomId is required';
+    }
+    if (!formData.shrinkage) {
+      errors.shrinkage = 'shrinkage is required';
+    }
+    if (!formData.wastage) {
+      errors.wastage = 'wastage is required';
+    }
+    return errors;
   };
 
   const handleCheckboxChange = (event) => {
@@ -504,6 +545,12 @@ const PrePlanning = () => {
       }
     },
     {
+      field: 'isSchiffili',
+      headerName: 'Is Shiffili'
+      // flex: 1
+      // editable: true
+    },
+    {
       field: 'shrinkage',
       headerName: 'Shrinkage %'
       // flex: 1
@@ -563,6 +610,7 @@ const PrePlanning = () => {
                 value={formData.collectionId}
                 onChange={handleChange}
                 size="small"
+                required
               >
                 {collectionList.map((option) => (
                   <MenuItem
@@ -583,6 +631,7 @@ const PrePlanning = () => {
                 value={formData.designId}
                 onChange={handleChange}
                 size="small"
+                required
               >
                 {designList.map((option) => (
                   <MenuItem key={option.designId} value={option.designId}>
@@ -600,6 +649,7 @@ const PrePlanning = () => {
                 value={formData.batchNo}
                 onChange={handleChange}
                 size="small"
+                required
               >
                 {batchList.map((option) => (
                   <MenuItem key={option.batchNo} value={option.batchNo}>
@@ -731,6 +781,9 @@ const PrePlanning = () => {
                       size="small"
                       name="componentId"
                       value={formData.componentId}
+                      required
+                      error={!!formErrors.componentId}
+                      helperText={formErrors.componentId}
                     />
                   )}
                 />
@@ -775,6 +828,9 @@ const PrePlanning = () => {
                       size="small"
                       value={formData.colorId}
                       name="colorId"
+                      required
+                      error={!!formErrors.colorId}
+                      helperText={formErrors.colorId}
                     />
                   )}
                 />
@@ -788,6 +844,9 @@ const PrePlanning = () => {
                   type="number"
                   value={formData.cuttingSize}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.cuttingSize}
+                  helperText={formErrors.cuttingSize}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -831,6 +890,9 @@ const PrePlanning = () => {
                       size="small"
                       name="fabricId"
                       value={formData.fabricId}
+                      required
+                      error={!!formErrors.fabricId}
+                      helperText={formErrors.fabricId}
                     />
                   )}
                 />
@@ -845,6 +907,9 @@ const PrePlanning = () => {
                   name="noOfHeads"
                   value={formData.noOfHeads}
                   onChange={handleChange}
+                  error={!!formErrors.noOfHeads}
+                  helperText={formErrors.noOfHeads}
+                  required
                 >
                   {heads.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -862,6 +927,9 @@ const PrePlanning = () => {
                   type="number"
                   value={formData.repeats}
                   onChange={handleChange}
+                  error={!!formErrors.repeats}
+                  helperText={formErrors.repeats}
+                  required
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -873,6 +941,9 @@ const PrePlanning = () => {
                   name="repeatSize"
                   value={formData.repeatSize}
                   onChange={handleChange}
+                  error={!!formErrors.repeatSize}
+                  helperText={formErrors.repeatSize}
+                  required
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -896,6 +967,9 @@ const PrePlanning = () => {
                   name="uomId"
                   value={formData.uomId}
                   onChange={handleChange}
+                  error={!!formErrors.uomId}
+                  helperText={formErrors.uomId}
+                  required
                   disabled={formData.isSchiffili} // Disable when isSchiffili is checked
                 >
                   {uoms.map((option) => (
@@ -914,6 +988,9 @@ const PrePlanning = () => {
                   name="shrinkage"
                   value={formData.shrinkage}
                   onChange={handleChange}
+                  error={!!formErrors.shrinkage}
+                  helperText={formErrors.shrinkage}
+                  required
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -925,6 +1002,9 @@ const PrePlanning = () => {
                   name="wastage"
                   value={formData.wastage}
                   onChange={handleChange}
+                  error={!!formErrors.wastage}
+                  helperText={formErrors.wastage}
+                  required
                 />
               </Grid>
               <Grid item xs={12} md={2}>

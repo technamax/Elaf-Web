@@ -472,8 +472,15 @@ const Embroidery = () => {
       setFormData({ ...formData, [name]: value });
     }
   };
+  const [formErrors, setFormErrors] = useState({});
 
   const handleSave = async () => {
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     try {
       const response = await axios.post(
         'https://gecxc.com:4041/api/Embroidery/SaveEmbroidery',
@@ -555,7 +562,46 @@ const Embroidery = () => {
       });
     }
   };
-
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.fabricId) {
+      errors.fabricId = 'fabricId is required';
+    }
+    if (!formData.colorId) {
+      errors.colorId = 'colorId is required';
+    }
+    if (!formData.vendorId) {
+      errors.vendorId = 'vendorId is required';
+    }
+    if (!formData.componentId) {
+      errors.componentId = 'componentId is required';
+    }
+    if (!formData.noOfHead) {
+      errors.noOfHead = 'noOfHead is required';
+    }
+    if (!formData.itemsPerRepeat) {
+      errors.itemsPerRepeat = 'itemsPerRepeat is required';
+    }
+    if (!formData.threadStiches) {
+      errors.threadStiches = 'threadStiches is required';
+    }
+    if (!formData.threadRate) {
+      errors.threadRate = 'threadRate is required';
+    }
+    if (!formData.tillaStiches) {
+      errors.tillaStiches = 'tillaStiches is required';
+    }
+    if (!formData.tilaRate) {
+      errors.tilaRate = 'tilaRate is required';
+    }
+    if (!formData.sequence) {
+      errors.sequence = 'sequence is required';
+    }
+    if (!formData.sequenceRate) {
+      errors.sequenceRate = 'sequenceRate is required';
+    }
+    return errors;
+  };
   console.log('initialRows', initialRows);
 
   const columns = [
@@ -724,6 +770,9 @@ const Embroidery = () => {
                   value={formData.componentId}
                   onChange={handleChange}
                   size="small"
+                  required
+                  error={!!formErrors.componentId}
+                  helperText={formErrors.componentId}
                 >
                   {components.map((option) => (
                     <MenuItem
@@ -745,6 +794,9 @@ const Embroidery = () => {
                   name="fabricId"
                   value={formData.fabricId}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.fabricId}
+                  helperText={formErrors.fabricId}
                 >
                   {Fabrications.map((option) => (
                     <MenuItem key={option.fabricId} value={option.fabricId}>
@@ -763,6 +815,9 @@ const Embroidery = () => {
                   name="vendorId"
                   value={formData.vendorId}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.vendorId}
+                  helperText={formErrors.vendorId}
                 >
                   {vendors.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -780,6 +835,9 @@ const Embroidery = () => {
                   name="colorId"
                   value={formData.colorId}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.colorId}
+                  helperText={formErrors.colorId}
                 >
                   {colors.map((option) => (
                     <MenuItem key={option.colorId} value={option.colorId}>
@@ -831,6 +889,9 @@ const Embroidery = () => {
                   name="noOfHead"
                   value={formData.noOfHead}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.noOfHead}
+                  helperText={formErrors.noOfHead}
                 >
                   {heads.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -859,6 +920,9 @@ const Embroidery = () => {
                   name="itemsPerRepeat"
                   value={formData.itemsPerRepeat}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.itemsPerRepeat}
+                  helperText={formErrors.itemsPerRepeat}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -965,6 +1029,9 @@ const Embroidery = () => {
                       name="threadStiches"
                       value={formData.threadStiches}
                       onChange={handleChange}
+                      required
+                      error={!!formErrors.threadStiches}
+                      helperText={formErrors.threadStiches}
                     />
                   </Grid>
                   <Grid item xs={12} md={4}>
@@ -976,6 +1043,9 @@ const Embroidery = () => {
                       name="threadRate"
                       value={formData.threadRate}
                       onChange={handleChange}
+                      required
+                      error={!!formErrors.threadRate}
+                      helperText={formErrors.threadRate}
                     />
                   </Grid>
                   <Grid item xs={12} md={4}>
@@ -1007,6 +1077,9 @@ const Embroidery = () => {
                       name="tillaStiches"
                       value={formData.tillaStiches}
                       onChange={handleChange}
+                      required
+                      error={!!formErrors.tillaStiches}
+                      helperText={formErrors.tillaStiches}
                     />
                   </Grid>
                   <Grid item xs={12} md={4}>
@@ -1018,6 +1091,9 @@ const Embroidery = () => {
                       name="tilaRate"
                       value={formData.tilaRate}
                       onChange={handleChange}
+                      required
+                      error={!!formErrors.tilaRate}
+                      helperText={formErrors.tilaRate}
                     />
                   </Grid>
                   <Grid item xs={12} md={4}>
@@ -1048,6 +1124,9 @@ const Embroidery = () => {
                       type="number"
                       value={formData.sequence}
                       onChange={handleChange}
+                      required
+                      error={!!formErrors.sequence}
+                      helperText={formErrors.sequence}
                     />
                   </Grid>
                   <Grid item xs={12} md={4}>
@@ -1059,6 +1138,9 @@ const Embroidery = () => {
                       name="sequenceRate"
                       value={formData.sequenceRate}
                       onChange={handleChange}
+                      required
+                      error={!!formErrors.sequenceRate}
+                      helperText={formErrors.sequenceRate}
                     />
                   </Grid>
                   <Grid item xs={12} md={4}>

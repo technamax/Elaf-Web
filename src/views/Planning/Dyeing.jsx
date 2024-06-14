@@ -292,48 +292,6 @@ const Dyeing = () => {
     }
   };
 
-  // const fetchFabricColorData = async (fabricId) => {
-  //   try {
-  //     const response = await axios.get(
-  //       `https://gecxc.com:4041/api/DyeingPrinting/GetFabricColorFromPrePlanningByFabricId?fabricId=${fabricId}`
-  //     );
-  //     const data = response.data.result;
-  //     console.log('Dyeing Color Data', data);
-
-  //     if (data.length > 0) {
-  //       const fabricInfo = data[0]; // Assuming only one fabric info is returned
-
-  //       // Update form data with fabric info
-  //       setFormData((prevFormData) => ({
-  //         ...prevFormData,
-  //         Shrinkage: fabricInfo.shrinkage.toFixed(2), // Assuming shrinkage is returned as a decimal
-  //         Wastage: fabricInfo.wastage.toFixed(2), // Assuming wastage is returned as a decimal
-  //         UOM: fabricInfo.uom,
-  //         AvailableQty: fabricInfo.total.toString() // Convert total to string to set in TextField
-  //         // Assuming uomId is not needed in the form
-  //       }));
-  //     }
-
-  //     const colorOptions = data.map((item) => ({
-  //       label: item.color,
-  //       value: item.colorId
-  //     }));
-
-  //     setColors(colorOptions);
-  //     // Assuming the first color is automatically selected
-  //     if (colorOptions.length > 0) {
-  //       const firstColor = colorOptions[0];
-  //       setFormData((prevFormData) => ({
-  //         ...prevFormData,
-  //         ColorId: firstColor.value,
-  //         color: firstColor.label
-  //       }));
-  //       setAccordionExpanded(true);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching fabric color data:', error);
-  //   }
-  // };
   useEffect(() => {
     const calculateOutputQty = () => {
       const AvailableQty = parseFloat(formData.AvailableQty) || 0;
@@ -375,11 +333,12 @@ const Dyeing = () => {
     formData.poPcs,
     formData.UnitRatePerPo
   ]);
+  const [formErrors, setFormErrors] = useState({});
 
   const handleSave = async () => {
-    // Validate required fields
-    if (!formData.designId || !formData.batchNo) {
-      alert('Please fill all required fields.');
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
       return;
     }
 
@@ -447,13 +406,29 @@ const Dyeing = () => {
       // Handle error (e.g., show an error message)
     }
   };
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.fabricId) {
+      errors.fabricId = 'fabricId is required';
+    }
+    if (!formData.colorId) {
+      errors.colorId = 'colorId is required';
+    }
+    if (!formData.vendorId) {
+      errors.vendorId = 'vendorId is required';
+    }
+    if (!formData.processType) {
+      errors.processType = 'processType is required';
+    }
+    if (!formData.GST) {
+      errors.GST = 'GST is required';
+    }
+    if (!formData.RatePerUOM) {
+      errors.RatePerUOM = 'RatePerUOM is required';
+    }
+    return errors;
+  };
 
-  // const handleAutocompleteChange = (event, newValue, name) => {
-  //   setFormData({
-  //     ...formData,
-  //     [name]: newValue ? newValue.value : ''
-  //   });
-  // };
   const design = [
     {
       value: 'Dyeing',
@@ -464,24 +439,6 @@ const Dyeing = () => {
       label: 'Printing'
     }
   ];
-  // const handleEdit = (row) => {
-  //   setInitialData(row);
-  // };
-
-  // console.log('initialData', initialData);
-  // const handleDelete = async (id) => {
-  //   try {
-  //     await axios.delete(
-  //       `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingById?DPId=${id}`
-  //     );
-
-  //     refetchDyeingPrintingData();
-  //     console.log('deleted');
-  //   } catch (error) {
-  //     console.error('Error deleting data:', error);
-  //   }
-  //   // Handle delete logic
-  // };
 
   const columns = [
     {
@@ -676,6 +633,9 @@ const Dyeing = () => {
               name="fabricId"
               value={formData.fabricId}
               onChange={handleChange}
+              error={!!formErrors.fabricId}
+              helperText={formErrors.fabricId}
+              required
             >
               {Fabrications.map((option) => (
                 <MenuItem key={option.fabricId} value={option.fabricId}>
@@ -711,6 +671,9 @@ const Dyeing = () => {
                   label="Color"
                   name="colorId"
                   size="small"
+                  error={!!formErrors.colorId}
+                  helperText={formErrors.colorId}
+                  required
                   // value={formData.color}
                 />
               )}
@@ -799,6 +762,9 @@ const Dyeing = () => {
                   name="vendorId"
                   value={formData.vendorId}
                   onChange={handleChange} // Change handleChange to handleAutocompleteChange
+                  error={!!formErrors.vendorId}
+                  helperText={formErrors.vendorId}
+                  required
                 >
                   {vendors.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -816,7 +782,10 @@ const Dyeing = () => {
                   size="small"
                   name="processType"
                   value={formData.processType}
-                  onChange={handleChange} // Change handleChange to handleAutocompleteChange
+                  onChange={handleChange}
+                  error={!!formErrors.processType}
+                  helperText={formErrors.processType}
+                  required
                 >
                   {design.map((option) => (
                     <MenuItem key={option.value} value={option.value}>
@@ -904,6 +873,9 @@ const Dyeing = () => {
                   name="RatePerUOM"
                   value={formData.RatePerUOM}
                   onChange={handleChange}
+                  error={!!formErrors.RatePerUOM}
+                  helperText={formErrors.RatePerUOM}
+                  required
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -926,6 +898,9 @@ const Dyeing = () => {
                   name="GST"
                   value={formData.GST}
                   onChange={handleChange}
+                  error={!!formErrors.GST}
+                  helperText={formErrors.GST}
+                  required
                 />{' '}
               </Grid>
 

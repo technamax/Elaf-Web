@@ -35,6 +35,7 @@ const NewDesign = () => {
     }
   );
   const { enqueueSnackbar } = useSnackbar();
+  const [formErrors, setFormErrors] = useState({});
 
   const [designList, setDesignList] = useState([]);
   const [colors, setColors] = useState([]);
@@ -182,6 +183,12 @@ const NewDesign = () => {
 
   const handleSave = async () => {
     console.log(formData);
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     try {
       const response = await axios.post(
         'https://gecxc.com:4041/API/DesignRegistration/SaveDesign',
@@ -214,6 +221,22 @@ const NewDesign = () => {
         autoHideDuration: 5000
       });
     }
+  };
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.collectionId) {
+      errors.collectionId = 'collectionId is required';
+    }
+    if (!formData.designNo) {
+      errors.designNo = 'designNo is required';
+    }
+    if (!formData.dateOfPlanning) {
+      errors.dateOfPlanning = 'dateOfPlanning is required';
+    }
+    if (!formData.colorId) {
+      errors.colorId = 'colorId is required';
+    }
+    return errors;
   };
 
   const deleteApi =
@@ -282,6 +305,9 @@ const NewDesign = () => {
                   value={formData.collectionId}
                   onChange={handleChange}
                   size="small"
+                  required
+                  error={!!formErrors.collectionId}
+                  helperText={formErrors.collectionId}
                 >
                   {collectionList.map((option) => (
                     <MenuItem
@@ -301,6 +327,9 @@ const NewDesign = () => {
                   size="small"
                   value={formData.designNo}
                   onChange={handleChange}
+                  error={!!formErrors.designNo}
+                  helperText={formErrors.designNo}
+                  required
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -320,9 +349,12 @@ const NewDesign = () => {
                   label="Planning Date"
                   name="dateOfPlanning"
                   value={formData.dateOfPlanning}
+                  error={!!formErrors.dateOfPlanning}
+                  helperText={formErrors.dateOfPlanning}
                   onChange={handleChange}
                   fullWidth
                   focused
+                  required
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -346,6 +378,9 @@ const NewDesign = () => {
                   name="colorId"
                   value={formData.colorId}
                   onChange={handleChange}
+                  error={!!formErrors.colorId}
+                  helperText={formErrors.colorId}
+                  required
                 >
                   {colors.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>

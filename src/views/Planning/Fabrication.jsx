@@ -42,6 +42,7 @@ import { useUser } from 'context/User';
 
 const Fabrication = () => {
   const { user } = useUser();
+  const [formErrors, setFormErrors] = useState({});
 
   const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
@@ -301,6 +302,12 @@ const Fabrication = () => {
   ];
 
   const handleSave = async () => {
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     try {
       // Make the API call
       const response = await axios.post(
@@ -361,6 +368,24 @@ const Fabrication = () => {
       });
     }
   };
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.fabricId) {
+      errors.fabricId = 'fabricId is required';
+    }
+    if (!formData.gst) {
+      errors.gst = 'gst is required';
+    }
+
+    if (!formData.uomId) {
+      errors.uomId = 'uomId is required';
+    }
+
+    if (!formData.rate) {
+      errors.rate = 'rate is required';
+    }
+    return errors;
+  };
 
   console.log('formData', formData);
   const editAPi = `https://gecxc.com:4041/api/Fabrication/SaveFabrication`;
@@ -396,6 +421,7 @@ const Fabrication = () => {
                 value={selectedCollectionId}
                 onChange={handleChange}
                 size="small"
+                required
               >
                 {collectionList.map((option) => (
                   <MenuItem
@@ -417,6 +443,7 @@ const Fabrication = () => {
                 value={formData.designId}
                 onChange={handleChange}
                 size="small"
+                required
               >
                 {designList.map((option) => (
                   <MenuItem key={option.designId} value={option.designId}>
@@ -434,6 +461,7 @@ const Fabrication = () => {
                 value={formData.batchNo}
                 onChange={handleChange}
                 size="small"
+                required
               >
                 {batchList.map((option) => (
                   <MenuItem key={option.batchNo} value={option.batchNo}>
@@ -505,6 +533,9 @@ const Fabrication = () => {
                   name="fabricId"
                   value={formData.fabricId}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.fabricId}
+                  helperText={formErrors.fabricId}
                 >
                   {Fabrications.map((option) => (
                     <MenuItem key={option.fabricId} value={option.fabricId}>
@@ -523,6 +554,9 @@ const Fabrication = () => {
                   name="uomId"
                   value={formData.uomId}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.uomId}
+                  helperText={formErrors.uomId}
                 >
                   {uoms.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -553,6 +587,9 @@ const Fabrication = () => {
                   name="quantity"
                   value={formData.quantity}
                   onChange={handleChange}
+                  // required
+                  // error={!!formErrors.quantity}
+                  // helperText={formErrors.quantity}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -564,6 +601,9 @@ const Fabrication = () => {
                   name="rate"
                   value={formData.rate}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.rate}
+                  helperText={formErrors.rate}
                 />
               </Grid>
 
@@ -597,6 +637,9 @@ const Fabrication = () => {
                   name="gst"
                   value={formData.gst}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.gst}
+                  helperText={formErrors.gst}
                 />
               </Grid>
               <Grid item xs={12} md={2}>

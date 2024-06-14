@@ -398,8 +398,15 @@ const Schiffli = () => {
     }
   };
   console.log('colors', colors);
+  const [formErrors, setFormErrors] = useState({});
 
   const handleSave = async () => {
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     try {
       // Make the API call
       const response = await axios.post(
@@ -467,6 +474,46 @@ const Schiffli = () => {
         autoHideDuration: 5000
       });
     }
+  };
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.fabricId) {
+      errors.fabricId = 'fabricId is required';
+    }
+    if (!formData.colorId) {
+      errors.colorId = 'colorId is required';
+    }
+    if (!formData.vendorId) {
+      errors.vendorId = 'vendorId is required';
+    }
+    if (!formData.componentId) {
+      errors.componentId = 'componentId is required';
+    }
+    if (!formData.thaanQty) {
+      errors.thaanQty = 'thaanQty is required';
+    }
+    if (!formData.workingHeadId) {
+      errors.workingHeadId = 'workingHeadId is required';
+    }
+    if (!formData.rate) {
+      errors.rate = 'rate is required';
+    }
+    if (!formData.operatingMachineId) {
+      errors.operatingMachineId = 'operatingMachineId is required';
+    }
+    if (!formData.noOfStichesPerYard) {
+      errors.noOfStichesPerYard = 'noOfStichesPerYard is required';
+    }
+    if (!formData.noOfItemPerThaan) {
+      errors.noOfItemPerThaan = 'noOfItemPerThaan is required';
+    }
+    // if (!formData.sequence) {
+    //   errors.sequence = 'sequence is required';
+    // }
+    // if (!formData.sequenceRate) {
+    //   errors.sequenceRate = 'sequenceRate is required';
+    // }
+    return errors;
   };
   console.log('formData', formData);
 
@@ -630,6 +677,9 @@ const Schiffli = () => {
               value={formData.componentId}
               onChange={handleChange}
               size="small"
+              required
+              error={!!formErrors.componentId}
+              helperText={formErrors.componentId}
             >
               {components.map((option) => (
                 <MenuItem key={option.componentId} value={option.componentId}>
@@ -703,6 +753,9 @@ const Schiffli = () => {
                   name="fabricId"
                   value={formData.fabricId}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.fabricId}
+                  helperText={formErrors.fabricId}
                 >
                   {Fabrications.map((option) => (
                     <MenuItem key={option.fabricId} value={option.fabricId}>
@@ -721,6 +774,9 @@ const Schiffli = () => {
                   name="vendorId"
                   value={formData.vendorId}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.vendorId}
+                  helperText={formErrors.vendorId}
                 >
                   {vendors.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -739,6 +795,9 @@ const Schiffli = () => {
                   name="colorId"
                   value={formData.colorId}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.colorId}
+                  helperText={formErrors.colorId}
                 >
                   {colors.map((option) => (
                     <MenuItem key={option.colorId} value={option.colorId}>
@@ -779,6 +838,9 @@ const Schiffli = () => {
                   name="thaanQty"
                   value={formData.thaanQty}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.thaanQty}
+                  helperText={formErrors.thaanQty}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -791,6 +853,9 @@ const Schiffli = () => {
                   name="operatingMachineId"
                   value={formData.operatingMachineId}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.operatingMachineId}
+                  helperText={formErrors.operatingMachineId}
                 >
                   {operatingMachineList.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -809,6 +874,9 @@ const Schiffli = () => {
                   name="workingHeadId"
                   value={formData.workingHeadId}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.workingHeadId}
+                  helperText={formErrors.workingHeadId}
                 >
                   {workingHeadList.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -838,6 +906,9 @@ const Schiffli = () => {
                   name="rate"
                   value={formData.rate}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.rate}
+                  helperText={formErrors.rate}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -849,6 +920,9 @@ const Schiffli = () => {
                   name="noOfStichesPerYard"
                   value={formData.noOfStichesPerYard}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.noOfStichesPerYard}
+                  helperText={formErrors.noOfStichesPerYard}
                 />
               </Grid>
 
@@ -861,6 +935,9 @@ const Schiffli = () => {
                   name="noOfItemPerThaan"
                   value={formData.noOfItemPerThaan}
                   onChange={handleChange}
+                  required
+                  error={!!formErrors.noOfItemPerThaan}
+                  helperText={formErrors.noOfItemPerThaan}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
