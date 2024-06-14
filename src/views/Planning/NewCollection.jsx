@@ -26,10 +26,13 @@ import MainCard from 'ui-component/cards/MainCard';
 import { width } from '@mui/system';
 import { WidthFull } from '@mui/icons-material';
 // import { GetCollectionList } from 'api/apis';
+import { useUser } from 'context/User';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
 const NewCollection = () => {
+  const { user } = useUser();
+
   const { data, error, isLoading, refetch } = useGetCollectionListQuery();
   const { data: lookupData } = useGetLookUpListQuery();
   const [brands, setBrands] = useState([]);
@@ -38,6 +41,7 @@ const NewCollection = () => {
     searchPlanningDateFrom: '',
     searchPlanningDateTo: ''
   });
+
   const [formData, setFormData] = useState({
     collectionName: '',
     brandId: '',
@@ -45,14 +49,14 @@ const NewCollection = () => {
     volume: '',
     planningDate: '',
     launchDate: '',
-    isReapetCollection: 'No',
+    isRepeatCollection: 'No',
     noOfDesigns: '',
     noOfColors: '',
     poPcs: '',
     appId: 1, // change after login api fetchdata
-    createdBy: 0,
+    createdBy: user.empId,
     createdOn: new Date().toISOString(),
-    lastUpdatedBy: 0,
+    lastUpdatedBy: user.empId,
     lastUpdatedOn: new Date().toISOString()
   });
   const [totalPcs, setTotalPcs] = useState('');
@@ -259,10 +263,14 @@ const NewCollection = () => {
         volume: '',
         planningDate: '',
         launchDate: '',
-        isReapetCollection: '',
+        isRepeatCollection: '',
         noOfDesigns: '',
         noOfColors: '',
-        poPcs: ''
+        poPcs: '',
+        createdOn: new Date().toISOString(),
+        createdBy: user.empId,
+        lastUpdatedOn: new Date().toISOString(),
+        lastUpdatedBy: user.empId
       });
       // fetchData();
       refetch();
@@ -440,7 +448,6 @@ const NewCollection = () => {
                     type="date"
                     label="Launch Date"
                     name="launchDate"
-                  
                     value={formData.launchDate}
                     onChange={handleChange}
                     fullWidth
@@ -453,9 +460,9 @@ const NewCollection = () => {
                     fullWidth
                     select
                     label="Repeat Collection?"
-                    name="isReapetCollection"
+                    name="isRepeatCollection"
                     defaultValue="No"
-                    value={formData.isReapetCollection}
+                    value={formData.isRepeatCollection}
                     onChange={handleChange}
                     size="small"
                   >
