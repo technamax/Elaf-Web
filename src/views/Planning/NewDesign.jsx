@@ -202,7 +202,8 @@ const NewDesign = () => {
       console.log('Form data saved:', response.data);
       setDesignList([...designList, response.data]);
       setFormData({
-        collectionId: '',
+        ...formData,
+        // collectionId: '',
         designNo: '',
         designerName: '',
         poPcs: '',

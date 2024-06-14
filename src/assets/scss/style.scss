@@ -34,12 +34,12 @@
   }
 }
 .CardHeader {
-  margin-bottom: 10px;
-  border-radius: 7px;
-  width: auto;
-  max-height: 80vh; /* Removed responsive design as it's not supported in CSS */
-  overflow: auto;
-  padding: 5px;
+  margin-bottom: 10px !important;
+  border-radius: 7px !important;
+  width: auto !important;
+  max-height: 80vh !important; /* Removed responsive design as it's not supported in CSS */
+  overflow: auto !important;
+  padding: 5px !important;
 }
 
 .css-5d09g1-MuiPaper-root-MuiAccordion-root.Mui-expanded {
