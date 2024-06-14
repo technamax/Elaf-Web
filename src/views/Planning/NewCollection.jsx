@@ -66,6 +66,7 @@ const NewCollection = () => {
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
   };
+  const [formErrors, setFormErrors] = useState({});
 
   const [collectionList, setCollectionList] = useState([]);
 
@@ -239,8 +240,43 @@ const NewCollection = () => {
     const { name, value } = e.target;
     setSearchData({ ...searchData, [name]: value });
   };
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.collectionName.trim()) {
+      errors.collectionName = 'collectionName is required';
+    }
+    if (!formData.seasonId) {
+      errors.seasonId = 'seasonId  is required';
+    }
+    if (!formData.brandId) {
+      errors.brandId = 'brandId  is required';
+    }
+    if (!formData.planningDate) {
+      errors.planningDate = 'planningDate  is required';
+    }
+    if (!formData.launchDate) {
+      errors.launchDate = 'launchDate  is required';
+    }
+    if (!formData.noOfDesigns) {
+      errors.noOfDesigns = 'noOfDesigns  is required';
+    }
+    if (!formData.noOfColors) {
+      errors.noOfColors = 'noOfColors  is required';
+    }
+    if (!formData.poPcs) {
+      errors.poPcs = 'poPcs  is required';
+    }
+    return errors;
+  };
+
   const handleSave = async () => {
     console.log(formData);
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     try {
       const response = await axios.post(
         'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection',
@@ -365,11 +401,13 @@ const NewCollection = () => {
                   <TextField
                     fullWidth
                     select
-                    label="Season Name"
+                    label="* Season Name"
                     name="seasonId"
                     value={formData.seasonId}
                     onChange={handleChange}
                     size="small"
+                    error={!!formErrors.seasonId}
+                    helperText={formErrors.seasonId}
                   >
                     {seasons.map((option) => (
                       <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -387,6 +425,8 @@ const NewCollection = () => {
                     value={formData.brandId}
                     onChange={handleChange}
                     size="small"
+                    error={!!formErrors.brandId}
+                    helperText={formErrors.brandId}
                   >
                     {brands.map((option) => (
                       <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -397,12 +437,14 @@ const NewCollection = () => {
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <TextField
-                    label="Collection Name"
+                    label="* Collection Name"
                     fullWidth
                     size="small"
                     name="collectionName"
                     onChange={handleChange}
                     value={formData.collectionName}
+                    error={!!formErrors.collectionName}
+                    helperText={formErrors.collectionName}
                   />
                 </Grid>
                 <Grid item xs={12} md={3}>
@@ -432,6 +474,8 @@ const NewCollection = () => {
                     onChange={handleChange}
                     fullWidth
                     focused
+                    error={!!formErrors.planningDate}
+                    helperText={formErrors.planningDate}
                   />
                 </Grid>
                 <Grid item xs={12} md={3}>
@@ -440,11 +484,12 @@ const NewCollection = () => {
                     type="date"
                     label="Launch Date"
                     name="launchDate"
-                  
                     value={formData.launchDate}
                     onChange={handleChange}
                     fullWidth
                     focused
+                    error={!!formErrors.launchDate}
+                    helperText={formErrors.launchDate}
                   />
                 </Grid>
 
@@ -475,6 +520,8 @@ const NewCollection = () => {
                     type="number"
                     onChange={handleChange}
                     value={formData.noOfColors}
+                    error={!!formErrors.noOfColors}
+                    helperText={formErrors.noOfColors}
                   />
                 </Grid>
                 <Grid item xs={12} md={3}>
@@ -486,6 +533,8 @@ const NewCollection = () => {
                     type="number"
                     onChange={handleChange}
                     value={formData.noOfDesigns}
+                    error={!!formErrors.noOfDesigns}
+                    helperText={formErrors.noOfDesigns}
                   />
                 </Grid>
                 <Grid item xs={12} md={3}>
@@ -497,6 +546,8 @@ const NewCollection = () => {
                     type="number"
                     onChange={handleChange}
                     value={formData.poPcs}
+                    error={!!formErrors.poPcs}
+                    helperText={formErrors.poPcs}
                   />
                 </Grid>
                 <Grid item xs={12} md={3}>
