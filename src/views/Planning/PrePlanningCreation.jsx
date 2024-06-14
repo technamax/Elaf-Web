@@ -146,8 +146,9 @@ const PrePlanningCreation = () => {
       });
 
       setFormData({
-        collectionName: '',
-        collectionId: '',
+        ...formData,
+        // collectionName: '',
+        // collectionId: '',
         designId: '',
         poPcs: '',
         batchNo: ''

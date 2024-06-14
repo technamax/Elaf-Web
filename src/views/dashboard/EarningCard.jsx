@@ -34,7 +34,7 @@ const EarningCard = ({ isLoading }) => {
   console.log('dashboardData', dashboardData);
   useEffect(() => {
     if (dashboardData) {
-      //   setTotalCollection(dashboardData.result[0]);
+      setTotalCollection(dashboardData.result[0].totalCollection);
     }
   }, [dashboardData]);
 
@@ -55,7 +55,7 @@ const EarningCard = ({ isLoading }) => {
           border={false}
           content={false}
           sx={{
-            bgcolor: 'secondary.dark',
+            bgcolor: 'primary.dark',
             color: '#fff',
             overflow: 'hidden',
             position: 'relative',
@@ -84,101 +84,38 @@ const EarningCard = ({ isLoading }) => {
         >
           <Box sx={{ p: 2.25 }}>
             <Grid container direction="column">
-              <Grid item>
-                <Grid container justifyContent="space-between">
-                  <Grid item>
-                    <Avatar
-                      variant="rounded"
-                      sx={{
-                        ...theme.typography.commonAvatar,
-                        ...theme.typography.largeAvatar,
-                        bgcolor: 'secondary.800',
-                        mt: 1
-                      }}
-                    >
-                      <img src={EarningIcon} alt="Notification" />
-                    </Avatar>
-                  </Grid>
-                  <Grid item>
-                    <Avatar
-                      variant="rounded"
-                      sx={{
-                        ...theme.typography.commonAvatar,
-                        ...theme.typography.mediumAvatar,
-                        bgcolor: 'secondary.dark',
-                        color: 'secondary.200',
-                        zIndex: 1
-                      }}
-                      aria-controls="menu-earning-card"
-                      aria-haspopup="true"
-                      onClick={handleClick}
-                    >
-                      <MoreHorizIcon fontSize="inherit" />
-                    </Avatar>
-                    {/* <Menu
-                      id="menu-earning-card"
-                      anchorEl={anchorEl}
-                      keepMounted
-                      open={Boolean(anchorEl)}
-                      onClose={handleClose}
-                      variant="selectedMenu"
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right'
-                      }}
-                      transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right'
-                      }}
-                    >
-                      <MenuItem onClick={handleClose}>
-                        <GetAppTwoToneIcon sx={{ mr: 1.75 }} /> Import Card
-                      </MenuItem>
-                      <MenuItem onClick={handleClose}>
-                        <FileCopyTwoToneIcon sx={{ mr: 1.75 }} /> Copy Data
-                      </MenuItem>
-                      <MenuItem onClick={handleClose}>
-                        <PictureAsPdfTwoToneIcon sx={{ mr: 1.75 }} /> Export
-                      </MenuItem>
-                      <MenuItem onClick={handleClose}>
-                        <ArchiveTwoToneIcon sx={{ mr: 1.75 }} /> Archive File
-                      </MenuItem>
-                    </Menu> */}
-                  </Grid>
+              {/* <Grid item> */}
+              <Grid container alignItems="center">
+                <Grid item>
+                  <Typography
+                    sx={{
+                      fontSize: '2.125rem',
+                      fontWeight: 500,
+                      mr: 1,
+                      mt: 1.75,
+                      mb: 0.75
+                    }}
+                  >
+                    {totalCollection}
+                  </Typography>
                 </Grid>
+                {/* <Grid item> */}
+                <Avatar
+                  sx={{
+                    cursor: 'pointer',
+                    ...theme.typography.smallAvatar,
+                    bgcolor: 'secondary.200',
+                    color: 'secondary.dark'
+                  }}
+                >
+                  <ArrowUpwardIcon
+                    fontSize="inherit"
+                    sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }}
+                  />
+                </Avatar>
               </Grid>
-              <Grid item>
-                <Grid container alignItems="center">
-                  <Grid item>
-                    <Typography
-                      sx={{
-                        fontSize: '2.125rem',
-                        fontWeight: 500,
-                        mr: 1,
-                        mt: 1.75,
-                        mb: 0.75
-                      }}
-                    >
-                      $500.00
-                    </Typography>
-                  </Grid>
-                  <Grid item>
-                    <Avatar
-                      sx={{
-                        cursor: 'pointer',
-                        ...theme.typography.smallAvatar,
-                        bgcolor: 'secondary.200',
-                        color: 'secondary.dark'
-                      }}
-                    >
-                      <ArrowUpwardIcon
-                        fontSize="inherit"
-                        sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }}
-                      />
-                    </Avatar>
-                  </Grid>
-                </Grid>
-              </Grid>
+              {/* </Grid> */}
+              {/* </Grid> */}
               <Grid item sx={{ mb: 1.25 }}>
                 <Typography
                   sx={{
@@ -187,7 +124,7 @@ const EarningCard = ({ isLoading }) => {
                     color: 'secondary.200'
                   }}
                 >
-                  No of Collections
+                  Total Collections
                 </Typography>
               </Grid>
             </Grid>
