@@ -21,11 +21,8 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
-import { useUser } from 'context/User';
 
 const NewDesign = () => {
-  const { user } = useUser();
-
   const { data: collectionData } = useGetCollectionListQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const { data: designData, refetch } = useGetDesignListByCollectionIdQuery(
@@ -35,7 +32,6 @@ const NewDesign = () => {
     }
   );
   const { enqueueSnackbar } = useSnackbar();
-  const [formErrors, setFormErrors] = useState({});
 
   const [designList, setDesignList] = useState([]);
   const [colors, setColors] = useState([]);
@@ -79,9 +75,9 @@ const NewDesign = () => {
     dateOfPlanning: '',
     colorId: '',
     appId: 1,
-    createdBy: user.empId,
+    createdBy: 0,
     createdOn: new Date().toISOString(),
-    lastUpdatedBy: user.empId,
+    lastUpdatedBy: 0,
     lastUpdatedOn: new Date().toISOString()
   });
 
@@ -183,12 +179,6 @@ const NewDesign = () => {
 
   const handleSave = async () => {
     console.log(formData);
-    const errors = validateForm();
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
-
     try {
       const response = await axios.post(
         'https://gecxc.com:4041/API/DesignRegistration/SaveDesign',
@@ -207,11 +197,7 @@ const NewDesign = () => {
         designerName: '',
         poPcs: '',
         dateOfPlanning: '',
-        colorId: '',
-        createdOn: new Date().toISOString(),
-        createdBy: user.empId,
-        lastUpdatedOn: new Date().toISOString(),
-        lastUpdatedBy: user.empId
+        colorId: ''
       });
       refetch();
     } catch (error) {
@@ -222,25 +208,8 @@ const NewDesign = () => {
       });
     }
   };
-  const validateForm = () => {
-    const errors = {};
-    if (!formData.collectionId) {
-      errors.collectionId = 'collectionId is required';
-    }
-    if (!formData.designNo) {
-      errors.designNo = 'designNo is required';
-    }
-    if (!formData.dateOfPlanning) {
-      errors.dateOfPlanning = 'dateOfPlanning is required';
-    }
-    if (!formData.colorId) {
-      errors.colorId = 'colorId is required';
-    }
-    return errors;
-  };
 
-  const deleteApi =
-    'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
+  const deleteApi = `https://gecxc.com:4041/api/DesignRegistration/DeleteDesignById?designId=`;
   const editAPi = 'https://gecxc.com:4041/API/DesignRegistration/SaveDesign';
   const handleSearch = () => {
     //search api call
@@ -305,9 +274,6 @@ const NewDesign = () => {
                   value={formData.collectionId}
                   onChange={handleChange}
                   size="small"
-                  required
-                  error={!!formErrors.collectionId}
-                  helperText={formErrors.collectionId}
                 >
                   {collectionList.map((option) => (
                     <MenuItem
@@ -327,9 +293,6 @@ const NewDesign = () => {
                   size="small"
                   value={formData.designNo}
                   onChange={handleChange}
-                  error={!!formErrors.designNo}
-                  helperText={formErrors.designNo}
-                  required
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -349,12 +312,9 @@ const NewDesign = () => {
                   label="Planning Date"
                   name="dateOfPlanning"
                   value={formData.dateOfPlanning}
-                  error={!!formErrors.dateOfPlanning}
-                  helperText={formErrors.dateOfPlanning}
                   onChange={handleChange}
                   fullWidth
                   focused
-                  required
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -378,9 +338,6 @@ const NewDesign = () => {
                   name="colorId"
                   value={formData.colorId}
                   onChange={handleChange}
-                  error={!!formErrors.colorId}
-                  helperText={formErrors.colorId}
-                  required
                 >
                   {colors.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -399,6 +356,9 @@ const NewDesign = () => {
                   ncolumns={columns}
                   formData={formData}
                   editAPi={editAPi}
+                  deleteApi={deleteApi}
+                  deleteBy="designId"
+                  refetch={refetch}
                 />
               </Grid>
             </Grid>
@@ -454,6 +414,7 @@ const NewDesign = () => {
                   formData={formData}
                   editAPi={editAPi}
                   disableAddRecord={true}
+
                   // disableEdit={true}
                 />
               </Grid>

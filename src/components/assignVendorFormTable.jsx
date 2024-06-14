@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import { Grid, TextField, Button, Box } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Grid, TextField, Button, Box, Divider, MenuItem } from '@mui/material';
+import ReuseableDataGrid from './ReuseableDataGrid';
+import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 
 const AssignVendorFormTable = ({ additionalProcessData }) => {
   const [formData, setFormData] = useState({
@@ -25,6 +27,16 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: 0
   });
+  const { data: lookupData } = useGetLookUpListQuery();
+  const [vendors, setVendors] = useState([]);
+
+  useEffect(() => {
+    // fetchData();
+    if (lookupData) {
+      const data = lookupData.result[0];
+      setVendors(data.vendorList);
+    }
+  }, [lookupData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,6 +46,63 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
   const handleSave = () => {
     console.log(formData);
   };
+  const initialRows = [
+    {
+      id: 1,
+      additionalProcessId: 0,
+      designId: 321,
+      planningHeaderId: 34,
+      batchNo: '3453',
+      componentId: '345',
+      colorId: 345,
+      fabricId: '345',
+      vendorId: 'gefg', /////////////checkapi
+      baseColorName: 'g4cgd',
+      poPcs: 'dfgdf',
+      pcsPerComponent: 345,
+      processTypeId: 'dfg',
+      quantity: 'dfg',
+      ratePerPcs: 40,
+      totalAmount: 40,
+      costPerComponent: '453',
+
+      createdOn: new Date().toISOString(),
+      createdBy: 0,
+      lastUpdatedOn: new Date().toISOString(),
+      LastUpdatedBy: 0
+    }
+  ];
+  const columns = [
+    {
+      field: 'vendorName',
+      headerName: 'Vendor'
+    },
+
+    {
+      field: 'processTypeId',
+      headerName: 'process Type'
+    },
+    {
+      field: 'pcsPerComponent',
+      headerName: ' Pcs. Per Component'
+    },
+    {
+      field: 'quantity',
+      headerName: 'Quantitity'
+    },
+    {
+      field: 'ratePerPcs',
+      headerName: 'Rate Per Pcs.'
+    },
+    {
+      field: 'totalAmount',
+      headerName: 'Total Amount'
+    },
+    {
+      field: 'costPerComponent',
+      headerName: 'Cost Per Component'
+    }
+  ];
 
   return (
     <Box
@@ -135,17 +204,10 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             disabled
           />
         </Grid>
-      </Grid>
-      <Grid
-        container
-        spacing={2}
-        width="Inherit"
-        sx={{ paddingY: 2, paddingX: 2 }}
-      >
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
-            select
+            // select
             label="Select Fabric"
             defaultValue=""
             size="small"
@@ -165,7 +227,7 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
-            select
+            // select
             label="Color"
             size="small"
             name="colorId"
@@ -191,6 +253,45 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             disabled
           />
         </Grid>
+        <Grid item xs={12} md={1.5}>
+          <TextField
+            label="Pcs. Per Component"
+            fullWidth
+            size="small"
+            name="pcsPerComponent"
+            value={formData.pcsPerComponent}
+            // type="number"
+            onChange={handleChange}
+            disabled
+          />
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            // select
+            label="Process Type"
+            defaultValue=""
+            size="small"
+            name="processTypeId"
+            value={formData.processTypeId}
+            onChange={handleChange}
+            disabled
+          >
+            {/* {operatingMachineList.map((option) => (
+              <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                {option.lookUpName}
+              </MenuItem>
+            ))} */}
+          </TextField>
+        </Grid>
+      </Grid>
+      <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />
+      <Grid
+        container
+        spacing={2}
+        width="Inherit"
+        sx={{ paddingY: 2, paddingX: 2 }}
+      >
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
@@ -202,44 +303,15 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             value={formData.vendorId}
             onChange={handleChange}
           >
-            {/* {vendors.map((option) => (
-                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                      {option.lookUpName}
-                    </MenuItem>
-                  ))} */}
-          </TextField>
-        </Grid>
-        <Grid item xs={12} md={1.5}>
-          <TextField
-            label="Pcs. Per Component"
-            fullWidth
-            size="small"
-            name="pcsPerComponent"
-            value={formData.pcsPerComponent}
-            // type="number"
-            onChange={handleChange}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <TextField
-            fullWidth
-            select
-            label="Process Type"
-            defaultValue=""
-            size="small"
-            name="processTypeId"
-            value={formData.processTypeId}
-            onChange={handleChange}
-          >
-            {/* {operatingMachineList.map((option) => (
+            {vendors.map((option) => (
               <MenuItem key={option.lookUpId} value={option.lookUpId}>
                 {option.lookUpName}
               </MenuItem>
-            ))} */}
+            ))}
           </TextField>
         </Grid>
 
-        <Grid item xs={12} md={1.5}>
+        <Grid item xs={12} md={3}>
           <TextField
             label="Quantity"
             fullWidth
@@ -250,7 +322,7 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             onChange={handleChange}
           />
         </Grid>
-        <Grid item xs={12} md={1.5}>
+        <Grid item xs={12} md={3}>
           <TextField
             label="Rate Per Pcs"
             type="number"
@@ -261,7 +333,7 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             onChange={handleChange}
           />
         </Grid>
-        <Grid item xs={12} md={1.5}>
+        <Grid item xs={12} md={3}>
           <TextField
             label="Total Amount"
             fullWidth
@@ -273,7 +345,7 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
           />
         </Grid>
 
-        <Grid item xs={12} md={1.5}>
+        <Grid item xs={12} md={3}>
           <TextField
             label="Cost Per Component"
             fullWidth
@@ -289,6 +361,25 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
           <Button variant="contained" size="small" onClick={handleSave}>
             Save
           </Button>
+        </Grid>
+      </Grid>
+      <Grid
+        container
+        spacing={2}
+        width="Inherit"
+        sx={{ paddingY: 2, paddingX: 2 }}
+      >
+        <Grid sx={{ marginTop: 2 }} item xs={12}>
+          <ReuseableDataGrid
+            iColumns={columns}
+            initialRows={initialRows}
+            // setInitialData={setInitialData}
+            // deleteApi={deleteApi}
+            // deleteBy="schiffiliId"
+            // refetch={refetchSchiffliList}
+            // setAccordionExpanded={setAccordionExpanded}
+            // fileName="Schffili List"
+          />
         </Grid>
       </Grid>
     </Box>

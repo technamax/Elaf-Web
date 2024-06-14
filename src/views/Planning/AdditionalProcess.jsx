@@ -822,14 +822,11 @@ const AdditionalProcess = () => {
               // aria-labelledby="alert-dialog-title"
               // aria-describedby="alert-dialog-description"
               fullWidth
+              maxWidth="md"
             >
-              <DialogTitle>{"Use Google's location service?"}</DialogTitle>
+              <DialogTitle>{'Assign Vendors to '}</DialogTitle>
               <DialogContent>
-                <DialogContentText id="alert-dialog-slide-description">
-                  Let Googlehelp apps determine location. This means sending
-                  anonymous location data to Google, even when no apps are
-                  running.
-                </DialogContentText>
+                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
                 <AssignVendorFormTable
                   additionalProcessData={additionalProcessData}
                 />
