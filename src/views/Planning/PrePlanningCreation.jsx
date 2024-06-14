@@ -19,6 +19,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import '../../App.css';
+import { useUser } from 'context/User';
 
 const PrePlanningCreation = () => {
   const { data: collectionData, refetch: refetchCollection } =
@@ -28,6 +29,8 @@ const PrePlanningCreation = () => {
   // {
   //   skip: !selectedCollectionId // Skip the query if no collection is selected
   // }
+  const { user } = useUser();
+
   const { enqueueSnackbar } = useSnackbar();
   const [designList, setDesignList] = useState([]);
   useEffect(() => {
@@ -46,7 +49,7 @@ const PrePlanningCreation = () => {
     designId: '',
     poPcs: '',
     batchNo: '',
-    createdBy: 0,
+    createdBy: user.empId,
     createdOn: new Date().toISOString()
   });
   const [designOptions, setDesignOptions] = useState([]);

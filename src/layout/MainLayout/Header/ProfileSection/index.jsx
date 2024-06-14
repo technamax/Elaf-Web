@@ -25,7 +25,7 @@ import Popper from '@mui/material/Popper';
 import Stack from '@mui/material/Stack';
 // import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
-
+import { useUser } from '../../../../context/User';
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
@@ -54,6 +54,8 @@ const ProfileSection = (username) => {
   //   const [notification, setNotification] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
+  const { user } = useUser();
+
   /**
    * anchorRef is used on different componets and specifying one type leads to other components throwing an error
    * */
@@ -179,10 +181,11 @@ const ProfileSection = (username) => {
                           variant="h4"
                           sx={{ fontWeight: 400 }}
                         >
-                          Elaf Develop
+                          {/* Elaf Develop */}
+                          {user.firstName}
                         </Typography>
                       </Stack>
-                      <Typography variant="subtitle2">Project Admin</Typography>
+                      {/* <Typography variant="subtitle2">Project Admin</Typography> */}
                     </Stack>
 
                     <Divider />
