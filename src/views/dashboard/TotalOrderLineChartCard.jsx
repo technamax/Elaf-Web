@@ -114,7 +114,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
               </Grid>
               {/* </Grid> */}
               {/* </Grid> */}
-              <Grid item sx={{ mb: 1.25 }}>
+              <Grid item sx={{ mb: 8 }}>
                 <Typography
                   sx={{
                     fontSize: '1rem',
