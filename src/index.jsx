@@ -32,6 +32,8 @@ import reportWebVitals from 'reportWebVitals';
 import './App.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../src/assets/scss/style.scss';
+// import 'style.scss';
+
 import { SnackbarProvider } from 'notistack';
 
 const container = document.getElementById('root');

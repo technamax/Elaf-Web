@@ -28,21 +28,28 @@
   background-size: contain;
 } */
 
-/* avatar hover */
-.css-6zypyp-MuiButtonBase-root-MuiChip-root[aria-controls='menu-list-grow'],
-.css-6zypyp-MuiButtonBase-root-MuiChip-root:hover {
-  /* border-color: #9f1d22; */
-  /* background: #9f1d22 !important; */
-}
-
-/* .css-138lma6-MuiPaper-root-MuiCard-root {
-  border-width: 1px;
-  border-style: dotted;
-  border-color: rgb(161, 31, 35);
-} */
-
 .MuiCardHeader-root {
   background: rgb(161, 31, 35);
   color: white !important;
   max-height: 30px !important;
+}
+
+.css-1ips9rb-MuiListItemIcon-root {
+  font-size: large;
+}
+.css-1gr4mqk {
+  margin-top: 55px;
+}
+.css-sgoict-MuiCardHeader-action {
+  margin-top: -18px;
+}
+
+.css-1pqm26d-MuiAvatar-img {
+  width: 80%;
+  height: 80%;
+}
+
+.css-kvip5o-MuiToolbar-root {
+  min-height: 0px;
+  padding: 0px;
 }

@@ -42,12 +42,6 @@
   padding: 5px;
 }
 
-.MainCard {
-  // border-width: 1px;
-  // border-style: dotted;
-  // border-color: #a11f23;
-}
-
 .css-5d09g1-MuiPaper-root-MuiAccordion-root.Mui-expanded {
   margin: 0px;
 }
@@ -84,9 +78,12 @@
 }
 //dropdown arrow
 .css-sgoict-MuiCardHeader-action {
-  margin-top: -18px;
+  margin-top: -18px !important;
 }
-
+//menuiconsize
+.css-1ips9rb-MuiListItemIcon-root {
+  font-size: large !important;
+}
 //cardheader icon size
 .css-1pqm26d-MuiAvatar-img {
   width: 80%;
@@ -119,10 +116,7 @@
     background-color: transparent;
   }
 }
-//menuiconsize
-.css-1ips9rb-MuiListItemIcon-root {
-  font-size: large;
-}
+
 // ==============================|| ANIMATION KEYFRAMES ||============================== //
 
 @keyframes wings {
