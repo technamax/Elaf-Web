@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useUser } from '../../../../context/User';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -25,7 +26,6 @@ import Popper from '@mui/material/Popper';
 import Stack from '@mui/material/Stack';
 // import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
-import { useUser } from '../../../../context/User';
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
@@ -50,18 +50,25 @@ const ProfileSection = (username) => {
   const navigate = useNavigate();
   console.log(username);
   //   const [sdm, setSdm] = useState(true);
-  const [value, setValue] = useState('');
+  // const [value, setValue] = useState('');
   //   const [notification, setNotification] = useState(false);
+
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
-  const { user } = useUser();
+  const { user, setUser } = useUser();
 
   /**
    * anchorRef is used on different componets and specifying one type leads to other components throwing an error
    * */
   const anchorRef = useRef(null);
-  const handleLogout = async () => {
+
+  const handleLogout = () => {
     console.log('Logout');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('empId');
+    localStorage.removeItem('isLoggedIn');
+    setUser(null);
+    navigate('/'); // Navigate to login page
   };
 
   const handleClose = (event) => {

@@ -63,8 +63,8 @@ const AuthLogin = ({ ...others }) => {
         localStorage.setItem('authToken', token);
         localStorage.setItem('empId', empId);
 
-        console.log('Stored empId:', empId); // Log stored empId
-        console.log('Stored token:', token); // Log stored token
+        // console.log('Stored empId:', empId); // Log stored empId
+        // console.log('Stored token:', token); // Log stored token
         setUser(response.data);
 
         navigate('/dashboard');
