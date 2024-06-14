@@ -733,7 +733,7 @@ const Embroidery = () => {
           title="Add Embroidery"
           titleTypographyProps={{ style: { color: 'white' } }}
           action={
-            <IconButton onClick={handleAccordionToggle}>
+            <IconButton onClick={handleAccordionToggle} sx={{ mt: '-18px' }}>
               <ExpandMoreIcon style={{ color: 'white' }} />
             </IconButton>
           }
@@ -1232,7 +1232,12 @@ const Embroidery = () => {
           </AccordionDetails>{' '}
         </Accordion>
       </Card>
-      <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
+      <Grid item xs={12} md={12}>
+        <Divider
+          // color="#cc8587"
+          sx={{ height: 1, width: '100%', marginTop: 1, marginBottom: 0 }}
+        />
+      </Grid>
 
       <Card variant="outlined">
         <CardHeader

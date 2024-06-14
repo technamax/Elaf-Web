@@ -495,7 +495,7 @@ const Fabrication = () => {
           title="Add Fabric Requisition"
           titleTypographyProps={{ style: { color: 'white' } }}
           action={
-            <IconButton onClick={handleAccordionToggle}>
+            <IconButton onClick={handleAccordionToggle} sx={{ mt: '-18px' }}>
               <ExpandMoreIcon style={{ color: 'white' }} />
             </IconButton>
           }
@@ -665,7 +665,7 @@ const Fabrication = () => {
       <Grid item xs={12} md={12}>
         <Divider
           // color="#cc8587"
-          sx={{ height: 1, width: '100%', marginTop: 1, marginBottom: 1 }}
+          sx={{ height: 1, width: '100%', marginTop: 1, marginBottom: 0 }}
         />
       </Grid>
 

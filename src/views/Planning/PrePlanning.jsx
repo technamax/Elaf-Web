@@ -705,7 +705,7 @@ const PrePlanning = () => {
           title="Add Pre Planning"
           titleTypographyProps={{ style: { color: 'white' } }}
           action={
-            <IconButton onClick={handleAccordionToggle}>
+            <IconButton onClick={handleAccordionToggle} sx={{ mt: '-18px' }}>
               <ExpandMoreIcon style={{ color: 'white' }} />
             </IconButton>
           }

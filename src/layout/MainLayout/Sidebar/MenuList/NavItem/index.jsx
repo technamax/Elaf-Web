@@ -80,7 +80,9 @@ const NavItem = ({ item, level }) => {
       onClick={() => itemHandler(item.id)}
     >
       {item.icon && (
-        <ListItemIcon sx={{ my: 'auto', minWidth: !item.icon ? 18 : 36 }}>
+        <ListItemIcon
+          sx={{ my: 'auto', minWidth: !item.icon ? 18 : 36, fontSize: 'large' }}
+        >
           <i class={item.icon}></i>
         </ListItemIcon>
       )}

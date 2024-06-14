@@ -544,7 +544,7 @@ const AdditionalProcess = () => {
           title="Add Additional Process "
           titleTypographyProps={{ style: { color: 'white' } }}
           action={
-            <IconButton onClick={handleAccordionToggle}>
+            <IconButton onClick={handleAccordionToggle} sx={{ mt: '-18px' }}>
               <ExpandMoreIcon style={{ color: 'white' }} />
             </IconButton>
           }
