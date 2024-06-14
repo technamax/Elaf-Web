@@ -45,6 +45,19 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import schiffli from '../../assets/images/planningicons/schiffli.png';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
+import assignVendorFormTable from 'components/AdditionalProcess/assignVendorFormTable';
+
+//////
+import * as React from 'react';
+
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
+import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
+///////
 
 const AdditionalProcess = () => {
   const [initialData, setInitialData] = useState([]);
@@ -353,6 +366,21 @@ const AdditionalProcess = () => {
     // }
   };
   console.log('formData', formData);
+  const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
+  const [additionalProcessData, setAdditionalProcessData] = useState({});
+  const [open, setOpen] = React.useState(false);
+  const handleClickOpen = (id) => {
+    setAdditionalProcessData(id);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setAdditionalProcessData({});
+    // setDeleteId(null);
+  };
 
   const columns = [
     {
@@ -432,6 +460,20 @@ const AdditionalProcess = () => {
     {
       field: 'pcsForLaserCut',
       headerName: 'Pcs.For Laser Cut'
+    },
+    {
+      field: 'AddVendor',
+      headerName: 'Add Vendor',
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <IconButton
+            color="primary"
+            onClick={() => handleClickOpen(params.row)}
+          >
+            <PersonAddAlt1OutlinedIcon />
+          </IconButton>
+        </div>
+      )
     }
   ];
   const deleteApi = `https://gecxc.com:4041/api/Schiffli/DeleteSchiffiById?schiffiId=`;
@@ -590,7 +632,7 @@ const AdditionalProcess = () => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} md={3}>
+              {/* <Grid item xs={12} md={3}>
                 <TextField
                   fullWidth
                   select
@@ -607,7 +649,7 @@ const AdditionalProcess = () => {
                     </MenuItem>
                   ))}
                 </TextField>
-              </Grid>
+              </Grid> */}
 
               <Grid item xs={12} md={3}>
                 <TextField
@@ -667,7 +709,7 @@ const AdditionalProcess = () => {
                 </TextField>
               </Grid>
 
-              <Grid item xs={12} md={1.5}>
+              {/* <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Quantity"
                   fullWidth
@@ -711,7 +753,7 @@ const AdditionalProcess = () => {
                   value={formData.costPerComponent}
                   onChange={handleChange}
                 />
-              </Grid>
+              </Grid> */}
 
               <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
                 <Button variant="contained" size="small" onClick={handleSave}>
@@ -748,6 +790,28 @@ const AdditionalProcess = () => {
               setAccordionExpanded={setAccordionExpanded}
               fileName="AdditionalProcess"
             />
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle>{"Use Google's location service?"}</DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description">
+                  Let Googlehelp apps determine location. This means sending
+                  anonymous location data to Google, even when no apps are
+                  running.
+                </DialogContentText>
+                <assignVendorFormTable
+                  additionalProcessData={additionalProcessData}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>Disagree</Button>
+                <Button onClick={handleClose}>Agree</Button>
+              </DialogActions>
+            </Dialog>
           </Grid>
         </Grid>
       </Card>
