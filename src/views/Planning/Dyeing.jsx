@@ -49,6 +49,7 @@ import roller from '../../assets/images/roller-ezgif.com-instagif.gif';
 import MainCard from 'ui-component/cards/MainCard';
 import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
+import '../../assets/scss/style.scss';
 
 const Dyeing = () => {
   const { user } = useUser();

@@ -51,6 +51,7 @@ import '../../assets/scss/style.scss';
 import MainCard from 'ui-component/cards/MainCard';
 import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
+import '../../assets/scss/style.scss';
 
 const Embroidery = () => {
   const theme = useTheme();

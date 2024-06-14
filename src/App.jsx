@@ -10,6 +10,7 @@ import router from 'routes';
 // defaultTheme
 import themes from 'themes';
 import './App.css';
+import '../src/assets/scss/style.scss';
 // project imports
 import NavigationScroll from 'layout/NavigationScroll';
 

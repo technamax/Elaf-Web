@@ -20,6 +20,7 @@ import AdditionalProcess from './AdditionalProcess';
 import AddAdditionalServices from './AdditionalServices';
 import AdditionalServices from './AdditionalServices';
 import { SnackbarProvider, useSnackbar } from 'notistack';
+import '../../assets/scss/style.scss';
 
 // import { color } from '@mui/system';
 const steps = [
