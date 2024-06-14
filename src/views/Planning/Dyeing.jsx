@@ -339,17 +339,17 @@ const Dyeing = () => {
       const AvailableQty = parseFloat(formData.AvailableQty) || 0;
       const shrinkage = parseFloat(formData.Shrinkage) || 0;
       const wastage = parseFloat(formData.Wastage) || 0;
-      return (AvailableQty * (100 - (shrinkage + wastage))) / 100;
+      return ((AvailableQty * (100 - (shrinkage + wastage))) / 100).toFixed(2);
     };
 
     const calculateTotalExclGst = () => {
       const quantity = parseFloat(formData.AvailableQty) || 0;
       const rate = parseFloat(formData.RatePerUOM) || 0;
-      return quantity * rate;
+      return (quantity * rate).toFixed(2);
     };
 
     const calculateTotalWithGst = (totalExclGst, gst) => {
-      return totalExclGst * (1 + gst / 100);
+      return (totalExclGst * (1 + gst / 100)).toFixed(2);
     };
 
     const outputQty = calculateOutputQty();
@@ -362,8 +362,8 @@ const Dyeing = () => {
     setFormData((prevData) => ({
       ...prevData,
       OutputQty: outputQty,
-      TotalExclGst: totalExclGst.toFixed(2),
-      TotalIncludingGst: totalIncludingGst.toFixed(2),
+      TotalExclGst: totalExclGst,
+      TotalIncludingGst: totalIncludingGst,
       UnitRatePerPo: unitRatePerPo.toFixed(2)
     }));
   }, [
@@ -426,7 +426,7 @@ const Dyeing = () => {
         // GSTAmount: '',
         TotalIncludingGst: '',
         // createdBy: 0,
-        poPcs: '',
+        poPcs: prevFormData.poPcs,
         baseColorName: '',
         createdOn: new Date().toISOString(),
         createdBy: user.empId,

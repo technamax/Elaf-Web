@@ -258,7 +258,7 @@ const Schiffli = () => {
     const calculateTotalEmbroidey = () => {
       const thaanQty = parseFloat(formData.thaanQty) || 0;
       const operatingMachine = parseFloat(formData.operatingMachine) || 0;
-      return thaanQty * operatingMachine;
+      return (thaanQty * operatingMachine).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -269,7 +269,7 @@ const Schiffli = () => {
       const thaanQty = parseFloat(formData.thaanQty) || 0;
       const noOfStichesPerYard = parseFloat(formData.noOfStichesPerYard) || 0;
 
-      return thaanQty * noOfStichesPerYard;
+      return (thaanQty * noOfStichesPerYard).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -280,7 +280,7 @@ const Schiffli = () => {
       const noOfStichesPerYard = parseFloat(formData.noOfStichesPerYard) || 0;
       const rate = parseFloat(formData.rate) || 0;
 
-      return (noOfStichesPerYard / 1000) * rate;
+      return ((noOfStichesPerYard / 1000) * rate).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -291,7 +291,7 @@ const Schiffli = () => {
       const totalAmount = parseFloat(formData.totalAmount) || 0;
       const totalPcs = parseFloat(formData.totalPcs) || 0;
 
-      return totalAmount / totalPcs;
+      return (totalAmount / totalPcs).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -303,7 +303,10 @@ const Schiffli = () => {
       const totalEmbroidry = parseFloat(formData.totalEmbroidry) || 0;
       const laserCutRate = parseFloat(formData.laserCutRate) || 0;
       const pcsForLaserCut = parseFloat(formData.pcsForLaserCut) || 0;
-      return amountPerYard * totalEmbroidry + pcsForLaserCut * laserCutRate;
+      return (
+        amountPerYard * totalEmbroidry +
+        pcsForLaserCut * laserCutRate
+      ).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -427,7 +430,7 @@ const Schiffli = () => {
         baseColorName: prevFormData.baseColorName,
         schiffiliId: 0,
         componentId: '',
-        poPcs: '',
+        poPcs: prevFormData.poPcs,
         fabricId: '',
         vendorId: '',
         colorId: '', // from dying screen coming from fabricAPI

@@ -237,7 +237,7 @@ const AdditionalProcess = () => {
       const quantity = parseFloat(formData.quantity) || 0;
       const ratePerPcs = parseFloat(formData.ratePerPcs) || 0;
 
-      return quantity * ratePerPcs;
+      return (quantity * ratePerPcs).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -248,7 +248,7 @@ const AdditionalProcess = () => {
       const totalAmount = parseFloat(formData.totalAmount) || 0;
       const poPcs = parseFloat(formData.poPcs) || 0;
 
-      return totalAmount / poPcs;
+      return (totalAmount / poPcs).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -331,7 +331,7 @@ const AdditionalProcess = () => {
     //   //   fabricId: '',
     //   //   vendorId: '', /////////////checkapi
     //   //   // baseColorName: '',
-    //   //   poPcs: '',
+    //   //   poPcs: prevFormData.poPcs,
     //   //   pcsPerComponent: '',
     //   //   processTypeId: '',
     //   //   quantity: '',

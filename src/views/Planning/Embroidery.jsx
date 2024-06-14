@@ -309,7 +309,7 @@ const Embroidery = () => {
     const calculateTotalPcs = () => {
       const repeats = parseFloat(formData.repeats) || 0;
       const itemsPerRepeat = parseFloat(formData.itemsPerRepeat) || 0;
-      return repeats * itemsPerRepeat;
+      return (repeats * itemsPerRepeat).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -321,7 +321,7 @@ const Embroidery = () => {
       const rate = parseFloat(formData.threadRate) || 0;
       const heads = parseFloat(formData.noOfHead) || 0;
       const repeats = parseFloat(formData.repeats) || 0;
-      return (stitches / 1000) * (rate * repeats * heads);
+      return ((stitches / 1000) * (rate * repeats * heads)).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -333,7 +333,7 @@ const Embroidery = () => {
       const rate = parseFloat(formData.tilaRate) || 0;
       const heads = parseFloat(formData.noOfHead) || 0;
       const repeats = parseFloat(formData.repeats) || 0;
-      return (stitches / 1000) * (rate * repeats * heads);
+      return ((stitches / 1000) * (rate * repeats * heads)).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -345,7 +345,7 @@ const Embroidery = () => {
       const rate = parseFloat(formData.sequenceRate) || 0;
       const heads = parseFloat(formData.noOfHead) || 0;
       const repeats = parseFloat(formData.repeats) || 0;
-      return (stitches / 1000) * (rate * repeats * heads);
+      return ((stitches / 1000) * (rate * repeats * heads)).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -356,7 +356,7 @@ const Embroidery = () => {
       const repeats = parseFloat(formData.repeats) || 0;
       const noOfHead = parseFloat(formData.noOfHead) || 0;
       const layers = parseFloat(formData.solvingLayers) || 0;
-      return ((repeats * noOfHead * 13) / 39.37) * layers;
+      return (((repeats * noOfHead * 13) / 39.37) * layers).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -367,7 +367,7 @@ const Embroidery = () => {
       const solvingInMeters = parseFloat(formData.solvingInMeters) || 0;
       const solvingRate = parseFloat(formData.solvingRate) || 0;
       const layers = parseFloat(formData.solvingLayers) || 0;
-      return solvingInMeters * solvingRate;
+      return (solvingInMeters * solvingRate).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -379,7 +379,7 @@ const Embroidery = () => {
       const tilla = parseFloat(formData.tilaAmount) || 0;
       const sequence = parseFloat(formData.sequenceAmount) || 0;
       const solving = parseFloat(formData.solvingAmount) || 0;
-      return thread + tilla + sequence + solving;
+      return (thread + tilla + sequence + solving).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -390,7 +390,7 @@ const Embroidery = () => {
       const totalAmount = parseFloat(formData.totalAmount) || 0;
       const totalPcs = parseFloat(formData.totalPcs) || 0;
 
-      return totalAmount / totalPcs;
+      return (totalAmount / totalPcs).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -513,9 +513,9 @@ const Embroidery = () => {
         componentId: '',
         fabricId: '',
         vendorId: '',
-        poPcs: '', // coming from getcollectionapi
-        baseColorId: '', // coming from getcollectionapi
-        baseColorName: '',
+        poPcs: prevFormData.poPcs, // coming from getcollectionapi
+        baseColorId: prevFormData.baseColorId, // coming from getcollectionapi
+        baseColorName: prevFormData.baseColorName,
         colorId: '', //from dying screen coming from fabricAPi
         availableQty: '',
         noOfHead: '',

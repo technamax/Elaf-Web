@@ -21,8 +21,11 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
+import { useUser } from 'context/User';
 
 const NewDesign = () => {
+  const { user } = useUser();
+
   const { data: collectionData } = useGetCollectionListQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const { data: designData, refetch } = useGetDesignListByCollectionIdQuery(
@@ -75,9 +78,9 @@ const NewDesign = () => {
     dateOfPlanning: '',
     colorId: '',
     appId: 1,
-    createdBy: 0,
+    createdBy: user.empId,
     createdOn: new Date().toISOString(),
-    lastUpdatedBy: 0,
+    lastUpdatedBy: user.empId,
     lastUpdatedOn: new Date().toISOString()
   });
 
@@ -197,7 +200,11 @@ const NewDesign = () => {
         designerName: '',
         poPcs: '',
         dateOfPlanning: '',
-        colorId: ''
+        colorId: '',
+        createdOn: new Date().toISOString(),
+        createdBy: user.empId,
+        lastUpdatedOn: new Date().toISOString(),
+        lastUpdatedBy: user.empId
       });
       refetch();
     } catch (error) {

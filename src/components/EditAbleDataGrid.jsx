@@ -18,6 +18,7 @@ import dayjs from 'dayjs';
 import ExcelExport from './ExcelExport';
 
 import { TextField, Grid } from '@mui/material';
+import { useUser } from 'context/User';
 
 export default function FullFeaturedCrudGrid({
   initialRows,
@@ -32,6 +33,7 @@ export default function FullFeaturedCrudGrid({
   disableAddRecord,
   refetch
 }) {
+  const { user } = useUser();
   const [rows, setRows] = useState(initialRows);
   const [rowModesModel, setRowModesModel] = useState({});
   // console.log(initialRows);
@@ -131,10 +133,14 @@ export default function FullFeaturedCrudGrid({
       //     ? dayjs(formattedRow.launchDate).format('YYYY-MM-DD')
       //     : null
       // };
-      // const formattedData = { ...formattedRow, ...formattedDates };
+      const lastUpdate = {
+        lastUpdatedBy: user.empId,
+        lastUpdatedOn: new Date().toISOString()
+      };
+      const formattedData = { ...formattedRow, ...lastUpdate };
 
-      // const response = await axios.post(editAPi, formattedData);
-      const response = await axios.post(editAPi, formattedRow);
+      const response = await axios.post(editAPi, formattedData);
+      // const response = await axios.post(editAPi, formattedRow);
 
       const responseData = { ...response.data.result, id: newRow.id };
       setRows((prevRows) =>

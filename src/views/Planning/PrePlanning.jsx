@@ -216,7 +216,7 @@ const PrePlanning = () => {
     const calculateTotalFabric = () => {
       const repeats = parseFloat(formData.repeats) || 0;
       const repeatSize = parseFloat(formData.repeatSize) || 0;
-      return repeats * repeatSize;
+      return (repeats * repeatSize).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -228,7 +228,7 @@ const PrePlanning = () => {
       const totalFabric = parseFloat(formData.totalFabric) || 0;
       const shrinkage = parseFloat(formData.shrinkage) || 0;
       const wastage = parseFloat(formData.wastage) || 0;
-      return (totalFabric * (100 + (shrinkage + wastage))) / 100;
+      return ((totalFabric * (100 + (shrinkage + wastage))) / 100).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -239,7 +239,7 @@ const PrePlanning = () => {
     const calculateSizeinMeter = () => {
       const repeats = parseFloat(formData.repeats) || 0;
       const repeatSize = parseFloat(formData.repeatSize) || 0;
-      return 0.9144 * repeatSize;
+      return (0.9144 * repeatSize).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -249,7 +249,7 @@ const PrePlanning = () => {
     const calculateSizeinMeterChecked = () => {
       const repeats = parseFloat(formData.repeats) || 0;
       const repeatsInMtr = parseFloat(formData.repeatsInMtr) || 0;
-      return repeatsInMtr * repeats;
+      return (repeatsInMtr * repeats).toFixed(2);
     };
     setFormData((prevData) => ({
       ...prevData,
