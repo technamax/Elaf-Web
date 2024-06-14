@@ -626,6 +626,24 @@ const AdditionalProcess = () => {
                   ))}
                 </TextField>
               </Grid>
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Process Type"
+                  defaultValue=""
+                  size="small"
+                  name="processTypeId"
+                  value={formData.processTypeId}
+                  onChange={handleChange}
+                >
+                  {operatingMachineList.map((option) => (
+                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                      {option.lookUpName}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
               <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Po Pcs"
@@ -647,24 +665,6 @@ const AdditionalProcess = () => {
                   // type="number"
                   onChange={handleChange}
                 />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Process Type"
-                  defaultValue=""
-                  size="small"
-                  name="processTypeId"
-                  value={formData.processTypeId}
-                  onChange={handleChange}
-                >
-                  {operatingMachineList.map((option) => (
-                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                      {option.lookUpName}
-                    </MenuItem>
-                  ))}
-                </TextField>
               </Grid>
 
               <Grid item xs={12} md={1.5}>

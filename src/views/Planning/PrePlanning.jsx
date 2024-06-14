@@ -504,6 +504,12 @@ const PrePlanning = () => {
       }
     },
     {
+      field: 'isSchiffili',
+      headerName: 'Is Schiffili'
+      // flex: 1
+      // editable: true
+    },
+    {
       field: 'shrinkage',
       headerName: 'Shrinkage %'
       // flex: 1
