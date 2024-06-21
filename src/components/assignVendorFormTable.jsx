@@ -16,6 +16,7 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
     baseColorName: additionalProcessData.baseColorName || '',
     poPcs: additionalProcessData.poPcs || '',
     pcsPerComponent: '',
+    remainingPcsPerComponent: '',
     processTypeId: '',
     quantity: '',
     ratePerPcs: 0,
@@ -242,6 +243,25 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             ))} */}
           </TextField>
         </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            // select
+            label="Process Type"
+            defaultValue=""
+            size="small"
+            name="processTypeId"
+            value={formData.processTypeId}
+            onChange={handleChange}
+            disabled
+          >
+            {/* {operatingMachineList.map((option) => (
+              <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                {option.lookUpName}
+              </MenuItem>
+            ))} */}
+          </TextField>
+        </Grid>
         <Grid item xs={12} md={1.5}>
           <TextField
             label="Po Pcs"
@@ -265,24 +285,17 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             disabled
           />
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} md={1.5}>
           <TextField
+            label="Remaining Pcs. Per Component"
             fullWidth
-            // select
-            label="Process Type"
-            defaultValue=""
             size="small"
-            name="processTypeId"
-            value={formData.processTypeId}
+            name="remainingPcsPerComponent"
+            value={formData.remainingPcsPerComponent}
+            // type="number"
             onChange={handleChange}
             disabled
-          >
-            {/* {operatingMachineList.map((option) => (
-              <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                {option.lookUpName}
-              </MenuItem>
-            ))} */}
-          </TextField>
+          />
         </Grid>
       </Grid>
       <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />

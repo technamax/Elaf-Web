@@ -57,9 +57,11 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
+import { useUser } from 'context/User';
 ///////
 
 const AdditionalProcess = () => {
+  const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
     additionalProcessId: 0,
@@ -69,20 +71,21 @@ const AdditionalProcess = () => {
     componentId: '',
     colorId: '',
     fabricId: '',
-    vendorId: '', /////////////checkapi
+    // vendorId: '', /////////////checkapi
+    uomId: '',
     baseColorName: '',
     poPcs: '',
     pcsPerComponent: '',
     processTypeId: '',
-    quantity: '',
-    ratePerPcs: 0,
-    totalAmount: 0,
-    costPerComponent: '',
+    // quantity: '',
+    // ratePerPcs: 0,
+    // totalAmount: 0,
+    // costPerComponent: '',
 
     createdOn: new Date().toISOString(),
-    createdBy: 0,
+    createdBy: user.empId,
     lastUpdatedOn: new Date().toISOString(),
-    LastUpdatedBy: 0
+    LastUpdatedBy: user.empId
   });
 
   useEffect(() => {
@@ -92,22 +95,22 @@ const AdditionalProcess = () => {
       planningHeaderId: initialData?.planningHeaderId || 0,
       batchNo: initialData?.batchNo || '',
       componentId: initialData?.componentId || '',
-      vendorId: initialData?.vendorId || '',
+      // vendorId: initialData?.vendorId || '',
       fabricId: initialData?.fabricId || '',
       colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
       poPcs: initialData?.poPcs || '',
       baseColorName: initialData?.baseColorName || '',
       pcsPerComponent: initialData?.baseColorName || '',
       processTypeId: initialData?.processTypeId || '',
-      quantity: initialData?.quantity || '',
-      ratePerPcs: initialData?.ratePerPcs || 0,
-      totalAmount: initialData?.totalAmount || 0,
-      costPerComponent: initialData?.costPerComponent || '',
+      // quantity: initialData?.quantity || '',
+      // ratePerPcs: initialData?.ratePerPcs || 0,
+      // totalAmount: initialData?.totalAmount || 0,
+      // costPerComponent: initialData?.costPerComponent || '',
 
       createdOn: initialData?.createdOn || new Date().toISOString(),
-      createdBy: initialData?.createdBy || 0,
+      createdBy: initialData?.createdBy || user.empId,
       lastUpdatedOn: new Date().toISOString(),
-      LastUpdatedBy: 0
+      LastUpdatedBy: user.empId
     });
   }, [initialData]);
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
@@ -160,14 +163,16 @@ const AdditionalProcess = () => {
       skip: !formData.planningHeaderId // Skip the query if no collection is selected
     }
   );
-  console.log('formData.planningHeaderId', formData.planningHeaderId);
+  console.log('lookupData', lookupData);
   console.log('collectionData', collectionData);
-  console.log('schiffliList', schiffliList);
+  console.log('colorData', colorData);
 
   const [designList, setDesignList] = useState([]);
   const [batchList, setBatchList] = useState([]);
   const [Fabrications, setFabrications] = useState([]);
   const [vendors, setVendors] = useState([]);
+  const [uoms, setUoms] = useState([]);
+  const [processList, setProcessList] = useState([]);
 
   const [operatingMachineList, setOperatingMachineList] = useState([]);
   const [workingHeadList, setWorkingHeadList] = useState([]);
@@ -196,7 +201,7 @@ const AdditionalProcess = () => {
   }, [fabricData]);
   useEffect(() => {
     if (colorData) {
-      setColors(fabricData.result);
+      setColors(colorData.result);
       // refetchBatches();
     }
   }, [colorData]);
@@ -205,6 +210,15 @@ const AdditionalProcess = () => {
       setComponents(componentsByBatch.result);
     }
   }, [componentsByBatch]);
+  useEffect(() => {
+    // fetchData();
+    if (lookupData) {
+      const data = lookupData.result[0];
+
+      setUoms(data.uomList);
+      setProcessList(data.processList);
+    }
+  }, [lookupData]);
   // useEffect(() => {
   //   if (schiffliList) {
   //     setInitialRows(
@@ -350,46 +364,41 @@ const AdditionalProcess = () => {
 
   const handleSave = async () => {
     console.log('formData', formData);
-    // try {
-    //   // Make the API call
-    //   const response = await axios.post(
-    //     'https://gecxc.com:4041/api/Schiffli/SaveSchiffili',
-    //     formData
-    //   );
+    try {
+      // Make the API call
+      const response = await axios.post(
+        'https://gecxc.com:4041/api/AdditionalProcess/SaveAdditionalProcess',
+        formData
+      );
 
-    //   console.log('Save response:', response.data);
+      console.log('Save response:', response.data);
 
-    //   // setFormData((prevFormData) => ({
-    //   //   additionalProcessId: 0,
-    //   //   designId: prevFormData.designId,
-    //   //   planningHeaderId: prevFormData.planningHeaderId,
-    //   //   batchNo: prevFormData.batchNo,
-    //   //   baseColorName: prevFormData.baseColorName,
-    //   //   componentId: '',
-    //   //   colorId: '',
-    //   //   fabricId: '',
-    //   //   vendorId: '', /////////////checkapi
-    //   //   // baseColorName: '',
-    //   //   poPcs: prevFormData.poPcs,
-    //   //   pcsPerComponent: '',
-    //   //   processTypeId: '',
-    //   //   quantity: '',
-    //   //   ratePerPcs: 0,
-    //   //   totalAmount: 0,
-    //   //   costPerComponent: '',
+      setFormData((prevFormData) => ({
+        additionalProcessId: 0,
+        designId: prevFormData.designId,
+        planningHeaderId: prevFormData.planningHeaderId,
+        batchNo: prevFormData.batchNo,
+        baseColorName: prevFormData.baseColorName,
+        poPcs: prevFormData.poPcs,
+        componentId: '',
+        colorId: '',
+        fabricId: '',
+        uomId: '',
+        baseColorName: '',
+        pcsPerComponent: '',
+        processTypeId: '',
+        createdOn: new Date().toISOString(),
+        createdBy: user.empId,
+        lastUpdatedOn: new Date().toISOString(),
+        LastUpdatedBy: user.empId
+      }));
 
-    //   //   createdOn: new Date().toISOString(),
-    //   //   createdBy: 0,
-    //   //   lastUpdatedOn: new Date().toISOString(),
-    //   //   LastUpdatedBy: 0
-    //   // }));
+      refetchSchiffliList();
 
-    //   // refetchSchiffliList();
-
-    //   setAccordionExpanded(false);
-    // } catch (error) {
-    //   console.error('Error saving data:', error);
-    // }
+      setAccordionExpanded(false);
+    } catch (error) {
+      console.error('Error saving data:', error);
+    }
   };
   console.log('formData', formData);
   const Transition = React.forwardRef(function Transition(props, ref) {
@@ -676,18 +685,41 @@ const AdditionalProcess = () => {
                   onChange={handleChange}
                 />
               </Grid>
+              <Grid item xs={12} md={2}>
+                <TextField
+                  fullWidth
+                  select
+                  label="UOM"
+                  type="number"
+                  defaultValue={140}
+                  size="small"
+                  name="uomId"
+                  value={formData.uomId}
+                  onChange={handleChange}
+                  // error={!!formErrors.uomId}
+                  // helperText={formErrors.uomId}
+                  // required
+                  // disabled={formData.isSchiffili} // Disable when isSchiffili is checked
+                >
+                  {uoms.map((option) => (
+                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                      {option.lookUpName}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
               <Grid item xs={12} md={3}>
                 <TextField
                   fullWidth
                   select
                   label="Process Type"
-                  defaultValue=""
+                  // defaultValue=""
                   size="small"
                   name="processTypeId"
                   value={formData.processTypeId}
                   onChange={handleChange}
                 >
-                  {operatingMachineList.map((option) => (
+                  {processList.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
                       {option.lookUpName}
                     </MenuItem>

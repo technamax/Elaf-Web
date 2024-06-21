@@ -220,6 +220,19 @@ const Fabrication = () => {
 
       setFormData({
         ...formData,
+        designId: '',
+        baseColorId: '',
+        planningHeaderId: '',
+        batchNo: '',
+        fabricId: '',
+        poPcs: '',
+        quantity: '',
+        rate: '',
+        uomId: '',
+        total: '',
+        unitPrice: '0',
+        gst: '', //// not in api
+        totalInclGst: '',
         collectionId: value
 
         // poPcs: selectedCollection ? selectedCollection.poPcs : ''
@@ -230,6 +243,18 @@ const Fabrication = () => {
       );
       setFormData({
         ...formData,
+
+        planningHeaderId: '',
+        batchNo: '',
+        fabricId: '',
+        poPcs: '',
+        quantity: '',
+        rate: '',
+        uomId: '',
+        total: '',
+        unitPrice: '0',
+        gst: '', //// not in api
+        totalInclGst: '',
         designId: value,
         baseColorId: selectedDesign ? selectedDesign.colorId : '',
         baseColorName: selectedDesign ? selectedDesign.colorName : ''
@@ -238,6 +263,15 @@ const Fabrication = () => {
       const selectedBatch = batchList.find((batch) => batch.batchNo === value);
       setFormData({
         ...formData,
+        fabricId: '',
+        poPcs: '',
+        quantity: '',
+        rate: '',
+        uomId: '',
+        total: '',
+        unitPrice: '0',
+        gst: '', //// not in api
+        totalInclGst: '',
         batchNo: value,
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
@@ -258,10 +292,51 @@ const Fabrication = () => {
     }
   };
 
+  const overallTotal = initialRows
+    .reduce((sum, row) => sum + (parseFloat(row.total) || 0), 0)
+    .toFixed(2);
+
+  const localizedTotal = parseFloat(overallTotal).toLocaleString();
+
+  // Calculate the overall total sum including GST
+  const overallTotalIncGst = initialRows
+    .reduce((sum, row) => sum + (parseFloat(row.totalInclGst) || 0), 0)
+    .toFixed(2);
+
+  const localizedTotalIncGst = parseFloat(overallTotalIncGst).toLocaleString();
+  console.log('overallTotal', overallTotal);
+  console.log('overallTotalIncGst', overallTotalIncGst);
+  console.log('localizedTotal', localizedTotal);
+  console.log('localizedTotalIncGst', localizedTotalIncGst);
+
+  // Add custom overallTotalIncGst fabric row
+  const rows = [
+    ...initialRows,
+    {
+      id: 'TOTAL_FABRIC',
+      label: 'Total',
+      total: localizedTotal,
+      totalInclGst: localizedTotalIncGst
+    }
+  ];
+
   const columns = [
     {
       field: 'designNo',
-      headerName: 'Design'
+      headerName: 'Design',
+      colSpan: (value, row) => {
+        if (row.id === 'TOTAL_FABRIC') {
+          return 6;
+        }
+        return undefined;
+      },
+      valueGetter: (value, row) => {
+        if (row.id === 'TOTAL_FABRIC') {
+          // console.log('row', row.label);
+          return row.label;
+        }
+        return value;
+      }
     },
     {
       field: 'fabricName',
@@ -285,11 +360,27 @@ const Fabrication = () => {
     },
     {
       field: 'total',
-      headerName: 'Total'
+      headerName: 'Total',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'unitPrice',
-      headerName: 'Unit Price'
+      headerName: 'Unit Price',
+      colSpan: (value, row) => {
+        if (row.id === 'TOTAL_FABRIC') {
+          return 2;
+        }
+        return undefined;
+      },
+      valueGetter: (value, row) => {
+        if (row.id === 'TOTAL_FABRIC') {
+          // console.log('row', row.label);
+          return 'Total Including GST';
+        }
+        return value;
+      }
     },
     {
       field: 'gst',
@@ -297,7 +388,16 @@ const Fabrication = () => {
     },
     {
       field: 'totalInclGst',
-      headerName: 'Total Inc. GST'
+      headerName: 'Total Inc. GST',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      },
+      colSpan: (value, row) => {
+        if (row.id === 'TOTAL_FABRIC') {
+          return 2;
+        }
+        return undefined;
+      }
     }
   ];
 
@@ -544,7 +644,7 @@ const Fabrication = () => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} md={2}>
+              <Grid item xs={12} md={3}>
                 <TextField
                   fullWidth
                   select
@@ -642,9 +742,9 @@ const Fabrication = () => {
                   helperText={formErrors.gst}
                 />
               </Grid>
-              <Grid item xs={12} md={2}>
+              <Grid item xs={12} md={3}>
                 <TextField
-                  label="Total Inc GSt."
+                  label="Total Inc GST."
                   fullWidth
                   size="small"
                   type="number"
@@ -704,7 +804,7 @@ const Fabrication = () => {
             ) : (
               <ReuseableDataGrid
                 iColumns={columns}
-                initialRows={initialRows}
+                initialRows={rows}
                 setInitialData={setInitialData}
                 deleteApi={deleteApi}
                 deleteBy="fabricationId"
