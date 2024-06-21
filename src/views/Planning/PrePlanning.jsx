@@ -532,7 +532,7 @@ const PrePlanning = () => {
 
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
-          return 3;
+          return 4;
         }
         return undefined;
       },
@@ -564,7 +564,13 @@ const PrePlanning = () => {
     },
     {
       field: 'total',
-      headerName: 'Total'
+      headerName: 'Total',
+      colSpan: (value, row) => {
+        if (row.id === 'TOTAL_FABRIC') {
+          return 2;
+        }
+        return undefined;
+      }
     }
   ];
 

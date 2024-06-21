@@ -10,7 +10,9 @@ import {
   Grid,
   TextField,
   Box,
-  Tab
+  Tab,
+  Card,
+  CardHeader
 } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import SearchIcon from '@mui/icons-material/Search';
@@ -27,6 +29,7 @@ import { width } from '@mui/system';
 import { WidthFull } from '@mui/icons-material';
 // import { GetCollectionList } from 'api/apis';
 import { useUser } from 'context/User';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
@@ -393,201 +396,239 @@ const NewCollection = () => {
           </Box>
           <TabPanel value="1">
             <FormControl>
-              <Grid container spacing={2} width="inherit">
-                <Grid item xs={9} md={9}>
-                  <Typography variant="h3" gutterBottom>
-                    Create New Collection
-                  </Typography>
-                </Grid>
-                <Grid item xs={3} textAlign="right">
-                  <Button variant="contained" size="small" onClick={handleSave}>
-                    Save
-                  </Button>
-                </Grid>
+              <Card variant="outlined">
+                <CardHeader
+                  className="css-4rfrnx-MuiCardHeader-root"
+                  // avatar={
+                  // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
+                  // }
+                  title="Add Collection "
+                  titleTypographyProps={{ style: { color: 'white' } }}
+                ></CardHeader>
+                <Grid
+                  container
+                  spacing={2}
+                  width="Inherit"
+                  sx={{ paddingY: 2, paddingX: 2 }}
+                >
+                  {/* <Grid item xs={9} md={9}>
+                    <Typography variant="h3" gutterBottom>
+                      Create New Collection
+                    </Typography>
+                  </Grid> */}
 
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    fullWidth
-                    select
-                    label="* Season Name"
-                    name="seasonId"
-                    value={formData.seasonId}
-                    onChange={handleChange}
-                    size="small"
-                    error={!!formErrors.seasonId}
-                    helperText={formErrors.seasonId}
-                  >
-                    {seasons.map((option) => (
-                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                        {option.lookUpName}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    fullWidth
-                    select
-                    label="Brand Name"
-                    name="brandId"
-                    value={formData.brandId}
-                    onChange={handleChange}
-                    size="small"
-                    error={!!formErrors.brandId}
-                    helperText={formErrors.brandId}
-                  >
-                    {brands.map((option) => (
-                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                        {option.lookUpName}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    label="* Collection Name"
-                    fullWidth
-                    size="small"
-                    name="collectionName"
-                    onChange={handleChange}
-                    value={formData.collectionName}
-                    error={!!formErrors.collectionName}
-                    helperText={formErrors.collectionName}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    fullWidth
-                    select
-                    label="Volume"
-                    name="volume"
-                    value={formData.volume}
-                    onChange={handleChange}
-                    size="small"
-                  >
-                    {volume.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    size="small"
-                    type="date"
-                    label="Planning Date"
-                    name="planningDate"
-                    value={formData.planningDate}
-                    onChange={handleChange}
-                    fullWidth
-                    focused
-                    error={!!formErrors.planningDate}
-                    helperText={formErrors.planningDate}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    size="small"
-                    type="date"
-                    label="Launch Date"
-                    name="launchDate"
-                    value={formData.launchDate}
-                    onChange={handleChange}
-                    fullWidth
-                    focused
-                    error={!!formErrors.launchDate}
-                    helperText={formErrors.launchDate}
-                  />
-                </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      fullWidth
+                      select
+                      label="* Season Name"
+                      name="seasonId"
+                      value={formData.seasonId}
+                      onChange={handleChange}
+                      size="small"
+                      error={!!formErrors.seasonId}
+                      helperText={formErrors.seasonId}
+                    >
+                      {seasons.map((option) => (
+                        <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                          {option.lookUpName}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      fullWidth
+                      select
+                      label="Brand Name"
+                      name="brandId"
+                      value={formData.brandId}
+                      onChange={handleChange}
+                      size="small"
+                      error={!!formErrors.brandId}
+                      helperText={formErrors.brandId}
+                    >
+                      {brands.map((option) => (
+                        <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                          {option.lookUpName}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      label="* Collection Name"
+                      fullWidth
+                      size="small"
+                      name="collectionName"
+                      onChange={handleChange}
+                      value={formData.collectionName}
+                      error={!!formErrors.collectionName}
+                      helperText={formErrors.collectionName}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      fullWidth
+                      select
+                      label="Volume"
+                      name="volume"
+                      value={formData.volume}
+                      onChange={handleChange}
+                      size="small"
+                    >
+                      {volume.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      size="small"
+                      type="date"
+                      label="Planning Date"
+                      name="planningDate"
+                      value={formData.planningDate}
+                      onChange={handleChange}
+                      fullWidth
+                      focused
+                      error={!!formErrors.planningDate}
+                      helperText={formErrors.planningDate}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      size="small"
+                      type="date"
+                      label="Launch Date"
+                      name="launchDate"
+                      value={formData.launchDate}
+                      onChange={handleChange}
+                      fullWidth
+                      focused
+                      error={!!formErrors.launchDate}
+                      helperText={formErrors.launchDate}
+                    />
+                  </Grid>
 
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    fullWidth
-                    select
-                    label="Repeat Collection?"
-                    name="isRepeatCollection"
-                    defaultValue="No"
-                    value={formData.isRepeatCollection}
-                    onChange={handleChange}
-                    size="small"
-                  >
-                    {enabled.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="No. of Colors/Articles"
-                    fullWidth
-                    size="small"
-                    name="noOfColors"
-                    type="number"
-                    onChange={handleChange}
-                    value={formData.noOfColors}
-                    error={!!formErrors.noOfColors}
-                    helperText={formErrors.noOfColors}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="No. of Designs"
-                    fullWidth
-                    size="small"
-                    name="noOfDesigns"
-                    type="number"
-                    onChange={handleChange}
-                    value={formData.noOfDesigns}
-                    error={!!formErrors.noOfDesigns}
-                    helperText={formErrors.noOfDesigns}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Po. Pieces"
-                    fullWidth
-                    size="small"
-                    name="poPcs"
-                    type="number"
-                    onChange={handleChange}
-                    value={formData.poPcs}
-                    error={!!formErrors.poPcs}
-                    helperText={formErrors.poPcs}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Total Pieces"
-                    fullWidth
-                    size="small"
-                    name="totalPcs"
-                    type="number"
-                    // onChange={handleChange}
-                    value={totalPcs}
-                    disabled
-                  />
-                </Grid>
-                <Grid item sm={12}>
-                  <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
-                </Grid>
-              </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      fullWidth
+                      select
+                      label="Repeat Collection?"
+                      name="isRepeatCollection"
+                      defaultValue="No"
+                      value={formData.isRepeatCollection}
+                      onChange={handleChange}
+                      size="small"
+                    >
+                      {enabled.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      label="No. of Colors/Articles"
+                      fullWidth
+                      size="small"
+                      name="noOfColors"
+                      type="number"
+                      onChange={handleChange}
+                      value={formData.noOfColors}
+                      error={!!formErrors.noOfColors}
+                      helperText={formErrors.noOfColors}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      label="No. of Designs"
+                      fullWidth
+                      size="small"
+                      name="noOfDesigns"
+                      type="number"
+                      onChange={handleChange}
+                      value={formData.noOfDesigns}
+                      error={!!formErrors.noOfDesigns}
+                      helperText={formErrors.noOfDesigns}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      label="Po. Pieces"
+                      fullWidth
+                      size="small"
+                      name="poPcs"
+                      type="number"
+                      onChange={handleChange}
+                      value={formData.poPcs}
+                      error={!!formErrors.poPcs}
+                      helperText={formErrors.poPcs}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      label="Total Pieces"
+                      fullWidth
+                      size="small"
+                      name="totalPcs"
+                      type="number"
+                      // onChange={handleChange}
+                      value={totalPcs}
+                      disabled
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={handleSave}
+                    >
+                      Save
+                    </Button>
+                  </Grid>
+                  {/* <Grid item sm={12}>
+                    <Divider
+                      color="#cc8587"
+                      sx={{ height: 2, width: '100%' }}
+                    />
+                  </Grid> */}
+                </Grid>{' '}
+              </Card>
             </FormControl>
-            <Grid container spacing={2} width="inherit" paddingTop={2}>
-              <Grid item xs={12}>
-                <EditAbleDataGrid
-                  initialRows={initialRows}
-                  ncolumns={columns}
-                  // fetchData={fetchData}
-                  formData={formData}
-                  deleteApi={deleteApi}
-                  deleteBy="collectionId"
-                  editAPi={editAPi}
-                />
-              </Grid>
-            </Grid>
+            <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
+            <Card variant="outlined">
+              <CardHeader
+                className="css-4rfrnx-MuiCardHeader-root"
+                avatar={<VisibilityOutlinedIcon />}
+                title="View Collections "
+                titleTypographyProps={{ style: { color: 'white' } }}
+              ></CardHeader>
+              <Grid
+                container
+                spacing={2}
+                width="Inherit"
+                sx={{ paddingY: 2, paddingX: 2 }}
+              >
+                {/* <Grid container spacing={2} width="inherit" paddingTop={2}> */}
+                <Grid item xs={12}>
+                  <EditAbleDataGrid
+                    initialRows={initialRows}
+                    ncolumns={columns}
+                    // fetchData={fetchData}
+                    formData={formData}
+                    deleteApi={deleteApi}
+                    deleteBy="collectionId"
+                    editAPi={editAPi}
+                  />
+                </Grid>
+              </Grid>{' '}
+            </Card>
           </TabPanel>
           <TabPanel value="2">
             <Grid container spacing={2} width="inherit">

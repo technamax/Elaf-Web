@@ -410,6 +410,14 @@ const AdditionalProcess = () => {
 
   const columns = [
     {
+      field: 'designId',
+      headerName: 'Design'
+    },
+    {
+      field: 'batchNo',
+      headerName: 'Batch'
+    },
+    {
       field: 'componentName',
       headerName: 'Component'
     },
@@ -417,76 +425,28 @@ const AdditionalProcess = () => {
       field: 'fabricName',
       headerName: 'Fabric'
     },
-    {
-      field: 'vendorName',
-      headerName: 'Vendor'
-    },
 
     {
       field: 'colourName',
       headerName: 'Color'
     },
     {
-      field: 'thaanQty',
-      headerName: 'Thaan Quantity'
+      field: 'baseColorName',
+      headerName: 'Base Color'
     },
     {
-      field: 'availableQty',
-      headerName: 'Available Quantitity'
+      field: 'poPcs',
+      headerName: 'PO Pcs.'
     },
     {
-      field: 'operatingMachineName',
-      headerName: 'Operating Machine'
+      field: 'processTypeId',
+      headerName: 'Process Type'
     },
     {
-      field: 'noOfHeadsName',
-      headerName: 'Working Head'
-    },
-    {
-      field: 'cuttingSize',
-      headerName: 'Cutting Size'
-    },
-    {
-      field: 'rate',
-      headerName: 'Rate'
-    },
-    {
-      field: 'noOfStichesPerYard',
-      headerName: 'No. Of Stiches Per Yard'
-    },
-    {
-      field: 'noOfItemPerThaan',
-      headerName: 'No. Of Item Per Thaan'
-    },
-    {
-      field: 'totalEmbroidry',
-      headerName: 'Total Embroidry'
-    },
-    {
-      field: 'amountPerYard',
-      headerName: 'Amount Per Yard'
+      field: 'pcsPerComponent',
+      headerName: 'Pcs Per Component'
     },
 
-    {
-      field: 'totalPcs',
-      headerName: 'Total Pcs'
-    },
-    {
-      field: 'totalAmount',
-      headerName: 'Total Amount'
-    },
-    {
-      field: 'costPerComponent',
-      headerName: 'Cost Per Component'
-    },
-    {
-      field: 'laserCutRate',
-      headerName: 'LaserCut Rate'
-    },
-    {
-      field: 'pcsForLaserCut',
-      headerName: 'Pcs.For Laser Cut'
-    },
     {
       field: 'AddVendor',
       headerName: 'Add Vendor',
@@ -822,9 +782,13 @@ const AdditionalProcess = () => {
               // aria-labelledby="alert-dialog-title"
               // aria-describedby="alert-dialog-description"
               fullWidth
-              maxWidth="md"
+              maxWidth="lg"
             >
-              <DialogTitle>{'Assign Vendors to '}</DialogTitle>
+              <DialogTitle
+                sx={{ backgroundColor: '#A11F23', color: '#ffffff' }}
+              >
+                {'Assign Vendors '}
+              </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
                 <AssignVendorFormTable
