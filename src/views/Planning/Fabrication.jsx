@@ -264,7 +264,7 @@ const Fabrication = () => {
       setFormData({
         ...formData,
         fabricId: '',
-        poPcs: '',
+        // poPcs: '',
         quantity: '',
         rate: '',
         uomId: '',

@@ -351,7 +351,33 @@ const Schiffli = () => {
 
       setFormData({
         ...formData,
-        collectionId: value
+        collectionId: value,
+        designId: '',
+        planningHeaderId: 0,
+        batchNo: '',
+        componentId: '',
+        poPcs: '',
+        baseColorName: '',
+        fabricId: '',
+        vendorId: '',
+        colorId: '', //from dying screen coming from fabricAPi
+        availableQty: '',
+        thaanQty: 0,
+        operatingMachineId: 0,
+        operatingMachine: '',
+        workingHeadId: 0,
+        cuttingSize: '',
+        rate: '',
+        costPerComponent: '',
+        totalEmbroidry: 0,
+        noOfItemPerThaan: 0,
+        noOfStichesPerYard: 0,
+        amountPerYard: 0,
+        totalPcs: 0,
+        laserCut: false,
+        laserCutRate: 0,
+        pcsForLaserCut: 0,
+        totalAmount: 0
 
         // poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
@@ -363,7 +389,31 @@ const Schiffli = () => {
         ...formData,
         designId: value,
         baseColorId: selectedDesign ? selectedDesign.colorId : '',
-        baseColorName: selectedDesign ? selectedDesign.colorName : ''
+        baseColorName: selectedDesign ? selectedDesign.colorName : '',
+        planningHeaderId: 0,
+        batchNo: '',
+        componentId: '',
+        poPcs: '',
+        fabricId: '',
+        vendorId: '',
+        colorId: '', //from dying screen coming from fabricAPi
+        availableQty: '',
+        thaanQty: 0,
+        operatingMachineId: 0,
+        operatingMachine: '',
+        workingHeadId: 0,
+        cuttingSize: '',
+        rate: '',
+        costPerComponent: '',
+        totalEmbroidry: 0,
+        noOfItemPerThaan: 0,
+        noOfStichesPerYard: 0,
+        amountPerYard: 0,
+        totalPcs: 0,
+        laserCut: false,
+        laserCutRate: 0,
+        pcsForLaserCut: 0,
+        totalAmount: 0
       });
     } else if (name === 'batchNo') {
       const selectedBatch = batchList.find((batch) => batch.batchNo === value);
@@ -371,7 +421,30 @@ const Schiffli = () => {
         ...formData,
         batchNo: value,
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
-        poPcs: selectedBatch ? selectedBatch.poPcs : ''
+        poPcs: selectedBatch ? selectedBatch.poPcs : '',
+
+        componentId: '',
+        baseColorName: '',
+        fabricId: '',
+        vendorId: '',
+        colorId: '', //from dying screen coming from fabricAPi
+        availableQty: '',
+        thaanQty: 0,
+        operatingMachineId: 0,
+        operatingMachine: '',
+        workingHeadId: 0,
+        cuttingSize: '',
+        rate: '',
+        costPerComponent: '',
+        totalEmbroidry: 0,
+        noOfItemPerThaan: 0,
+        noOfStichesPerYard: 0,
+        amountPerYard: 0,
+        totalPcs: 0,
+        laserCut: false,
+        laserCutRate: 0,
+        pcsForLaserCut: 0,
+        totalAmount: 0
       });
       setAccordionExpanded(true);
       setLoading(false);

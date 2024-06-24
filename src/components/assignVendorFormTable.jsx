@@ -2,33 +2,74 @@ import React, { useState, useEffect } from 'react';
 import { Grid, TextField, Button, Box, Divider, MenuItem } from '@mui/material';
 import ReuseableDataGrid from './ReuseableDataGrid';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
+import { useGetAdditionalProcessDetailsByAdditionalProcessIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
+import { useUser } from 'context/User';
+import axios from 'axios';
 
-const AssignVendorFormTable = ({ additionalProcessData }) => {
+const AssignVendorFormTable = ({
+  additionalProcessData,
+  setAdditionalProcessData,
+  refetchAdditionalProcessList,
+  handleClickOpen
+}) => {
+  const { user } = useUser();
+  const [initialRows, setInitialRows] = useState([]);
+
+  const Quantity = initialRows
+    .reduce((sum, row) => sum + (row.quantity ?? 0), 0)
+    .toFixed(2);
+  console.log('Quantity', Quantity);
+
   const [formData, setFormData] = useState({
+    additionalProcessDetId: 0,
     additionalProcessId: additionalProcessData.additionalProcessId || 0,
     designId: additionalProcessData.designId || '',
     planningHeaderId: additionalProcessData.planningHeaderId || 0,
     batchNo: additionalProcessData.batchNo || '',
+    componentName: additionalProcessData.componentName || '',
     componentId: additionalProcessData.componentId || '',
+    colorName: additionalProcessData.colorName || '',
     colorId: additionalProcessData.colorId || '',
+    fabricName: additionalProcessData.fabricName || '',
     fabricId: additionalProcessData.fabricId || '',
+    uomId: additionalProcessData.uomId || '',
+    uom: additionalProcessData.uom || '',
+
     vendorId: '', /////////////checkapi
-    baseColorName: additionalProcessData.baseColorName || '',
-    poPcs: additionalProcessData.poPcs || '',
-    pcsPerComponent: '',
-    remainingPcsPerComponent: '',
-    processTypeId: '',
+    // baseColorName: additionalProcessData.baseColorName || '',
+    // poPcs: additionalProcessData.poPcs || '',
+    pcsPerComponent: additionalProcessData.pcsPerComponent || '',
+    remainingPcsPerComponent:
+      additionalProcessData.pcsPerComponent - Quantity || '',
+    processTypeName: additionalProcessData.processTypeName || '',
+    processTypeId: additionalProcessData.processTypeId || '',
     quantity: '',
     ratePerPcs: 0,
     totalAmount: 0,
     costPerComponent: '',
 
     createdOn: new Date().toISOString(),
-    createdBy: 0,
+    createdBy: user.empId,
     lastUpdatedOn: new Date().toISOString(),
-    LastUpdatedBy: 0
+    LastUpdatedBy: user.empId
   });
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      remainingPcsPerComponent:
+        additionalProcessData.pcsPerComponent - Quantity || ''
+    });
+  }, [initialRows]);
   const { data: lookupData } = useGetLookUpListQuery();
+  const {
+    data: additionalProcessDetails,
+    refetch: refetchAdditionalProcessDetails
+  } = useGetAdditionalProcessDetailsByAdditionalProcessIdQuery(
+    formData.additionalProcessId,
+    {
+      skip: !formData.additionalProcessId // Skip the query if no collection is selected
+    }
+  );
   const [vendors, setVendors] = useState([]);
 
   useEffect(() => {
@@ -38,41 +79,93 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
       setVendors(data.vendorList);
     }
   }, [lookupData]);
-
+  useEffect(() => {
+    if (additionalProcessDetails) {
+      setInitialRows(
+        additionalProcessDetails.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+    }
+  }, [additionalProcessDetails, refetchAdditionalProcessDetails]);
+  console.log('initialRows', initialRows);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+  useEffect(() => {
+    const calculateTotalamount = () => {
+      const quantity = parseFloat(formData.quantity) || 0;
+      const ratePerPcs = parseFloat(formData.ratePerPcs) || 0;
 
-  const handleSave = () => {
+      return (quantity * ratePerPcs).toFixed(2);
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      totalAmount: calculateTotalamount()
+    }));
+    const calculateCostPerComponent = () => {
+      const totalAmount = parseFloat(formData.totalAmount) || 0;
+      const poPcs = parseFloat(formData.poPcs) || 0;
+
+      return (totalAmount / poPcs).toFixed(2);
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      costPerComponent: calculateCostPerComponent()
+    }));
+  }, [
+    formData.quantity,
+    formData.ratePerPcs,
+    formData.totalAmount
+    // formData.poPcs
+    // formData.poPcs,
+    // formData.pcsPerComponent
+  ]);
+
+  const handleSave = async () => {
     console.log(formData);
-  };
-  const initialRows = [
-    {
-      id: 1,
-      additionalProcessId: 0,
-      designId: 321,
-      planningHeaderId: 34,
-      batchNo: '3453',
-      componentId: '345',
-      colorId: 345,
-      fabricId: '345',
-      vendorId: 'gefg', /////////////checkapi
-      baseColorName: 'g4cgd',
-      poPcs: 'dfgdf',
-      pcsPerComponent: 345,
-      processTypeId: 'dfg',
-      quantity: 'dfg',
-      ratePerPcs: 40,
-      totalAmount: 40,
-      costPerComponent: '453',
+    try {
+      // Make the API call
+      const response = await axios.post(
+        'https://gecxc.com:4041/api/AdditionalProcess/SaveAdditionalProcessDetails',
+        formData
+      );
 
-      createdOn: new Date().toISOString(),
-      createdBy: 0,
-      lastUpdatedOn: new Date().toISOString(),
-      LastUpdatedBy: 0
+      console.log('Save response:', response.data);
+      refetchAdditionalProcessDetails();
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        // remainingPcsPerComponent:
+        //   prevFormData.remainingPcsPerComponent - prevFormData.quantity,
+        vendorId: '', /////////////checkapi
+
+        pcsPerComponent: additionalProcessData.pcsPerComponent || '',
+
+        quantity: '',
+        ratePerPcs: 0,
+        totalAmount: 0,
+        costPerComponent: '',
+
+        createdOn: new Date().toISOString(),
+        createdBy: user.empId,
+        lastUpdatedOn: new Date().toISOString(),
+        LastUpdatedBy: user.empId
+      }));
+      refetchAdditionalProcessList();
+
+      // handleClickOpen();
+
+      setAccordionExpanded(false);
+    } catch (error) {
+      console.error('Error saving data:', error);
     }
-  ];
+  };
+
   const columns = [
     {
       field: 'vendorName',
@@ -80,8 +173,8 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
     },
 
     {
-      field: 'processTypeId',
-      headerName: 'process Type'
+      field: 'processType',
+      headerName: 'Process Type'
     },
     {
       field: 'pcsPerComponent',
@@ -98,13 +191,10 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
     {
       field: 'totalAmount',
       headerName: 'Total Amount'
-    },
-    {
-      field: 'costPerComponent',
-      headerName: 'Cost Per Component'
     }
   ];
 
+  const deleteApi = `https://gecxc.com:4041/api/AdditionalProcess/DeleteAdditionalProcessDetails?apdId=`;
   return (
     <Box
       noValidate
@@ -181,8 +271,8 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
           <TextField
             fullWidth
             label="Components"
-            name="componentId"
-            value={formData.componentId}
+            name="componentName"
+            value={formData.componentName}
             onChange={handleChange}
             size="small"
             disabled
@@ -194,8 +284,8 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             ))} */}
           </TextField>{' '}
         </Grid>
-        <Grid item xs={12} md={3}>
-          <TextField
+        {/* <Grid item xs={12} md={3}> */}
+        {/* <TextField
             label="Base Color"
             fullWidth
             size="small"
@@ -204,7 +294,7 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             onChange={handleChange}
             disabled
           />
-        </Grid>
+        </Grid> */}
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
@@ -212,8 +302,8 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             label="Select Fabric"
             defaultValue=""
             size="small"
-            name="fabricId"
-            value={formData.fabricId}
+            name="fabricName"
+            value={formData.fabricName}
             onChange={handleChange}
             disabled
           >
@@ -231,8 +321,8 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             // select
             label="Color"
             size="small"
-            name="colorId"
-            value={formData.colorId}
+            name="colorName"
+            value={formData.colorName}
             onChange={handleChange}
             disabled
           >
@@ -250,8 +340,8 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             label="Process Type"
             defaultValue=""
             size="small"
-            name="processTypeId"
-            value={formData.processTypeId}
+            name="processTypeName"
+            value={formData.processTypeName}
             onChange={handleChange}
             disabled
           >
@@ -262,7 +352,7 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             ))} */}
           </TextField>
         </Grid>
-        <Grid item xs={12} md={1.5}>
+        {/* <Grid item xs={12} md={1.5}>
           <TextField
             label="Po Pcs"
             fullWidth
@@ -272,7 +362,7 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             onChange={handleChange}
             disabled
           />
-        </Grid>
+        </Grid> */}
         <Grid item xs={12} md={1.5}>
           <TextField
             label="Pcs. Per Component"
@@ -360,13 +450,14 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
 
         <Grid item xs={12} md={3}>
           <TextField
-            label="Cost Per Component"
+            label="UOM"
             fullWidth
             size="small"
-            type="number"
-            name="costPerComponent"
-            value={formData.costPerComponent}
+            // type="number"
+            name="uom"
+            value={formData.uom}
             onChange={handleChange}
+            disabled
           />
         </Grid>
 
@@ -387,9 +478,9 @@ const AssignVendorFormTable = ({ additionalProcessData }) => {
             iColumns={columns}
             initialRows={initialRows}
             // setInitialData={setInitialData}
-            // deleteApi={deleteApi}
-            // deleteBy="schiffiliId"
-            // refetch={refetchSchiffliList}
+            deleteApi={deleteApi}
+            deleteBy="additionalProcessDetId"
+            refetch={refetchAdditionalProcessDetails}
             // setAccordionExpanded={setAccordionExpanded}
             // fileName="Schffili List"
           />
