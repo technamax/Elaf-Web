@@ -37,7 +37,12 @@ const EarningCard = ({ isLoading }) => {
       setTotalCollection(dashboardData.result[0].totalCollection);
     }
   }, [dashboardData]);
-
+  const [noOfDesign, setNoOfDesign] = useState(null);
+  useEffect(() => {
+    if (dashboardData) {
+      setNoOfDesign(dashboardData.result[0].noOfDesign);
+    }
+  }, [dashboardData]);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -86,7 +91,7 @@ const EarningCard = ({ isLoading }) => {
             <Grid container direction="column">
               {/* <Grid item> */}
               <Grid container alignItems="center">
-                <Grid item>
+                <Grid item sx={{ mb: 3.5 }}>
                   <Typography
                     sx={{
                       fontSize: '2.125rem',
@@ -96,11 +101,22 @@ const EarningCard = ({ isLoading }) => {
                       mb: 0.75
                     }}
                   >
-                    {totalCollection}
+                    Collections = {totalCollection}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: '2.125rem',
+                      fontWeight: 500,
+                      mr: 1,
+                      mt: 1.75,
+                      mb: 0.75
+                    }}
+                  >
+                    Designs = {noOfDesign}
                   </Typography>
                 </Grid>
                 {/* <Grid item> */}
-                <Avatar
+                {/* <Avatar
                   sx={{
                     cursor: 'pointer',
                     ...theme.typography.smallAvatar,
@@ -112,11 +128,11 @@ const EarningCard = ({ isLoading }) => {
                     fontSize="inherit"
                     sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }}
                   />
-                </Avatar>
+                </Avatar> */}
               </Grid>
               {/* </Grid> */}
               {/* </Grid> */}
-              <Grid item sx={{ mb: 8 }}>
+              {/* <Grid item sx={{ mb: 8 }}>
                 <Typography
                   sx={{
                     fontSize: '1rem',
@@ -126,7 +142,7 @@ const EarningCard = ({ isLoading }) => {
                 >
                   Total Collections
                 </Typography>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Box>
         </MainCard>
