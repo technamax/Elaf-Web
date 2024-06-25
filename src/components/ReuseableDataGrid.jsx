@@ -24,7 +24,9 @@ const ReuseableDataGrid = ({
   refetch,
   setAccordionExpanded,
   getCellClassName,
-  fileName
+  fileName,
+  disableEdit,
+  disableDelete
 }) => {
   // console.log('type of initial rows', typeof initialRows.length);
   const [open, setOpen] = React.useState(false);
@@ -95,21 +97,25 @@ const ReuseableDataGrid = ({
       field: 'Action',
       headerName: 'Actions',
       renderCell: (params) => (
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+        <div style={{ display: 'flex' }}>
           <ButtonGroup size="small" variant="text">
-            <IconButton
-              aria-label="Edit"
-              onClick={() => handleEdit(params.row)}
-            >
-              <EditIcon />
-            </IconButton>
-            <IconButton
-              aria-label="delete"
-              color="primary"
-              onClick={() => handleClickOpen(params.row[deleteBy])}
-            >
-              <DeleteIcon />
-            </IconButton>
+            {disableEdit ? null : (
+              <IconButton
+                aria-label="Edit"
+                onClick={() => handleEdit(params.row)}
+              >
+                <EditIcon />
+              </IconButton>
+            )}
+            {disableDelete ? null : (
+              <IconButton
+                aria-label="delete"
+                color="primary"
+                onClick={() => handleClickOpen(params.row[deleteBy])}
+              >
+                <DeleteIcon />
+              </IconButton>
+            )}
           </ButtonGroup>
         </div>
       )

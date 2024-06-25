@@ -4,6 +4,7 @@ import { collectionApi } from './Apis/collectionApi';
 import { designApi } from './Apis/designApi';
 import { lookupApi } from './Apis/lookupApi';
 import { prePlanningHeaderApi } from './Apis/prePlanningHeaderApi';
+import { userManagementApi } from './Apis/userManagementApi';
 import rootReducer from '../../store/reducer';
 
 const store = configureStore({
@@ -13,7 +14,8 @@ const store = configureStore({
       .concat(collectionApi.middleware)
       .concat(designApi.middleware)
       .concat(lookupApi.middleware)
-      .concat(prePlanningHeaderApi.middleware) // Include the API middleware
+      .concat(prePlanningHeaderApi.middleware)
+      .concat(userManagementApi.middleware) // Include the API middleware
 });
 
 export default store;
