@@ -17,6 +17,7 @@ import {
   AccordionDetails,
   AccordionSummary
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { DataGrid } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
@@ -732,18 +733,22 @@ const AdditionalProcess = () => {
               setAccordionExpanded={setAccordionExpanded}
               fileName="AdditionalProcess"
             />
-            <Dialog
-              open={open}
-              onClose={handleClose}
-              // aria-labelledby="alert-dialog-title"
-              // aria-describedby="alert-dialog-description"
-              fullWidth
-              maxWidth="lg"
-            >
+            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
               <DialogTitle
-                sx={{ backgroundColor: '#A11F23', color: '#ffffff' }}
+                sx={{
+                  backgroundColor: '#A11F23',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}
               >
-                {'Assign Vendors '}
+                <Typography variant="h6" component="div" color="#ffffff">
+                  {'Assign Vendors '}
+                </Typography>
+                <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
+                  <CloseIcon />
+                </IconButton>
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
@@ -754,10 +759,6 @@ const AdditionalProcess = () => {
                   handleClickOpen={handleClickOpen}
                 />
               </DialogContent>
-              {/* <DialogActions>
-                <Button onClick={handleClose}>Disagree</Button>
-                <Button onClick={handleClose}>Agree</Button>
-              </DialogActions> */}
             </Dialog>
           </Grid>
         </Grid>

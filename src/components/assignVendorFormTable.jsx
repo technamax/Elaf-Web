@@ -169,28 +169,34 @@ const AssignVendorFormTable = ({
   const columns = [
     {
       field: 'vendorName',
-      headerName: 'Vendor'
+      headerName: 'Vendor',
+      flex: 2
     },
 
     {
       field: 'processType',
-      headerName: 'Process Type'
+      headerName: 'Process Type',
+      flex: 1
     },
     {
       field: 'pcsPerComponent',
-      headerName: ' Pcs. Per Component'
+      headerName: ' Pcs. Per Component',
+      flex: 1
     },
     {
       field: 'quantity',
-      headerName: 'Quantitity'
+      headerName: 'Quantitity',
+      flex: 1
     },
     {
       field: 'ratePerPcs',
-      headerName: 'Rate Per Pcs.'
+      headerName: 'Rate Per Pcs.',
+      flex: 1
     },
     {
       field: 'totalAmount',
-      headerName: 'Total Amount'
+      headerName: 'Total Amount',
+      flex: 1
     }
   ];
 
