@@ -611,7 +611,7 @@ const Embroidery = () => {
 
       // fetchEmbroidery();
       // setInitialData({});
-      setAccordionExpanded(false);
+      // setAccordionExpanded(false);
       setFormData((prevFormData) => ({
         embroideryId: 0,
         designId: prevFormData.designId,

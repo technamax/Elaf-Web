@@ -369,7 +369,7 @@ const AdditionalProcess = () => {
 
       refetchAdditionalProcessList();
 
-      setAccordionExpanded(false);
+      // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
     }

@@ -539,7 +539,7 @@ const Schiffli = () => {
 
       refetchSchiffliList();
 
-      setAccordionExpanded(false);
+      // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
       enqueueSnackbar('Dyeing not saved successfully!', {

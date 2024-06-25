@@ -430,7 +430,7 @@ const PrePlanning = () => {
 
       refetchPrePlanningList();
 
-      setAccordionExpanded(false);
+      // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
       enqueueSnackbar('Pre Planning not saved successfully!', {

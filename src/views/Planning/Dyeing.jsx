@@ -458,7 +458,7 @@ const Dyeing = () => {
         // planningHeaderId: ''
       }));
       refetchDyeingPrintingData();
-      setAccordionExpanded(false);
+      // setAccordionExpanded(false);
     } catch (error) {
       // Handle error (e.g., show an error message)
 

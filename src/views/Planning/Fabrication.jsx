@@ -459,7 +459,7 @@ const Fabrication = () => {
       }));
 
       refetchFabricRequisitionData();
-      setAccordionExpanded(false);
+      // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
       enqueueSnackbar('Fabrication not saved successfully!', {
