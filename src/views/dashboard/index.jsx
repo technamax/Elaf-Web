@@ -63,28 +63,25 @@ const Dashboard = () => {
           <Grid item xs={12} md={8}>
             <TotalGrowthBarChart isLoading={isLoading} />
           </Grid>
+
           <Grid item xs={12} md={4}>
+            <PopularCard isLoading={isLoading} />
+          </Grid>
+
+          {/* <Grid item xs={12} md={4}>
             <Box mb={2}>
-              {' '}
-              {/* Adjust the value of mb (margin-bottom) as needed */}
               <EmbroideryData isLoading={isLoading} />
             </Box>
             <Box mb={2}>
-              {' '}
-              {/* Adjust the value of mb (margin-bottom) as needed */}
               <DyeingData isLoading={isLoading} />
             </Box>
             <Box mb={2}>
-              {' '}
-              {/* Adjust the value of mb (margin-bottom) as needed */}
               <PrintingData isLoading={isLoading} />
             </Box>
             <Box mb={2}>
-              {' '}
-              {/* Adjust the value of mb (margin-bottom) as needed */}
               <SchiffliData isLoading={isLoading} />
             </Box>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Grid>
     </Grid>
