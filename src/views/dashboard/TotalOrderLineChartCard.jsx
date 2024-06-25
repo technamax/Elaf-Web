@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-
+import { Menu } from '@mui/material';
 // third-party
 import Chart from 'react-apexcharts';
 
@@ -16,20 +16,28 @@ import Chart from 'react-apexcharts';
 import MainCard from 'ui-component/cards/MainCard';
 import SkeletonTotalOrderCard from 'ui-component/cards/Skeleton/EarningCard';
 import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
+import MenuItem from '@mui/material/MenuItem';
 
 import ChartDataMonth from './chart-data/total-order-month-line-chart';
 import ChartDataYear from './chart-data/total-order-year-line-chart';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import EarningIcon from 'assets/images/icons/earning.svg';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import GetAppTwoToneIcon from '@mui/icons-material/GetAppOutlined';
+import FileCopyTwoToneIcon from '@mui/icons-material/FileCopyOutlined';
+import PictureAsPdfTwoToneIcon from '@mui/icons-material/PictureAsPdfOutlined';
+import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveOutlined';
 
 // assets
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useGetPlanningDashboardByYearQuery } from '../../api/store/Apis/dashboardApi';
 
 // ==============================|| DASHBOARD - TOTAL ORDER LINE CHART CARD ||============================== //
 
 const TotalOrderLineChartCard = ({ isLoading }) => {
   const theme = useTheme();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
   const { data: dashboardData } = useGetPlanningDashboardByYearQuery();
   const [noOfDesign, setNoOfDesign] = useState(null);
   useEffect(() => {
@@ -60,6 +68,12 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
   const formattedcostOfFabric = costOfFabric
     ? new Intl.NumberFormat().format(costOfFabric)
     : null;
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <>
@@ -101,64 +115,64 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
             <Grid container direction="column">
               <Grid item>
                 <Grid container justifyContent="space-between">
-                  {/* <Grid item>
-                      <Avatar
-                        variant="rounded"
-                        sx={{
-                          ...theme.typography.commonAvatar,
-                          ...theme.typography.largeAvatar,
-                          bgcolor: 'secondary.800',
-                          mt: 1
-                        }}
-                      >
-                        <img src={EarningIcon} alt="Notification" />
-                      </Avatar>
-                    </Grid> */}
                   <Grid item>
-                    {/* <Avatar
-                        variant="rounded"
-                        sx={{
-                          ...theme.typography.commonAvatar,
-                          ...theme.typography.mediumAvatar,
-                          bgcolor: 'secondary.dark',
-                          color: 'secondary.200',
-                          zIndex: 1
-                        }}
-                        aria-controls="menu-earning-card"
-                        aria-haspopup="true"
-                        onClick={handleClick}
-                      >
-                        <MoreHorizIcon fontSize="inherit" />
-                      </Avatar> */}
-                    {/* <Menu
-                        id="menu-earning-card"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={Boolean(anchorEl)}
-                        onClose={handleClose}
-                        variant="selectedMenu"
-                        anchorOrigin={{
-                          vertical: 'bottom',
-                          horizontal: 'right'
-                        }}
-                        transformOrigin={{
-                          vertical: 'top',
-                          horizontal: 'right'
-                        }}
-                      >
-                        <MenuItem onClick={handleClose}>
-                          <GetAppTwoToneIcon sx={{ mr: 1.75 }} /> Import Card
-                        </MenuItem>
-                        <MenuItem onClick={handleClose}>
-                          <FileCopyTwoToneIcon sx={{ mr: 1.75 }} /> Copy Data
-                        </MenuItem>
-                        <MenuItem onClick={handleClose}>
-                          <PictureAsPdfTwoToneIcon sx={{ mr: 1.75 }} /> Export
-                        </MenuItem>
-                        <MenuItem onClick={handleClose}>
-                          <ArchiveTwoToneIcon sx={{ mr: 1.75 }} /> Archive File
-                        </MenuItem>
-                      </Menu> */}
+                    <Avatar
+                      variant="rounded"
+                      sx={{
+                        ...theme.typography.commonAvatar,
+                        ...theme.typography.largeAvatar,
+                        bgcolor: 'secondary.800',
+                        mt: 1
+                      }}
+                    >
+                      <img src={EarningIcon} alt="Notification" />
+                    </Avatar>
+                  </Grid>
+                  <Grid item>
+                    <Avatar
+                      variant="rounded"
+                      sx={{
+                        ...theme.typography.commonAvatar,
+                        ...theme.typography.mediumAvatar,
+                        bgcolor: 'secondary.dark',
+                        color: 'secondary.200',
+                        zIndex: 1
+                      }}
+                      aria-controls="menu-earning-card"
+                      aria-haspopup="true"
+                      onClick={handleClick}
+                    >
+                      <MoreHorizIcon fontSize="inherit" />
+                    </Avatar>
+                    <Menu
+                      id="menu-earning-card"
+                      anchorEl={anchorEl}
+                      keepMounted
+                      open={Boolean(anchorEl)}
+                      onClose={handleClose}
+                      variant="selectedMenu"
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right'
+                      }}
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right'
+                      }}
+                    >
+                      <MenuItem onClick={handleClose}>
+                        <GetAppTwoToneIcon sx={{ mr: 1.75 }} /> Import Card
+                      </MenuItem>
+                      <MenuItem onClick={handleClose}>
+                        <FileCopyTwoToneIcon sx={{ mr: 1.75 }} /> Copy Data
+                      </MenuItem>
+                      <MenuItem onClick={handleClose}>
+                        <PictureAsPdfTwoToneIcon sx={{ mr: 1.75 }} /> Export
+                      </MenuItem>
+                      <MenuItem onClick={handleClose}>
+                        <ArchiveTwoToneIcon sx={{ mr: 1.75 }} /> Archive File
+                      </MenuItem>
+                    </Menu>
                   </Grid>
                 </Grid>
               </Grid>
@@ -202,7 +216,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                     color: 'secondary.200'
                   }}
                 >
-                  Total Design
+                  Total Designs
                 </Typography>
               </Grid>
             </Grid>
