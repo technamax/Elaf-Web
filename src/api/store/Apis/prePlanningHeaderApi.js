@@ -52,6 +52,14 @@ export const prePlanningHeaderApi = createApi({
     getPrePlanningByPlanningHeaderId: builder.query({
       query: (planningHeaderId) =>
         `PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${planningHeaderId}`
+    }),
+    getAdditionalProcessListByBatchNo: builder.query({
+      query: (planningHeaderId) =>
+        `AdditionalProcess/GetAdditionalProcessListByBatchNo?batchNo=${planningHeaderId}`
+    }),
+    getAdditionalProcessDetailsByAdditionalProcessId: builder.query({
+      query: (additionalProcessId) =>
+        `AdditionalProcess/GetAdditionalProcessDetailsByAdditionalProcessId?additionalProcessId=${additionalProcessId}`
     })
   })
 });
@@ -69,5 +77,7 @@ export const {
   useGetSchffiliListByBatchNoQuery,
   useGetFabricColorFromPrePlanningByFabricIdQuery,
   useGetDyeingPrintingListByBatchNoQuery,
-  useGetPrePlanningByPlanningHeaderIdQuery
+  useGetPrePlanningByPlanningHeaderIdQuery,
+  useGetAdditionalProcessListByBatchNoQuery,
+  useGetAdditionalProcessDetailsByAdditionalProcessIdQuery
 } = prePlanningHeaderApi;

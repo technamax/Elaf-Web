@@ -13,7 +13,9 @@ import {
   Grid,
   TextField,
   Box,
-  Tab
+  Tab,
+  Card,
+  CardHeader
 } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import SearchIcon from '@mui/icons-material/Search';
@@ -21,11 +23,9 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
-import { useUser } from 'context/User';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 const NewDesign = () => {
-  const { user } = useUser();
-
   const { data: collectionData } = useGetCollectionListQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const { data: designData, refetch } = useGetDesignListByCollectionIdQuery(
@@ -35,7 +35,6 @@ const NewDesign = () => {
     }
   );
   const { enqueueSnackbar } = useSnackbar();
-  const [formErrors, setFormErrors] = useState({});
 
   const [designList, setDesignList] = useState([]);
   const [colors, setColors] = useState([]);
@@ -79,9 +78,9 @@ const NewDesign = () => {
     dateOfPlanning: '',
     colorId: '',
     appId: 1,
-    createdBy: user.empId,
+    createdBy: 0,
     createdOn: new Date().toISOString(),
-    lastUpdatedBy: user.empId,
+    lastUpdatedBy: 0,
     lastUpdatedOn: new Date().toISOString()
   });
 
@@ -183,12 +182,6 @@ const NewDesign = () => {
 
   const handleSave = async () => {
     console.log(formData);
-    const errors = validateForm();
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
-
     try {
       const response = await axios.post(
         'https://gecxc.com:4041/API/DesignRegistration/SaveDesign',
@@ -208,11 +201,7 @@ const NewDesign = () => {
         designerName: '',
         poPcs: '',
         dateOfPlanning: '',
-        colorId: '',
-        createdOn: new Date().toISOString(),
-        createdBy: user.empId,
-        lastUpdatedOn: new Date().toISOString(),
-        lastUpdatedBy: user.empId
+        colorId: ''
       });
       refetch();
     } catch (error) {
@@ -223,25 +212,8 @@ const NewDesign = () => {
       });
     }
   };
-  const validateForm = () => {
-    const errors = {};
-    if (!formData.collectionId) {
-      errors.collectionId = 'collectionId is required';
-    }
-    if (!formData.designNo) {
-      errors.designNo = 'designNo is required';
-    }
-    if (!formData.dateOfPlanning) {
-      errors.dateOfPlanning = 'dateOfPlanning is required';
-    }
-    if (!formData.colorId) {
-      errors.colorId = 'colorId is required';
-    }
-    return errors;
-  };
 
-  const deleteApi =
-    'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
+  const deleteApi = `https://gecxc.com:4041/api/DesignRegistration/DeleteDesignById?designId=`;
   const editAPi = 'https://gecxc.com:4041/API/DesignRegistration/SaveDesign';
   const handleSearch = () => {
     //search api call
@@ -286,123 +258,147 @@ const NewDesign = () => {
           </Box>
           <TabPanel value="1">
             {/* <FormControl> */}
-            <Grid container spacing={2} width="Inherit">
-              <Grid item xs={9} md={9}>
-                <Typography variant="h3" gutterBottom>
-                  Create New Design
-                </Typography>
-              </Grid>
-              <Grid item xs={3} md={3} textAlign="right">
+            <Card variant="outlined">
+              <CardHeader
+                className="css-4rfrnx-MuiCardHeader-root"
+                // avatar={
+                // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
+                // }
+                title="Add Design "
+                titleTypographyProps={{ style: { color: 'white' } }}
+              ></CardHeader>
+              <Grid
+                container
+                spacing={2}
+                width="Inherit"
+                sx={{ paddingY: 2, paddingX: 2 }}
+              >
+                {/* <Grid item xs={9} md={9}>
+                  <Typography variant="h3" gutterBottom>
+                    Create New Design
+                  </Typography>
+                </Grid> */}
+                {/* <Grid item xs={3} md={3} textAlign="right">
                 <Button variant="contained" size="small" onClick={handleSave}>
                   Save
                 </Button>
+              </Grid> */}
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Select Collection"
+                    name="collectionId"
+                    value={formData.collectionId}
+                    onChange={handleChange}
+                    size="small"
+                  >
+                    {collectionList.map((option) => (
+                      <MenuItem
+                        key={option.collectionId}
+                        value={option.collectionId}
+                      >
+                        {option.collectionName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    label="Design No."
+                    name="designNo"
+                    fullWidth
+                    size="small"
+                    value={formData.designNo}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    label="Designer Name"
+                    fullWidth
+                    size="small"
+                    name="designerName"
+                    value={formData.designerName}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    size="small"
+                    type="date"
+                    label="Planning Date"
+                    name="dateOfPlanning"
+                    value={formData.dateOfPlanning}
+                    onChange={handleChange}
+                    fullWidth
+                    focused
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    label="Po PCs"
+                    fullWidth
+                    size="small"
+                    name="poPcs"
+                    type="number"
+                    value={formData.poPcs}
+                    disabled
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Color"
+                    size="small"
+                    name="colorId"
+                    value={formData.colorId}
+                    onChange={handleChange}
+                  >
+                    {colors.map((option) => (
+                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                        {option.lookUpName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
+                  <Button variant="contained" size="small" onClick={handleSave}>
+                    Save
+                  </Button>{' '}
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Select Collection"
-                  name="collectionId"
-                  value={formData.collectionId}
-                  onChange={handleChange}
-                  size="small"
-                  required
-                  error={!!formErrors.collectionId}
-                  helperText={formErrors.collectionId}
-                >
-                  {collectionList.map((option) => (
-                    <MenuItem
-                      key={option.collectionId}
-                      value={option.collectionId}
-                    >
-                      {option.collectionName}
-                    </MenuItem>
-                  ))}
-                </TextField>
+              {/* </FormControl> */}
+            </Card>
+            <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
+            <Card variant="outlined">
+              <CardHeader
+                className="css-4rfrnx-MuiCardHeader-root"
+                avatar={<VisibilityOutlinedIcon />}
+                title="View Designs "
+                titleTypographyProps={{ style: { color: 'white' } }}
+              ></CardHeader>
+              <Grid
+                container
+                spacing={2}
+                width="Inherit"
+                sx={{ paddingY: 2, paddingX: 2 }}
+              >
+                <Grid item xs={12} md={12}>
+                  <EditAbleDataGrid
+                    initialRows={initialRows}
+                    ncolumns={columns}
+                    formData={formData}
+                    editAPi={editAPi}
+                    deleteApi={deleteApi}
+                    deleteBy="designId"
+                    refetch={refetch}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Design No."
-                  name="designNo"
-                  fullWidth
-                  size="small"
-                  value={formData.designNo}
-                  onChange={handleChange}
-                  error={!!formErrors.designNo}
-                  helperText={formErrors.designNo}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Designer Name"
-                  fullWidth
-                  size="small"
-                  name="designerName"
-                  value={formData.designerName}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  size="small"
-                  type="date"
-                  label="Planning Date"
-                  name="dateOfPlanning"
-                  value={formData.dateOfPlanning}
-                  error={!!formErrors.dateOfPlanning}
-                  helperText={formErrors.dateOfPlanning}
-                  onChange={handleChange}
-                  fullWidth
-                  focused
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  label="Po PCs"
-                  fullWidth
-                  size="small"
-                  name="poPcs"
-                  type="number"
-                  value={formData.poPcs}
-                  disabled
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={4}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Color"
-                  size="small"
-                  name="colorId"
-                  value={formData.colorId}
-                  onChange={handleChange}
-                  error={!!formErrors.colorId}
-                  helperText={formErrors.colorId}
-                  required
-                >
-                  {colors.map((option) => (
-                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                      {option.lookUpName}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-            </Grid>
-            {/* </FormControl> */}
-            <Divider />
-            <Grid container spacing={2} width="inherit" paddingTop={2}>
-              <Grid item xs={12} md={12}>
-                <EditAbleDataGrid
-                  initialRows={initialRows}
-                  ncolumns={columns}
-                  formData={formData}
-                  editAPi={editAPi}
-                />
-              </Grid>
-            </Grid>
+            </Card>
           </TabPanel>
           <TabPanel value="2">
             <Grid container spacing={2} width="inherit">
@@ -455,6 +451,7 @@ const NewDesign = () => {
                   formData={formData}
                   editAPi={editAPi}
                   disableAddRecord={true}
+
                   // disableEdit={true}
                 />
               </Grid>

@@ -216,7 +216,8 @@ const PrePlanning = () => {
     const calculateTotalFabric = () => {
       const repeats = parseFloat(formData.repeats) || 0;
       const repeatSize = parseFloat(formData.repeatSize) || 0;
-      return (repeats * repeatSize).toFixed(2);
+      const totalFabric = (repeats * repeatSize).toFixed(2);
+      return parseFloat(totalFabric).toLocaleString();
     };
 
     setFormData((prevData) => ({
@@ -225,10 +226,16 @@ const PrePlanning = () => {
     }));
 
     const calculateTotal = () => {
-      const totalFabric = parseFloat(formData.totalFabric) || 0;
+      // Parse the localized totalFabric string back to a float for calculations
+      const totalFabric =
+        parseFloat(formData.totalFabric.replace(/,/g, '')) || 0;
       const shrinkage = parseFloat(formData.shrinkage) || 0;
       const wastage = parseFloat(formData.wastage) || 0;
-      return ((totalFabric * (100 + (shrinkage + wastage))) / 100).toFixed(2);
+      const total = (
+        (totalFabric * (100 + (shrinkage + wastage))) /
+        100
+      ).toFixed(2);
+      return parseFloat(total).toLocaleString();
     };
 
     setFormData((prevData) => ({
@@ -285,6 +292,18 @@ const PrePlanning = () => {
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
+        componentId: '',
+        cuttingSize: '', // not in api
+        colorId: '',
+        fabricId: '',
+        noOfHeads: '',
+        repeats: '',
+        repeatSize: '',
+        uomId: '',
+        totalFabric: '',
+        shrinkage: '',
+        wastage: '',
+        total: '',
         collectionId: value,
         noOfDesigns: selectedCollection ? selectedCollection.noOfDesigns : '',
         noOfColors: selectedCollection ? selectedCollection.noOfColors : ''
@@ -295,6 +314,18 @@ const PrePlanning = () => {
       );
       setFormData({
         ...formData,
+        componentId: '',
+        cuttingSize: '', // not in api
+        colorId: '',
+        fabricId: '',
+        noOfHeads: '',
+        repeats: '',
+        repeatSize: '',
+        uomId: '',
+        totalFabric: '',
+        shrinkage: '',
+        wastage: '',
+        total: '',
         designId: value,
         baseColorId: selectedDesign ? selectedDesign.colorId : '',
         baseColorName: selectedDesign ? selectedDesign.colorName : ''
@@ -303,6 +334,18 @@ const PrePlanning = () => {
       const selectedBatch = batchList.find((batch) => batch.batchNo === value);
       setFormData({
         ...formData,
+        componentId: '',
+        cuttingSize: '', // not in api
+        colorId: '',
+        fabricId: '',
+        noOfHeads: '',
+        repeats: '',
+        repeatSize: '',
+        uomId: '',
+        totalFabric: '',
+        shrinkage: '',
+        wastage: '',
+        total: '',
         batchNo: value,
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
       });
@@ -323,9 +366,14 @@ const PrePlanning = () => {
     }
 
     try {
+      const cleanedFormData = {
+        ...formData,
+        totalFabric: parseFloat(formData.totalFabric.replace(/,/g, '')),
+        total: parseFloat(formData.total.replace(/,/g, ''))
+      };
       const response = await axios.post(
         'https://gecxc.com:4041/api/PrePlanning/SavePrePlanning',
-        formData
+        cleanedFormData
       );
       console.log('Data saved successfully:', response.data);
       console.log('Save response:', response.data);
@@ -437,19 +485,30 @@ const PrePlanning = () => {
   };
 
   console.log('initialRows', initialRows);
+
   const totalFabric = initialRows
     .reduce((sum, row) => sum + (row.totalFabric ?? 0), 0)
     .toFixed(2);
+
+  const localizedTotalFabric = parseFloat(totalFabric).toLocaleString();
+  console.log('localizedTotalFabric', localizedTotalFabric);
 
   // Calculate the overall total sum
   const total = initialRows
     .reduce((sum, row) => sum + (row.total ?? 0), 0)
     .toFixed(2);
 
+  const localizedTotal = parseFloat(total).toLocaleString();
+
   // Add custom total fabric row
   const rows = [
     ...initialRows,
-    { id: 'TOTAL_FABRIC', label: 'Total Fabric', totalFabric, total }
+    {
+      id: 'TOTAL_FABRIC',
+      label: 'Total Fabric',
+      totalFabric: localizedTotalFabric,
+      total: localizedTotal
+    }
   ];
 
   // Base column options
@@ -510,6 +569,9 @@ const PrePlanning = () => {
     {
       field: 'repeats',
       headerName: 'Repeats',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      },
       ...baseColumnOptions
       // flex: 1,
       // editable: true
@@ -517,6 +579,9 @@ const PrePlanning = () => {
     {
       field: 'repeatSize',
       headerName: 'Repeat Size',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      },
       ...baseColumnOptions
       // flex: 1,
       // editable: true
@@ -524,6 +589,9 @@ const PrePlanning = () => {
     {
       field: 'totalFabric',
       headerName: 'Total Fabric',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      },
       ...baseColumnOptions
     },
     {
@@ -532,7 +600,7 @@ const PrePlanning = () => {
 
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
-          return 3;
+          return 4;
         }
         return undefined;
       },
@@ -564,7 +632,16 @@ const PrePlanning = () => {
     },
     {
       field: 'total',
-      headerName: 'Total'
+      headerName: 'Total',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      },
+      colSpan: (value, row) => {
+        if (row.id === 'TOTAL_FABRIC') {
+          return 2;
+        }
+        return undefined;
+      }
     }
   ];
 
@@ -1011,7 +1088,7 @@ const PrePlanning = () => {
                 <TextField
                   label="Total"
                   fullWidth
-                  type="number"
+                  // type="number"
                   size="small"
                   name="total"
                   value={formData.total}

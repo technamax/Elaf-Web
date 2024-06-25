@@ -61,43 +61,43 @@ const Embroidery = () => {
   const [loading, setLoading] = useState(false); // State for loading
 
   const [formData, setFormData] = useState({
-    embroideryId: initialData?.embroideryId || 0,
-    designId: initialData?.designId || '',
-    batchNo: initialData?.batchNo || '',
-    planningHeaderId: initialData?.planningHeaderId || '',
-    componentId: initialData?.componentId || '',
-    fabricId: initialData?.fabricId || '',
-    vendorId: initialData?.vendorId || '',
-    poPcs: initialData?.poPcs || '', // coming from getcollectionapi
-    baseColorId: initialData?.baseColorId || '', // coming from getcollectionapi
-    baseColorName: initialData?.baseColorName || '',
-    colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
-    availableQty: initialData?.availableQty || '',
-    noOfHead: initialData?.noOfHead || '',
-    repeats: initialData?.repeats || '',
-    cuttingSize: initialData?.cuttingSize || '',
-    itemsPerRepeat: initialData?.itemsPerRepeat || '',
-    totalPcs: initialData?.totalPcs || '', //repeat*itemsPerRepeat
-    totalAmount: initialData?.totalAmount || '', //
-    threadStiches: initialData?.threadStiches || '',
-    threadRate: initialData?.threadRate || '',
-    threadAmount: initialData?.threadAmount || '',
-    tillaStiches: initialData?.tillaStiches || '',
-    tilaRate: initialData?.tilaRate || '',
-    tilaAmount: initialData?.tilaAmount || '',
-    sequence: initialData?.sequence || '',
-    sequenceRate: initialData?.sequenceRate || '',
-    sequenceAmount: initialData?.sequenceAmount || '',
-    isSolving: initialData?.isSolving || false,
-    solvingLayers: initialData?.solvingLayers || 0,
-    solvingInMeters: initialData?.solvingInMeters || '',
-    solvingRate: initialData?.solvingRate || 0,
-    solvingAmount: initialData?.solvingAmount || '',
-    // additional:  initialData?.tilaRate || '',
-    threadAdditional: initialData?.threadAdditional || [],
+    embroideryId: 0,
+    designId: '',
+    batchNo: '',
+    planningHeaderId: '',
+    componentId: '',
+    fabricId: '',
+    vendorId: '',
+    poPcs: '', // coming from getcollectionapi
+    baseColorId: '', // coming from getcollectionapi
+    baseColorName: '',
+    colorId: '', //from dying screen coming from fabricAPi
+    availableQty: '',
+    noOfHead: '',
+    repeats: '',
+    cuttingSize: '',
+    itemsPerRepeat: '',
+    totalPcs: '', //repeat*itemsPerRepeat
+    totalAmount: '', //
+    threadStiches: '',
+    threadRate: '',
+    threadAmount: '',
+    tillaStiches: '',
+    tilaRate: '',
+    tilaAmount: '',
+    sequence: '',
+    sequenceRate: '',
+    sequenceAmount: '',
+    isSolving: false,
+    solvingLayers: 0,
+    solvingInMeters: '',
+    solvingRate: 0,
+    solvingAmount: '',
+    // additional:  '',
+    threadAdditional: [],
 
-    costPerComponent: initialData?.costPerComponent || '', //
-    // costPerComponent:  initialData?.tilaRate || '', //
+    costPerComponent: '', //
+    // costPerComponent:  '', //
     createdBy: user.empId,
     createdOn: new Date().toISOString(),
     lastUpdatedOn: new Date().toISOString(),
@@ -437,7 +437,42 @@ const Embroidery = () => {
 
       setFormData({
         ...formData,
-        collectionId: value
+        collectionId: value,
+        designId: '',
+        batchNo: '',
+        planningHeaderId: '',
+        componentId: '',
+        fabricId: '',
+        vendorId: '',
+        poPcs: '', // coming from getcollectionapi
+        baseColorId: '', // coming from getcollectionapi
+        baseColorName: '',
+        colorId: '', //from dying screen coming from fabricAPi
+        availableQty: '',
+        noOfHead: '',
+        repeats: '',
+        cuttingSize: '',
+        itemsPerRepeat: '',
+        totalPcs: '', //repeat*itemsPerRepeat
+        totalAmount: '', //
+        threadStiches: '',
+        threadRate: '',
+        threadAmount: '',
+        tillaStiches: '',
+        tilaRate: '',
+        tilaAmount: '',
+        sequence: '',
+        sequenceRate: '',
+        sequenceAmount: '',
+        isSolving: false,
+        solvingLayers: 0,
+        solvingInMeters: '',
+        solvingRate: 0,
+        solvingAmount: '',
+        // additional:  '',
+        threadAdditional: [],
+
+        costPerComponent: '' //
         // poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
     } else if (name === 'designId') {
@@ -448,7 +483,40 @@ const Embroidery = () => {
         ...formData,
         designId: value,
         baseColorId: selectedDesign ? selectedDesign.colorId : '',
-        baseColorName: selectedDesign ? selectedDesign.colorName : ''
+        baseColorName: selectedDesign ? selectedDesign.colorName : '',
+
+        batchNo: '',
+        planningHeaderId: '',
+        componentId: '',
+        fabricId: '',
+        vendorId: '',
+        poPcs: '', // coming from getcollectionapi
+        colorId: '', //from dying screen coming from fabricAPi
+        availableQty: '',
+        noOfHead: '',
+        repeats: '',
+        cuttingSize: '',
+        itemsPerRepeat: '',
+        totalPcs: '', //repeat*itemsPerRepeat
+        totalAmount: '', //
+        threadStiches: '',
+        threadRate: '',
+        threadAmount: '',
+        tillaStiches: '',
+        tilaRate: '',
+        tilaAmount: '',
+        sequence: '',
+        sequenceRate: '',
+        sequenceAmount: '',
+        isSolving: false,
+        solvingLayers: 0,
+        solvingInMeters: '',
+        solvingRate: 0,
+        solvingAmount: '',
+        // additional:  '',
+        threadAdditional: [],
+
+        costPerComponent: '' //
       });
     } else if (name === 'colorId') {
       const selectedcolor = colors.find((color) => color.colorId === value);
@@ -465,7 +533,38 @@ const Embroidery = () => {
         ...formData,
         batchNo: value,
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
-        poPcs: selectedBatch ? selectedBatch.poPcs : ''
+        poPcs: selectedBatch ? selectedBatch.poPcs : '',
+        componentId: '',
+        fabricId: '',
+        vendorId: '',
+        baseColorId: '', // coming from getcollectionapi
+        baseColorName: '',
+        colorId: '', //from dying screen coming from fabricAPi
+        availableQty: '',
+        noOfHead: '',
+        repeats: '',
+        cuttingSize: '',
+        itemsPerRepeat: '',
+        totalPcs: '', //repeat*itemsPerRepeat
+        totalAmount: '', //
+        threadStiches: '',
+        threadRate: '',
+        threadAmount: '',
+        tillaStiches: '',
+        tilaRate: '',
+        tilaAmount: '',
+        sequence: '',
+        sequenceRate: '',
+        sequenceAmount: '',
+        isSolving: false,
+        solvingLayers: 0,
+        solvingInMeters: '',
+        solvingRate: 0,
+        solvingAmount: '',
+        // additional:  '',
+        threadAdditional: [],
+
+        costPerComponent: '' //
       });
       setAccordionExpanded(true);
       setLoading(false);

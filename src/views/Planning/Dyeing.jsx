@@ -226,7 +226,30 @@ const Dyeing = () => {
 
       setFormData({
         ...formData,
-        collectionId: value
+        collectionId: value,
+        designId: '',
+        batchNo: '',
+        planningHeaderId: '',
+        fabricId: '',
+        colorId: '',
+        color: '',
+        vendorId: '',
+        processType: '',
+        AvailableQty: '',
+        Shrinkage: '',
+        Wastage: '',
+        OutputQty: '',
+        UOM: '',
+        uomId: '',
+        RatePerUOM: '',
+        UnitRatePerPo: '',
+        TotalExclGst: '',
+        GST: '0',
+        // GSTAmount: '',
+        TotalIncludingGst: '',
+        // createdBy: 0,
+        poPcs: '',
+        baseColorName: ''
         // poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
     } else if (name === 'designId') {
@@ -237,7 +260,30 @@ const Dyeing = () => {
         ...formData,
         designId: value,
         baseColorId: selectedDesign ? selectedDesign.colorId : '',
-        baseColorName: selectedDesign ? selectedDesign.colorName : ''
+        baseColorName: selectedDesign ? selectedDesign.colorName : '',
+        // designId: '',
+        batchNo: '',
+        planningHeaderId: '',
+        fabricId: '',
+        colorId: '',
+        color: '',
+        vendorId: '',
+        processType: '',
+        AvailableQty: '',
+        Shrinkage: '',
+        Wastage: '',
+        OutputQty: '',
+        UOM: '',
+        uomId: '',
+        RatePerUOM: '',
+        UnitRatePerPo: '',
+        TotalExclGst: '',
+        GST: '0',
+        // GSTAmount: '',
+        TotalIncludingGst: '',
+        // createdBy: 0,
+        poPcs: ''
+        // baseColorName: '',
       });
     } else if (name === 'batchNo') {
       const selectedBatch = batchList.find((batch) => batch.batchNo === value);
@@ -245,7 +291,24 @@ const Dyeing = () => {
         ...formData,
         batchNo: value,
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
-        poPcs: selectedBatch ? selectedBatch.poPcs : ''
+        poPcs: selectedBatch ? selectedBatch.poPcs : '',
+        fabricId: '',
+        colorId: '',
+        color: '',
+        vendorId: '',
+        processType: '',
+        AvailableQty: '',
+        Shrinkage: '',
+        Wastage: '',
+        OutputQty: '',
+        UOM: '',
+        uomId: '',
+        RatePerUOM: '',
+        UnitRatePerPo: '',
+        TotalExclGst: '',
+        GST: '0',
+        // GSTAmount: '',
+        TotalIncludingGst: ''
       });
       setAccordionExpanded(true);
       setLoading(false);
