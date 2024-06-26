@@ -185,17 +185,6 @@ export default function SubMenu() {
   ];
 
   return (
-    // <MainCard
-    //   style={{
-    //     borderWidth: 1,
-    //     borderStyle: 'dotted',
-    //     borderColor: '#a11f23',
-    //     // backgroundColor: '#eef2f6',
-    //     width: 'auto',
-    //     maxHeight: { xs: '80vh', md: 'auto' },
-    //     overflow: 'auto'
-    //   }}
-    // >
     <Box sx={{ width: '100%', typography: 'body1' }}>
       <Card variant="outlined">
         <CardHeader
@@ -337,26 +326,5 @@ export default function SubMenu() {
         </Grid>{' '}
       </Card>
     </Box>
-    // </MainCard>
   );
 }
-
-/////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////
-// import React from 'react';
-// import Divider from '@mui/material/Divider';
-// import AddSubMenu from 'components/SubMenu/addsubMenu';
-// import AddSubMenuTable from 'components/SubMenu/addsubmenuTable';
-
-// export default function Application(fetchData) {
-//   return (
-//     <>
-//       <AddSubMenu />
-//       <Divider />
-//       <AddSubMenuTable
-//       fetchData={fetchData}
-//       />
-//     </>
-//   );
-// }

@@ -327,61 +327,6 @@ export default function Application() {
           </TabPanel>
           <TabPanel value="2">
             <SubMenu />
-            {/* <Grid container spacing={2} width="inherit">
-              <Grid item xs={9} md={9}>
-                <Typography variant="h3" gutterBottom>
-                  Search Collection
-                </Typography>
-              </Grid>
-              <Grid item xs={3} textAlign="right">
-                <Button variant="contained" size="small" onClick={handleSearch}>
-                  Search
-                </Button>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <TextField
-                  size="small"
-                  type="date"
-                  label="Date From"
-                  name="searchPlanningDateFrom"
-                  value={searchData.searchPlanningDateFrom}
-                  onChange={handlesearchChange}
-                  fullWidth
-                  focused
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  size="small"
-                  type="date"
-                  label="Date to"
-                  name="searchPlanningDateTo"
-                  value={searchData.searchPlanningDateTo}
-                  onChange={handlesearchChange}
-                  fullWidth
-                  focused
-                />
-              </Grid> */}
-
-            {/* <Grid item sm={12}>
-                <Divider color="#cc8587" sx={{ height: 2, width: '100%' }} />
-              </Grid> */}
-            {/* </Grid> */}
-
-            {/* <Grid container spacing={2} width="inherit" paddingTop={2}>
-              <Grid item xs={12}>
-                <EditAbleDataGrid
-                  initialRows={searchResult}
-                  ncolumns={columns}
-                  formData={formData}
-                  // deleteApi={deleteApi}
-                  // deleteBy="collectionId"
-                  // editAPi={editAPi}
-                  disableAddRecord={true}
-                />
-              </Grid>
-            </Grid> */}
           </TabPanel>
         </TabContext>
       </Box>
