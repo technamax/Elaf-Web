@@ -39,6 +39,7 @@ const NewDesign = () => {
   const [designList, setDesignList] = useState([]);
   const [colors, setColors] = useState([]);
   const [value, setValue] = useState('1');
+  const [duplicateError, setDuplicateError] = useState(false); // State to track duplicate design number error
 
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
@@ -182,6 +183,19 @@ const NewDesign = () => {
 
   const handleSave = async () => {
     console.log(formData);
+    // Check if the design number already exists
+    const isDuplicate = designList.some(
+      (design) => design.designNo === formData.designNo
+    );
+
+    if (isDuplicate) {
+      // Show Snackbar for duplicate entry
+      enqueueSnackbar('Design number already exists!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+      return; // Exit without saving
+    }
     try {
       const response = await axios.post(
         'https://gecxc.com:4041/API/DesignRegistration/SaveDesign',
@@ -311,6 +325,7 @@ const NewDesign = () => {
                     size="small"
                     value={formData.designNo}
                     onChange={handleChange}
+                    disabled={!formData.collectionId} // Disable if collectionId is not selected
                   />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -321,6 +336,7 @@ const NewDesign = () => {
                     name="designerName"
                     value={formData.designerName}
                     onChange={handleChange}
+                    disabled={!formData.collectionId} // Disable if collectionId is not selected
                   />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -333,6 +349,7 @@ const NewDesign = () => {
                     onChange={handleChange}
                     fullWidth
                     focused
+                    // disabled={!formData.collectionId}
                   />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -356,6 +373,7 @@ const NewDesign = () => {
                     name="colorId"
                     value={formData.colorId}
                     onChange={handleChange}
+                    disabled={!formData.collectionId}
                   >
                     {colors.map((option) => (
                       <MenuItem key={option.lookUpId} value={option.lookUpId}>
