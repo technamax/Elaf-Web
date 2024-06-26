@@ -237,6 +237,7 @@ export default function FullFeaturedCrudGrid({
       }}
     >
       <DataGrid
+        sx={{ backgroundColor: 'white' }}
         rows={rows}
         columns={columns}
         editMode="row"
