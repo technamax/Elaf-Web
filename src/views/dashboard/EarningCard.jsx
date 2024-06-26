@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
-
+import CollectionsIcon from '@mui/icons-material/Collections';
 // assets
 import EarningIcon from 'assets/images/icons/earning.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -23,7 +23,7 @@ import FileCopyTwoToneIcon from '@mui/icons-material/FileCopyOutlined';
 import PictureAsPdfTwoToneIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveOutlined';
 import { useGetPlanningDashboardByYearQuery } from '../../api/store/Apis/dashboardApi';
-
+import 'bootstrap-icons/font/bootstrap-icons.css';
 // ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
 
 const EarningCard = ({ isLoading }) => {
@@ -54,7 +54,7 @@ const EarningCard = ({ isLoading }) => {
           border={false}
           content={false}
           sx={{
-            bgcolor: 'secondary.dark',
+            bgcolor: 'primary.dark',
             color: '#fff',
             overflow: 'hidden',
             position: 'relative',
@@ -91,11 +91,16 @@ const EarningCard = ({ isLoading }) => {
                       sx={{
                         ...theme.typography.commonAvatar,
                         ...theme.typography.largeAvatar,
-                        bgcolor: 'secondary.800',
+                        bgcolor: 'primary.light',
                         mt: 1
                       }}
                     >
-                      <img src={EarningIcon} alt="Notification" />
+                      <i
+                        class="bi bi-bag-check-fill
+"
+                      ></i>
+                      {/* <CollectionsIcon /> */}
+                      {/* <img src={EarningIcon} alt="Notification" /> */}
                     </Avatar>
                   </Grid>
                   <Grid item>
@@ -104,7 +109,7 @@ const EarningCard = ({ isLoading }) => {
                       sx={{
                         ...theme.typography.commonAvatar,
                         ...theme.typography.mediumAvatar,
-                        bgcolor: 'secondary.dark',
+                        bgcolor: 'secondary.800',
                         color: 'secondary.200',
                         zIndex: 1
                       }}
@@ -183,7 +188,7 @@ const EarningCard = ({ isLoading }) => {
                   sx={{
                     fontSize: '1rem',
                     fontWeight: 500,
-                    color: 'secondary.200'
+                    color: 'primary.light'
                   }}
                 >
                   Total Collecions

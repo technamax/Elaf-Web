@@ -27,6 +27,7 @@ import GetAppTwoToneIcon from '@mui/icons-material/GetAppOutlined';
 import FileCopyTwoToneIcon from '@mui/icons-material/FileCopyOutlined';
 import PictureAsPdfTwoToneIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveOutlined';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 // assets
 import LocalMallOutlinedIcon from '@mui/icons-material/LocalMallOutlined';
@@ -84,7 +85,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
           border={false}
           content={false}
           sx={{
-            bgcolor: 'secondary.dark',
+            bgcolor: 'primary.dark',
             color: '#fff',
             overflow: 'hidden',
             position: 'relative',
@@ -121,11 +122,12 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                       sx={{
                         ...theme.typography.commonAvatar,
                         ...theme.typography.largeAvatar,
-                        bgcolor: 'secondary.800',
+                        bgcolor: 'primary.light',
                         mt: 1
                       }}
                     >
-                      <img src={EarningIcon} alt="Notification" />
+                      <i class="bi bi-backpack4-fill"></i>
+                      {/* <img src={EarningIcon} alt="Notification" /> */}
                     </Avatar>
                   </Grid>
                   <Grid item>
@@ -134,7 +136,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                       sx={{
                         ...theme.typography.commonAvatar,
                         ...theme.typography.mediumAvatar,
-                        bgcolor: 'secondary.dark',
+                        bgcolor: 'secondary.800',
                         color: 'secondary.200',
                         zIndex: 1
                       }}
@@ -213,7 +215,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                   sx={{
                     fontSize: '1rem',
                     fontWeight: 500,
-                    color: 'secondary.200'
+                    color: 'primary.light'
                   }}
                 >
                   Total Designs

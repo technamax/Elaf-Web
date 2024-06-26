@@ -37,16 +37,14 @@ const PopularCard = ({ isLoading }) => {
 
   useEffect(() => {
     if (dashboardData) {
-      setCostOfDying(dashboardData.result[0].costOfDying);
-    }
-    if (dashboardData) {
-      setCostOfPrinting(dashboardData.result[0].costOfPrinting);
-    }
-    if (dashboardData) {
-      setEmbroidery(dashboardData.result[0].costOfEmbroidery);
-    }
-    if (dashboardData) {
-      setCostOfSchiffili(dashboardData.result[0].costOfSchiffili);
+      setCostOfDying(dashboardData.result[0].costOfDying.toLocaleString());
+      setCostOfPrinting(
+        dashboardData.result[0].costOfPrinting.toLocaleString()
+      );
+      setEmbroidery(dashboardData.result[0].costOfEmbroidery.toLocaleString());
+      setCostOfSchiffili(
+        dashboardData.result[0].costOfSchiffili.toLocaleString()
+      );
     }
   }, [dashboardData]);
 
