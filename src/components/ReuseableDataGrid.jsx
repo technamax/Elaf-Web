@@ -161,15 +161,7 @@ const ReuseableDataGrid = ({
         rowLength={100}
         getCellClassName={getCellClassName}
         slots={{ toolbar: EditToolbar }}
-        sx={{
-          boxShadow: 2,
-          backgroundColor: 'white',
-          border: 2,
-          borderColor: 'primary.light',
-          '& .MuiDataGrid-cell:hover': {
-            color: 'primary.main'
-          }
-        }}
+        sx={{ '--DataGrid-rowBorderColor': 'rgb(255 255 255)' }}
       />
       <Dialog
         open={open}
