@@ -35,7 +35,7 @@ import '../../assets/scss/style.scss';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
-
+import 'App.css';
 const PrePlanning = () => {
   const { user } = useUser();
   console.log('user', user);
@@ -851,6 +851,10 @@ const PrePlanning = () => {
                       }
                     });
                   }}
+                  renderOption={(props, option) => {
+                    const { lookUpName } = option; // Assuming lookUpName is the title you want to display
+                    return <span {...props}>{lookUpName}</span>;
+                  }}
                   renderInput={(params) => (
                     <TextField
                       {...params}
@@ -861,7 +865,16 @@ const PrePlanning = () => {
                       required
                       error={!!formErrors.componentId}
                       helperText={formErrors.componentId}
+                      sx={{
+                        backgroundColor: 'white', // Setting white background for the Autocomplete input
+                        '& input': {
+                          backgroundColor: 'white' // Setting white background for the input field inside Autocomplete
+                        }
+                      }}
                     />
+                  )}
+                  PaperComponent={({ children }) => (
+                    <div style={{ backgroundColor: 'white' }}>{children}</div>
                   )}
                 />
               </Grid>
@@ -908,7 +921,16 @@ const PrePlanning = () => {
                       required
                       error={!!formErrors.colorId}
                       helperText={formErrors.colorId}
+                      sx={{
+                        backgroundColor: 'white', // Setting white background for the TextField
+                        '& input': {
+                          backgroundColor: 'white' // Setting white background for the input inside TextField
+                        }
+                      }}
                     />
+                  )}
+                  PaperComponent={({ children }) => (
+                    <div style={{ backgroundColor: 'white' }}>{children}</div>
                   )}
                 />
               </Grid>
@@ -970,7 +992,16 @@ const PrePlanning = () => {
                       required
                       error={!!formErrors.fabricId}
                       helperText={formErrors.fabricId}
+                      sx={{
+                        backgroundColor: 'white', // Setting white background for the TextField
+                        '& input': {
+                          backgroundColor: 'white' // Setting white background for the input inside TextField
+                        }
+                      }}
                     />
+                  )}
+                  PaperComponent={({ children }) => (
+                    <div style={{ backgroundColor: 'white' }}>{children}</div>
                   )}
                 />
               </Grid>
