@@ -185,159 +185,159 @@ export default function SubMenu() {
   ];
 
   return (
-    <MainCard
-      style={{
-        borderWidth: 1,
-        borderStyle: 'dotted',
-        borderColor: '#a11f23',
-        // backgroundColor: '#eef2f6',
-        width: 'auto',
-        maxHeight: { xs: '80vh', md: 'auto' },
-        overflow: 'auto'
-      }}
-    >
-      <Box sx={{ width: '100%', typography: 'body1' }}>
-        <Card variant="outlined">
-          <CardHeader
-            className="css-4rfrnx-MuiCardHeader-root"
-            // avatar={
-            // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
-            // }
-            title="Add Sub Menus "
-            titleTypographyProps={{ style: { color: 'white' } }}
-          ></CardHeader>
-          <Grid
-            container
-            spacing={1}
-            width="Inherit"
-            sx={{ paddingY: 2, paddingX: 2 }}
-          >
-            <Grid item xs={12} md={2}>
-              <TextField
-                fullWidth
-                select
-                label="Main Menu"
-                name="mainMenuId"
-                value={formData.mainMenuId}
-                onChange={handleChange}
-                size="small"
-                // error={!!formErrors.brandId}
-                // helperText={formErrors.brandId}
-              >
-                {mainMenus.map((option) => (
-                  <MenuItem key={option.mainMenuId} value={option.mainMenuId}>
-                    {option.mainMenuDesc}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <TextField
-                label="Sub Menu"
-                fullWidth
-                size="small"
-                name="subMenuDesc"
-                onChange={handleChange}
-                value={formData.subMenuDesc}
-                required
-                // disabled={isEdit}
-                // error={!!formErrors.collectionName}
-                // helperText={formErrors.collectionName}
-              />
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <TextField
-                fullWidth
-                select
-                label="Enabled"
-                name="enabled"
-                value={formData.enabled}
-                onChange={handleChange}
-                size="small"
-                // error={!!formErrors.brandId}
-                // helperText={formErrors.brandId}
-              >
-                {options.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <TextField
-                label="Order No."
-                fullWidth
-                size="small"
-                name="orderNo"
-                onChange={handleChange}
-                value={formData.orderNo}
-                required
-                // error={!!formErrors.collectionName}
-                // helperText={formErrors.collectionName}
-              />
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <TextField
-                label="Icon"
-                fullWidth
-                size="small"
-                name="icon"
-                onChange={handleChange}
-                value={formData.icon}
-                required
-                // error={!!formErrors.collectionName}
-                // helperText={formErrors.collectionName}
-              />
-            </Grid>
-            <Grid item xs={12} md={2}>
-              <TextField
-                label="Link"
-                fullWidth
-                size="small"
-                name="link"
-                onChange={handleChange}
-                value={formData.link}
-                required
-                // error={!!formErrors.collectionName}
-                // helperText={formErrors.collectionName}
-              />
-            </Grid>
+    // <MainCard
+    //   style={{
+    //     borderWidth: 1,
+    //     borderStyle: 'dotted',
+    //     borderColor: '#a11f23',
+    //     // backgroundColor: '#eef2f6',
+    //     width: 'auto',
+    //     maxHeight: { xs: '80vh', md: 'auto' },
+    //     overflow: 'auto'
+    //   }}
+    // >
+    <Box sx={{ width: '100%', typography: 'body1' }}>
+      <Card variant="outlined">
+        <CardHeader
+          className="css-4rfrnx-MuiCardHeader-root"
+          // avatar={
+          // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
+          // }
+          title="Add Sub Menus "
+          titleTypographyProps={{ style: { color: 'white' } }}
+        ></CardHeader>
+        <Grid
+          container
+          spacing={1}
+          width="Inherit"
+          sx={{ paddingY: 2, paddingX: 2 }}
+        >
+          <Grid item xs={12} md={2}>
+            <TextField
+              fullWidth
+              select
+              label="Main Menu"
+              name="mainMenuId"
+              value={formData.mainMenuId}
+              onChange={handleChange}
+              size="small"
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            >
+              {mainMenus.map((option) => (
+                <MenuItem key={option.mainMenuId} value={option.mainMenuId}>
+                  {option.mainMenuDesc}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <TextField
+              label="Sub Menu"
+              fullWidth
+              size="small"
+              name="subMenuDesc"
+              onChange={handleChange}
+              value={formData.subMenuDesc}
+              required
+              // disabled={isEdit}
+              // error={!!formErrors.collectionName}
+              // helperText={formErrors.collectionName}
+            />
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <TextField
+              fullWidth
+              select
+              label="Enabled"
+              name="enabled"
+              value={formData.enabled}
+              onChange={handleChange}
+              size="small"
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            >
+              {options.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <TextField
+              label="Order No."
+              fullWidth
+              size="small"
+              name="orderNo"
+              onChange={handleChange}
+              value={formData.orderNo}
+              required
+              // error={!!formErrors.collectionName}
+              // helperText={formErrors.collectionName}
+            />
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <TextField
+              label="Icon"
+              fullWidth
+              size="small"
+              name="icon"
+              onChange={handleChange}
+              value={formData.icon}
+              required
+              // error={!!formErrors.collectionName}
+              // helperText={formErrors.collectionName}
+            />
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <TextField
+              label="Link"
+              fullWidth
+              size="small"
+              name="link"
+              onChange={handleChange}
+              value={formData.link}
+              required
+              // error={!!formErrors.collectionName}
+              // helperText={formErrors.collectionName}
+            />
+          </Grid>
 
-            <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-              <Button variant="contained" size="small" onClick={handleSave}>
-                Save
-              </Button>
-            </Grid>
-          </Grid>{' '}
-        </Card>
-        <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
-        <Card variant="outlined">
-          <CardHeader
-            className="css-4rfrnx-MuiCardHeader-root"
-            avatar={<VisibilityOutlinedIcon />}
-            title="View Sub Menus "
-            titleTypographyProps={{ style: { color: 'white' } }}
-          ></CardHeader>
-          <Grid
-            container
-            spacing={2}
-            width="Inherit"
-            // sx={{ paddingY: 2, paddingX: 2 }}
-          >
-            <Grid item xs={12}>
-              <ReuseableDataGrid
-                initialRows={initialRows}
-                iColumns={columns}
-                disableDelete={true}
-                setInitialData={setInitialData}
-                setIsEdit={setIsEdit}
-              />
-            </Grid>
-          </Grid>{' '}
-        </Card>
-      </Box>
-    </MainCard>
+          <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
+            <Button variant="contained" size="small" onClick={handleSave}>
+              Save
+            </Button>
+          </Grid>
+        </Grid>{' '}
+      </Card>
+      <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
+      <Card variant="outlined">
+        <CardHeader
+          className="css-4rfrnx-MuiCardHeader-root"
+          avatar={<VisibilityOutlinedIcon />}
+          title="View Sub Menus "
+          titleTypographyProps={{ style: { color: 'white' } }}
+        ></CardHeader>
+        <Grid
+          container
+          spacing={2}
+          width="Inherit"
+          // sx={{ paddingY: 2, paddingX: 2 }}
+        >
+          <Grid item xs={12}>
+            <ReuseableDataGrid
+              initialRows={initialRows}
+              iColumns={columns}
+              disableDelete={true}
+              setInitialData={setInitialData}
+              setIsEdit={setIsEdit}
+            />
+          </Grid>
+        </Grid>{' '}
+      </Card>
+    </Box>
+    // </MainCard>
   );
 }
 
