@@ -29,69 +29,68 @@ import { IconSettings } from '@tabler/icons-react';
 
 // concat 'px'
 function valueText(value) {
-    return `${value}px`;
+  return `${value}px`;
 }
 
 // ==============================|| LIVE CUSTOMIZATION ||============================== //
 
 const Customization = () => {
-    const theme = useTheme();
-    const dispatch = useDispatch();
-    const customization = useSelector((state) => state.customization);
+  const theme = useTheme();
+  const dispatch = useDispatch();
+  const customization = useSelector((state) => state.customization);
 
-    // drawer on/off
-    const [open, setOpen] = useState(false);
-    const handleToggle = () => {
-        setOpen(!open);
-    };
+  // drawer on/off
+  const [open, setOpen] = useState(false);
+  const handleToggle = () => {
+    setOpen(!open);
+  };
 
-    // state - border radius
-    const [borderRadius, setBorderRadius] = useState(customization.borderRadius);
-    const handleBorderRadius = (event, newValue) => {
-        setBorderRadius(newValue);
-    };
+  // state - border radius
+  const [borderRadius, setBorderRadius] = useState(customization.borderRadius);
+  const handleBorderRadius = (event, newValue) => {
+    setBorderRadius(newValue);
+  };
 
-    useEffect(() => {
-        dispatch({ type: SET_BORDER_RADIUS, borderRadius });
-    }, [dispatch, borderRadius]);
+  useEffect(() => {
+    dispatch({ type: SET_BORDER_RADIUS, borderRadius });
+  }, [dispatch, borderRadius]);
 
-    let initialFont;
-    switch (customization.fontFamily) {
-        case `'Inter', sans-serif`:
-            initialFont = 'Inter';
-            break;
-        case `'Poppins', sans-serif`:
-            initialFont = 'Poppins';
-            break;
-        case `'Roboto', sans-serif`:
-        default:
-            initialFont = 'Roboto';
-            break;
+  let initialFont;
+  switch (customization.fontFamily) {
+    case `'Inter', sans-serif`:
+      initialFont = 'Inter';
+      break;
+    case `'Poppins', sans-serif`:
+      initialFont = 'Poppins';
+      break;
+    case `'Roboto', sans-serif`:
+    default:
+      initialFont = 'Roboto';
+      break;
+  }
+
+  // state - font family
+  const [fontFamily, setFontFamily] = useState(initialFont);
+  useEffect(() => {
+    let newFont;
+    switch (fontFamily) {
+      case 'Inter':
+        newFont = `'Inter', sans-serif`;
+        break;
+      case 'Poppins':
+        newFont = `'Poppins', sans-serif`;
+        break;
+      case 'Roboto':
+      default:
+        newFont = `'Roboto', sans-serif`;
+        break;
     }
+    dispatch({ type: SET_FONT_FAMILY, fontFamily: newFont });
+  }, [dispatch, fontFamily]);
 
-    // state - font family
-    const [fontFamily, setFontFamily] = useState(initialFont);
-    useEffect(() => {
-        let newFont;
-        switch (fontFamily) {
-            case 'Inter':
-                newFont = `'Inter', sans-serif`;
-                break;
-            case 'Poppins':
-                newFont = `'Poppins', sans-serif`;
-                break;
-            case 'Roboto':
-            default:
-                newFont = `'Roboto', sans-serif`;
-                break;
-        }
-        dispatch({ type: SET_FONT_FAMILY, fontFamily: newFont });
-    }, [dispatch, fontFamily]);
-
-    return (
-        <>
-            {/* toggle button */}
-            <Tooltip title="Live Customize">
+  return (
+    <>
+      {/* <Tooltip title="Live Customize">
                 <Fab
                     component="div"
                     onClick={handleToggle}
@@ -116,9 +115,9 @@ const Customization = () => {
                         </IconButton>
                     </AnimateButton>
                 </Fab>
-            </Tooltip>
+            </Tooltip> */}
 
-            <Drawer
+      {/* <Drawer
                 anchor="right"
                 onClose={handleToggle}
                 open={open}
@@ -131,7 +130,6 @@ const Customization = () => {
                 <PerfectScrollbar component="div">
                     <Grid container spacing={gridSpacing} sx={{ p: 3 }}>
                         <Grid item xs={12}>
-                            {/* font family */}
                             <SubCard title="Font Family">
                                 <FormControl>
                                     <RadioGroup
@@ -172,7 +170,6 @@ const Customization = () => {
                             </SubCard>
                         </Grid>
                         <Grid item xs={12}>
-                            {/* border radius */}
                             <SubCard title="Border Radius">
                                 <Grid item xs={12} container spacing={2} alignItems="center" sx={{ mt: 2.5 }}>
                                     <Grid item>
@@ -210,9 +207,9 @@ const Customization = () => {
                         </Grid>
                     </Grid>
                 </PerfectScrollbar>
-            </Drawer>
-        </>
-    );
+            </Drawer> */}
+    </>
+  );
 };
 
 export default Customization;

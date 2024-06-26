@@ -131,7 +131,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                     </Avatar>
                   </Grid>
                   <Grid item>
-                    <Avatar
+                    {/* <Avatar
                       variant="rounded"
                       sx={{
                         ...theme.typography.commonAvatar,
@@ -145,7 +145,7 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
                       onClick={handleClick}
                     >
                       <MoreHorizIcon fontSize="inherit" />
-                    </Avatar>
+                    </Avatar> */}
                     <Menu
                       id="menu-earning-card"
                       anchorEl={anchorEl}
