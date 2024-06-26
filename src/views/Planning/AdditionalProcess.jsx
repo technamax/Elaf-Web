@@ -244,60 +244,9 @@ const AdditionalProcess = () => {
   }, [lookupData]);
 
   console.log('initialRows', initialRows);
-  // console.log('components', components);
 
   const collectionList = collectionData?.result || [];
-  // console.log('collectionList', collectionList);
-  // const iniPcsPerComponent = formData.pcsPerComponent;
-  // useEffect(() => {
-  //   const calculatePcsPerComponent = () => {
-  //     const quantity = parseFloat(formData.quantity) || 0;
 
-  //     return iniPcsPerComponent - quantity;
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     pcsPerComponent: calculatePcsPerComponent()
-  //   }));
-  //   const calculateTotalamount = () => {
-  //     const quantity = parseFloat(formData.quantity) || 0;
-  //     const ratePerPcs = parseFloat(formData.ratePerPcs) || 0;
-
-  //     return (quantity * ratePerPcs).toFixed(2);
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     totalAmount: calculateTotalamount()
-  //   }));
-  //   const calculateCostPerComponent = () => {
-  //     const totalAmount = parseFloat(formData.totalAmount) || 0;
-  //     const poPcs = parseFloat(formData.poPcs) || 0;
-
-  //     return (totalAmount / poPcs).toFixed(2);
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     costPerComponent: calculateCostPerComponent()
-  //   }));
-  // }, [
-  //   formData.quantity,
-  //   formData.ratePerPcs,
-  //   formData.totalAmount,
-  //   formData.poPcs
-  //   // formData.poPcs,
-  //   // formData.pcsPerComponent
-  // ]);
-
-  // const handleCheckboxChange = (e) => {
-  //   const { name, checked } = e.target;
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     [name]: checked
-  //   }));
-  // };
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'collectionId') {

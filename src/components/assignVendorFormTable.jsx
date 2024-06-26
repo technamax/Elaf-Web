@@ -487,6 +487,7 @@ const AssignVendorFormTable = ({
             deleteApi={deleteApi}
             deleteBy="additionalProcessDetId"
             refetch={refetchAdditionalProcessDetails}
+            disableEdit={true}
             // setAccordionExpanded={setAccordionExpanded}
             // fileName="Schffili List"
           />
