@@ -26,7 +26,8 @@ const ReuseableDataGrid = ({
   getCellClassName,
   fileName,
   disableEdit,
-  disableDelete
+  disableDelete,
+  setIsEdit
 }) => {
   // console.log('type of initial rows', typeof initialRows.length);
   const [open, setOpen] = React.useState(false);
@@ -74,7 +75,12 @@ const ReuseableDataGrid = ({
         threadAdditional: threadAdditionalArray
       });
     } else {
-      setAccordionExpanded(true);
+      if (setAccordionExpanded) {
+        setAccordionExpanded(true);
+      }
+      if (setIsEdit) {
+        setIsEdit(true);
+      }
       setInitialData(row);
     }
   };
