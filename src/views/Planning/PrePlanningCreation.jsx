@@ -7,7 +7,8 @@ import {
   Grid,
   TextField,
   Box,
-  Tab
+  Tab,
+  Divider
 } from '@mui/material';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
@@ -19,8 +20,9 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import '../../App.css';
-import { useUser } from 'context/User';
+import MainCard from 'ui-component/cards/MainCard';
 
+import { useUser } from 'context/User';
 const PrePlanningCreation = () => {
   const { data: collectionData, refetch: refetchCollection } =
     useGetCollectionListQuery();
@@ -211,205 +213,215 @@ const PrePlanningCreation = () => {
   }, [formData.plannedCollectionId]);
 
   return (
-    <>
-      <div
-        style={{
-          marginBottom: 10,
-          borderRadius: 7,
-          width: 'auto',
-          maxHeight: { xs: '80vh', md: 'auto' },
-          overflow: 'auto',
-          padding: 5
-        }}
-      >
-        <Card variant="outlined">
-          <CardHeader
-            className="css-4rfrnx-MuiCardHeader-root"
-            title="Create Batch Planning"
-            titleTypographyProps={{ style: { color: 'white' } }}
-          ></CardHeader>
+    <MainCard
+      style={{
+        borderWidth: 1,
+        borderStyle: 'dotted',
+        borderColor: '#a11f23',
+        // backgroundColor: '#eef2f6',
+        width: 'auto',
+        maxHeight: { xs: '80vh', md: 'auto' },
+        overflow: 'auto'
+      }}
+    >
+      <Box sx={{ width: '100%', typography: 'body1' }}>
+        <TabContext value={value}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <TabList
+              onChange={handleChangeTabs}
+              aria-label="lab API tabs example"
+            >
+              <Tab
+                icon={<AddCircleIcon />}
+                label="Add Collection"
+                value="1"
+                sx={(theme) => ({
+                  '& .MuiTouchRipple-child': {
+                    backgroundColor: `${theme.palette.primary.main} !important`
+                  }
+                })}
+              />
+              <Tab
+                icon={<SearchIcon />}
+                label="Search Collection"
+                value="2"
+                sx={(theme) => ({
+                  '& .MuiTouchRipple-child': {
+                    backgroundColor: `${theme.palette.primary.main} !important`
+                  }
+                })}
+              />
+            </TabList>
+          </Box>
+          <TabPanel value="1">
+            <Card variant="outlined">
+              <CardHeader
+                className="css-4rfrnx-MuiCardHeader-root"
+                title="Create Batch Planning"
+                titleTypographyProps={{ style: { color: 'white' } }}
+              ></CardHeader>
 
-          <Box sx={{ width: '100%', typography: 'body1' }}>
-            <TabContext value={value}>
-              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                <TabList
-                  onChange={handleChangeTabs}
-                  aria-label="lab API tabs example"
-                >
-                  <Tab
-                    icon={<AddCircleIcon />}
-                    label="Add Collection"
-                    value="1"
-                    sx={(theme) => ({
-                      '& .MuiTouchRipple-child': {
-                        backgroundColor: `${theme.palette.primary.main} !important`
-                      }
-                    })}
-                  />
-                  <Tab
-                    icon={<SearchIcon />}
-                    label="Search Collection"
-                    value="2"
-                    sx={(theme) => ({
-                      '& .MuiTouchRipple-child': {
-                        backgroundColor: `${theme.palette.primary.main} !important`
-                      }
-                    })}
-                  />
-                </TabList>
-              </Box>
-              <TabPanel value="1">
-                <Grid
-                  container
-                  spacing={2}
-                  width="inherit"
-                  sx={{ paddingX: 2 }}
-                >
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      fullWidth
-                      select
-                      label="Select Collection"
-                      name="collectionId"
-                      value={formData.collectionId}
-                      onChange={handleChange}
-                      size="small"
-                    >
-                      {collectionList.map((option) => (
-                        <MenuItem
-                          key={option.collectionId}
-                          value={option.collectionId}
-                        >
-                          {option.collectionName}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      fullWidth
-                      select
-                      label="Select Design"
-                      name="designId"
-                      value={formData.designId}
-                      onChange={handleChange}
-                      size="small"
-                    >
-                      {designOptions.map((option) => (
-                        <MenuItem key={option.designId} value={option.designId}>
-                          {option.designNo}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Po PCs"
-                      fullWidth
-                      size="small"
-                      name="poPcs"
-                      value={formData.poPcs}
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    md={12}
-                    textAlign="right"
-                    sx={{ marginBottom: 2 }}
+              <Grid
+                container
+                spacing={2}
+                width="Inherit"
+                sx={{ paddingY: 2, paddingX: 2 }}
+              >
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Select Collection"
+                    name="collectionId"
+                    value={formData.collectionId}
+                    onChange={handleChange}
+                    size="small"
                   >
-                    <Button
-                      variant="contained"
-                      size="small"
-                      onClick={handleSave}
-                    >
-                      Save
-                    </Button>
-                  </Grid>
-                  <Grid item xs={12} paddingTop={1}>
-                    <EditAbleDataGrid
-                      initialRows={gridData}
-                      ncolumns={columns}
-                      formData={formData}
-                      fetchData={fetchData}
-                      refetch={refetchCollection}
-                    />
-                  </Grid>
+                    {collectionList.map((option) => (
+                      <MenuItem
+                        key={option.collectionId}
+                        value={option.collectionId}
+                      >
+                        {option.collectionName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
-              </TabPanel>
-              <TabPanel value="2">
-                {/* <Grid item xs={9} md={9}>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Select Design"
+                    name="designId"
+                    value={formData.designId}
+                    onChange={handleChange}
+                    size="small"
+                  >
+                    {designOptions.map((option) => (
+                      <MenuItem key={option.designId} value={option.designId}>
+                        {option.designNo}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    label="Po PCs"
+                    fullWidth
+                    size="small"
+                    name="poPcs"
+                    value={formData.poPcs}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  md={12}
+                  textAlign="right"
+                  sx={{ marginBottom: 2 }}
+                >
+                  <Button variant="contained" size="small" onClick={handleSave}>
+                    Save
+                  </Button>
+                </Grid>
+                <Divider
+                  color="#cc8587"
+                  sx={{ height: 2, width: '100%', mt: 2 }}
+                />
+                <Grid item xs={12} paddingTop={1}>
+                  <EditAbleDataGrid
+                    initialRows={gridData}
+                    ncolumns={columns}
+                    formData={formData}
+                    fetchData={fetchData}
+                    refetch={refetchCollection}
+                  />
+                </Grid>
+              </Grid>
+            </Card>
+          </TabPanel>
+          <TabPanel value="2">
+            {/* <Grid item xs={9} md={9}>
                     <Typography variant="h3" gutterBottom>
                       Search Collection
                     </Typography>
                   </Grid> */}
-                <Grid
-                  container
-                  spacing={2}
-                  width="inherit"
-                  sx={{ paddingX: 2 }}
-                >
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      fullWidth
-                      select
-                      label="Select Collection"
-                      name="plannedCollectionId"
-                      value={formData.plannedCollectionId}
-                      onChange={handleChange}
-                      size="small"
-                    >
-                      {plannedCollection.length > 0 ? (
-                        plannedCollection.map((option) => (
-                          <MenuItem
-                            id="ddlCollection"
-                            key={option.planningHeaderId}
-                            value={option.collectionId}
-                          >
-                            {option.collectionName}
-                          </MenuItem>
-                        ))
-                      ) : (
-                        <MenuItem disabled>No Collections Available</MenuItem>
-                      )}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      fullWidth
-                      select
-                      label="Design"
-                      name="plannedDesignedId"
-                      value={formData.plannedDesignedId}
-                      onChange={handleChange}
-                      size="small"
-                    >
-                      {plannedDesign.map((option) => (
+            <Card variant="outlined">
+              <CardHeader
+                className="css-4rfrnx-MuiCardHeader-root"
+                title="Searc Batch Planning"
+                titleTypographyProps={{ style: { color: 'white' } }}
+              ></CardHeader>
+              <Grid
+                container
+                spacing={2}
+                width="Inherit"
+                sx={{ paddingY: 2, paddingX: 2 }}
+              >
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Select Collection"
+                    name="plannedCollectionId"
+                    value={formData.plannedCollectionId}
+                    onChange={handleChange}
+                    size="small"
+                  >
+                    {plannedCollection.length > 0 ? (
+                      plannedCollection.map((option) => (
                         <MenuItem
+                          id="ddlCollection"
                           key={option.planningHeaderId}
-                          value={option.designId}
+                          value={option.collectionId}
                         >
-                          {option.designNo}
+                          {option.collectionName}
                         </MenuItem>
-                      ))}
-                    </TextField>
-                  </Grid>
-                  <Grid item xs={12} paddingTop={1}>
-                    <EditAbleDataGrid
-                      initialRows={gridData}
-                      ncolumns={columns}
-                      formData={formData}
-                      fetchData={fetchData}
-                    />
-                  </Grid>
+                      ))
+                    ) : (
+                      <MenuItem disabled>No Collections Available</MenuItem>
+                    )}
+                  </TextField>
                 </Grid>
-              </TabPanel>
-            </TabContext>
-          </Box>
-        </Card>
-      </div>
-    </>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Design"
+                    name="plannedDesignedId"
+                    value={formData.plannedDesignedId}
+                    onChange={handleChange}
+                    size="small"
+                  >
+                    {plannedDesign.map((option) => (
+                      <MenuItem
+                        key={option.planningHeaderId}
+                        value={option.designId}
+                      >
+                        {option.designNo}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Divider
+                  color="#cc8587"
+                  sx={{ height: 2, width: '100%', mt: 2 }}
+                />
+                <Grid item xs={12} paddingTop={1}>
+                  <EditAbleDataGrid
+                    initialRows={gridData}
+                    ncolumns={columns}
+                    formData={formData}
+                    fetchData={fetchData}
+                  />
+                </Grid>
+              </Grid>
+            </Card>
+          </TabPanel>
+        </TabContext>
+      </Box>
+    </MainCard>
   );
 };
 
