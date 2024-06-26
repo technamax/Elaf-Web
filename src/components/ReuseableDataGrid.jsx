@@ -163,6 +163,7 @@ const ReuseableDataGrid = ({
         slots={{ toolbar: EditToolbar }}
         sx={{
           boxShadow: 2,
+          backgroundColor: 'white',
           border: 2,
           borderColor: 'primary.light',
           '& .MuiDataGrid-cell:hover': {

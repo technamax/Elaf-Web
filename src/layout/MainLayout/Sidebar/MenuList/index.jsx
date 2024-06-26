@@ -6,6 +6,7 @@ import NavGroup from './NavGroup';
 import menuItem from 'menu-items';
 import fetchMenuItems from '../../../../api/menuService';
 import * as Icons from '@mui/icons-material'; // Import all icons from MUI
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 
 // ==============================|| SIDEBAR MENU LIST ||============================== //
 
@@ -13,12 +14,23 @@ const MenuList = ({ empId, token }) => {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
     const getMenuItems = async () => {
       try {
         const data = await fetchMenuItems(empId, token);
-        setMenuItems(data.mainMenuModel); // Adjust to use mainMenuModel
+        const fetchedMenuItems = data.mainMenuModel;
+
+        // Check if defaultUrl is null for any menu and navigate to welcome page if so
+        const shouldNavigateToWelcome = fetchedMenuItems.some(
+          (menu) => menu.defaultUrl === null
+        );
+        if (shouldNavigateToWelcome) {
+          navigate('/welcome'); // Navigate to welcome page
+        } else {
+          setMenuItems(data.mainMenuModel);
+        } // Adjust to use mainMenuModel
         setLoading(false);
         console.log('menuItem', menuItem);
         // console.log('Fetched data:', data.mainMenuModel);

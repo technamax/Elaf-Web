@@ -32,6 +32,7 @@ const PrePlanningCreation = Loadable(
   lazy(() => import('views/Planning/PrePlanningCreation'))
 );
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
+const WelcomePage = Loadable(lazy(() => import('views/welcome/WelcomePage')));
 
 const MainRoutes = {
   path: '/',
@@ -90,6 +91,10 @@ const MainRoutes = {
     {
       path: 'sample-page',
       element: <ProtectedRoute element={SamplePage} />
+    },
+    {
+      path: 'welcome',
+      element: <ProtectedRoute element={WelcomePage} /> // Add the welcome page route
     }
   ]
 };
