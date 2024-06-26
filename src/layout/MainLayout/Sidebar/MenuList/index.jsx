@@ -28,9 +28,9 @@ const MenuList = ({ empId, token }) => {
         );
         if (shouldNavigateToWelcome) {
           navigate('/welcome'); // Navigate to welcome page
-        } else {
-          setMenuItems(data.mainMenuModel);
-        } // Adjust to use mainMenuModel
+        }
+        setMenuItems(data.mainMenuModel);
+        // Adjust to use mainMenuModel
         setLoading(false);
         console.log('menuItem', menuItem);
         // console.log('Fetched data:', data.mainMenuModel);
