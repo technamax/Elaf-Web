@@ -6,8 +6,18 @@ export const userManagementApi = createApi({
   endpoints: (builder) => ({
     getRoleList: builder.query({
       query: () => `Role/GetRoleList?appId=1`
+    }),
+    getMainMenuList: builder.query({
+      query: () => `Menu/GetMainMenuList`
+    }),
+    getSubMenuList: builder.query({
+      query: () => `Menu/GetSubMenuList`
     })
   })
 });
 
-export const { useGetRoleListQuery } = userManagementApi;
+export const {
+  useGetRoleListQuery,
+  useGetMainMenuListQuery,
+  useGetSubMenuListQuery
+} = userManagementApi;

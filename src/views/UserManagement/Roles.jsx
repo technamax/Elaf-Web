@@ -276,14 +276,3 @@ export default function Application() {
     </MainCard>
   );
 }
-
-// {
-//   return (
-//     <>
-//       <AddRole />
-//       <Divider />
-//       <AddRoleTable
-//        fetchData={fetchData} />
-//     </>
-//   );
-// }
