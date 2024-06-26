@@ -496,8 +496,17 @@ const Fabrication = () => {
         {/* <FormControl> */}
         <Card variant="outlined">
           <CardHeader
+            // sx={{ paddingY: 4, marginTop: -1 }}
             className="css-4rfrnx-MuiCardHeader-root"
-            avatar={<Avatar src={fabric} sx={{ background: 'transparent' }} />}
+            avatar={
+              <Avatar
+                src={fabric}
+                sx={{
+                  background: 'transparent'
+                  // marginTop: -1
+                }}
+              />
+            }
             title="Fabric Requisition"
             titleTypographyProps={{ style: { color: 'white' } }}
           ></CardHeader>
@@ -505,7 +514,11 @@ const Fabrication = () => {
             container
             spacing={2}
             width="Inherit"
-            sx={{ paddingY: 2, paddingX: 2 }}
+            sx={{
+              paddingY: 2,
+              paddingX: 2
+              // backgroundColor: '#e0e0e0'
+            }}
           >
             {/* <Grid item xs={3} textAlign="right">
               <Button variant="contained" size="small" onClick={handleSave}>
