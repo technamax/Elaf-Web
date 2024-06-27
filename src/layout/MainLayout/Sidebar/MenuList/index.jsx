@@ -17,23 +17,46 @@ const MenuList = ({ empId, token }) => {
   const navigate = useNavigate(); // Initialize navigate
 
   useEffect(() => {
+    //   const getMenuItems = async () => {
+    //     try {
+    //       const data = await fetchMenuItems(empId, token);
+    //       const fetchedMenuItems = data.mainMenuModel;
+
+    //       // Check if defaultUrl is null for any menu and navigate to welcome page if so
+    //       const shouldNavigateToWelcome = fetchedMenuItems.some(
+    //         (menu) => menu.defaultUrl === null
+    //       );
+    //       if (shouldNavigateToWelcome) {
+    //         navigate('/welcome'); // Navigate to welcome page
+    //       }
+    //       setMenuItems(data.mainMenuModel);
+    //       // Adjust to use mainMenuModel
+    //       setLoading(false);
+    //       console.log('menuItem', menuItem);
+    //       // console.log('Fetched data:', data.mainMenuModel);
+    //     } catch (err) {
+    //       setError(err.message);
+    //       setLoading(false);
+    //     }
+    //   };
+
+    //   getMenuItems();
+    // }, [empId, token]);
     const getMenuItems = async () => {
       try {
         const data = await fetchMenuItems(empId, token);
-        const fetchedMenuItems = data.mainMenuModel;
+        setMenuItems(data.mainMenuModel);
+        setLoading(false);
 
-        // Check if defaultUrl is null for any menu and navigate to welcome page if so
-        const shouldNavigateToWelcome = fetchedMenuItems.some(
+        // Check if any defaultUrl is null
+        const shouldNavigateToWelcome = data.mainMenuModel.some(
           (menu) => menu.defaultUrl === null
         );
         if (shouldNavigateToWelcome) {
-          navigate('/welcome'); // Navigate to welcome page
+          navigate('/welcome');
+        } else {
+          navigate('/dashboard'); // Navigate to dashboard or another default page
         }
-        setMenuItems(data.mainMenuModel);
-        // Adjust to use mainMenuModel
-        setLoading(false);
-        console.log('menuItem', menuItem);
-        // console.log('Fetched data:', data.mainMenuModel);
       } catch (err) {
         setError(err.message);
         setLoading(false);
@@ -41,7 +64,7 @@ const MenuList = ({ empId, token }) => {
     };
 
     getMenuItems();
-  }, [empId, token]);
+  }, [empId, token, navigate]);
 
   if (loading) {
     return (

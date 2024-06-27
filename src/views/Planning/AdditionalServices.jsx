@@ -13,6 +13,7 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
+import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
 export default function AdditionalServices({}) {
   const { data: lookupData } = useGetLookUpListQuery();
@@ -143,232 +144,232 @@ export default function AdditionalServices({}) {
   }, [fetchDataInternal]);
 
   const columns = [
-    { field: 'additionalServiceId', headerName: 'Additional Service ID' },
-    { field: 'serviceTypeId', headerName: 'Service Type ID' },
-    { field: 'serviceListId', headerName: 'Service List ID' },
-    { field: 'vendorId', headerName: 'Vendor ID' },
-    { field: 'collectionId', headerName: 'Collection ID' },
-    { field: 'collectionName', headerName: 'Collection Name' },
+    // { field: 'additionalServiceId', headerName: 'Additional Service ID' },
+    // { field: 'serviceTypeId', headerName: 'Service Type ID' },
+    // { field: 'serviceListId', headerName: 'Service List ID' },
+    // { field: 'vendorId', headerName: 'Vendor ID' },
+    // { field: 'collectionId', headerName: 'Collection ID' },
+    { field: 'collectionName', headerName: 'Collection Name', flex: 1 },
+    { field: 'serviceType', headerName: 'Service Type', flex: 1 },
+    { field: 'serviceListName', headerName: 'Service List Name', flex: 1 },
+    { field: 'vendor', headerName: 'Vendor', flex: 1 },
+
     { field: 'poPcs', headerName: 'PO Pieces' },
     { field: 'qty', headerName: 'Quantity' },
-    { field: 'uomId', headerName: 'UOM ID' },
+    { field: 'uom', headerName: 'UOM' },
     { field: 'rate', headerName: 'Rate' },
     { field: 'totalAmount', headerName: 'Total Amount' },
-    { field: 'costperPiece', headerName: 'Cost per Piece' },
-    { field: 'createdBy', headerName: 'Created By' },
-    { field: 'createdOn', headerName: 'Created On' },
-    { field: 'lastUpdatedBy', headerName: 'Last Updated By' },
-    { field: 'lastUpdatedOn', headerName: 'Last Updated On' },
-    { field: 'uom', headerName: 'UOM' },
-    { field: 'vendor', headerName: 'Vendor' },
-    { field: 'serviceType', headerName: 'Service Type' },
-    { field: 'serviceListName', headerName: 'Service List Name' }
+    { field: 'costperPiece', headerName: 'Cost per Piece' }
+    // { field: 'createdBy', headerName: 'Created By' },
+    // { field: 'createdOn', headerName: 'Created On' }
+    // { field: 'lastUpdatedBy', headerName: 'Last Updated By' },
+    // { field: 'lastUpdatedOn', headerName: 'Last Updated On' },
   ];
 
   return (
     <>
-      <div className="CardHeader">
-        <Card variant="outlined">
-          <CardHeader
-            className="css-4rfrnx-MuiCardHeader-root"
-            // avatar={<AddOutlinedIcon />}
-            title="Additional Services"
-            titleTypographyProps={{ style: { color: 'white' } }}
-          ></CardHeader>
-          {/* <AddAdditionalServices
+      {/* <div className="CardHeader"> */}
+      <Card variant="outlined">
+        <CardHeader
+          className="css-4rfrnx-MuiCardHeader-root"
+          // avatar={<AddOutlinedIcon />}
+          title="Additional Services"
+          titleTypographyProps={{ style: { color: 'white' } }}
+        ></CardHeader>
+        {/* <AddAdditionalServices
             onCollectionChange={(id) => fetchDataInternal(id)}
           />{' '} */}
-          <Grid
-            container
-            spacing={2}
-            width="Inherit"
-            sx={{ paddingY: 2, paddingX: 2 }}
-          >
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                select
-                label="Select Collection"
-                name="collectionId"
-                value={formData.collectionId}
-                onChange={handleChange}
-                size="small"
-              >
-                {plannedCollection.length > 0 ? (
-                  plannedCollection.map((option) => (
-                    <MenuItem
-                      id="collectionId"
-                      key={option.collectionId}
-                      value={option.collectionId}
-                    >
-                      {option.collectionName}
-                    </MenuItem>
-                  ))
-                ) : (
-                  <MenuItem disabled>No Collections Available</MenuItem>
-                )}
-              </TextField>
-            </Grid>
-            <Grid item md={4} width="inherit" paddingX={1}>
-              <TextField
-                id="outlined-select-option"
-                select
-                label="Service Type"
-                name="serviceTypeId"
-                value={formData.serviceTypeId}
-                onChange={handleChange}
-                variant="outlined"
-                size="small"
-                fullWidth
-              >
-                {serviceType.map((option) => (
-                  <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                    {option.lookUpName}
+        <Grid
+          container
+          spacing={2}
+          width="Inherit"
+          sx={{ paddingY: 2, paddingX: 2 }}
+        >
+          <Grid item xs={12} md={4}>
+            <TextField
+              fullWidth
+              select
+              label="Select Collection"
+              name="collectionId"
+              value={formData.collectionId}
+              onChange={handleChange}
+              size="small"
+            >
+              {plannedCollection.length > 0 ? (
+                plannedCollection.map((option) => (
+                  <MenuItem
+                    id="collectionId"
+                    key={option.collectionId}
+                    value={option.collectionId}
+                  >
+                    {option.collectionName}
                   </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item md={4} width="inherit" paddingX={1}>
-              <TextField
-                id="outlined-select-option"
-                select
-                label="Service List Id"
-                name="serviceListId"
-                value={formData.serviceListId}
-                onChange={handleChange}
-                variant="outlined"
-                size="small"
-                fullWidth
-              >
-                {serviceList.map((option) => (
-                  <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                    {option.lookUpName}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                select
-                label="Vendor Name"
-                size="small"
-                name="vendorId"
-                value={formData.vendorId}
-                onChange={handleChange}
-              >
-                {vendors.map((option) => (
-                  <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                    {option.lookUpName}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item md={2} width="inherit" paddingX={1}>
-              <TextField
-                id="outlined-required"
-                label="PO PC's"
-                name="poPcs"
-                value={formData.poPcs}
-                onChange={handleChange}
-                type="number"
-                size="small"
-                fullWidth
-                disabled
-              />
-            </Grid>
-            <Grid item md={2} width="inherit" paddingX={1}>
-              <TextField
-                id="outlined-required"
-                label="Qty"
-                name="qty"
-                value={formData.qty}
-                onChange={handleChange}
-                type="number"
-                size="small"
-                required
-                fullWidth
-              />
-            </Grid>
-            <Grid item md={2} width="inherit" paddingX={1}>
-              <TextField
-                fullWidth
-                select
-                label="UOM"
-                defaultValue=""
-                size="small"
-                name="uomId"
-                value={formData.uomId}
-                onChange={handleChange}
-              >
-                {uoms.map((option) => (
-                  <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                    {option.lookUpName}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item md={2} width="inherit" paddingX={1}>
-              <TextField
-                id="outlined-required"
-                label="Rate"
-                name="rate"
-                value={formData.rate}
-                onChange={handleChange}
-                type="number"
-                size="small"
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item md={2} width="inherit" paddingX={1}>
-              <TextField
-                id="outlined-required"
-                label="Total Amount"
-                name="totalAmount"
-                value={formData.totalAmount}
-                onChange={handleChange}
-                type="number"
-                size="small"
-                fullWidth
-                required
-              />
-            </Grid>
-            <Grid item md={2} width="inherit" paddingX={1}>
-              <TextField
-                id="outlined-required"
-                label="Cost per Piece"
-                name="costperPiece"
-                value={formData.costperPiece}
-                onChange={handleChange}
-                type="number"
-                size="small"
-                required
-                fullWidth
-              />
-            </Grid>
-            <Grid item md={12} width="inherit" paddingX={1} textAlign="right">
-              <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                onClick={handleSave}
-              >
-                Save
-              </Button>
-            </Grid>
+                ))
+              ) : (
+                <MenuItem disabled>No Collections Available</MenuItem>
+              )}
+            </TextField>
           </Grid>
-        </Card>
-        <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
-        <Card variant="outlined">
-          <CardHeader
-            className="css-4rfrnx-MuiCardHeader-root"
-            // avatar={<AddOutlinedIcon />}
-            title="View Additional Services"
-            titleTypographyProps={{ style: { color: 'white' } }}
-          ></CardHeader>
+          <Grid item md={4} width="inherit" paddingX={1}>
+            <TextField
+              id="outlined-select-option"
+              select
+              label="Service Type"
+              name="serviceTypeId"
+              value={formData.serviceTypeId}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+              fullWidth
+            >
+              {serviceType.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item md={4} width="inherit" paddingX={1}>
+            <TextField
+              id="outlined-select-option"
+              select
+              label="Service List Id"
+              name="serviceListId"
+              value={formData.serviceListId}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+              fullWidth
+            >
+              {serviceList.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <TextField
+              fullWidth
+              select
+              label="Vendor Name"
+              size="small"
+              name="vendorId"
+              value={formData.vendorId}
+              onChange={handleChange}
+            >
+              {vendors.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item md={2} width="inherit" paddingX={1}>
+            <TextField
+              id="outlined-required"
+              label="PO PC's"
+              name="poPcs"
+              value={formData.poPcs}
+              onChange={handleChange}
+              type="number"
+              size="small"
+              fullWidth
+              disabled
+            />
+          </Grid>
+          <Grid item md={2} width="inherit" paddingX={1}>
+            <TextField
+              id="outlined-required"
+              label="Qty"
+              name="qty"
+              value={formData.qty}
+              onChange={handleChange}
+              type="number"
+              size="small"
+              required
+              fullWidth
+            />
+          </Grid>
+          <Grid item md={2} width="inherit" paddingX={1}>
+            <TextField
+              fullWidth
+              select
+              label="UOM"
+              defaultValue=""
+              size="small"
+              name="uomId"
+              value={formData.uomId}
+              onChange={handleChange}
+            >
+              {uoms.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item md={2} width="inherit" paddingX={1}>
+            <TextField
+              id="outlined-required"
+              label="Rate"
+              name="rate"
+              value={formData.rate}
+              onChange={handleChange}
+              type="number"
+              size="small"
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item md={2} width="inherit" paddingX={1}>
+            <TextField
+              id="outlined-required"
+              label="Total Amount"
+              name="totalAmount"
+              value={formData.totalAmount}
+              onChange={handleChange}
+              type="number"
+              size="small"
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item md={2} width="inherit" paddingX={1}>
+            <TextField
+              id="outlined-required"
+              label="Cost per Piece"
+              name="costperPiece"
+              value={formData.costperPiece}
+              onChange={handleChange}
+              type="number"
+              size="small"
+              required
+              fullWidth
+            />
+          </Grid>
+          <Grid item md={12} width="inherit" paddingX={1} textAlign="right">
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={handleSave}
+            >
+              Save
+            </Button>
+          </Grid>
+        </Grid>
+      </Card>
+      <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
+      <Card variant="outlined">
+        <CardHeader
+          className="css-4rfrnx-MuiCardHeader-root"
+          // avatar={<AddOutlinedIcon />}
+          title="View Additional Services"
+          titleTypographyProps={{ style: { color: 'white' } }}
+        ></CardHeader>
 
-          <DataGrid
+        {/* <DataGrid
             rows={initialRows}
             columns={columns}
             autoHeight
@@ -388,9 +389,16 @@ export default function AdditionalServices({}) {
             components={{
               Toolbar: GridToolbar
             }}
-          />
-        </Card>
-      </div>
+          /> */}
+        <ReuseableDataGrid
+          iColumns={columns}
+          initialRows={initialRows}
+          // setInitialData={setInitialData}
+          // deleteApi={deleteApi}
+          // deleteBy="additionalProcessId"
+        />
+      </Card>
+      {/* </div> */}
     </>
   );
 }
