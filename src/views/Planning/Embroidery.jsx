@@ -566,10 +566,12 @@ const Embroidery = () => {
 
         costPerComponent: '' //
       });
+
       setAccordionExpanded(true);
       setLoading(false);
     } else {
       setFormData({ ...formData, [name]: value });
+      setFormErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
     }
   };
   const [formErrors, setFormErrors] = useState({});
