@@ -1,13 +1,17 @@
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-export default function AdditionalServiceTable({ fetchData, serviceTypeId }) {
+
+export default function AdditionalServiceTable({
+  fetchData,
+  additionalServiceId
+}) {
   const [rows, setRows] = useState([]);
 
   const fetchDataInternal = useCallback(async () => {
     try {
       const response = await axios.get(
-        `https://gecxc.com:4041/api/AdditionalServices/GetAdditionalServicesListByServiceTypeId?serviceTypeId=${serviceTypeId}`
+        `https://gecxc.com:4041/api/AdditionalServices/GetAdditionalServicesListByAdditionalServiceId?additionalServiceId=1`
       );
       const dataWithId = response.data.result.map((row, index) => ({
         id: index,
@@ -18,23 +22,30 @@ export default function AdditionalServiceTable({ fetchData, serviceTypeId }) {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  }, []);
+  }, [additionalServiceId]);
+
   useEffect(() => {
     fetchDataInternal();
   }, [fetchDataInternal]);
 
   const columns = [
-    { field: 'serviceTypeId', headerName: 'Service Type' },
-    { field: 'collectionName', headerName: 'collectionName' },
-    { field: 'vendorId', headerName: 'Vendor' },
-    { field: 'qty', headerName: 'Qty' },
-    { field: 'uom', headerName: 'UOM' },
+    { field: 'additionalServiceId', headerName: 'Additional Service ID' },
+    { field: 'serviceTypeId', headerName: 'Service Type ID' },
+    { field: 'serviceListId', headerName: 'Service List ID' },
+    { field: 'vendorId', headerName: 'Vendor ID' },
+    { field: 'collectionId', headerName: 'Collection ID' },
+    { field: 'collectionName', headerName: 'Collection Name' },
+    { field: 'poPcs', headerName: 'PO Pieces' },
+    { field: 'qty', headerName: 'Quantity' },
+    { field: 'uomId', headerName: 'UOM ID' },
     { field: 'rate', headerName: 'Rate' },
     { field: 'totalAmount', headerName: 'Total Amount' },
-    { field: 'uomId', headerName: 'UOM Id' },
-    { field: 'quantity', headerName: 'quantity' },
-    { field: 'ratePerPcs', headerName: 'rate Per Pcs' },
-    { field: 'costperPiece', headerName: 'cost per Piece' },
+    { field: 'costperPiece', headerName: 'Cost per Piece' },
+    { field: 'createdBy', headerName: 'Created By' },
+    { field: 'createdOn', headerName: 'Created On' },
+    { field: 'lastUpdatedBy', headerName: 'Last Updated By' },
+    { field: 'lastUpdatedOn', headerName: 'Last Updated On' },
+    { field: 'uom', headerName: 'UOM' },
     { field: 'vendor', headerName: 'Vendor' },
     { field: 'serviceType', headerName: 'Service Type' },
     { field: 'serviceListName', headerName: 'Service List Name' }

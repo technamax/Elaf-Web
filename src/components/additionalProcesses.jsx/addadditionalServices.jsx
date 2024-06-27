@@ -9,7 +9,9 @@ import '../../assets/scss/style.scss';
 
 export default function AddAdditionalServices({
   onSaveSuccess,
-  serviceTypeId
+  additionalServiceId,
+  collectionId,
+  onCollectionChange // Ensure this is declared as a prop
 }) {
   const { data: lookupData } = useGetLookUpListQuery();
   const [serviceType, setServiceType] = useState([]);
@@ -28,8 +30,9 @@ export default function AddAdditionalServices({
   }, [lookupData]);
 
   const [formData, setFormData] = useState({
+    additionalServiceId: additionalServiceId || 0,
     collectionId: '',
-    serviceTypeId: '', // Ensure this is a number or string
+    serviceTypeId: '',
     serviceListId: '',
     vendorId: '',
     poPcs: '',
@@ -75,10 +78,7 @@ export default function AddAdditionalServices({
       }
     }
   };
-
   const handleSave = async () => {
-    const formDataToSend = { ...formData, serviceTypeId }; // Use passed serviceTypeId
-    console.log(formDataToSend);
     try {
       const response = await axios.post(
         'https://gecxc.com:4041/api/AdditionalServices/SaveAdditionalServices',
@@ -86,8 +86,10 @@ export default function AddAdditionalServices({
       );
       console.log('Form data saved:', response.data);
       setFormData({
+        additionalServiceId: 0,
+
         collectionId: '',
-        serviceTypeId: serviceTypeId || '', // Reset to the passed serviceTypeId
+        serviceTypeId: '', // Reset to the passed serviceTypeId
         serviceListId: '',
         vendorId: '',
         poPcs: '',
