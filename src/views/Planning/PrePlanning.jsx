@@ -42,6 +42,7 @@ const PrePlanning = () => {
   const [initialData, setInitialData] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   const [formData, setFormData] = useState({
+    processType: '',
     planningId: 0,
     collectionId: '',
     baseColorId: '', // not in api
@@ -75,6 +76,7 @@ const PrePlanning = () => {
 
   useEffect(() => {
     setFormData({
+      processType: initialData?.processType || '',
       planningId: initialData?.planningId || 0,
       collectionId: initialData?.collectionId || '',
       baseColorId: initialData?.baseColorId || '', // not in api
@@ -143,6 +145,8 @@ const PrePlanning = () => {
   const collectionList = collectionData?.result || [];
   // const designList = designData?.result || [];
   const [loading, setLoading] = useState(false); // State for loading
+
+  const [processType, setProcessType] = useState([]);
 
   const [components, setComponents] = useState([]);
   const [Fabrications, setFabrications] = useState([]);
@@ -292,6 +296,7 @@ const PrePlanning = () => {
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
+        processType: '',
         componentId: '',
         cuttingSize: '', // not in api
         colorId: '',
@@ -314,6 +319,8 @@ const PrePlanning = () => {
       );
       setFormData({
         ...formData,
+        processType: '',
+
         componentId: '',
         cuttingSize: '', // not in api
         colorId: '',
@@ -335,6 +342,8 @@ const PrePlanning = () => {
       setFormData({
         ...formData,
         componentId: '',
+        processType: '',
+
         cuttingSize: '', // not in api
         colorId: '',
         fabricId: '',
@@ -398,6 +407,7 @@ const PrePlanning = () => {
       //   autoHideDuration: 5000
       // });
       setFormData((prevFormData) => ({
+        processType: '',
         planningId: 0,
         collectionId: prevFormData.collectionId,
         designId: prevFormData.designId,
@@ -818,6 +828,24 @@ const PrePlanning = () => {
               {/* <FormControl> */}
               {/* <Grid container spacing={2} width="Inherit"> */}
               <Grid item xs={12} md={2}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Process Type"
+                  name="processType"
+                  value={formData.processType}
+                  onChange={handleChange}
+                  size="small"
+                  required
+                >
+                  {processType.map((option) => (
+                    <MenuItem key={option.batchNo} value={option.batchNo}>
+                      {option.batchNo}
+                    </MenuItem>
+                  ))}
+                </TextField>{' '}
+              </Grid>
+              <Grid item xs={12} md={2}>
                 {/* <TextField
                 fullWidth
                 select
@@ -1126,7 +1154,7 @@ const PrePlanning = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={2} textAlign="right">
+              {/* <Grid item xs={12} md={2} textAlign="right">
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -1137,24 +1165,24 @@ const PrePlanning = () => {
                   }
                   label="Is Schiffli"
                 />
-              </Grid>
-              {formData.isSchiffili ? (
-                <Grid item xs={12} md={6}>
-                  <Grid container spacing={1} width="Inherit">
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        label="repeat in mtr"
-                        fullWidth
-                        size="small"
-                        name="repeatsInMtr"
-                        disabled
-                        value={formData.repeatsInMtr}
-                        onChange={handleChange}
-                      />
-                    </Grid>
+              </Grid> */}
+              {/* {formData.isSchiffili ? ( */}
+              <Grid item xs={12} md={6}>
+                <Grid container spacing={1} width="Inherit">
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="repeat in mtr"
+                      fullWidth
+                      size="small"
+                      name="repeatsInMtr"
+                      disabled
+                      value={formData.repeatsInMtr}
+                      onChange={handleChange}
+                    />
                   </Grid>
                 </Grid>
-              ) : null}
+              </Grid>
+              {/* ) : null} */}
               <Grid item xs={12} textAlign="right">
                 <Button variant="contained" size="small" onClick={handleSave}>
                   Save

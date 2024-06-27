@@ -12,6 +12,12 @@ export const userManagementApi = createApi({
     }),
     getSubMenuList: builder.query({
       query: () => `Menu/GetSubMenuList`
+    }),
+    getUsersList: builder.query({
+      query: () => `Users/GetUsersList`
+    }),
+    getAssignedRolesByEmpId: builder.query({
+      query: (empId) => `Users/GetAssignedRolesByEmpId?appId=1&empId=${empId}`
     })
   })
 });
@@ -19,5 +25,7 @@ export const userManagementApi = createApi({
 export const {
   useGetRoleListQuery,
   useGetMainMenuListQuery,
-  useGetSubMenuListQuery
+  useGetSubMenuListQuery,
+  useGetUsersListQuery,
+  useGetAssignedRolesByEmpIdQuery
 } = userManagementApi;
