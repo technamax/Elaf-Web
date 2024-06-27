@@ -24,7 +24,7 @@ import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
 
 // styles
 const CardWrapper = styled(MainCard)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.dark,
+  backgroundColor: theme.palette.primary.main,
   color: theme.palette.primary.light,
   overflow: 'hidden',
   position: 'relative',
@@ -33,7 +33,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: `linear-gradient(210.04deg, ${theme.palette.primary[200]} -50.94%, rgba(144, 202, 249, 0) 83.49%)`,
+    background: `linear-gradient(210.04deg, ${theme.palette.grey[400]} -50.94%, rgba(144, 202, 249, 0) 83.49%)`,
     borderRadius: '50%',
     top: -30,
     right: -180
@@ -43,7 +43,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: `linear-gradient(140.9deg, ${theme.palette.primary[200]} -14.02%, rgba(144, 202, 249, 0) 77.58%)`,
+    background: `linear-gradient(140.9deg, ${theme.palette.grey[400]} -14.02%, rgba(144, 202, 249, 0) 77.58%)`,
     borderRadius: '50%',
     top: -160,
     right: -130
@@ -81,8 +81,8 @@ const TotalIncomeDarkCard = ({ isLoading }) => {
                     sx={{
                       ...theme.typography.commonAvatar,
                       ...theme.typography.largeAvatar,
-                      bgcolor: 'primary.800',
-                      color: '#fff'
+                      bgcolor: theme.palette.grey[400],
+                      color: 'secondary.dark'
                     }}
                   >
                     <TableChartOutlinedIcon fontSize="inherit" />

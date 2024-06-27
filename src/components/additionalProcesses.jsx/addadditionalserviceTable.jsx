@@ -1,15 +1,14 @@
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-export default function AdditionalServiceTable() {
+export default function AdditionalServiceTable({ fetchData, serviceTypeId }) {
   const [rows, setRows] = useState([]);
 
-  const fetchData = useCallback(async () => {
+  const fetchDataInternal = useCallback(async () => {
     try {
       const response = await axios.get(
-        `https://gecxc.com:4041/api/AdditionalServices/GetdditionalServicesListByServiceTypeId?serviceTypeId=1`
+        `https://gecxc.com:4041/api/AdditionalServices/GetAdditionalServicesListByServiceTypeId?serviceTypeId=${serviceTypeId}`
       );
-
       const dataWithId = response.data.result.map((row, index) => ({
         id: index,
         ...row
@@ -20,14 +19,13 @@ export default function AdditionalServiceTable() {
       console.error('Error fetching data:', error);
     }
   }, []);
-
   useEffect(() => {
-    fetchData(); // Fetch data when the component mounts
-  }, [fetchData]);
+    fetchDataInternal();
+  }, [fetchDataInternal]);
 
   const columns = [
     { field: 'serviceTypeId', headerName: 'Service Type' },
-    { field: 'serviceList', headerName: 'Service List' },
+    { field: 'collectionName', headerName: 'collectionName' },
     { field: 'vendorId', headerName: 'Vendor' },
     { field: 'qty', headerName: 'Qty' },
     { field: 'uom', headerName: 'UOM' },

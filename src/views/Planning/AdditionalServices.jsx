@@ -5,8 +5,11 @@ import AdditionalServiceTable from 'components/additionalProcesses.jsx/addadditi
 import MainCard from 'ui-component/cards/MainCard';
 import { Card, CardHeader, Avatar } from '@mui/material';
 import '../../assets/scss/style.scss';
+import { useUser } from 'context/User';
 
-export default function AdditionalServices(fetchData) {
+export default function AdditionalServices(fetchData, serviceTypeId) {
+  const { user } = useUser();
+
   return (
     <>
       <div className="CardHeader">
@@ -27,7 +30,10 @@ export default function AdditionalServices(fetchData) {
             title="View Additional Services"
             titleTypographyProps={{ style: { color: 'white' } }}
           ></CardHeader>
-          <AdditionalServiceTable fetchData={fetchData} />
+          <AdditionalServiceTable
+            fetchData={fetchData}
+            serviceTypeId={serviceTypeId}
+          />
         </Card>
       </div>
     </>

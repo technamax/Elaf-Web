@@ -18,6 +18,8 @@ import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
 
 // styles
 const CardWrapper = styled(MainCard)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.primary.light,
   overflow: 'hidden',
   position: 'relative',
   '&:after': {
@@ -25,7 +27,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: `linear-gradient(210.04deg, ${theme.palette.warning.dark} -50.94%, rgba(144, 202, 249, 0) 83.49%)`,
+    background: `linear-gradient(210.04deg, ${theme.palette.grey[400]} -50.94%, rgba(144, 202, 249, 0) 83.49%)`,
     borderRadius: '50%',
     top: -30,
     right: -180
@@ -35,7 +37,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: `linear-gradient(140.9deg, ${theme.palette.warning.dark} -14.02%, rgba(144, 202, 249, 0) 70.50%)`,
+    background: `linear-gradient(140.9deg, ${theme.palette.grey[400]} -14.02%, rgba(144, 202, 249, 0) 70.50%)`,
     borderRadius: '50%',
     top: -160,
     right: -130
@@ -71,11 +73,8 @@ const TotalIncomeLightCard = ({ isLoading, total, icon, label }) => {
                     sx={{
                       ...theme.typography.commonAvatar,
                       ...theme.typography.largeAvatar,
-                      bgcolor: 'warning.light',
-                      color:
-                        label === 'Meeting attends'
-                          ? 'error.dark'
-                          : 'warning.dark'
+                      bgcolor: theme.palette.grey[400],
+                      color: 'secondary.dark'
                     }}
                   >
                     {icon}
@@ -84,14 +83,14 @@ const TotalIncomeLightCard = ({ isLoading, total, icon, label }) => {
                 <ListItemText
                   sx={{ py: 0, mt: 0.45, mb: 0.45 }}
                   primary={
-                    <Typography variant="h4">
+                    <Typography variant="h4" sx={{ color: '#fff' }}>
                       Rs{formattedcostOfFabric}
                     </Typography>
                   }
                   secondary={
                     <Typography
                       variant="subtitle2"
-                      sx={{ color: 'grey.500', mt: 0.5 }}
+                      sx={{ color: '#fff', mt: 0.5 }}
                     >
                       Total Cost of Fabric
                     </Typography>

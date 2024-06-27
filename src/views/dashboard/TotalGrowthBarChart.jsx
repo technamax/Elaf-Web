@@ -43,7 +43,7 @@ const TotalGrowthBarChart = ({ isLoading }) => {
 
   const theme = useTheme();
 
-  const { primary } = theme.palette.text;
+  const { primary } = theme.palette.primary.main;
   const divider = theme.palette.divider;
   const grey500 = theme.palette.grey[500];
 
@@ -131,6 +131,8 @@ const TotalGrowthBarChart = ({ isLoading }) => {
           data: fabricQuantities
         }
       ],
+      colors: ['#a31f23', '#e0e0e0'], // Set the bar colors here
+
       xaxis: {
         categories: fabricNames,
         labels: {

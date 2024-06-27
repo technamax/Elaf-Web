@@ -7,7 +7,10 @@ import MenuItem from '@mui/material/MenuItem';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import '../../assets/scss/style.scss';
 
-export default function AddAdditionalServices({ onSaveSuccess }) {
+export default function AddAdditionalServices({
+  onSaveSuccess,
+  serviceTypeId
+}) {
   const { data: lookupData } = useGetLookUpListQuery();
   const [serviceType, setServiceType] = useState([]);
   const [serviceList, setServiceList] = useState([]);
@@ -26,7 +29,7 @@ export default function AddAdditionalServices({ onSaveSuccess }) {
 
   const [formData, setFormData] = useState({
     collectionId: '',
-    serviceTypeId: 0,
+    serviceTypeId: '', // Ensure this is a number or string
     serviceListId: '',
     vendorId: '',
     poPcs: '',
@@ -74,17 +77,17 @@ export default function AddAdditionalServices({ onSaveSuccess }) {
   };
 
   const handleSave = async () => {
-    const formDataToSend = { ...formData, serviceTypeId: 0 }; // Override serviceTypeId to be 0
+    const formDataToSend = { ...formData, serviceTypeId }; // Use passed serviceTypeId
     console.log(formDataToSend);
     try {
       const response = await axios.post(
         'https://gecxc.com:4041/api/AdditionalServices/SaveAdditionalServices',
-        formDataToSend
+        formData
       );
       console.log('Form data saved:', response.data);
       setFormData({
         collectionId: '',
-        serviceTypeId: 0,
+        serviceTypeId: serviceTypeId || '', // Reset to the passed serviceTypeId
         serviceListId: '',
         vendorId: '',
         poPcs: '',
