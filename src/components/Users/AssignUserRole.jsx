@@ -1,34 +1,46 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Grid, TextField, Button, MenuItem, Divider, Box } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import {
+  Grid,
+  TextField,
+  Button,
+  Box,
+  Divider,
+  MenuItem,
+  Card,
+  CardHeader
+} from '@mui/material';
+import ReuseableDataGrid from '../ReuseableDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
-
-import { Card, CardHeader, Avatar } from '@mui/material';
-import '../../assets/scss/style.scss';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 import {
-  useGetSubMenuListQuery,
-  useGetMainMenuListQuery
+  useGetRoleListQuery,
+  useGetAssignedRolesByEmpIdQuery
 } from 'api/store/Apis/userManagementApi';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import ReuseableDataGrid from 'components/ReuseableDataGrid';
-
-//////
-import * as React from 'react';
+// import { useGetAdditionalProcessDetailsByAdditionalProcessIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useUser } from 'context/User';
+import axios from 'axios';
 
-export default function SubMenu() {
+const AssignVendorFormTable = ({
+  userData,
+  setAdditionalProcessData,
+  refetchUsers,
+  handleClickOpen
+}) => {
+  console.log('userData', userData);
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({
-    subMenuId: 0,
-    subMenuDesc: '',
-    orderNo: '',
+    userRoleId: 0,
+    userName: userData.userName,
+    roleId: '',
+    // roleName: '',
+    startDate: '',
+    endDate: '',
+    empId: userData.empId,
+    isMainRole: '',
     enabled: '',
-    link: '',
-    icon: '',
-    mainMenuId: '',
 
     createdOn: new Date().toISOString(),
     createdBy: user.empId,
@@ -48,14 +60,15 @@ export default function SubMenu() {
   // console.log('initialData', initialData);
   useEffect(() => {
     setFormData({
-      subMenuId: initialData?.subMenuId || 0,
-      subMenuDesc: initialData?.subMenuDesc || '',
-      orderNo: initialData?.orderNo || '',
+      userRoleId: initialData?.userRoleId || 0,
+      userName: userData.userName,
+      roleId: initialData?.roleId || '',
+      // roleName: initialData?.roleName || '',
+      startDate: initialData?.startDate || '',
+      endDate: initialData?.endDate || '',
+      empId: userData.empId || '',
+      isMainRole: initialData?.isMainRole || '',
       enabled: initialData?.enabled || '',
-      link: initialData?.link || '',
-      icon: initialData?.icon || '',
-      mainMenuId: initialData?.mainMenuId || '',
-
       createdOn: initialData?.createdOn || new Date().toISOString(),
       createdBy: initialData?.createdBy || user.empId,
       lastUpdatedOn: new Date().toISOString(),
@@ -68,30 +81,33 @@ export default function SubMenu() {
     setAccordionExpanded(!accordionExpanded);
   };
 
-  const { data: subMenuData, refetch } = useGetSubMenuListQuery();
-  const { data: mainMenuData } = useGetMainMenuListQuery();
-  const [mainMenus, setMainMenus] = useState([]);
+  const { data: rolesData, refetch } = useGetRoleListQuery();
+  const { data: assignedRoles, refetch: refetchAssignedRoles } =
+    useGetAssignedRolesByEmpIdQuery(formData.empId, {
+      skip: !formData.empId // Skip the query if no collection is selected
+    });
+  const [roles, setRoles] = useState([]);
 
   useEffect(() => {
-    if (subMenuData) {
-      setInitialRows(
-        subMenuData.result.map((row, index) => ({
+    if (rolesData) {
+      setRoles(
+        rolesData.result.map((row, index) => ({
           id: index,
           ...row
         }))
       );
     }
-  }, [subMenuData, refetch]);
+  }, [rolesData, refetch]);
   useEffect(() => {
-    if (mainMenuData) {
-      setMainMenus(
-        mainMenuData.result.map((row, index) => ({
+    if (assignedRoles) {
+      setInitialRows(
+        assignedRoles.result.map((row, index) => ({
           id: index,
           ...row
         }))
       );
     }
-  }, [mainMenuData, refetch]);
+  }, [assignedRoles, refetch]);
 
   console.log('initialRows', initialRows);
 
@@ -106,26 +122,29 @@ export default function SubMenu() {
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:4041/api/Menu/SaveSubMenu',
+        'https://gecxc.com:4041/api/Users/AssignUserRole',
         formData
       );
 
       console.log('Save response:', response.data);
 
       setFormData((prevFormData) => ({
-        subMenuId: 0,
-        subMenuDesc: '',
-        orderNo: '',
+        userRoleId: 0,
+        userName: userData.userName,
+        roleId: '',
+        // roleName: '',
+        startDate: '',
+        endDate: '',
+        empId: userData.empId,
+        isMainRole: '',
         enabled: '',
-        link: '',
-        icon: '',
-        mainMenuId: '',
+
         createdOn: new Date().toISOString(),
         createdBy: user.empId,
         lastUpdatedOn: new Date().toISOString(),
         LastUpdatedBy: user.empId
       }));
-
+      refetchAssignedRoles();
       refetch();
       setIsEdit(false);
       // setAccordionExpanded(false);
@@ -153,48 +172,77 @@ export default function SubMenu() {
 
   const columns = [
     {
-      field: 'mainMenuId',
-      headerName: 'Main Menu',
+      field: 'userName',
+      headerName: 'User Name',
       flex: 1
     },
     {
-      field: 'subMenuDesc',
-      headerName: 'Sub Menu',
+      field: 'roleName',
+      headerName: 'Role',
       flex: 1
     },
     {
-      field: 'orderNo',
-      headerName: 'Order No.',
+      field: 'startDate',
+      headerName: 'Start Date',
+      flex: 1,
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'endDate',
+      headerName: 'End Date',
+      flex: 1,
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'isMainRole',
+      headerName: 'isMAinRole',
       flex: 1
     },
     {
       field: 'enabled',
       headerName: 'Enabled',
       flex: 1
-    },
-    {
-      field: 'link',
-      headerName: 'Link',
-      flex: 1
-    },
-    {
-      field: 'icon',
-      headerName: 'Icon',
-      flex: 1
     }
   ];
 
+  const fileName = `assignedUserRoles${new Date().toISOString()}`;
+
   return (
-    <Box sx={{ width: '100%', typography: 'body1' }}>
+    // <MainCard
+    //   style={{
+    //     borderWidth: 1,
+    //     borderStyle: 'dotted',
+    //     borderColor: '#a11f23',
+    //     // backgroundColor: '#eef2f6',
+    //     width: 'auto',
+    //     maxHeight: { xs: '80vh', md: 'auto' },
+    //     overflow: 'auto'
+    //   }}
+    // >
+    <Box sx={{ width: '100%', typography: 'body1', paddingTop: 2 }}>
       <Card variant="outlined">
-        <CardHeader
+        {/* <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
           // avatar={
           // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
           // }
-          title="Add Sub Menus "
+          title="Assign Role "
           titleTypographyProps={{ style: { color: 'white' } }}
-        ></CardHeader>
+        ></CardHeader> */}
         <Grid
           container
           spacing={1}
@@ -203,36 +251,84 @@ export default function SubMenu() {
         >
           <Grid item xs={12} md={2}>
             <TextField
+              label="User Name"
+              fullWidth
+              size="small"
+              name="userName"
+              onChange={handleChange}
+              value={formData.userName}
+              required
+              disabled
+              // error={!!formErrors.collectionName}
+              // helperText={formErrors.collectionName}
+            />
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <TextField
               fullWidth
               select
-              label="Main Menu"
-              name="mainMenuId"
-              value={formData.mainMenuId}
+              label="Role"
+              name="roleId"
+              value={formData.roleId}
               onChange={handleChange}
               size="small"
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             >
-              {mainMenus.map((option) => (
-                <MenuItem key={option.mainMenuId} value={option.mainMenuId}>
-                  {option.mainMenuDesc}
+              {roles.map((option) => (
+                <MenuItem key={option.roleId} value={option.roleId}>
+                  {option.roleName}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
           <Grid item xs={12} md={2}>
             <TextField
-              label="Sub Menu"
-              fullWidth
               size="small"
-              name="subMenuDesc"
+              type="date"
+              label="Start Date"
+              name="startDate"
+              value={formData.startDate}
               onChange={handleChange}
-              value={formData.subMenuDesc}
-              required
-              // disabled={isEdit}
-              // error={!!formErrors.collectionName}
-              // helperText={formErrors.collectionName}
+              fullWidth
+              focused
+              // error={!!formErrors.planningDate}
+              // helperText={formErrors.planningDate}
             />
+          </Grid>
+          <Grid item xs={12} md={2}>
+            <TextField
+              size="small"
+              type="date"
+              label="End Date"
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleChange}
+              fullWidth
+              focused
+              // error={!!formErrors.planningDate}
+              // helperText={formErrors.planningDate}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={2}>
+            <TextField
+              fullWidth
+              select
+              label="Is Main Role"
+              name="isMainRole"
+              value={formData.isMainRole}
+              onChange={handleChange}
+              size="small"
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            >
+              {options.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
           </Grid>
           <Grid item xs={12} md={2}>
             <TextField
@@ -253,47 +349,8 @@ export default function SubMenu() {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} md={2}>
-            <TextField
-              label="Order No."
-              fullWidth
-              size="small"
-              name="orderNo"
-              onChange={handleChange}
-              value={formData.orderNo}
-              required
-              // error={!!formErrors.collectionName}
-              // helperText={formErrors.collectionName}
-            />
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <TextField
-              label="Icon"
-              fullWidth
-              size="small"
-              name="icon"
-              onChange={handleChange}
-              value={formData.icon}
-              required
-              // error={!!formErrors.collectionName}
-              // helperText={formErrors.collectionName}
-            />
-          </Grid>
-          <Grid item xs={12} md={2}>
-            <TextField
-              label="Link"
-              fullWidth
-              size="small"
-              name="link"
-              onChange={handleChange}
-              value={formData.link}
-              required
-              // error={!!formErrors.collectionName}
-              // helperText={formErrors.collectionName}
-            />
-          </Grid>
 
-          <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
+          <Grid item xs={12} textAlign="right" sx={{}}>
             <Button variant="contained" size="small" onClick={handleSave}>
               Save
             </Button>
@@ -305,14 +362,14 @@ export default function SubMenu() {
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
           avatar={<VisibilityOutlinedIcon />}
-          title="View Sub Menus "
+          title="View User Roles "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid
           container
           spacing={2}
           width="Inherit"
-          // sx={{ paddingY: 2, paddingX: 2 }}
+          sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid item xs={12}>
             <ReuseableDataGrid
@@ -321,10 +378,14 @@ export default function SubMenu() {
               disableDelete={true}
               setInitialData={setInitialData}
               setIsEdit={setIsEdit}
+              fileName={fileName}
             />
           </Grid>
         </Grid>{' '}
       </Card>
     </Box>
+    // </MainCard>
   );
-}
+};
+
+export default AssignVendorFormTable;
