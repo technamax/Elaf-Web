@@ -424,7 +424,7 @@ const Schiffli = () => {
         poPcs: selectedBatch ? selectedBatch.poPcs : '',
 
         componentId: '',
-        baseColorName: '',
+        // baseColorName: '',
         fabricId: '',
         vendorId: '',
         colorId: '', //from dying screen coming from fabricAPi

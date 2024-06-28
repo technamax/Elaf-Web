@@ -77,6 +77,7 @@ const PrePlanning = () => {
   useEffect(() => {
     setFormData({
       processType: initialData?.processType || '',
+
       planningId: initialData?.planningId || 0,
       collectionId: initialData?.collectionId || '',
       baseColorId: initialData?.baseColorId || '', // not in api
@@ -91,6 +92,7 @@ const PrePlanning = () => {
       colorId: initialData?.colorId || '',
       fabricId: initialData?.fabricId || '',
       noOfHeads: initialData?.noOfHeads || '',
+      operatingMachineId: initialData?.operatingMachineId || '',
       repeats: initialData?.repeats || '',
       repeatSize: initialData?.repeatSize || '',
       uomId: initialData?.uomId || '',
@@ -147,7 +149,7 @@ const PrePlanning = () => {
   const [loading, setLoading] = useState(false); // State for loading
 
   const [processType, setProcessType] = useState([]);
-
+  const [operatingMachineList, setOperatingMachineList] = useState([]);
   const [components, setComponents] = useState([]);
   const [Fabrications, setFabrications] = useState([]);
   const [colors, setColors] = useState([]);
@@ -172,6 +174,8 @@ const PrePlanning = () => {
         setFabrications(data.fabricList);
         setHeads(data.noOfHeadsList);
         setUoms(data.uom);
+        setProcessType(data.planningTypeProcessList);
+        setOperatingMachineList(data.operatingMachineList);
       } catch (error) {
         console.error('Error fetching pre-planning lookup data:', error);
       }
@@ -302,6 +306,8 @@ const PrePlanning = () => {
         colorId: '',
         fabricId: '',
         noOfHeads: '',
+        operatingMachineId: '',
+
         repeats: '',
         repeatSize: '',
         uomId: '',
@@ -326,6 +332,8 @@ const PrePlanning = () => {
         colorId: '',
         fabricId: '',
         noOfHeads: '',
+        operatingMachineId: '',
+
         repeats: '',
         repeatSize: '',
         uomId: '',
@@ -348,6 +356,8 @@ const PrePlanning = () => {
         colorId: '',
         fabricId: '',
         noOfHeads: '',
+        operatingMachineId: '',
+
         repeats: '',
         repeatSize: '',
         uomId: '',
@@ -362,7 +372,6 @@ const PrePlanning = () => {
       setLoading(false);
     } else {
       setFormData({ ...formData, [name]: value });
-      setFormErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
     }
   };
   // console.log('noOfDesigns', formData.noOfDesigns); colorId
@@ -423,6 +432,7 @@ const PrePlanning = () => {
         colorId: '',
         fabricId: '',
         noOfHeads: '',
+        operatingMachineId: '',
         repeats: '',
         repeatSize: '',
         uomId: '',
@@ -655,6 +665,7 @@ const PrePlanning = () => {
       }
     }
   ];
+  const isSchiffli = formData.processType === 'Schiffili';
 
   const getCellClassName = ({ row, field }) => {
     if (row.id === 'TOTAL_FABRIC') {
@@ -840,8 +851,8 @@ const PrePlanning = () => {
                   required
                 >
                   {processType.map((option) => (
-                    <MenuItem key={option.batchNo} value={option.batchNo}>
-                      {option.batchNo}
+                    <MenuItem key={option.lookUpId} value={option.lookUpName}>
+                      {option.lookUpName}
                     </MenuItem>
                   ))}
                 </TextField>{' '}
@@ -1035,7 +1046,7 @@ const PrePlanning = () => {
                 />
               </Grid>
               <Grid item xs={12} md={2}>
-                <TextField
+                {/* <TextField
                   fullWidth
                   select
                   label="No of Heads"
@@ -1053,7 +1064,47 @@ const PrePlanning = () => {
                       {option.lookUpName}
                     </MenuItem>
                   ))}
-                </TextField>
+                </TextField> */}
+                {/* ///////////////////////////////////////////// */}
+                {isSchiffli ? (
+                  <TextField
+                    fullWidth
+                    select
+                    label="Operating Machine"
+                    size="small"
+                    name="operatingMachineId"
+                    value={formData.operatingMachineId}
+                    onChange={handleChange}
+                    required
+                    // error={!!formErrors.operatingMachineId}
+                    // helperText={formErrors.operatingMachineId}
+                  >
+                    {operatingMachineList.map((option) => (
+                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                        {option.lookUpName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                ) : (
+                  <TextField
+                    fullWidth
+                    select
+                    label="No of Heads"
+                    size="small"
+                    name="noOfHeads"
+                    value={formData.noOfHeads}
+                    onChange={handleChange}
+                    required
+                    error={!!formErrors.noOfHeads}
+                    helperText={formErrors.noOfHeads}
+                  >
+                    {heads.map((option) => (
+                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                        {option.lookUpName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                )}
               </Grid>
               <Grid item xs={12} md={2}>
                 <TextField
