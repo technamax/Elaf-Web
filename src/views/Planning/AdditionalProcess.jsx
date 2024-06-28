@@ -689,10 +689,20 @@ const AdditionalProcess = () => {
                   color: '#ffffff',
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  paddingX: '24px',
+                  paddingY: '4px'
                 }}
               >
-                <Typography variant="h6" component="div" color="#ffffff">
+                <Typography
+                  variant="h4"
+                  component="div"
+                  color="#ffffff"
+                  gutterBottom
+                  fontSize={20}
+                  fontWeight={2}
+                  fontStyle={'normal'}
+                >
                   {'Assign Vendors '}
                 </Typography>
                 <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>

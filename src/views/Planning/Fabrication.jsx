@@ -289,6 +289,7 @@ const Fabrication = () => {
       });
     } else {
       setFormData({ ...formData, [name]: value });
+      setFormErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
     }
   };
 

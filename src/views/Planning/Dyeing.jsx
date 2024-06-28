@@ -353,6 +353,7 @@ const Dyeing = () => {
       });
     } else {
       setFormData({ ...formData, [name]: value });
+      setFormErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
     }
   };
 

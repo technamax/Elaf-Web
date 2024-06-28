@@ -362,6 +362,7 @@ const PrePlanning = () => {
       setLoading(false);
     } else {
       setFormData({ ...formData, [name]: value });
+      setFormErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
     }
   };
   // console.log('noOfDesigns', formData.noOfDesigns); colorId
