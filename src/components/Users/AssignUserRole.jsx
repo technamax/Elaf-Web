@@ -258,7 +258,7 @@ const AssignVendorFormTable = ({
               onChange={handleChange}
               value={formData.userName}
               required
-              disabled={isEdit}
+              disabled
               // error={!!formErrors.collectionName}
               // helperText={formErrors.collectionName}
             />
