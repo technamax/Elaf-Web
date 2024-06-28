@@ -65,6 +65,33 @@ export default function AdditionalServices({}) {
       }
     }
   };
+  useEffect(() => {
+    const calculateTotal = () => {
+      const qty = parseFloat(formData.qty) || 0;
+      const rate = parseFloat(formData.rate) || 0;
+      return (qty * rate).toFixed(2);
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      totalAmount: calculateTotal()
+    }));
+    const calculateCost = () => {
+      const poPcs = parseFloat(formData.poPcs) || 0;
+      const totalAmount = parseFloat(formData.totalAmount) || 0;
+      return (poPcs * totalAmount).toFixed(2);
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      costperPiece: calculateCost()
+    }));
+  }, [
+    formData.qty,
+    formData.rate,
+    formData.totalAmount,
+    formData.costperPiece
+  ]);
 
   const handleSave = async () => {
     try {
