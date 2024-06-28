@@ -79,7 +79,7 @@ export default function AdditionalServices({}) {
     const calculateCost = () => {
       const poPcs = parseFloat(formData.poPcs) || 0;
       const totalAmount = parseFloat(formData.totalAmount) || 0;
-      return (poPcs * totalAmount).toFixed(2);
+      return (poPcs / totalAmount).toFixed(2);
     };
 
     setFormData((prevData) => ({
