@@ -36,6 +36,7 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
 import 'App.css';
+import { maxWidth, width } from '@mui/system';
 const PrePlanning = () => {
   const { user } = useUser();
   console.log('user', user);
@@ -544,6 +545,7 @@ const PrePlanning = () => {
     {
       field: 'componentName',
       headerName: 'Component',
+      flex: 1,
 
       ...baseColumnOptions,
 
@@ -565,25 +567,27 @@ const PrePlanning = () => {
       field: 'color',
       headerName: 'Color',
       // editable: true,
-      // flex: 1,
+      flex: 1,
       ...baseColumnOptions
     },
     {
       field: 'cuttingSize',
       headerName: 'Cutting Size',
-      // flex: 1,
+      flex: 1,
       ...baseColumnOptions
       // editable: true/
     },
     {
       field: 'fabric',
       headerName: 'Fabrication',
+      flex: 2,
       // editable: true,
       ...baseColumnOptions
     },
     {
       field: 'noOfHeadName',
       headerName: 'No. Of Heads',
+      flex: 1,
       // editable: true,
       ...baseColumnOptions
     },
@@ -593,8 +597,8 @@ const PrePlanning = () => {
       valueGetter: (params) => {
         return params.toLocaleString();
       },
-      ...baseColumnOptions
-      // flex: 1,
+      ...baseColumnOptions,
+      flex: 1
       // editable: true
     },
     {
@@ -603,13 +607,14 @@ const PrePlanning = () => {
       valueGetter: (params) => {
         return params.toLocaleString();
       },
-      ...baseColumnOptions
-      // flex: 1,
+      ...baseColumnOptions,
+      flex: 1
       // editable: true
     },
     {
       field: 'totalFabric',
       headerName: 'Total Fabric',
+      flex: 1,
       valueGetter: (params) => {
         return params.toLocaleString();
       },
@@ -618,6 +623,7 @@ const PrePlanning = () => {
     {
       field: 'uom',
       headerName: 'UOM',
+      flex: 1,
 
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
@@ -635,25 +641,26 @@ const PrePlanning = () => {
     },
     {
       field: 'isSchiffili',
-      headerName: 'Is Shiffili'
-      // flex: 1
+      headerName: 'Is Shiffili',
+      flex: 1
       // editable: true
     },
     {
       field: 'shrinkage',
-      headerName: 'Shrinkage %'
-      // flex: 1
+      headerName: 'Shrinkage %',
+      flex: 1
       // editable: true
     },
     {
       field: 'wastage',
-      headerName: 'Wastage %'
-      // flex: 1
+      headerName: 'Wastage %',
+      flex: 1
       // editable: true
     },
     {
       field: 'total',
       headerName: 'Total',
+      flex: 1,
       valueGetter: (params) => {
         return params.toLocaleString();
       },

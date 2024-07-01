@@ -325,6 +325,7 @@ const Fabrication = () => {
     {
       field: 'designNo',
       headerName: 'Design',
+      flex: 1,
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
           return 6;
@@ -341,27 +342,34 @@ const Fabrication = () => {
     },
     {
       field: 'fabricName',
-      headerName: 'Fabric'
+      headerName: 'Fabric',
+      flex: 2
     },
     {
       field: 'poPcs',
-      headerName: 'PO. Pieces'
+      headerName: 'PO. Pieces',
+      flex: 1
     },
     {
       field: 'quantity',
-      headerName: 'Quantity'
+      headerName: 'Quantity',
+      flex: 1
     },
     {
       field: 'rate',
-      headerName: 'Rate'
+      headerName: 'Rate',
+      flex: 1
     },
     {
       field: 'uomName',
-      headerName: 'UOM'
+      headerName: 'UOM',
+      flex: 1
     },
     {
       field: 'total',
       headerName: 'Total',
+      flex: 1,
+
       valueGetter: (params) => {
         return params.toLocaleString();
       }
@@ -369,6 +377,8 @@ const Fabrication = () => {
     {
       field: 'unitPrice',
       headerName: 'Unit Price',
+      flex: 1,
+
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
           return 2;
@@ -385,11 +395,14 @@ const Fabrication = () => {
     },
     {
       field: 'gst',
-      headerName: 'GST'
+      headerName: 'GST',
+      flex: 1
     },
     {
       field: 'totalInclGst',
       headerName: 'Total Inc. GST',
+      flex: 2,
+
       valueGetter: (params) => {
         return params.toLocaleString();
       },
