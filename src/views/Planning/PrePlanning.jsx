@@ -57,7 +57,8 @@ const PrePlanning = () => {
     cuttingSize: '', // not in api
     colorId: '',
     fabricId: '',
-    noOfHeads: '',
+    noOfHeads: 0,
+    operatingMachineId: 0,
     repeats: '',
     repeatSize: '',
     uomId: '',
@@ -92,8 +93,8 @@ const PrePlanning = () => {
       cuttingSize: initialData?.cuttingSize || '', // not in api
       colorId: initialData?.colorId || '',
       fabricId: initialData?.fabricId || '',
-      noOfHeads: initialData?.noOfHeads || '',
-      operatingMachineId: initialData?.operatingMachineId || '',
+      noOfHeads: initialData?.noOfHeads || 0,
+      operatingMachineId: initialData?.operatingMachineId || 0,
       repeats: initialData?.repeats || '',
       repeatSize: initialData?.repeatSize || '',
       uomId: initialData?.uomId || '',
@@ -106,7 +107,7 @@ const PrePlanning = () => {
       createdBy: initialData?.createdBy || user.empId,
       lastUpdatedBy: user.empId,
       lastUpdatedOn: new Date().toISOString(),
-      isSchiffili: initialData?.isSchiffili || false,
+      // isSchiffili: initialData?.isSchiffili || false,
       repeatsInMtr: initialData?.repeatsInMtr || ''
     });
   }, [initialData]);
@@ -306,8 +307,8 @@ const PrePlanning = () => {
         cuttingSize: '', // not in api
         colorId: '',
         fabricId: '',
-        noOfHeads: '',
-        operatingMachineId: '',
+        noOfHeads: 0,
+        operatingMachineId: 0,
 
         repeats: '',
         repeatSize: '',
@@ -332,8 +333,8 @@ const PrePlanning = () => {
         cuttingSize: '', // not in api
         colorId: '',
         fabricId: '',
-        noOfHeads: '',
-        operatingMachineId: '',
+        noOfHeads: 0,
+        operatingMachineId: 0,
 
         repeats: '',
         repeatSize: '',
@@ -356,8 +357,8 @@ const PrePlanning = () => {
         cuttingSize: '', // not in api
         colorId: '',
         fabricId: '',
-        noOfHeads: '',
-        operatingMachineId: '',
+        noOfHeads: 0,
+        operatingMachineId: 0,
 
         repeats: '',
         repeatSize: '',
@@ -432,8 +433,8 @@ const PrePlanning = () => {
         cuttingSize: '', // not in api
         colorId: '',
         fabricId: '',
-        noOfHeads: '',
-        operatingMachineId: '',
+        noOfHeads: 0,
+        operatingMachineId: 0,
         repeats: '',
         repeatSize: '',
         uomId: '',
@@ -475,9 +476,9 @@ const PrePlanning = () => {
     if (!formData.cuttingSize) {
       errors.cuttingSize = 'cuttingSize is required';
     }
-    if (!formData.noOfHeads) {
-      errors.noOfHeads = 'noOfHeads is required';
-    }
+    // if (!formData.noOfHeads) {
+    //   errors.noOfHeads = 'noOfHeads is required';
+    // }
     if (!formData.repeats) {
       errors.repeats = 'repeats is required';
     }
@@ -672,7 +673,7 @@ const PrePlanning = () => {
       }
     }
   ];
-  const isSchiffli = formData.processType === 'Schiffili';
+  const isSchiffili = formData.processType === 'Schiffili';
 
   const getCellClassName = ({ row, field }) => {
     if (row.id === 'TOTAL_FABRIC') {
@@ -1073,7 +1074,7 @@ const PrePlanning = () => {
                   ))}
                 </TextField> */}
                 {/* ///////////////////////////////////////////// */}
-                {isSchiffli ? (
+                {isSchiffili ? (
                   <TextField
                     fullWidth
                     select
@@ -1102,8 +1103,8 @@ const PrePlanning = () => {
                     value={formData.noOfHeads}
                     onChange={handleChange}
                     required
-                    error={!!formErrors.noOfHeads}
-                    helperText={formErrors.noOfHeads}
+                    // error={!!formErrors.noOfHeads}
+                    // helperText={formErrors.noOfHeads}
                   >
                     {heads.map((option) => (
                       <MenuItem key={option.lookUpId} value={option.lookUpId}>
