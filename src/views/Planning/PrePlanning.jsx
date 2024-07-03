@@ -567,11 +567,13 @@ const PrePlanning = () => {
       field: 'color',
       headerName: 'Color',
       // editable: true,
+      // flex: 1,
       ...baseColumnOptions
     },
     {
       field: 'cuttingSize',
       headerName: 'Cutting Size',
+      // flex: 1,
       ...baseColumnOptions
       // editable: true/
     },
@@ -587,12 +589,12 @@ const PrePlanning = () => {
       // editable: true,
       ...baseColumnOptions
     },
-    {
-      field: 'operatingMachineId',
-      headerName: 'Operating Machine Head',
-      // editable: true,
-      ...baseColumnOptions
-    },
+    // {
+    //   field: 'operatingMachineId',
+    //   headerName: 'Operating Machine Heads',
+    //   // editable: true,
+    //   ...baseColumnOptions
+    // },
     {
       field: 'repeats',
       headerName: 'Repeats',
@@ -600,6 +602,7 @@ const PrePlanning = () => {
         return params.toLocaleString();
       },
       ...baseColumnOptions
+      // flex: 1,
       // editable: true
     },
     {
@@ -609,6 +612,7 @@ const PrePlanning = () => {
         return params.toLocaleString();
       },
       ...baseColumnOptions
+      // flex: 1,
       // editable: true
     },
     {
@@ -622,7 +626,6 @@ const PrePlanning = () => {
     {
       field: 'uom',
       headerName: 'UOM',
-      flex: 1,
 
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
@@ -638,19 +641,22 @@ const PrePlanning = () => {
         return value;
       }
     },
-    // {
-    //   field: 'isSchiffili',
-    //   headerName: 'Is Shiffili',
-    //   // editable: true
-    // },
+    {
+      field: 'isSchiffili',
+      headerName: 'Is Shiffili'
+      // flex: 1
+      // editable: true
+    },
     {
       field: 'shrinkage',
       headerName: 'Shrinkage %'
+      // flex: 1
       // editable: true
     },
     {
       field: 'wastage',
       headerName: 'Wastage %'
+      // flex: 1
       // editable: true
     },
     {
@@ -667,6 +673,7 @@ const PrePlanning = () => {
       }
     }
   ];
+
   const isSchiffili = formData.processType === 'Schiffili';
 
   const getCellClassName = ({ row, field }) => {
