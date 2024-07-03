@@ -43,7 +43,7 @@ const PrePlanning = () => {
   const [initialData, setInitialData] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   const [formData, setFormData] = useState({
-    processType: '',
+    processType: 'MultiHead',
     planningId: 0,
     collectionId: '',
     baseColorId: '', // not in api
@@ -78,7 +78,7 @@ const PrePlanning = () => {
 
   useEffect(() => {
     setFormData({
-      processType: initialData?.processType || '',
+      processType: initialData?.processType || 'MultiHead',
 
       planningId: initialData?.planningId || 0,
       collectionId: initialData?.collectionId || '',
@@ -302,7 +302,7 @@ const PrePlanning = () => {
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
-        processType: '',
+        processType: 'MultiHead',
         componentId: '',
         cuttingSize: '', // not in api
         colorId: '',
@@ -327,7 +327,7 @@ const PrePlanning = () => {
       );
       setFormData({
         ...formData,
-        processType: '',
+        processType: 'MultiHead',
 
         componentId: '',
         cuttingSize: '', // not in api
@@ -352,7 +352,7 @@ const PrePlanning = () => {
       setFormData({
         ...formData,
         componentId: '',
-        processType: '',
+        processType: 'MultiHead', // Ensure processType is set correctly here
 
         cuttingSize: '', // not in api
         colorId: '',
@@ -419,7 +419,7 @@ const PrePlanning = () => {
       //   autoHideDuration: 5000
       // });
       setFormData((prevFormData) => ({
-        processType: '',
+        processType: 'MultiHead',
         planningId: 0,
         collectionId: prevFormData.collectionId,
         designId: prevFormData.designId,
@@ -641,12 +641,12 @@ const PrePlanning = () => {
         return value;
       }
     },
-    {
-      field: 'isSchiffili',
-      headerName: 'Is Shiffili'
-      // flex: 1
-      // editable: true
-    },
+    // {
+    //   field: 'isSchiffili',
+    //   headerName: 'Is Shiffili'
+    //   // flex: 1
+    //   // editable: true
+    // },
     {
       field: 'shrinkage',
       headerName: 'Shrinkage %'
