@@ -35,6 +35,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 const NewCollection = () => {
   const { user } = useUser();
+  const [initialData, setInitialData] = useState([]);
 
   const { data, error, isLoading, refetch } = useGetCollectionListQuery();
   const { data: lookupData } = useGetLookUpListQuery();
@@ -46,6 +47,7 @@ const NewCollection = () => {
   });
 
   const [formData, setFormData] = useState({
+    collectionId: 0,
     collectionName: '',
     brandId: '',
     seasonId: '',
@@ -296,6 +298,7 @@ const NewCollection = () => {
 
       console.log('Form data saved:', response.data);
       setFormData({
+        collectionId: 0,
         collectionName: '',
         brandId: '',
         seasonId: '',
