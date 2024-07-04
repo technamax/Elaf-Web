@@ -23,6 +23,7 @@ import {
 import { useGetCollectionFromPlanningHeaderQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetPrePlanningByPlanningHeaderIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
+import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 
 import { Card, CardHeader, Avatar } from '@mui/material';
 import { SnackbarProvider, useSnackbar } from 'notistack';
@@ -124,8 +125,11 @@ const PrePlanning = () => {
     useGetPrePlanningByPlanningHeaderIdQuery(formData.planningHeaderId, {
       skip: !formData.planningHeaderId // Skip the query if no collection is selected
     });
+  const { data: lookupData } = useGetLookUpListQuery();
+
   const [designList, setDesignList] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
+  console.log('lookupData', lookupData);
 
   useEffect(() => {
     if (designData) {
@@ -159,33 +163,25 @@ const PrePlanning = () => {
   const [uoms, setUoms] = useState([]);
   const [heads, setHeads] = useState([]);
   const [batchList, setBatchList] = useState([]);
-  // console.log('components:', components);
-  // console.log('Fabrications:', Fabrications);
-  // console.log('colors:', colors);
-  // console.log('uoms:', uoms);
-  // console.log('heads:', heads);
-
+  console.log('components:', components);
+  console.log('Fabrications:', Fabrications);
+  console.log('colors:', colors);
+  console.log('uoms:', uoms);
+  console.log('heads:', heads);
+  console.log('lookupData', lookupData);
   useEffect(() => {
-    const fetchPrePlanningLookUp = async () => {
-      try {
-        const response = await axios.get(
-          'https://gecxc.com:4041/API/Common/GetPrePlanningLookUp?appID=1'
-        );
-        const data = response.data.result[0];
-        setComponents(data.componentList);
-        setColors(data.colorList);
-        setFabrications(data.fabricList);
-        setHeads(data.noOfHeadsList);
-        setUoms(data.uom);
-        setProcessType(data.planningTypeProcessList);
-        setOperatingMachineList(data.operatingMachineList);
-      } catch (error) {
-        console.error('Error fetching pre-planning lookup data:', error);
-      }
-    };
-
-    fetchPrePlanningLookUp();
-  }, []);
+    if (lookupData) {
+      const data = lookupData.result[0];
+      // const data = response.data.result[0];
+      setComponents(data.componentList);
+      setColors(data.colorList);
+      setFabrications(data.fabricList);
+      setHeads(data.noOfHeadsList);
+      setUoms(data.uomList);
+      setProcessType(data.planningTypeProcessList);
+      setOperatingMachineList(data.operatingMachineList);
+    }
+  }, [lookupData]);
 
   useEffect(() => {
     const GetPrePlanningHeaderByDesignId = async (id) => {
@@ -238,8 +234,16 @@ const PrePlanning = () => {
 
     const calculateTotal = () => {
       // Parse the localized totalFabric string back to a float for calculations
-      const totalFabric =
-        parseFloat(formData.totalFabric.replace(/,/g, '')) || 0;
+      const totalFabricValue =
+        typeof formData.totalFabric === 'string'
+          ? parseFloat(formData.totalFabric.replace(/,/g, ''))
+          : formData.totalFabric;
+
+      const totalFabric = totalFabricValue || 0;
+      // const totalFabric =
+      //   parseFloat(formData.totalFabric.replace(/,/g, '')) ||
+      //   formData.totalFabric ||
+      //   0;
       const shrinkage = parseFloat(formData.shrinkage) || 0;
       const wastage = parseFloat(formData.wastage) || 0;
       const total = (
@@ -630,7 +634,7 @@ const PrePlanning = () => {
 
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
-          return 4;
+          return 2;
         }
         return undefined;
       },

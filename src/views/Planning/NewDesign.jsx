@@ -72,6 +72,7 @@ const NewDesign = () => {
   const collectionList = collectionData?.result || [];
 
   const [formData, setFormData] = useState({
+    designId: 0,
     collectionId: '',
     designNo: '',
     designerName: '',
@@ -148,8 +149,8 @@ const NewDesign = () => {
     {
       field: 'poPcs',
       headerName: 'Po PCs',
-      flex: 1,
-      editable: true
+      flex: 1
+      // editable: true
     },
     {
       field: 'dateOfPlanning',
@@ -210,7 +211,8 @@ const NewDesign = () => {
       setDesignList([...designList, response.data]);
       setFormData({
         ...formData,
-        // collectionId: '',
+        collectionId: '',
+        designId: 0,
         designNo: '',
         designerName: '',
         poPcs: '',

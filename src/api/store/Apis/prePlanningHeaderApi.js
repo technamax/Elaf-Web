@@ -16,8 +16,8 @@ export const prePlanningHeaderApi = createApi({
         `PrePlanning/GetPrePlanningHeaderByDesignId?designId=${designId}`
     }),
     getFabricFromPrePlanningByBatchNo: builder.query({
-      query: (batchNo) =>
-        `Fabrication/GetFabricFromPrePlanningByBatchNo?batchNo=${batchNo}`
+      query: ({ batchNo, processType }) =>
+        `Fabrication/GetFabricFromPrePlanningByBatchNo?batchNo=${batchNo}&processType=${processType}`
     }),
     getFabricRequisitionListByBatchNo: builder.query({
       query: (batchNo) =>

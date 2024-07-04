@@ -13,6 +13,8 @@ import Typography from '@mui/material/Typography';
 import Fabrication from 'views/Planning/Fabrication';
 import Embroidery from './Embroidery';
 import { Grid, TextField } from '@mui/material';
+import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
+
 import PrePlanning from './PrePlanning';
 import Dyeing from './Dyeing';
 import Schiffli from './Schiffli';
@@ -39,7 +41,7 @@ export default function PlanningProcess() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [lookupDomains, setLookupDomains] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
-
+  const { data: lookupData, refetch } = useGetLookUpListQuery();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -132,7 +134,7 @@ export default function PlanningProcess() {
         enabled: '',
         createdOn: new Date().toISOString()
       });
-
+      refetch();
       // Fetch the updated lookup domains
       // fetchPrePlanningLookUp();
       return response.data;
