@@ -824,7 +824,7 @@ const Embroidery = () => {
                   ? null
                   : (theme) => ({
                       '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
-                        backgroundColor: `${theme.palette.secondary[200]} !important`
+                        backgroundColor: `${formData.baseColorName} !important`
                       }
                     })
               }
