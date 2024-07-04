@@ -104,6 +104,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
       <Box
         sx={{
           width: 228,
+
           display: 'flex',
           [theme.breakpoints.down('md')]: {
             width: 'auto'
