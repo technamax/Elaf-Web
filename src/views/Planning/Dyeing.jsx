@@ -508,74 +508,60 @@ const Dyeing = () => {
   const columns = [
     {
       field: 'fabricName',
-      headerName: 'Fabric',
-      flex: 2
+      headerName: 'Fabric'
     },
     {
       field: 'colorName',
-      headerName: 'Color',
-      flex: 1
+      headerName: 'Color'
     },
     {
       field: 'vendorName',
-      headerName: 'Vendor',
-      flex: 1
+      headerName: 'Vendor'
     },
 
     {
       field: 'processType',
-      headerName: 'Process Type',
-      flex: 1
+      headerName: 'Process Type'
     },
     {
       field: 'uom',
-      headerName: ' UOM',
-      flex: 1
+      headerName: ' UOM'
     },
     {
       field: 'availableQty',
-      headerName: 'Available Quantitity',
-      flex: 1
+      headerName: 'Available Quantitity'
     },
     {
       field: 'shrinkage',
-      headerName: 'Shrinkage',
-      flex: 1
+      headerName: 'Shrinkage'
     },
     {
       field: 'wastage',
-      headerName: 'Wastage',
-      flex: 1
+      headerName: 'Wastage'
     },
     {
       field: 'outputQty',
-      headerName: 'Output Qty',
-      flex: 1
+      headerName: 'Output Qty'
     },
     {
       field: 'ratePerUOM',
-      headerName: 'Rate',
-      flex: 1
+      headerName: 'Rate'
     },
     {
       field: 'totalExclGst',
-      headerName: 'Total Excl. Gst',
-      flex: 1
+      headerName: 'Total Excl. Gst'
     },
     {
       field: 'gst',
-      headerName: 'GST',
-      flex: 1
+      headerName: 'GST'
     },
     {
       field: 'totalIncludingGst',
-      headerName: 'Total Including GST',
-      flex: 1
+      headerName: 'Total Including GST'
     },
     {
       field: 'unitRatePerPo',
-      headerName: 'UnitRate Per Po.',
-      flex: 1
+      headerName: 'UnitRate Per Po.'
     }
 
     // {

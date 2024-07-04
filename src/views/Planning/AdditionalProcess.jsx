@@ -605,7 +605,7 @@ const AdditionalProcess = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={2}>
+              <Grid item xs={12} md={3}>
                 <TextField
                   fullWidth
                   select

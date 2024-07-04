@@ -44,7 +44,7 @@ const PrePlanning = () => {
   const [initialData, setInitialData] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   const [formData, setFormData] = useState({
-    processType: '',
+    processType: 'MultiHead',
     planningId: 0,
     collectionId: '',
     baseColorId: '', // not in api
@@ -79,7 +79,7 @@ const PrePlanning = () => {
 
   useEffect(() => {
     setFormData({
-      processType: initialData?.processType || '',
+      processType: initialData?.processType || 'MultiHead',
 
       planningId: initialData?.planningId || 0,
       collectionId: initialData?.collectionId || '',
@@ -303,7 +303,7 @@ const PrePlanning = () => {
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
-        processType: '',
+        processType: 'MultiHead',
         componentId: '',
         cuttingSize: '', // not in api
         colorId: '',
@@ -328,7 +328,7 @@ const PrePlanning = () => {
       );
       setFormData({
         ...formData,
-        processType: '',
+        processType: 'MultiHead',
 
         componentId: '',
         cuttingSize: '', // not in api
@@ -353,7 +353,7 @@ const PrePlanning = () => {
       setFormData({
         ...formData,
         componentId: '',
-        processType: '',
+        processType: 'MultiHead', // Ensure processType is set correctly here
 
         cuttingSize: '', // not in api
         colorId: '',
@@ -420,7 +420,7 @@ const PrePlanning = () => {
       //   autoHideDuration: 5000
       // });
       setFormData((prevFormData) => ({
-        processType: '',
+        processType: 'MultiHead',
         planningId: 0,
         collectionId: prevFormData.collectionId,
         designId: prevFormData.designId,
@@ -547,7 +547,6 @@ const PrePlanning = () => {
     {
       field: 'componentName',
       headerName: 'Component',
-      flex: 1,
 
       ...baseColumnOptions,
 
@@ -569,38 +568,42 @@ const PrePlanning = () => {
       field: 'color',
       headerName: 'Color',
       // editable: true,
-      flex: 1,
+      // flex: 1,
       ...baseColumnOptions
     },
     {
       field: 'cuttingSize',
       headerName: 'Cutting Size',
-      flex: 1,
+      // flex: 1,
       ...baseColumnOptions
       // editable: true/
     },
     {
       field: 'fabric',
       headerName: 'Fabrication',
-      flex: 2,
       // editable: true,
       ...baseColumnOptions
     },
     {
       field: 'noOfHeadName',
       headerName: 'No. Of Heads',
-      flex: 1,
       // editable: true,
       ...baseColumnOptions
     },
+    // {
+    //   field: 'operatingMachineId',
+    //   headerName: 'Operating Machine Heads',
+    //   // editable: true,
+    //   ...baseColumnOptions
+    // },
     {
       field: 'repeats',
       headerName: 'Repeats',
       valueGetter: (params) => {
         return params.toLocaleString();
       },
-      ...baseColumnOptions,
-      flex: 1
+      ...baseColumnOptions
+      // flex: 1,
       // editable: true
     },
     {
@@ -609,14 +612,13 @@ const PrePlanning = () => {
       valueGetter: (params) => {
         return params.toLocaleString();
       },
-      ...baseColumnOptions,
-      flex: 1
+      ...baseColumnOptions
+      // flex: 1,
       // editable: true
     },
     {
       field: 'totalFabric',
       headerName: 'Total Fabric',
-      flex: 1,
       valueGetter: (params) => {
         return params.toLocaleString();
       },
@@ -625,7 +627,6 @@ const PrePlanning = () => {
     {
       field: 'uom',
       headerName: 'UOM',
-      flex: 1,
 
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
@@ -641,28 +642,27 @@ const PrePlanning = () => {
         return value;
       }
     },
-    {
-      field: 'isSchiffili',
-      headerName: 'Is Shiffili',
-      flex: 1
-      // editable: true
-    },
+    // {
+    //   field: 'isSchiffili',
+    //   headerName: 'Is Shiffili'
+    //   // flex: 1
+    //   // editable: true
+    // },
     {
       field: 'shrinkage',
-      headerName: 'Shrinkage %',
-      flex: 1
+      headerName: 'Shrinkage %'
+      // flex: 1
       // editable: true
     },
     {
       field: 'wastage',
-      headerName: 'Wastage %',
-      flex: 1
+      headerName: 'Wastage %'
+      // flex: 1
       // editable: true
     },
     {
       field: 'total',
       headerName: 'Total',
-      flex: 1,
       valueGetter: (params) => {
         return params.toLocaleString();
       },
@@ -674,6 +674,7 @@ const PrePlanning = () => {
       }
     }
   ];
+
   const isSchiffili = formData.processType === 'Schiffili';
 
   const getCellClassName = ({ row, field }) => {

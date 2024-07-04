@@ -6,10 +6,13 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { ButtonGroup, Box, IconButton } from '@mui/material';
-import { DataGrid, GridToolbarContainer } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridToolbarContainer,
+  useGridApiRef
+} from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import AddIcon from '@mui/icons-material/Add';
 import ExcelExport from './ExcelExport';
 import loadingGif from '../assets/images/loading1.svg';
 
@@ -27,27 +30,16 @@ const ReuseableDataGrid = ({
   fileName,
   disableEdit,
   disableDelete,
-  setIsEdit
+  setIsEdit,
+  autoSizeColumns
 }) => {
-  // console.log('type of initial rows', typeof initialRows.length);
+  const apiRef = useGridApiRef();
   const [open, setOpen] = React.useState(false);
   const [deleteId, setDeleteId] = React.useState(null);
-  function EditToolbar() {
-    // const handleClick = () => {
-    //   setAccordionExpanded(true);
-    // };
 
+  function EditToolbar() {
     return (
       <GridToolbarContainer sx={{ justifyContent: 'end' }}>
-        {/* <Button
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={handleClick}
-          // disabled={disableAddRecord}
-          disab
-        >
-          Add record
-        </Button> */}
         <ExcelExport data={initialRows} fileName={fileName} />
       </GridToolbarContainer>
     );
@@ -64,7 +56,6 @@ const ReuseableDataGrid = ({
   };
 
   const handleEdit = (row) => {
-    // console.log('row.embroideryId', row.embroideryId);
     if (row.embroideryId) {
       const threadAdditionalArray = row.threadAdditional
         ? row.threadAdditional.split(',').map((item) => item.trim())
@@ -86,11 +77,9 @@ const ReuseableDataGrid = ({
   };
 
   const handleDelete = async () => {
-    // console.log('deleteby', deleteId);
     try {
       await axios.delete(`${deleteApi}${deleteId}`);
       refetch();
-      // console.log('deleted');
     } catch (error) {
       console.error('Error deleting data:', error);
     }
@@ -128,6 +117,16 @@ const ReuseableDataGrid = ({
     }
   ];
 
+  const handleStateChange = (params) => {
+    if (apiRef.current && apiRef.current.autosizeColumns) {
+      apiRef.current.autosizeColumns({
+        columns: autoSizeColumns,
+        includeOutliers: true,
+        includeHeaders: true
+      });
+    }
+  };
+
   return initialRows.length === 0 ? (
     <div
       style={{
@@ -164,8 +163,11 @@ const ReuseableDataGrid = ({
       <DataGrid
         rows={initialRows}
         columns={columns}
-        rowLength={100}
+        // rowLength={100}
+        apiRef={apiRef}
+        autosizeOnMount
         getCellClassName={getCellClassName}
+        onStateChange={handleStateChange}
         slots={{ toolbar: EditToolbar }}
         sx={{ '--DataGrid-rowBorderColor': 'rgb(255 255 255)' }}
       />
