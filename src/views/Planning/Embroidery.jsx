@@ -537,8 +537,8 @@ const Embroidery = () => {
         componentId: '',
         fabricId: '',
         vendorId: '',
-        baseColorId: '', // coming from getcollectionapi
-        baseColorName: '',
+        // baseColorId: '', // coming from getcollectionapi
+        // baseColorName: '',
         colorId: '', //from dying screen coming from fabricAPi
         availableQty: '',
         noOfHead: '',
@@ -819,6 +819,15 @@ const Embroidery = () => {
               value={formData.baseColorName}
               onChange={handleChange}
               disabled
+              sx={
+                formData.baseColorName === ''
+                  ? null
+                  : (theme) => ({
+                      '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                        backgroundColor: `${theme.palette.secondary[200]} !important`
+                      }
+                    })
+              }
             />
           </Grid>
         </Grid>
@@ -1072,11 +1081,11 @@ const Embroidery = () => {
                   label="isSolving"
                 />
               </Grid>
-              {formData.isSolving ? (
-                <Grid item xs={12} md={6}>
-                  {/* <FormControl fullWidth> */}
+              {/* {formData.isSolving ? ( */}
+              <Grid item xs={12} md={6}>
+                {/* <FormControl fullWidth> */}
 
-                  {/* <Select
+                {/* <Select
                   multiple
                   labelId="thread-additional-label"
                   value={formData.threadAdditional}
@@ -1099,188 +1108,184 @@ const Embroidery = () => {
                     </MenuItem>
                   ))}
                 </Select> */}
-                  <TextField
-                    select
-                    label="Additional"
-                    value={formData.threadAdditional}
-                    name="threadAdditional"
-                    size="small"
-                    onChange={handleChange}
-                    fullWidth
-                    SelectProps={{
-                      multiple: true
-                    }}
-                  >
-                    {additionals.map((name) => (
-                      <MenuItem
-                        key={name}
-                        value={name}
-                        style={getStyles(
-                          name,
-                          formData.threadAdditional,
-                          theme
-                        )}
-                      >
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                  {/* </FormControl> */}
-                </Grid>
-              ) : null}
+                <TextField
+                  select
+                  label="Additional"
+                  value={formData.threadAdditional}
+                  name="threadAdditional"
+                  size="small"
+                  onChange={handleChange}
+                  fullWidth
+                  SelectProps={{
+                    multiple: true
+                  }}
+                >
+                  {additionals.map((name) => (
+                    <MenuItem
+                      key={name}
+                      value={name}
+                      style={getStyles(name, formData.threadAdditional, theme)}
+                    >
+                      {name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                {/* </FormControl> */}
+              </Grid>
+              {/* ) : null} */}
               {/* <Grid item xs={12} md={4}></Grid> */}
               {/* <Divider
                 color="#cc8587"
                 sx={{ height: 1, width: '100%', mt: 2 }}
               /> */}
-              {formData.isSolving ? (
-                <Grid item xs={12} md={6}>
-                  <Grid container spacing={1} width="Inherit">
-                    <Grid item xs={12} md={12}>
-                      <Typography variant="h5" gutterBottom>
-                        Thread
-                      </Typography>
-                    </Grid>{' '}
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        label="Stitches"
-                        fullWidth
-                        size="small"
-                        type="number"
-                        name="threadStiches"
-                        value={formData.threadStiches}
-                        onChange={handleChange}
-                        required
-                        // error={!!formErrors.threadStiches}
-                        // helperText={formErrors.threadStiches}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        label="Rate"
-                        type="number"
-                        fullWidth
-                        size="small"
-                        name="threadRate"
-                        value={formData.threadRate}
-                        onChange={handleChange}
-                        required
-                        // error={!!formErrors.threadRate}
-                        // helperText={formErrors.threadRate}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        label="Amount"
-                        fullWidth
-                        size="small"
-                        type="number"
-                        name="threadAmount"
-                        value={formData.threadAmount}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-              ) : null}
-              {formData.isSolving ? (
-                <Grid item xs={12} md={6}>
-                  <Grid container spacing={1} width="Inherit">
-                    <Grid item xs={12} md={12}>
-                      <Typography variant="h5" gutterBottom>
-                        Tilla
-                      </Typography>
-                    </Grid>{' '}
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        label="Stitches"
-                        fullWidth
-                        size="small"
-                        type="number"
-                        name="tillaStiches"
-                        value={formData.tillaStiches}
-                        onChange={handleChange}
-                        required
-                        // error={!!formErrors.tillaStiches}
-                        // helperText={formErrors.tillaStiches}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        label="Rate"
-                        fullWidth
-                        size="small"
-                        type="number"
-                        name="tilaRate"
-                        value={formData.tilaRate}
-                        onChange={handleChange}
-                        required
-                        // error={!!formErrors.tilaRate}
-                        // helperText={formErrors.tilaRate}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        label="Amount"
-                        fullWidth
-                        size="small"
-                        name="tilaAmount"
-                        value={formData.tilaAmount}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-              ) : null}
-              {formData.isSolving ? (
-                <Grid item xs={12} md={6}>
-                  <Grid container spacing={1} width="Inherit">
-                    <Grid item xs={12} md={12}>
-                      <Typography variant="h5" gutterBottom>
-                        Sequence
-                      </Typography>
-                    </Grid>{' '}
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        label="Sequence"
-                        fullWidth
-                        size="small"
-                        name="sequence"
-                        type="number"
-                        value={formData.sequence}
-                        onChange={handleChange}
-                        required
-                        // error={!!formErrors.sequence}
-                        // helperText={formErrors.sequence}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        label="Rate"
-                        fullWidth
-                        type="number"
-                        size="small"
-                        name="sequenceRate"
-                        value={formData.sequenceRate}
-                        onChange={handleChange}
-                        required
-                        // error={!!formErrors.sequenceRate}
-                        // helperText={formErrors.sequenceRate}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                      <TextField
-                        label="Amount"
-                        fullWidth
-                        size="small"
-                        name="sequenceAmount"
-                        value={formData.sequenceAmount}
-                        onChange={handleChange}
-                      />
-                    </Grid>
+              {/* {formData.isSolving ? ( */}
+              <Grid item xs={12} md={6}>
+                <Grid container spacing={1} width="Inherit">
+                  <Grid item xs={12} md={12}>
+                    <Typography variant="h5" gutterBottom>
+                      Thread
+                    </Typography>
                   </Grid>{' '}
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="Stitches"
+                      fullWidth
+                      size="small"
+                      type="number"
+                      name="threadStiches"
+                      value={formData.threadStiches}
+                      onChange={handleChange}
+                      required
+                      // error={!!formErrors.threadStiches}
+                      // helperText={formErrors.threadStiches}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="Rate"
+                      type="number"
+                      fullWidth
+                      size="small"
+                      name="threadRate"
+                      value={formData.threadRate}
+                      onChange={handleChange}
+                      required
+                      // error={!!formErrors.threadRate}
+                      // helperText={formErrors.threadRate}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="Amount"
+                      fullWidth
+                      size="small"
+                      type="number"
+                      name="threadAmount"
+                      value={formData.threadAmount}
+                      onChange={handleChange}
+                    />
+                  </Grid>
                 </Grid>
-              ) : null}
+              </Grid>
+              {/* ) : null} */}
+              {/* {formData.isSolving ? ( */}
+              <Grid item xs={12} md={6}>
+                <Grid container spacing={1} width="Inherit">
+                  <Grid item xs={12} md={12}>
+                    <Typography variant="h5" gutterBottom>
+                      Tilla
+                    </Typography>
+                  </Grid>{' '}
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="Stitches"
+                      fullWidth
+                      size="small"
+                      type="number"
+                      name="tillaStiches"
+                      value={formData.tillaStiches}
+                      onChange={handleChange}
+                      required
+                      // error={!!formErrors.tillaStiches}
+                      // helperText={formErrors.tillaStiches}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="Rate"
+                      fullWidth
+                      size="small"
+                      type="number"
+                      name="tilaRate"
+                      value={formData.tilaRate}
+                      onChange={handleChange}
+                      required
+                      // error={!!formErrors.tilaRate}
+                      // helperText={formErrors.tilaRate}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="Amount"
+                      fullWidth
+                      size="small"
+                      name="tilaAmount"
+                      value={formData.tilaAmount}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+              {/* ) : null} */}
+              {/* {formData.isSolving ? ( */}
+              <Grid item xs={12} md={6}>
+                <Grid container spacing={1} width="Inherit">
+                  <Grid item xs={12} md={12}>
+                    <Typography variant="h5" gutterBottom>
+                      Sequence
+                    </Typography>
+                  </Grid>{' '}
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="Sequence"
+                      fullWidth
+                      size="small"
+                      name="sequence"
+                      type="number"
+                      value={formData.sequence}
+                      onChange={handleChange}
+                      required
+                      // error={!!formErrors.sequence}
+                      // helperText={formErrors.sequence}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="Rate"
+                      fullWidth
+                      type="number"
+                      size="small"
+                      name="sequenceRate"
+                      value={formData.sequenceRate}
+                      onChange={handleChange}
+                      required
+                      // error={!!formErrors.sequenceRate}
+                      // helperText={formErrors.sequenceRate}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="Amount"
+                      fullWidth
+                      size="small"
+                      name="sequenceAmount"
+                      value={formData.sequenceAmount}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                </Grid>{' '}
+              </Grid>
+              {/* ) : null} */}
               {formData.isSolving ? (
                 <Grid item xs={12} md={6}>
                   <Grid container spacing={1} width="Inherit">
