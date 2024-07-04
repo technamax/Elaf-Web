@@ -36,6 +36,7 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
 import 'App.css';
+import '../../index.css';
 import { maxWidth, width } from '@mui/system';
 const PrePlanning = () => {
   const { user } = useUser();
