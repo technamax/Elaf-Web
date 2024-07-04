@@ -362,6 +362,7 @@ const Fabrication = () => {
     {
       field: 'total',
       headerName: 'Total',
+
       valueGetter: (params) => {
         return params.toLocaleString();
       }
@@ -369,6 +370,7 @@ const Fabrication = () => {
     {
       field: 'unitPrice',
       headerName: 'Unit Price',
+
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
           return 2;
@@ -390,6 +392,7 @@ const Fabrication = () => {
     {
       field: 'totalInclGst',
       headerName: 'Total Inc. GST',
+
       valueGetter: (params) => {
         return params.toLocaleString();
       },

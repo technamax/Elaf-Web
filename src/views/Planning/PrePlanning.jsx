@@ -36,13 +36,14 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
 import 'App.css';
+import { maxWidth, width } from '@mui/system';
 const PrePlanning = () => {
   const { user } = useUser();
   console.log('user', user);
   const [initialData, setInitialData] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   const [formData, setFormData] = useState({
-    processType: '',
+    processType: 'MultiHead',
     planningId: 0,
     collectionId: '',
     baseColorId: '', // not in api
@@ -56,7 +57,8 @@ const PrePlanning = () => {
     cuttingSize: '', // not in api
     colorId: '',
     fabricId: '',
-    noOfHeads: '',
+    noOfHeads: 0,
+    operatingMachineId: 0,
     repeats: '',
     repeatSize: '',
     uomId: '',
@@ -76,7 +78,7 @@ const PrePlanning = () => {
 
   useEffect(() => {
     setFormData({
-      processType: initialData?.processType || '',
+      processType: initialData?.processType || 'MultiHead',
 
       planningId: initialData?.planningId || 0,
       collectionId: initialData?.collectionId || '',
@@ -91,8 +93,8 @@ const PrePlanning = () => {
       cuttingSize: initialData?.cuttingSize || '', // not in api
       colorId: initialData?.colorId || '',
       fabricId: initialData?.fabricId || '',
-      noOfHeads: initialData?.noOfHeads || '',
-      operatingMachineId: initialData?.operatingMachineId || '',
+      noOfHeads: initialData?.noOfHeads || 0,
+      operatingMachineId: initialData?.operatingMachineId || 0,
       repeats: initialData?.repeats || '',
       repeatSize: initialData?.repeatSize || '',
       uomId: initialData?.uomId || '',
@@ -105,7 +107,7 @@ const PrePlanning = () => {
       createdBy: initialData?.createdBy || user.empId,
       lastUpdatedBy: user.empId,
       lastUpdatedOn: new Date().toISOString(),
-      isSchiffili: initialData?.isSchiffili || false,
+      // isSchiffili: initialData?.isSchiffili || false,
       repeatsInMtr: initialData?.repeatsInMtr || ''
     });
   }, [initialData]);
@@ -300,13 +302,13 @@ const PrePlanning = () => {
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
-        processType: '',
+        processType: 'MultiHead',
         componentId: '',
         cuttingSize: '', // not in api
         colorId: '',
         fabricId: '',
-        noOfHeads: '',
-        operatingMachineId: '',
+        noOfHeads: 0,
+        operatingMachineId: 0,
 
         repeats: '',
         repeatSize: '',
@@ -325,14 +327,14 @@ const PrePlanning = () => {
       );
       setFormData({
         ...formData,
-        processType: '',
+        processType: 'MultiHead',
 
         componentId: '',
         cuttingSize: '', // not in api
         colorId: '',
         fabricId: '',
-        noOfHeads: '',
-        operatingMachineId: '',
+        noOfHeads: 0,
+        operatingMachineId: 0,
 
         repeats: '',
         repeatSize: '',
@@ -350,13 +352,13 @@ const PrePlanning = () => {
       setFormData({
         ...formData,
         componentId: '',
-        processType: '',
+        processType: 'MultiHead', // Ensure processType is set correctly here
 
         cuttingSize: '', // not in api
         colorId: '',
         fabricId: '',
-        noOfHeads: '',
-        operatingMachineId: '',
+        noOfHeads: 0,
+        operatingMachineId: 0,
 
         repeats: '',
         repeatSize: '',
@@ -417,7 +419,7 @@ const PrePlanning = () => {
       //   autoHideDuration: 5000
       // });
       setFormData((prevFormData) => ({
-        processType: '',
+        processType: 'MultiHead',
         planningId: 0,
         collectionId: prevFormData.collectionId,
         designId: prevFormData.designId,
@@ -431,8 +433,8 @@ const PrePlanning = () => {
         cuttingSize: '', // not in api
         colorId: '',
         fabricId: '',
-        noOfHeads: '',
-        operatingMachineId: '',
+        noOfHeads: 0,
+        operatingMachineId: 0,
         repeats: '',
         repeatSize: '',
         uomId: '',
@@ -474,9 +476,9 @@ const PrePlanning = () => {
     if (!formData.cuttingSize) {
       errors.cuttingSize = 'cuttingSize is required';
     }
-    if (!formData.noOfHeads) {
-      errors.noOfHeads = 'noOfHeads is required';
-    }
+    // if (!formData.noOfHeads) {
+    //   errors.noOfHeads = 'noOfHeads is required';
+    // }
     if (!formData.repeats) {
       errors.repeats = 'repeats is required';
     }
@@ -587,6 +589,12 @@ const PrePlanning = () => {
       // editable: true,
       ...baseColumnOptions
     },
+    // {
+    //   field: 'operatingMachineId',
+    //   headerName: 'Operating Machine Heads',
+    //   // editable: true,
+    //   ...baseColumnOptions
+    // },
     {
       field: 'repeats',
       headerName: 'Repeats',
@@ -633,12 +641,12 @@ const PrePlanning = () => {
         return value;
       }
     },
-    {
-      field: 'isSchiffili',
-      headerName: 'Is Shiffili'
-      // flex: 1
-      // editable: true
-    },
+    // {
+    //   field: 'isSchiffili',
+    //   headerName: 'Is Shiffili'
+    //   // flex: 1
+    //   // editable: true
+    // },
     {
       field: 'shrinkage',
       headerName: 'Shrinkage %'
@@ -665,7 +673,8 @@ const PrePlanning = () => {
       }
     }
   ];
-  const isSchiffli = formData.processType === 'Schiffili';
+
+  const isSchiffili = formData.processType === 'Schiffili';
 
   const getCellClassName = ({ row, field }) => {
     if (row.id === 'TOTAL_FABRIC') {
@@ -1066,7 +1075,7 @@ const PrePlanning = () => {
                   ))}
                 </TextField> */}
                 {/* ///////////////////////////////////////////// */}
-                {isSchiffli ? (
+                {isSchiffili ? (
                   <TextField
                     fullWidth
                     select
@@ -1095,8 +1104,8 @@ const PrePlanning = () => {
                     value={formData.noOfHeads}
                     onChange={handleChange}
                     required
-                    error={!!formErrors.noOfHeads}
-                    helperText={formErrors.noOfHeads}
+                    // error={!!formErrors.noOfHeads}
+                    // helperText={formErrors.noOfHeads}
                   >
                     {heads.map((option) => (
                       <MenuItem key={option.lookUpId} value={option.lookUpId}>

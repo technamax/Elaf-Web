@@ -525,7 +525,7 @@ const Dyeing = () => {
     },
     {
       field: 'uom',
-      headerName: 'uom'
+      headerName: ' UOM'
     },
     {
       field: 'availableQty',
