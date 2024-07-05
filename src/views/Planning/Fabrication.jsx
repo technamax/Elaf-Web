@@ -109,7 +109,7 @@ const Fabrication = () => {
       skip: !formData.designId // Skip the query if no collection is selected
     });
   const { data: fabricData } = useGetFabricFromPrePlanningByBatchNoQuery(
-    { batchNo: formData.planningHeaderId, processType: 'Fabrication' },
+    { batchNo: formData.planningHeaderId, processType: 'PrePlanning' },
     {
       skip: !formData.planningHeaderId // Skip the query if no collection is selected
     }

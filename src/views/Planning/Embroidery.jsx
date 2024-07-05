@@ -830,6 +830,172 @@ const Embroidery = () => {
               }
             />
           </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Components"
+              name="componentId"
+              value={formData.componentId}
+              onChange={handleChange}
+              size="small"
+              required
+              error={!!formErrors.componentId}
+              helperText={formErrors.componentId}
+            >
+              {components.map((option) => (
+                <MenuItem key={option.componentId} value={option.componentId}>
+                  {option.componentName}
+                </MenuItem>
+              ))}
+            </TextField>{' '}
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Select Fabric"
+              defaultValue=""
+              size="small"
+              name="fabricId"
+              value={formData.fabricId}
+              onChange={handleChange}
+              required
+              error={!!formErrors.fabricId}
+              helperText={formErrors.fabricId}
+            >
+              {Fabrications.map((option) => (
+                <MenuItem key={option.fabricId} value={option.fabricId}>
+                  {option.fabric}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          {/* <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Vendors"
+              defaultValue=""
+              size="small"
+              name="vendorId"
+              value={formData.vendorId}
+              onChange={handleChange}
+              required
+              error={!!formErrors.vendorId}
+              helperText={formErrors.vendorId}
+            >
+              {vendors.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid> */}
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Color"
+              size="small"
+              name="colorId"
+              value={formData.colorId}
+              onChange={handleChange}
+              required
+              error={!!formErrors.colorId}
+              helperText={formErrors.colorId}
+            >
+              {colors.map((option) => (
+                <MenuItem key={option.colorId} value={option.colorId}>
+                  {option.color}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Po Pcs"
+              fullWidth
+              size="small"
+              name="poPcs"
+              value={formData.poPcs}
+              onChange={handleChange}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Available Quantity"
+              fullWidth
+              size="small"
+              name="availableQty"
+              type="number"
+              value={formData.availableQty}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Repeats"
+              type="number"
+              fullWidth
+              size="small"
+              name="repeats"
+              value={formData.repeats}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              fullWidth
+              select
+              label="Heads"
+              defaultValue=""
+              size="small"
+              name="noOfHead"
+              value={formData.noOfHead}
+              onChange={handleChange}
+              required
+              error={!!formErrors.noOfHead}
+              helperText={formErrors.noOfHead}
+            >
+              {heads.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Cutting Size"
+              fullWidth
+              size="small"
+              name="cuttingSize"
+              type="number"
+              value={formData.cuttingSize}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="itemsPerRepeat"
+              fullWidth
+              type="number"
+              size="small"
+              name="itemsPerRepeat"
+              value={formData.itemsPerRepeat}
+              onChange={handleChange}
+              required
+              error={!!formErrors.itemsPerRepeat}
+              helperText={formErrors.itemsPerRepeat}
+            />
+          </Grid>
+          <Grid item xs={12} md={6} textAlign="right" sx={{ mt: 2 }}>
+            <Button variant="contained" size="small" onClick={handleSave}>
+              Save
+            </Button>
+          </Grid>
         </Grid>
         {/* </Grid> */}
       </Card>
@@ -872,170 +1038,6 @@ const Embroidery = () => {
               sx={{ paddingY: 2, paddingX: 2 }}
             >
               {' '}
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Components"
-                  name="componentId"
-                  value={formData.componentId}
-                  onChange={handleChange}
-                  size="small"
-                  required
-                  error={!!formErrors.componentId}
-                  helperText={formErrors.componentId}
-                >
-                  {components.map((option) => (
-                    <MenuItem
-                      key={option.componentId}
-                      value={option.componentId}
-                    >
-                      {option.componentName}
-                    </MenuItem>
-                  ))}
-                </TextField>{' '}
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Select Fabric"
-                  defaultValue=""
-                  size="small"
-                  name="fabricId"
-                  value={formData.fabricId}
-                  onChange={handleChange}
-                  required
-                  error={!!formErrors.fabricId}
-                  helperText={formErrors.fabricId}
-                >
-                  {Fabrications.map((option) => (
-                    <MenuItem key={option.fabricId} value={option.fabricId}>
-                      {option.fabric}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Vendors"
-                  defaultValue=""
-                  size="small"
-                  name="vendorId"
-                  value={formData.vendorId}
-                  onChange={handleChange}
-                  required
-                  error={!!formErrors.vendorId}
-                  helperText={formErrors.vendorId}
-                >
-                  {vendors.map((option) => (
-                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                      {option.lookUpName}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Color"
-                  size="small"
-                  name="colorId"
-                  value={formData.colorId}
-                  onChange={handleChange}
-                  required
-                  error={!!formErrors.colorId}
-                  helperText={formErrors.colorId}
-                >
-                  {colors.map((option) => (
-                    <MenuItem key={option.colorId} value={option.colorId}>
-                      {option.color}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Po Pcs"
-                  fullWidth
-                  size="small"
-                  name="poPcs"
-                  value={formData.poPcs}
-                  onChange={handleChange}
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Available Quantity"
-                  fullWidth
-                  size="small"
-                  name="availableQty"
-                  type="number"
-                  value={formData.availableQty}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Repeats"
-                  type="number"
-                  fullWidth
-                  size="small"
-                  name="repeats"
-                  value={formData.repeats}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Heads"
-                  defaultValue=""
-                  size="small"
-                  name="noOfHead"
-                  value={formData.noOfHead}
-                  onChange={handleChange}
-                  required
-                  error={!!formErrors.noOfHead}
-                  helperText={formErrors.noOfHead}
-                >
-                  {heads.map((option) => (
-                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                      {option.lookUpName}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Cutting Size"
-                  fullWidth
-                  size="small"
-                  name="cuttingSize"
-                  type="number"
-                  value={formData.cuttingSize}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="itemsPerRepeat"
-                  fullWidth
-                  type="number"
-                  size="small"
-                  name="itemsPerRepeat"
-                  value={formData.itemsPerRepeat}
-                  onChange={handleChange}
-                  required
-                  error={!!formErrors.itemsPerRepeat}
-                  helperText={formErrors.itemsPerRepeat}
-                />
-              </Grid>
               <Grid item xs={12} md={1.5}>
                 <TextField
                   label="total Pcs."
@@ -1069,7 +1071,7 @@ const Embroidery = () => {
                   onChange={handleChange}
                 />
               </Grid>
-              <Grid item xs={12} md={3}>
+              <Grid item xs={12} md={2}>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -1082,7 +1084,7 @@ const Embroidery = () => {
                 />
               </Grid>
               {/* {formData.isSolving ? ( */}
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
                 {/* <FormControl fullWidth> */}
 
                 {/* <Select
@@ -1341,11 +1343,6 @@ const Embroidery = () => {
                   </Grid>
                 </Grid>
               ) : null}
-              <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-                <Button variant="contained" size="small" onClick={handleSave}>
-                  Save
-                </Button>
-              </Grid>
             </Grid>{' '}
           </AccordionDetails>{' '}
         </Accordion>
