@@ -54,7 +54,7 @@ import * as React from 'react';
 
 import Dialog from '@mui/material/Dialog';
 import CloseIcon from '@mui/icons-material/Close';
-import AssignVendorFormTable from 'components/assignVendorFormTable';
+import DyeingPrintingAssignVendor from 'components/DyeingPrintingAssignVendor';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
@@ -526,7 +526,7 @@ const Dyeing = () => {
   const handleClose = () => {
     setOpen(false);
     setAdditionalProcessData({});
-    // refetchAdditionalProcessList();
+    refetchDyeingPrintingData();
     // setDeleteId(null);
   };
 
@@ -560,17 +560,17 @@ const Dyeing = () => {
       field: 'availableQty',
       headerName: 'Available Quantitity'
     },
+    // {
+    //   field: 'shrinkage',
+    //   headerName: 'Shrinkage'
+    // },
+    // {
+    //   field: 'wastage',
+    //   headerName: 'Wastage'
+    // },
     {
-      field: 'shrinkage',
-      headerName: 'Shrinkage'
-    },
-    {
-      field: 'wastage',
-      headerName: 'Wastage'
-    },
-    {
-      field: 'outputQty',
-      headerName: 'Output Qty'
+      field: 'assignedQty',
+      headerName: 'Assigned Qty'
     },
     {
       field: 'AddVendor',
@@ -875,7 +875,7 @@ const Dyeing = () => {
               // focused
             />
           </Grid>
-          <Grid item xs={12} md={1.5}>
+          {/* <Grid item xs={12} md={1.5}>
             <TextField
               label="Shrinkage%"
               type="number"
@@ -910,8 +910,8 @@ const Dyeing = () => {
               onChange={handleChange}
               // focused
             />
-          </Grid>
-          <Grid item xs={12} md={3} sx={{ marginTop: 2 }} textAlign="right">
+          </Grid> */}
+          <Grid item xs={12} md={9} sx={{ marginTop: 2 }} textAlign="right">
             <Button
               variant="contained"
               color="primary"
@@ -1132,10 +1132,10 @@ const Dyeing = () => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                <AssignVendorFormTable
+                <DyeingPrintingAssignVendor
                   additionalProcessData={additionalProcessData}
                   setAdditionalProcessData={setAdditionalProcessData}
-                  // refetchAdditionalProcessList={refetchAdditionalProcessList}
+                  refetchDyeingPrintingData={refetchDyeingPrintingData}
                   handleClickOpen={handleClickOpen}
                 />
               </DialogContent>
