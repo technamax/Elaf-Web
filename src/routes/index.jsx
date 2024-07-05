@@ -16,15 +16,12 @@ const router = createBrowserRouter([AuthenticationRoutes, MainRoutes], {
 
 console.log(router.basename);
 
-// ReactDOM.render(
-//   <React.StrictMode>
-//     <BrowserRouter>
-//       <Routes>
-//         <Route path="/*" element={<AuthenticationRoutes />} />
-//         <Route path="/dashboard/*" element={<MainRoutes />} />
-//       </Routes>
-//     </BrowserRouter>
-//   </React.StrictMode>,
-//   document.getElementById('root')
-// );
+ReactDOM.render(
+  <React.StrictMode>
+    <BrowserRouter basename="/Elaf">
+      <RouterProvider router={router} />
+    </BrowserRouter>
+  </React.StrictMode>,
+  document.getElementById('root')
+);
 export default router;

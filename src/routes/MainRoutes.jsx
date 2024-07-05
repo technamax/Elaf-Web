@@ -94,7 +94,7 @@ const MainRoutes = {
     },
     {
       path: 'welcome',
-      element: <ProtectedRoute element={WelcomePage} /> // Add the welcome page route
+      element: <ProtectedRoute element={WelcomePage} />
     }
   ]
 };
