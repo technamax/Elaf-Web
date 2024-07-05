@@ -134,7 +134,7 @@ const Dyeing = () => {
       skip: !formData.designId
     });
   const { data: fabricData } = useGetFabricFromPrePlanningByBatchNoQuery(
-    { batchNo: formData.planningHeaderId, processType: 'DyeingPrinting' },
+    { batchNo: formData.planningHeaderId, processType: 'Fabrication' },
     {
       skip: !formData.planningHeaderId
     }
