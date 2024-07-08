@@ -64,6 +64,10 @@ export const prePlanningHeaderApi = createApi({
     getDyeingPrintingDetailsByDpId: builder.query({
       query: (dpId) =>
         `DyeingPrinting/GetDyeingPrintingDetailsByDpId?dpId=${dpId}`
+    }),
+    getEmbroideryDetailsListByEmbroideryId: builder.query({
+      query: (embroideryId) =>
+        `Embroidery/GetEmbroideryDetailsListByEmbroideryId?embroideryId=${embroideryId}`
     })
   })
 });
@@ -84,5 +88,6 @@ export const {
   useGetPrePlanningByPlanningHeaderIdQuery,
   useGetAdditionalProcessListByBatchNoQuery,
   useGetAdditionalProcessDetailsByAdditionalProcessIdQuery,
-  useGetDyeingPrintingDetailsByDpIdQuery
+  useGetDyeingPrintingDetailsByDpIdQuery,
+  useGetEmbroideryDetailsListByEmbroideryIdQuery
 } = prePlanningHeaderApi;

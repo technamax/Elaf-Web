@@ -90,22 +90,52 @@ const NewDesign = () => {
     lastUpdatedOn: new Date().toISOString()
   });
   useEffect(() => {
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     setFormData({
       designId: initialData?.designId || 0,
       collectionId: initialData?.collectionId || '',
       designNo: initialData?.designNo || 0,
       designerName: initialData?.designerName || '',
       poPcs: initialData?.poPcs || '',
-      dateOfPlanning: initialData?.dateOfPlanning || '',
+      dateOfPlanning: initialData?.dateOfPlanning
+        ? formatDate(initialData.dateOfPlanning)
+        : '',
       colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
       appId: initialData?.appId || user.appId,
-
       createdOn: initialData?.createdOn || new Date().toISOString(),
       createdBy: initialData?.createdBy || user.empId,
       lastUpdatedOn: new Date().toISOString(),
       LastUpdatedBy: user.empId
     });
   }, [initialData]);
+
+  // useEffect(() => {
+  //   setFormData({
+  //     designId: initialData?.designId || 0,
+  //     collectionId: initialData?.collectionId || '',
+  //     designNo: initialData?.designNo || 0,
+  //     designerName: initialData?.designerName || '',
+  //     poPcs: initialData?.poPcs || '',
+  //     dateOfPlanning:
+  //       new Date(initialData.dateOfPlanning).toISOString().split('T')[0] || '',
+  //     // dateOfPlanning: initialData?.dateOfPlanning || '',
+  //     colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
+  //     appId: initialData?.appId || user.appId,
+
+  //     createdOn: initialData?.createdOn || new Date().toISOString(),
+  //     createdBy: initialData?.createdBy || user.empId,
+  //     lastUpdatedOn: new Date().toISOString(),
+  //     LastUpdatedBy: user.empId
+  //   });
+  // }, [initialData]);
+  console.log('initialData', initialData);
   console.log('formData', formData);
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -186,7 +216,7 @@ const NewDesign = () => {
       }
     },
     {
-      field: 'colorId',
+      field: 'colorName',
       headerName: 'Color'
       // flex: 1,
       // editable: true,

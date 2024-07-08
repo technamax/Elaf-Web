@@ -12,27 +12,61 @@ import {
 } from '@mui/material';
 import ReuseableDataGrid from './ReuseableDataGrid';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
-import { useGetAdditionalProcessDetailsByAdditionalProcessIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
+import { useGetEmbroideryDetailsListByEmbroideryIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useUser } from 'context/User';
-import axios from 'axios';
 import { useTheme } from '@mui/material/styles';
 
-const EmbroideryAssignVendor = ({ handleClickOpen }) => {
-  const { user } = useUser();
-  const [initialRows, setInitialRows] = useState([]);
+import axios from 'axios';
+
+const EmbroideryAssignVendor = ({
+  initialFormData,
+  setAdditionalProcessData,
+  refetchDyeingPrintingData,
+  handleClickOpen
+}) => {
   const theme = useTheme();
 
+  const { user } = useUser();
+  const [initialRows, setInitialRows] = useState([]);
+
   const Quantity = initialRows
-    .reduce((sum, row) => sum + (row.quantity ?? 0), 0)
+    .reduce((sum, row) => sum + (row.assignedQty ?? 0), 0)
     .toFixed(2);
   console.log('Quantity', Quantity);
+  const totalRepeats = initialRows
+    .reduce((sum, row) => sum + (row.repeats ?? 0), 0)
+    .toFixed(2);
+  console.log('totalRepeats', totalRepeats);
 
   const [formData, setFormData] = useState({
-    totalPcs: '',
-    totalAmount: '',
-    costPerComponent: '',
-    isSolving: false,
-    threadAdditional: [], // Initialize as an array
+    embroideryIdDet: 0,
+    embroideryId: initialFormData.embroideryId || 0,
+    designId: initialFormData.designId || '',
+    batchNo: initialFormData.batchNo || '',
+    planningHeaderId: initialFormData.planningHeaderId || 0,
+    componentId: initialFormData.componentId || '',
+    componentName: initialFormData.componentName || '',
+    fabricId: initialFormData.fabricId || '',
+    fabricName: initialFormData.fabricName || '',
+    // colourName: initialFormData.colorName || '',
+    vendorId: '', /////////////checkapi
+    colorId: initialFormData.colorId || '',
+    colourName: initialFormData.colourName || '',
+    availableQty: initialFormData.availableQty || '',
+    assignedQty: '',
+    remainingQty: initialFormData.availableQty - Quantity || '',
+    noOfHead: initialFormData.noOfHead || '',
+    noOfHeadsName: initialFormData.noOfHeadsName || '',
+    repeats: initialFormData.repeats || '',
+    assignedRepeats: '',
+    remainingRepeats: initialFormData.repeats - totalRepeats || '',
+
+    cuttingSize: initialFormData.cuttingSize || '',
+    itemsPerRepeat: initialFormData.itemsPerRepeat || '',
+    poPcs: initialFormData.poPcs || '',
+
+    totalPcs: '', //repeat*itemsPerRepeat
+    totalAmount: '', //
     threadStiches: '',
     threadRate: '',
     threadAmount: '',
@@ -42,28 +76,44 @@ const EmbroideryAssignVendor = ({ handleClickOpen }) => {
     sequence: '',
     sequenceRate: '',
     sequenceAmount: '',
-    solvingLayers: '',
+    isSolving: false,
+    solvingLayers: 0,
     solvingInMeters: '',
-    solvingRate: '',
-    solvingAmount: ''
+    solvingRate: 0,
+    solvingAmount: '',
+    // additional:  '',
+    additional: [],
+
+    costPerComponent: '', //
+
+    createdOn: new Date().toISOString(),
+    createdBy: user.empId,
+    lastUpdatedOn: new Date().toISOString(),
+    LastUpdatedBy: user.empId
   });
-  //   useEffect(() => {
-  //     setFormData({
-  //       ...formData,
-  //       remainingPcsPerComponent:
-  //         additionalProcessData.pcsPerComponent - Quantity || ''
-  //     });
-  //   }, [initialRows]);
+
+  const additionals = ['Boring', 'Pooni', 'Laser', 'Doori', 'Dissolving'];
+  function getStyles(name, personName, theme) {
+    return {
+      fontWeight:
+        personName.indexOf(name) === -1
+          ? theme.typography.fontWeightRegular
+          : theme.typography.fontWeightMedium
+    };
+  }
+
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      remainingQty: initialFormData.availableQty - Quantity || '',
+      remainingRepeats: initialFormData.repeats - totalRepeats || ''
+    });
+  }, [initialRows]);
   const { data: lookupData } = useGetLookUpListQuery();
-  //   const {
-  //     data: additionalProcessDetails,
-  //     refetch: refetchAdditionalProcessDetails
-  //   } = useGetAdditionalProcessDetailsByAdditionalProcessIdQuery(
-  //     formData.additionalProcessId,
-  //     {
-  //       skip: !formData.additionalProcessId // Skip the query if no collection is selected
-  //     }
-  //   );
+  const { data: embroideryDetails, refetch: refetchEmbroideryDetails } =
+    useGetEmbroideryDetailsListByEmbroideryIdQuery(formData.embroideryId, {
+      skip: !formData.embroideryId // Skip the query if no collection is selected
+    });
   const [vendors, setVendors] = useState([]);
 
   useEffect(() => {
@@ -73,84 +123,188 @@ const EmbroideryAssignVendor = ({ handleClickOpen }) => {
       setVendors(data.vendorList);
     }
   }, [lookupData]);
-  //   useEffect(() => {
-  //     if (additionalProcessDetails) {
-  //       setInitialRows(
-  //         additionalProcessDetails.result.map((row, index) => ({
-  //           id: index,
-  //           ...row
-  //         }))
-  //       );
-  //     }
-  //   }, [additionalProcessDetails, refetchAdditionalProcessDetails]);
+  useEffect(() => {
+    if (embroideryDetails) {
+      setInitialRows(
+        embroideryDetails.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+    }
+  }, [embroideryDetails, refetchEmbroideryDetails]);
   console.log('initialRows', initialRows);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-  useEffect(() => {
-    const calculateTotalamount = () => {
-      const quantity = parseFloat(formData.quantity) || 0;
-      const ratePerPcs = parseFloat(formData.ratePerPcs) || 0;
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: checked
+    }));
+  };
 
-      return (quantity * ratePerPcs).toFixed(2);
+  useEffect(() => {
+    const calculateTotalPcs = () => {
+      const repeats = parseFloat(formData.repeats) || 0;
+      const itemsPerRepeat = parseFloat(formData.itemsPerRepeat) || 0;
+      return (repeats * itemsPerRepeat).toFixed(2);
     };
 
     setFormData((prevData) => ({
       ...prevData,
-      totalAmount: calculateTotalamount()
+      totalPcs: calculateTotalPcs()
+    }));
+    const calculateThread = () => {
+      const stitches = parseFloat(formData.threadStiches) || 0;
+      const rate = parseFloat(formData.threadRate) || 0;
+      const heads = parseFloat(formData.noOfHead) || 0;
+      const repeats = parseFloat(formData.repeats) || 0;
+      return ((stitches / 1000) * (rate * repeats * heads)).toFixed(2);
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      threadAmount: calculateThread()
+    }));
+    const calculateTilla = () => {
+      const stitches = parseFloat(formData.tillaStiches) || 0;
+      const rate = parseFloat(formData.tilaRate) || 0;
+      const heads = parseFloat(formData.noOfHead) || 0;
+      const repeats = parseFloat(formData.repeats) || 0;
+      return ((stitches / 1000) * (rate * repeats * heads)).toFixed(2);
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      tilaAmount: calculateTilla()
+    }));
+    const calculateSequence = () => {
+      const stitches = parseFloat(formData.sequence) || 0;
+      const rate = parseFloat(formData.sequenceRate) || 0;
+      const heads = parseFloat(formData.noOfHead) || 0;
+      const repeats = parseFloat(formData.repeats) || 0;
+      return ((stitches / 1000) * (rate * repeats * heads)).toFixed(2);
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      sequenceAmount: calculateSequence()
+    }));
+    const calculateInMeters = () => {
+      const repeats = parseFloat(formData.repeats) || 0;
+      const noOfHead = parseFloat(formData.noOfHead) || 0;
+      const layers = parseFloat(formData.solvingLayers) || 0;
+      return (((repeats * noOfHead * 13) / 39.37) * layers).toFixed(2);
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      solvingInMeters: calculateInMeters()
+    }));
+    const calculateSolvingAmount = () => {
+      const solvingInMeters = parseFloat(formData.solvingInMeters) || 0;
+      const solvingRate = parseFloat(formData.solvingRate) || 0;
+      const layers = parseFloat(formData.solvingLayers) || 0;
+      return (solvingInMeters * solvingRate).toFixed(2);
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      solvingAmount: calculateSolvingAmount()
+    }));
+    const calculateTotalAmount = () => {
+      const thread = parseFloat(formData.threadAmount) || 0;
+      const tilla = parseFloat(formData.tilaAmount) || 0;
+      const sequence = parseFloat(formData.sequenceAmount) || 0;
+      const solving = parseFloat(formData.solvingAmount) || 0;
+      return (thread + tilla + sequence + solving).toFixed(2);
+    };
+
+    setFormData((prevData) => ({
+      ...prevData,
+      totalAmount: calculateTotalAmount() || 0
     }));
     const calculateCostPerComponent = () => {
       const totalAmount = parseFloat(formData.totalAmount) || 0;
-      const poPcs = parseFloat(formData.poPcs) || 0;
+      const totalPcs = parseFloat(formData.totalPcs) || 0;
 
-      return (totalAmount / poPcs).toFixed(2);
+      return (totalAmount / totalPcs).toFixed(2);
     };
 
     setFormData((prevData) => ({
       ...prevData,
-      costPerComponent: calculateCostPerComponent()
+      costPerComponent: calculateCostPerComponent() || 0
     }));
   }, [
-    formData.quantity,
-    formData.ratePerPcs,
-    formData.totalAmount
-    // formData.poPcs
-    // formData.poPcs,
-    // formData.pcsPerComponent
+    formData.threadAmount,
+    formData.totalAmount,
+    formData.sequenceAmount,
+    formData.solvingAmount,
+    formData.repeats,
+    formData.tilaAmount,
+    formData.itemsPerRepeat,
+    formData.threadRate,
+    formData.threadStiches,
+    formData.noOfHead,
+    formData.tilaRate,
+    formData.tillaStiches,
+    formData.sequenceRate,
+    formData.sequence,
+    formData.solvingLayers,
+    formData.solvingInMeters,
+    formData.solvingRate
   ]);
-
+  console.log('formData', formData);
   const handleSave = async () => {
     console.log(formData);
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:4041/api/AdditionalProcess/SaveAdditionalProcessDetails',
-        formData
+        'https://gecxc.com:4041/api/Embroidery/SaveEmbroideryDetails',
+        {
+          ...formData,
+          additional: formData.additional.join(', ')
+        }
       );
 
       console.log('Save response:', response.data);
-      refetchAdditionalProcessDetails();
 
       setFormData((prevFormData) => ({
         ...prevFormData,
-        // remainingPcsPerComponent:
-        //   prevFormData.remainingPcsPerComponent - prevFormData.quantity,
-        vendorId: '', /////////////checkapi
+        // remainingQty:
+        //   prevFormData.remainingQty - prevFormData.assignedQty,
+        embroideryIdDet: 0,
+        totalPcs: '', //repeat*itemsPerRepeat
+        totalAmount: '', //
+        threadStiches: '',
+        threadRate: '',
+        threadAmount: '',
+        tillaStiches: '',
+        tilaRate: '',
+        tilaAmount: '',
+        sequence: '',
+        sequenceRate: '',
+        sequenceAmount: '',
+        isSolving: false,
+        solvingLayers: 0,
+        solvingInMeters: '',
+        solvingRate: 0,
+        solvingAmount: '',
+        // additional:  '',
+        additional: [],
 
-        // pcsPerComponent: additionalProcessData.pcsPerComponent || '',
-
-        quantity: '',
-        ratePerPcs: 0,
-        totalAmount: 0,
-        costPerComponent: '',
+        costPerComponent: '', //
 
         createdOn: new Date().toISOString(),
         createdBy: user.empId,
         lastUpdatedOn: new Date().toISOString(),
         LastUpdatedBy: user.empId
       }));
-      refetchAdditionalProcessList();
+      refetchEmbroideryDetails();
+      refetchDyeingPrintingData();
 
       // handleClickOpen();
 
@@ -167,61 +321,47 @@ const EmbroideryAssignVendor = ({ handleClickOpen }) => {
       flex: 2
     },
 
+    // {
+    //   field: 'processType',
+    //   headerName: 'Process Type',
+    //   flex: 1
+    // },
+    // {
+    //   field: 'availableQty',
+    //   headerName: 'Total Available Qty',
+    //   flex: 1
+    // },
     {
-      field: 'processType',
-      headerName: 'Process Type',
+      field: 'assignedQty',
+      headerName: 'Assigned Quantity',
       flex: 1
     },
     {
-      field: 'pcsPerComponent',
-      headerName: ' Pcs. Per Component',
+      field: 'assignedRepeats',
+      headerName: 'Assigned repeats',
       flex: 1
     },
-    {
-      field: 'quantity',
-      headerName: 'Quantitity',
-      flex: 1
-    },
-    {
-      field: 'ratePerPcs',
-      headerName: 'Rate Per Pcs.',
-      flex: 1
-    },
-    {
-      field: 'totalAmount',
-      headerName: 'Total Amount',
-      flex: 1
-    }
+    { field: 'additional', headerName: 'ThreadAdditional' },
+    { field: 'threadStiches', headerName: 'Thread Stitches' },
+    { field: 'threadRate', headerName: 'Thread Rate' },
+    { field: 'threadAmount', headerName: 'Thread Amount' },
+    { field: 'tillaStiches', headerName: 'Tilla Stitches' },
+    { field: 'tilaRate', headerName: 'Tilla Rate' },
+    { field: 'tilaAmount', headerName: 'Tilla Amount' },
+    { field: 'sequence', headerName: 'sequence' },
+    { field: 'sequenceRate', headerName: 'Sequence Rate' },
+    { field: 'sequenceAmount', headerName: 'Sequence Amount' },
+    { field: 'isSolving', headerName: 'Is Solving' },
+    { field: 'solvingLayers', headerName: 'Solving Layers' },
+    { field: 'solvingInMeters', headerName: 'Solving In Meters' },
+    { field: 'solvingRate', headerName: 'Solving Rate' },
+    { field: 'solvingAmount', headerName: 'Solving Amount' },
+    { field: 'totalPcs', headerName: 'Total Pcs' },
+    { field: 'totalAmount', headerName: 'Total Amount' },
+    { field: 'costPerComponent', headerName: 'Cost Per Component' }
   ];
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: checked
-    }));
-  };
-  const additionals = ['Boring', 'Pooni', 'Laser', 'Doori', 'Dissolving'];
-  function getStyles(name, selectedValues, theme) {
-    return {
-      fontWeight:
-        selectedValues.indexOf(name) === -1
-          ? theme.typography.fontWeightRegular
-          : theme.typography.fontWeightMedium
-    };
-  }
 
-  //   const handleClickOpen = (data) => {
-  //     setAdditionalProcessData(data);
-  //     setOpen(true);
-  //   };
-
-  const handleClose = () => {
-    setOpen(false);
-    setAdditionalProcessData({});
-    // refetchAdditionalProcessList();
-    // setDeleteId(null);
-  };
-  const deleteApi = `https://gecxc.com:4041/api/AdditionalProcess/DeleteAdditionalProcessDetails?apdId=`;
+  const deleteApi = `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingDetailByDetId?embroideryIdDet=`;
   return (
     <Box
       noValidate
@@ -242,239 +382,217 @@ const EmbroideryAssignVendor = ({ handleClickOpen }) => {
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
-            // select
             label="Fabric"
-            defaultValue=""
-            size="small"
-            name="fabricId"
-            //   value={formData.fabricId}
+            name="fabricName"
+            value={formData.fabricName}
             onChange={handleChange}
+            size="small"
+            disabled
           >
-            {/* {Fabrications.map((option) => (
-                    <MenuItem key={option.fabricId} value={option.fabricId}>
-                      {option.fabric}
-                    </MenuItem>
-                  ))} */}
-          </TextField>
-        </Grid>{' '}
+            {/* {collectionList.map((option) => (
+              <MenuItem key={option.collectionId} value={option.collectionId}>
+                {option.collectionName}
+              </MenuItem>
+            ))} */}
+          </TextField>{' '}
+        </Grid>
+
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
             // select
-            label="Components"
-            name="componentId"
-            //   value={formData.componentId}
+            label="Component"
+            name="componentName"
+            value={formData.componentName}
             onChange={handleChange}
             size="small"
-            required
-            //   error={!!formErrors.componentId}
-            //   helperText={formErrors.componentId}
+            disabled
           >
-            {/* {components.map((option) => (
-                <MenuItem key={option.componentId} value={option.componentId}>
-                  {option.componentName}
-                </MenuItem>
-              ))} */}
+            {/* {designList.map((option) => (
+              <MenuItem key={option.designId} value={option.designId}>
+                {option.designNo}
+              </MenuItem>
+            ))} */}
+          </TextField>
+        </Grid>
+
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            // select
+            label="Color"
+            name="colourName"
+            value={formData.colourName}
+            onChange={handleChange}
+            size="small"
+            disabled
+          >
+            {/* {batchList.map((option) => (
+              <MenuItem key={option.batchNo} value={option.batchNo}>
+                {option.batchNo}
+              </MenuItem>
+            ))} */}
           </TextField>{' '}
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
-            //   select
-            label="Color"
-            size="small"
-            name="colorId"
-            //   value={formData.colorId}
+            label="PO Pcs"
+            name="poPcs"
+            value={formData.poPcs}
             onChange={handleChange}
-            required
-            //   error={!!formErrors.colorId}
-            //   helperText={formErrors.colorId}
+            size="small"
+            disabled
           >
-            {/* {colors.map((option) => (
-                <MenuItem key={option.colorId} value={option.colorId}>
-                  {option.color}
-                </MenuItem>
-              ))} */}
-          </TextField>
+            {/* {components.map((option) => (
+              <MenuItem key={option.componentId} value={option.componentId}>
+                {option.componentName}
+              </MenuItem>
+            ))} */}
+          </TextField>{' '}
+        </Grid>
+
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            // select
+            label="noOfHead"
+            size="small"
+            name="noOfHeadsName"
+            value={formData.noOfHeadsName}
+            onChange={handleChange}
+            disabled
+          ></TextField>
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField
-            label="Po Pcs"
             fullWidth
+            // select
+            label="Cutting Size"
             size="small"
-            name="poPcs"
-            //   value={formData.poPcs}
+            name="cuttingSize"
+            value={formData.cuttingSize}
             onChange={handleChange}
-            focused
-            // disabled
-          />
+            disabled
+          ></TextField>
         </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            // select
+            label="Items Per Repeat"
+            size="small"
+            name="itemsPerRepeat"
+            value={formData.itemsPerRepeat}
+            onChange={handleChange}
+            disabled
+          ></TextField>
+        </Grid>
+
         <Grid item xs={12} md={1.5}>
           <TextField
-            label="Available Quantity"
+            label="Total AvailableQty"
             fullWidth
             size="small"
             name="availableQty"
-            type="number"
-            //   value={formData.availableQty}
+            value={formData.availableQty}
+            // type="number"
             onChange={handleChange}
+            disabled
           />
         </Grid>
         <Grid item xs={12} md={1.5}>
           <TextField
-            label="Remaining Quantity"
+            label="Remaining Qty"
             fullWidth
             size="small"
             name="remainingQty"
-            type="number"
-            //   value={formData.availableQty}
+            value={formData.remainingQty}
+            // type="number"
             onChange={handleChange}
+            disabled
           />
         </Grid>
         <Grid item xs={12} md={1.5}>
           <TextField
             label="Repeats"
-            type="number"
             fullWidth
             size="small"
             name="repeats"
-            //   value={formData.repeats}
+            value={formData.repeats}
+            // type="number"
             onChange={handleChange}
+            disabled
           />
         </Grid>
         <Grid item xs={12} md={1.5}>
           <TextField
             label="Remaining Repeats"
-            type="number"
             fullWidth
             size="small"
             name="remainingRepeats"
-            //   value={formData.repeats}
+            value={formData.remainingRepeats}
+            // type="number"
             onChange={handleChange}
+            disabled
           />
         </Grid>
-        <Grid item xs={12} md={1.5}>
-          <TextField
-            fullWidth
-            //   select
-            label="Heads"
-            defaultValue=""
-            size="small"
-            name="noOfHead"
-            //   value={formData.noOfHead}
-            onChange={handleChange}
-            required
-            //   error={!!formErrors.noOfHead}
-            //   helperText={formErrors.noOfHead}
-          >
-            {/* {heads.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))} */}
-          </TextField>
-        </Grid>
-        <Grid item xs={12} md={1.5}>
-          <TextField
-            label="Cutting Size"
-            fullWidth
-            size="small"
-            name="cuttingSize"
-            type="number"
-            //   value={formData.cuttingSize}
-            onChange={handleChange}
-          />
-        </Grid>
-        <Grid item xs={12} md={1.5}>
-          <TextField
-            label="itemsPerRepeat"
-            fullWidth
-            type="number"
-            size="small"
-            name="itemsPerRepeat"
-            //   value={formData.itemsPerRepeat}
-            onChange={handleChange}
-            required
-            focused
-            //   error={!!formErrors.itemsPerRepeat}
-            //   helperText={formErrors.itemsPerRepeat}
-          />
-        </Grid>
+      </Grid>
+      <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />
+      <Grid
+        container
+        spacing={2}
+        width="Inherit"
+        sx={{ paddingY: 2, paddingX: 2 }}
+      >
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
-            //   select
+            select
             label="Vendors"
-            defaultValue=""
+            // defaultValue=""
             size="small"
             name="vendorId"
-            //   value={formData.vendorId}
+            value={formData.vendorId}
             onChange={handleChange}
-            required
-            //   error={!!formErrors.vendorId}
-            //   helperText={formErrors.vendorId}
           >
-            {/* {vendors.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))} */}
-          </TextField>
-        </Grid>
-        <Grid item xs={12} md={1.5}>
-          <TextField
-            label="AssignQty"
-            fullWidth
-            size="small"
-            type="number"
-            name="AssignQty"
-            // value={formData.totalPcs}
-            onChange={handleChange}
-          />
-        </Grid>
-        <Grid item xs={12} md={1.5}>
-          <TextField
-            label="AssignRepeats"
-            fullWidth
-            size="small"
-            type="number"
-            name="AssignRepeats"
-            // value={formData.totalPcs}
-            onChange={handleChange}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextField
-            select
-            label="Additional"
-            value={formData.threadAdditional}
-            name="threadAdditional"
-            size="small"
-            onChange={handleChange}
-            fullWidth
-            SelectProps={{
-              multiple: true
-            }}
-          >
-            {additionals.map((name) => (
-              <MenuItem
-                key={name}
-                value={name}
-                style={getStyles(name, formData.threadAdditional, theme)}
-              >
-                {name}
+            {vendors.map((option) => (
+              <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                {option.lookUpName}
               </MenuItem>
             ))}
           </TextField>
         </Grid>
         <Grid item xs={12} md={1.5}>
           <TextField
-            label="Total Pcs"
+            label="Assigned Qty"
             fullWidth
-            type="number"
             size="small"
+            type="number"
+            name="assignedQty"
+            value={formData.assignedQty}
+            onChange={handleChange}
+          />
+        </Grid>
+        <Grid item xs={12} md={1.5}>
+          <TextField
+            label="Assigned Repeeats"
+            fullWidth
+            size="small"
+            type="number"
+            name="assignedRepeats"
+            value={formData.assignedRepeats}
+            onChange={handleChange}
+          />
+        </Grid>
+        <Grid item xs={12} md={1.5}>
+          <TextField
+            label="total Pcs."
+            fullWidth
+            size="small"
+            type="number"
             name="totalPcs"
-            // value={formData.totalAmount}
+            value={formData.totalPcs}
             onChange={handleChange}
           />
         </Grid>
@@ -485,7 +603,7 @@ const EmbroideryAssignVendor = ({ handleClickOpen }) => {
             type="number"
             size="small"
             name="totalAmount"
-            // value={formData.totalAmount}
+            value={formData.totalAmount}
             onChange={handleChange}
           />
         </Grid>
@@ -500,7 +618,33 @@ const EmbroideryAssignVendor = ({ handleClickOpen }) => {
             onChange={handleChange}
           />
         </Grid>
-        <Grid item xs={12} md={3}>
+
+        <Grid item xs={12} md={4.5}>
+          <TextField
+            select
+            label="Additional"
+            value={formData.additional}
+            name="additional"
+            size="small"
+            onChange={handleChange}
+            fullWidth
+            SelectProps={{
+              multiple: true
+            }}
+          >
+            {additionals.map((name) => (
+              <MenuItem
+                key={name}
+                value={name}
+                style={getStyles(name, formData.additional, theme)}
+              >
+                {name}
+              </MenuItem>
+            ))}
+          </TextField>
+          {/* </FormControl> */}
+        </Grid>
+        <Grid item xs={12} md={1.5}>
           <FormControlLabel
             control={
               <Checkbox
@@ -512,38 +656,8 @@ const EmbroideryAssignVendor = ({ handleClickOpen }) => {
             label="isSolving"
           />
         </Grid>
-        {/* {formData.isSolving ? ( */}
-        {/* <FormControl fullWidth> */}
-        {/* <Select
-                  multiple
-                  labelId="thread-additional-label"
-                  value={formData.threadAdditional}
-                  name="threadAdditional"
-                  size="small"
-                  label="Additional"
-                  // focused
-                  onChange={handleChange}
-                  // input={<OutlinedInput label="Additional" />}
-                  fullWidth
-                  // MenuProps={MenuProps}
-                >
-                  {additionals.map((name) => (
-                    <MenuItem
-                      key={name}
-                      value={name}
-                      style={getStyles(name, formData.threadAdditional, theme)}
-                    >
-                      {name}
-                    </MenuItem>
-                  ))}
-                </Select> */}
-        {/* ) : null} */}
-        {/* <Grid item xs={12} md={4}></Grid> */}
-        {/* <Divider
-                color="#cc8587"
-                sx={{ height: 1, width: '100%', mt: 2 }}
-              /> */}
-        {/* {formData.isSolving ? ( */}
+        <Grid item xs={12} md={6}></Grid>
+
         <Grid item xs={12} md={6}>
           <Grid container spacing={1} width="Inherit">
             <Grid item xs={12} md={12}>
@@ -746,13 +860,13 @@ const EmbroideryAssignVendor = ({ handleClickOpen }) => {
             </Grid>
           </Grid>
         ) : null}
+
         <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
           <Button variant="contained" size="small" onClick={handleSave}>
             Save
           </Button>
         </Grid>
-      </Grid>{' '}
-      <Divider color="#cc8587" sx={{ height: 2, width: '100%', mt: 2 }} />
+      </Grid>
       <Grid
         container
         spacing={2}
@@ -765,9 +879,9 @@ const EmbroideryAssignVendor = ({ handleClickOpen }) => {
             initialRows={initialRows}
             // setInitialData={setInitialData}
             deleteApi={deleteApi}
-            // deleteBy="additionalProcessDetId"
-            // refetch={refetchAdditionalProcessDetails}
-            // disableEdit={true}
+            deleteBy="embroideryIdDet"
+            refetch={refetchEmbroideryDetails}
+            disableEdit={true}
             // setAccordionExpanded={setAccordionExpanded}
             // fileName="Schffili List"
           />

@@ -7,7 +7,7 @@ import { useUser } from 'context/User';
 import axios from 'axios';
 
 const DyeingPrintingAssignVendor = ({
-  additionalProcessData,
+  initialFormData,
   setAdditionalProcessData,
   refetchDyeingPrintingData,
   handleClickOpen
@@ -22,29 +22,29 @@ const DyeingPrintingAssignVendor = ({
 
   const [formData, setFormData] = useState({
     dpIdDet: 0,
-    dpId: additionalProcessData.dpId || 0,
-    designId: additionalProcessData.designId || '',
-    batchNo: additionalProcessData.batchNo || '',
-    planningHeaderId: additionalProcessData.planningHeaderId || 0,
-    fabricId: additionalProcessData.fabricId || '',
-    colorId: additionalProcessData.colorId || '',
-    colorName: additionalProcessData.colorName || '',
+    dpId: initialFormData.dpId || 0,
+    designId: initialFormData.designId || '',
+    batchNo: initialFormData.batchNo || '',
+    planningHeaderId: initialFormData.planningHeaderId || 0,
+    fabricId: initialFormData.fabricId || '',
+    colorId: initialFormData.colorId || '',
+    colorName: initialFormData.colorName || '',
     vendorId: '', /////////////checkapi
-    processType: additionalProcessData.processType || '',
-    availableQty: additionalProcessData.availableQty || '',
-    remainingQty: additionalProcessData.availableQty - Quantity || '',
+    processType: initialFormData.processType || '',
+    availableQty: initialFormData.availableQty || '',
+    remainingQty: initialFormData.availableQty - Quantity || '',
     shrinkage: '',
     wastage: '',
-    uomId: additionalProcessData.uomId || '',
-    uom: additionalProcessData.uom || '',
-    poPcs: additionalProcessData.poPcs || '',
+    uomId: initialFormData.uomId || '',
+    uom: initialFormData.uom || '',
+    poPcs: initialFormData.poPcs || '',
 
-    // baseColorName: additionalProcessData.baseColorName || '',
-    // poPcs: additionalProcessData.poPcs || '',
-    // availableQty: additionalProcessData.availableQty || '',
+    // baseColorName: initialFormData.baseColorName || '',
+    // poPcs: initialFormData.poPcs || '',
+    // availableQty: initialFormData.availableQty || '',
     // remainingQty:
-    //   additionalProcessData.availableQty - Quantity || '',
-    // processTypeId: additionalProcessData.processTypeId || '',
+    //   initialFormData.availableQty - Quantity || '',
+    // processTypeId: initialFormData.processTypeId || '',
     assignedQty: '',
 
     rate: '',
@@ -62,7 +62,7 @@ const DyeingPrintingAssignVendor = ({
   useEffect(() => {
     setFormData({
       ...formData,
-      remainingQty: additionalProcessData.availableQty - Quantity || ''
+      remainingQty: initialFormData.availableQty - Quantity || ''
     });
   }, [initialRows]);
   const { data: lookupData } = useGetLookUpListQuery();
@@ -154,7 +154,7 @@ const DyeingPrintingAssignVendor = ({
         dpIdDet: 0,
         vendorId: '', /////////////checkapi
 
-        availableQty: additionalProcessData.availableQty || '',
+        availableQty: initialFormData.availableQty || '',
         shrinkage: '',
         wastage: '',
         assignedQty: '',
@@ -230,7 +230,7 @@ const DyeingPrintingAssignVendor = ({
     }
   ];
 
-  const deleteApi = `https://gecxc.com:4041/api/AdditionalProcess/DeleteAdditionalProcessDetails?apdId=`;
+  const deleteApi = `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingDetailByDetId?dpIdDet=`;
   return (
     <Box
       noValidate

@@ -56,6 +56,7 @@ const ReuseableDataGrid = ({
   };
 
   const handleEdit = (row) => {
+    window.scrollTo({ top: 100, behavior: 'smooth' });
     if (row.embroideryId) {
       const threadAdditionalArray = row.threadAdditional
         ? row.threadAdditional.split(',').map((item) => item.trim())

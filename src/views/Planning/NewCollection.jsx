@@ -30,6 +30,7 @@ import { WidthFull } from '@mui/icons-material';
 // import { GetCollectionList } from 'api/apis';
 import { useUser } from 'context/User';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
@@ -78,6 +79,38 @@ const NewCollection = () => {
     lastUpdatedBy: user.empId,
     lastUpdatedOn: new Date().toISOString()
   });
+
+  useEffect(() => {
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+    setFormData({
+      collectionId: initialData?.collectionId || 0,
+      collectionName: initialData?.collectionName || '',
+      brandId: initialData?.brandId || 0,
+      seasonId: initialData?.seasonId || '',
+      volume: initialData?.volume || '',
+      planningDate: initialData?.planningDate
+        ? formatDate(initialData.planningDate)
+        : '',
+      launchDate: initialData?.launchDate
+        ? formatDate(initialData.launchDate)
+        : '',
+      isRepeatCollection: initialData?.isRepeatCollection || '',
+      noOfDesigns: initialData?.noOfDesigns || '',
+      noOfColors: initialData?.noOfColors || '',
+      poPcs: initialData?.poPcs || '',
+      appId: initialData?.appId || user.appId,
+      createdOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || user.empId,
+      lastUpdatedOn: new Date().toISOString(),
+      LastUpdatedBy: user.empId
+    });
+  }, [initialData]);
   const [totalPcs, setTotalPcs] = useState('');
   console.log('formData', formData);
   console.log('lookupData', lookupData);
@@ -146,50 +179,45 @@ const NewCollection = () => {
   const columns = [
     {
       field: 'collectionName',
-      headerName: 'Collection',
-      editable: true,
-      flex: 2
+      headerName: 'Collection'
+      // editable: true,
+      // flex: 2
     },
     {
       field: 'brandId',
-      headerName: 'Brand',
-      editable: true,
-      flex: 1,
-      type: 'singleSelect',
-      valueOptions: brands.map((collection) => ({
-        value: collection.lookUpId,
-        label: collection.lookUpName
-      }))
+      headerName: 'Brand'
+      // editable: true,
+      // flex: 1,
+      // type: 'singleSelect',
+      // valueOptions: brands.map((collection) => ({
+      //   value: collection.lookUpId,
+      //   label: collection.lookUpName
+      // }))
     },
     {
       field: 'seasonId',
-      headerName: 'Season',
-      editable: true,
-      flex: 1,
-      type: 'singleSelect',
-      valueOptions: seasons.map((collection) => ({
-        value: collection.lookUpId,
-        label: collection.lookUpName
-      }))
+      headerName: 'Season'
+      // editable: true,
+      // flex: 1,
+      // type: 'singleSelect',
+      // valueOptions: seasons.map((collection) => ({
+      //   value: collection.lookUpId,
+      //   label: collection.lookUpName
+      // }))
     },
     {
       field: 'volume',
-      headerName: 'Volume',
-      flex: 1,
-      editable: true,
-      type: 'singleSelect',
-      valueOptions: ['Volume 1', 'Volume 2', 'Volume 3', 'Volume 4', 'Volume 5']
+      headerName: 'Volume'
+      // flex: 1,
+      // editable: true,
+      // type: 'singleSelect',
+      // valueOptions: ['Volume 1', 'Volume 2', 'Volume 3', 'Volume 4', 'Volume 5']
     },
     {
       field: 'planningDate',
       headerName: 'Planning Date',
-      type: 'date',
-      flex: 1,
-      editable: true,
-      valueGetter: (params) => (params ? new Date(params) : null),
-      valueFormatter: (params) => {
-        const date = params;
-        if (!date) return '';
+      valueGetter: (params) => {
+        const date = new Date(params);
         return date.toLocaleDateString('en-GB', {
           day: 'numeric',
           month: 'short',
@@ -200,13 +228,8 @@ const NewCollection = () => {
     {
       field: 'launchDate',
       headerName: 'Launch Date',
-      type: 'date',
-      flex: 1,
-      editable: true,
-      valueGetter: (params) => (params ? new Date(params) : null),
-      valueFormatter: (params) => {
-        const date = params;
-        if (!date) return '';
+      valueGetter: (params) => {
+        const date = new Date(params);
         return date.toLocaleDateString('en-GB', {
           day: 'numeric',
           month: 'short',
@@ -216,29 +239,25 @@ const NewCollection = () => {
     },
     {
       field: 'isRepeatCollection',
-      headerName: 'Repeat',
-      flex: 1,
-      editable: true,
-      type: 'singleSelect',
-      valueOptions: ['No', 'Yes']
+      headerName: 'Repeat'
     },
     {
       field: 'noOfColors',
-      headerName: 'No. Of Colors',
-      editable: true,
-      flex: 1
+      headerName: 'No. Of Colors'
+      // editable: true,
+      // flex: 1
     },
     {
       field: 'noOfDesigns',
-      headerName: 'No Of Designs',
-      editable: true,
-      flex: 1
+      headerName: 'No Of Designs'
+      // editable: true,
+      // flex: 1
     },
     {
       field: 'poPcs',
-      headerName: 'Po Pcs',
-      editable: true,
-      flex: 1
+      headerName: 'Po Pcs'
+      // editable: true,
+      // flex: 1
     }
   ];
 
@@ -403,8 +422,8 @@ const NewCollection = () => {
   console.log('searchData', searchData);
   const deleteApi =
     'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
-  const editAPi =
-    'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection';
+  // const editAPi =
+  //   'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection';
 
   return (
     <MainCard
@@ -670,14 +689,17 @@ const NewCollection = () => {
               >
                 {/* <Grid container spacing={2} width="inherit" paddingTop={2}> */}
                 <Grid item xs={12}>
-                  <EditAbleDataGrid
+                  <ReuseableDataGrid
                     initialRows={initialRows}
-                    ncolumns={columns}
+                    iColumns={columns}
+                    setInitialData={setInitialData}
                     // fetchData={fetchData}
                     formData={formData}
                     deleteApi={deleteApi}
                     deleteBy="collectionId"
-                    editAPi={editAPi}
+                    refetch={refetch}
+                    // editAPi={editAPi}
+                    fileName="collectionList"
                   />
                 </Grid>
               </Grid>{' '}
@@ -733,14 +755,16 @@ const NewCollection = () => {
 
             <Grid container spacing={2} width="inherit" paddingTop={2}>
               <Grid item xs={12}>
-                <EditAbleDataGrid
+                <ReuseableDataGrid
                   initialRows={searchResult}
-                  ncolumns={columns}
-                  formData={formData}
+                  iColumns={columns}
+                  disableEdit
+                  disableDelete
+                  // formData={formData}
                   // deleteApi={deleteApi}
                   // deleteBy="collectionId"
                   // editAPi={editAPi}
-                  disableAddRecord={true}
+                  // disableAddRecord={true}
                 />
               </Grid>
             </Grid>

@@ -517,16 +517,16 @@ const Dyeing = () => {
     }
   ];
 
-  const [additionalProcessData, setAdditionalProcessData] = useState({});
+  const [initialFormData, setInitialFormData] = useState({});
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = (data) => {
-    setAdditionalProcessData(data);
+    setInitialFormData(data);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setAdditionalProcessData({});
+    setInitialFormData({});
     refetchDyeingPrintingData();
     // setDeleteId(null);
   };
@@ -1135,8 +1135,8 @@ const Dyeing = () => {
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
                 <DyeingPrintingAssignVendor
-                  additionalProcessData={additionalProcessData}
-                  setAdditionalProcessData={setAdditionalProcessData}
+                  initialFormData={initialFormData}
+                  setInitialFormData={setInitialFormData}
                   refetchDyeingPrintingData={refetchDyeingPrintingData}
                   handleClickOpen={handleClickOpen}
                 />
