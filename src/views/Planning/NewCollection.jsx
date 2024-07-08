@@ -398,7 +398,7 @@ const NewCollection = () => {
       const response = await axios.get(
         `https://gecxc.com:4041/API/CollectionRegistration/GetCollectionListByPlanningDate?startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}&appId=1`
       );
-      enqueueSnackbar('Collection saved successfully!', {
+      enqueueSnackbar('Collection Search successfully!', {
         variant: 'success',
         autoHideDuration: 5000
       });
@@ -412,7 +412,7 @@ const NewCollection = () => {
       );
     } catch (error) {
       console.error('Error saving data:', error);
-      enqueueSnackbar('Collection not saved!', {
+      enqueueSnackbar('Collection Search Failed!', {
         variant: 'error',
         autoHideDuration: 5000
       });
