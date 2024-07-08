@@ -777,8 +777,8 @@ const Embroidery = () => {
       )
     }
   ];
-  const deleteApi =
-    'https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=';
+  const deleteApi = `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=`;
+
   return (
     <>
       {/* <div className="CardHeader"> */}
