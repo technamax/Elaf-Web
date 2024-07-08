@@ -55,8 +55,13 @@ const MenuList = ({ empId, token }) => {
         if (shouldNavigateToWelcome) {
           navigate('/welcome');
         }
+<<<<<<< HEAD
         // if (!shouldNavigateToWelcome) {
         //   navigate('/dashboard');
+=======
+        // else {
+        //   navigate('/dashboard'); // Navigate to dashboard or another default page
+>>>>>>> Develop
         // }
       } catch (err) {
         setError(err.message);

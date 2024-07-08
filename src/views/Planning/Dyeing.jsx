@@ -50,6 +50,17 @@ import MainCard from 'ui-component/cards/MainCard';
 import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
 import '../../assets/scss/style.scss';
+import * as React from 'react';
+
+import Dialog from '@mui/material/Dialog';
+import CloseIcon from '@mui/icons-material/Close';
+import DyeingPrintingAssignVendor from 'components/DyeingPrintingAssignVendor';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
+import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
 
 const Dyeing = () => {
   const { user } = useUser();
@@ -64,20 +75,20 @@ const Dyeing = () => {
     fabricId: '',
     colorId: '',
     color: '',
-    vendorId: '',
+    // vendorId: '',
     processType: '',
-    AvailableQty: '',
+    availableQty: '',
     Shrinkage: '',
     Wastage: '',
-    OutputQty: '',
+    outputQty: '',
     UOM: '',
     uomId: '',
-    RatePerUOM: '',
-    UnitRatePerPo: '',
-    TotalExclGst: '',
-    GST: '0',
-    // GSTAmount: '',
-    TotalIncludingGst: '',
+    // RatePerUOM: '',
+    // UnitRatePerPo: '',
+    // TotalExclGst: '',
+    // GST: '0',
+    // // GSTAmount: '',
+    // TotalIncludingGst: '',
     // createdBy: 0,
     poPcs: '',
     baseColorName: '',
@@ -96,19 +107,19 @@ const Dyeing = () => {
       fabricId: initialData?.fabricId || '',
       colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
       color: initialData?.color || '', //from dying screen coming from fabricAPi
-      vendorId: initialData?.vendorId || '',
+      // vendorId: initialData?.vendorId || '',
       processType: initialData?.processType || '',
-      AvailableQty: initialData?.availableQty || '',
+      availableQty: initialData?.availableQty || '',
       Shrinkage: initialData?.shrinkage || '',
       Wastage: initialData?.wastage || '',
-      OutputQty: initialData?.outputQty || 0,
+      outputQty: initialData?.outputQty || 0,
       UOM: initialData?.uom || 0,
       uomId: initialData?.uomId || '',
-      RatePerUOM: initialData?.ratePerUOM || 0,
-      UnitRatePerPo: initialData?.unitRatePerPo || '',
-      TotalExclGst: initialData?.totalExclGst || '',
-      GST: initialData?.gst || '',
-      TotalIncludingGst: initialData?.totalIncludingGst || '',
+      // RatePerUOM: initialData?.ratePerUOM || 0,
+      // UnitRatePerPo: initialData?.unitRatePerPo || '',
+      // TotalExclGst: initialData?.totalExclGst || '',
+      // GST: initialData?.gst || '',
+      // TotalIncludingGst: initialData?.totalIncludingGst || '',
       // createdBy: initialData?.createdBy || 0,
       poPcs: initialData?.poPcs || 0,
       baseColorName: initialData?.baseColorName || 0,
@@ -189,12 +200,12 @@ const Dyeing = () => {
       setColors(colorData.result);
     }
   }, [colorData]);
-  useEffect(() => {
-    if (lookupData) {
-      setVendors(lookupData.result[0].vendorList);
-    }
-  }, [fabricData]);
-  console.log(vendors);
+  // useEffect(() => {
+  //   if (lookupData) {
+  //     setVendors(lookupData.result[0].vendorList);
+  //   }
+  // }, [fabricData]);
+  // console.log(vendors);
   useEffect(() => {
     if (dyeingPrintingData) {
       setInitialRows(
@@ -233,20 +244,20 @@ const Dyeing = () => {
         fabricId: '',
         colorId: '',
         color: '',
-        vendorId: '',
+        // vendorId: '',
         processType: '',
-        AvailableQty: '',
+        availableQty: '',
         Shrinkage: '',
         Wastage: '',
-        OutputQty: '',
+        outputQty: '',
         UOM: '',
         uomId: '',
-        RatePerUOM: '',
-        UnitRatePerPo: '',
-        TotalExclGst: '',
-        GST: '0',
-        // GSTAmount: '',
-        TotalIncludingGst: '',
+        // RatePerUOM: '',
+        // UnitRatePerPo: '',
+        // TotalExclGst: '',
+        // GST: '0',
+        // // GSTAmount: '',
+        // TotalIncludingGst: '',
         // createdBy: 0,
         poPcs: '',
         baseColorName: ''
@@ -267,20 +278,20 @@ const Dyeing = () => {
         fabricId: '',
         colorId: '',
         color: '',
-        vendorId: '',
+        // vendorId: '',
         processType: '',
-        AvailableQty: '',
+        availableQty: '',
         Shrinkage: '',
         Wastage: '',
-        OutputQty: '',
+        outputQty: '',
         UOM: '',
         uomId: '',
-        RatePerUOM: '',
-        UnitRatePerPo: '',
-        TotalExclGst: '',
-        GST: '0',
-        // GSTAmount: '',
-        TotalIncludingGst: '',
+        // RatePerUOM: '',
+        // UnitRatePerPo: '',
+        // TotalExclGst: '',
+        // GST: '0',
+        // // GSTAmount: '',
+        // TotalIncludingGst: '',
         // createdBy: 0,
         poPcs: ''
         // baseColorName: '',
@@ -295,20 +306,20 @@ const Dyeing = () => {
         fabricId: '',
         colorId: '',
         color: '',
-        vendorId: '',
+        // vendorId: '',
         processType: '',
-        AvailableQty: '',
+        availableQty: '',
         Shrinkage: '',
         Wastage: '',
-        OutputQty: '',
+        outputQty: '',
         UOM: '',
-        uomId: '',
-        RatePerUOM: '',
-        UnitRatePerPo: '',
-        TotalExclGst: '',
-        GST: '0',
-        // GSTAmount: '',
-        TotalIncludingGst: ''
+        uomId: ''
+        // RatePerUOM: '',
+        // UnitRatePerPo: '',
+        // TotalExclGst: '',
+        // GST: '0',
+        // // GSTAmount: '',
+        // TotalIncludingGst: ''
       });
       setAccordionExpanded(true);
       setLoading(false);
@@ -322,7 +333,7 @@ const Dyeing = () => {
       setFormData({
         ...formData,
         fabricId: value
-        // OutputQty: selectedFabric ? selectedFabric.total : ''
+        // outputQty: selectedFabric ? selectedFabric.total : ''
       });
       // fetchFabricColorData(value); // Pass formData.fabricId instead of value
       // setAccordionExpanded(true);
@@ -334,7 +345,7 @@ const Dyeing = () => {
         ...formData,
         ColorId: value.colorId,
         color: selectedColor.color,
-        AvailableQty: selectedColor.total,
+        availableQty: selectedColor.total,
         UOM: selectedColor.uom,
         Shrinkage: selectedColor.shrinkage,
         Wastage: selectedColor.wastage
@@ -359,14 +370,14 @@ const Dyeing = () => {
 
   useEffect(() => {
     const calculateOutputQty = () => {
-      const AvailableQty = parseFloat(formData.AvailableQty) || 0;
+      const availableQty = parseFloat(formData.availableQty) || 0;
       const shrinkage = parseFloat(formData.Shrinkage) || 0;
       const wastage = parseFloat(formData.Wastage) || 0;
-      return ((AvailableQty * (100 - (shrinkage + wastage))) / 100).toFixed(2);
+      return ((availableQty * (100 - (shrinkage + wastage))) / 100).toFixed(2);
     };
 
     const calculateTotalExclGst = () => {
-      const quantity = parseFloat(formData.AvailableQty) || 0;
+      const quantity = parseFloat(formData.availableQty) || 0;
       const rate = parseFloat(formData.RatePerUOM) || 0;
       return (quantity * rate).toFixed(2);
     };
@@ -384,13 +395,13 @@ const Dyeing = () => {
 
     setFormData((prevData) => ({
       ...prevData,
-      OutputQty: outputQty,
-      TotalExclGst: totalExclGst,
-      TotalIncludingGst: totalIncludingGst,
-      UnitRatePerPo: unitRatePerPo.toFixed(2)
+      outputQty: outputQty
+      // TotalExclGst: totalExclGst,
+      // TotalIncludingGst: totalIncludingGst,
+      // UnitRatePerPo: unitRatePerPo.toFixed(2)
     }));
   }, [
-    formData.AvailableQty,
+    formData.availableQty,
     formData.Shrinkage,
     formData.Wastage,
     formData.RatePerUOM,
@@ -401,11 +412,11 @@ const Dyeing = () => {
   const [formErrors, setFormErrors] = useState({});
 
   const handleSave = async () => {
-    const errors = validateForm();
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
+    // const errors = validateForm();
+    // if (Object.keys(errors).length > 0) {
+    //   setFormErrors(errors);
+    //   return;
+    // }
 
     try {
       const response = await axios.post(
@@ -435,20 +446,20 @@ const Dyeing = () => {
         fabricId: '',
         colorId: '',
         color: '',
-        vendorId: '',
+        // vendorId: '',
         processType: '',
-        AvailableQty: '',
+        availableQty: '',
         Shrinkage: '',
         Wastage: '',
-        OutputQty: '',
+        outputQty: '',
         UOM: '',
         uomId: '',
-        RatePerUOM: '',
-        UnitRatePerPo: '',
-        TotalExclGst: '',
-        GST: '0',
-        // GSTAmount: '',
-        TotalIncludingGst: '',
+        // RatePerUOM: '',
+        // UnitRatePerPo: '',
+        // TotalExclGst: '',
+        // GST: '0',
+        // // GSTAmount: '',
+        // TotalIncludingGst: '',
         // createdBy: 0,
         poPcs: prevFormData.poPcs,
         baseColorName: '',
@@ -479,18 +490,18 @@ const Dyeing = () => {
     if (!formData.colorId) {
       errors.colorId = 'colorId is required';
     }
-    if (!formData.vendorId) {
-      errors.vendorId = 'vendorId is required';
-    }
+    // if (!formData.vendorId) {
+    //   errors.vendorId = 'vendorId is required';
+    // }
     if (!formData.processType) {
       errors.processType = 'processType is required';
     }
-    if (!formData.GST) {
-      errors.GST = 'GST is required';
-    }
-    if (!formData.RatePerUOM) {
-      errors.RatePerUOM = 'RatePerUOM is required';
-    }
+    // if (!formData.GST) {
+    //   errors.GST = 'GST is required';
+    // }
+    // if (!formData.RatePerUOM) {
+    //   errors.RatePerUOM = 'RatePerUOM is required';
+    // }
     return errors;
   };
 
@@ -505,6 +516,20 @@ const Dyeing = () => {
     }
   ];
 
+  const [additionalProcessData, setAdditionalProcessData] = useState({});
+  const [open, setOpen] = React.useState(false);
+  const handleClickOpen = (data) => {
+    setAdditionalProcessData(data);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setAdditionalProcessData({});
+    refetchDyeingPrintingData();
+    // setDeleteId(null);
+  };
+
   const columns = [
     {
       field: 'fabricName',
@@ -514,10 +539,10 @@ const Dyeing = () => {
       field: 'colorName',
       headerName: 'Color'
     },
-    {
-      field: 'vendorName',
-      headerName: 'Vendor'
-    },
+    // {
+    //   field: 'vendorName',
+    //   headerName: 'Vendor'
+    // },
 
     {
       field: 'processType',
@@ -528,41 +553,59 @@ const Dyeing = () => {
       headerName: ' UOM'
     },
     {
+      field: 'poPcs',
+      headerName: ' PO PCS.'
+    },
+    {
       field: 'availableQty',
       headerName: 'Available Quantitity'
     },
+    // {
+    //   field: 'shrinkage',
+    //   headerName: 'Shrinkage'
+    // },
+    // {
+    //   field: 'wastage',
+    //   headerName: 'Wastage'
+    // },
     {
-      field: 'shrinkage',
-      headerName: 'Shrinkage'
+      field: 'assignedQty',
+      headerName: 'Assigned Qty'
     },
     {
-      field: 'wastage',
-      headerName: 'Wastage'
-    },
-    {
-      field: 'outputQty',
-      headerName: 'Output Qty'
-    },
-    {
-      field: 'ratePerUOM',
-      headerName: 'Rate'
-    },
-    {
-      field: 'totalExclGst',
-      headerName: 'Total Excl. Gst'
-    },
-    {
-      field: 'gst',
-      headerName: 'GST'
-    },
-    {
-      field: 'totalIncludingGst',
-      headerName: 'Total Including GST'
-    },
-    {
-      field: 'unitRatePerPo',
-      headerName: 'UnitRate Per Po.'
+      field: 'AddVendor',
+      headerName: 'Add Vendor',
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <IconButton
+            color="primary"
+            onClick={() => handleClickOpen(params.row)}
+          >
+            <PersonAddAlt1OutlinedIcon />
+          </IconButton>
+        </div>
+      )
     }
+    // {
+    //   field: 'ratePerUOM',
+    //   headerName: 'Rate'
+    // },
+    // {
+    //   field: 'totalExclGst',
+    //   headerName: 'Total Excl. Gst'
+    // },
+    // {
+    //   field: 'gst',
+    //   headerName: 'GST'
+    // },
+    // {
+    //   field: 'totalIncludingGst',
+    //   headerName: 'Total Including GST'
+    // },
+    // {
+    //   field: 'unitRatePerPo',
+    //   headerName: 'UnitRate Per Po.'
+    // }
 
     // {
     //   field: 'Action',
@@ -609,13 +652,13 @@ const Dyeing = () => {
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
           avatar={<Avatar src={roller} sx={{ background: 'transparent' }} />}
-          title="Dyeing "
+          title="Add Dyeing and Printing "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
 
         <Grid
           container
-          spacing={2}
+          spacing={1}
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
@@ -751,7 +794,7 @@ const Dyeing = () => {
                   ...prevFormData,
                   colorId: newValue ? newValue.colorId : '',
                   color: newValue ? newValue.color : '',
-                  AvailableQty: newValue ? newValue.total : '',
+                  availableQty: newValue ? newValue.total : '',
                   UOM: newValue ? newValue.uom : '',
                   uomId: newValue ? newValue.uomId : '',
                   Shrinkage: newValue ? newValue.shrinkage : '',
@@ -778,11 +821,110 @@ const Dyeing = () => {
               onChange={handleChange}
             /> */}
           </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Process Type"
+              size="small"
+              name="processType"
+              value={formData.processType}
+              onChange={handleChange}
+              error={!!formErrors.processType}
+              helperText={formErrors.processType}
+              required
+            >
+              {design.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Po Pcs"
+              fullWidth
+              size="small"
+              name="poPcs"
+              value={formData.poPcs}
+              onChange={handleChange}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="UOM"
+              fullWidth
+              size="small"
+              name="UOM"
+              value={formData.UOM}
+              // focused
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="availableQty"
+              fullWidth
+              size="small"
+              type="number"
+              name="availableQty"
+              value={formData.availableQty}
+              onChange={handleChange}
+              // focused
+            />
+          </Grid>
+          {/* <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Shrinkage%"
+              type="number"
+              fullWidth
+              size="small"
+              name="Shrinkage"
+              value={formData.Shrinkage}
+              onChange={handleChange}
+              // focused
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Wastage%"
+              fullWidth
+              size="small"
+              type="number"
+              name="Wastage"
+              value={formData.Wastage}
+              onChange={handleChange}
+              // focused
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Output Qty"
+              fullWidth
+              size="small"
+              name="outputQty"
+              type="number"
+              value={formData.outputQty}
+              onChange={handleChange}
+              // focused
+            />
+          </Grid> */}
+          <Grid item xs={12} md={9} sx={{ marginTop: 2 }} textAlign="right">
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={handleSave}
+            >
+              Save
+            </Button>
+          </Grid>
         </Grid>
       </Card>
       <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
-
-      <Card variant="outlined">
+      {/* <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
           avatar={<AddOutlinedIcon />}
@@ -812,13 +954,13 @@ const Dyeing = () => {
           ></AccordionSummary>
           <AccordionDetails>
             {/* <FormControl> */}
-            <Grid
+      {/* <Grid
               container
-              spacing={2}
+              spacing={1}
               width="Inherit"
               sx={{ paddingY: 2, paddingX: 2 }}
-            >
-              <Grid item xs={12} md={3}>
+            > */}{' '}
+      {/* <Grid item xs={12} md={3}>
                 <TextField
                   fullWidth
                   select
@@ -837,99 +979,8 @@ const Dyeing = () => {
                     </MenuItem>
                   ))}
                 </TextField>
-              </Grid>
-
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Process Type"
-                  size="small"
-                  name="processType"
-                  value={formData.processType}
-                  onChange={handleChange}
-                  error={!!formErrors.processType}
-                  helperText={formErrors.processType}
-                  required
-                >
-                  {design.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  label="Po Pcs"
-                  fullWidth
-                  size="small"
-                  name="poPcs"
-                  value={formData.poPcs}
-                  onChange={handleChange}
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="UOM"
-                  fullWidth
-                  size="small"
-                  name="UOM"
-                  value={formData.UOM}
-                  // focused
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="AvailableQty"
-                  fullWidth
-                  size="small"
-                  type="number"
-                  name="AvailableQty"
-                  value={formData.AvailableQty}
-                  onChange={handleChange}
-                  // focused
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Shrinkage%"
-                  type="number"
-                  fullWidth
-                  size="small"
-                  name="Shrinkage"
-                  value={formData.Shrinkage}
-                  onChange={handleChange}
-                  // focused
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Wastage%"
-                  fullWidth
-                  size="small"
-                  type="number"
-                  name="Wastage"
-                  value={formData.Wastage}
-                  onChange={handleChange}
-                  // focused
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Output Qty"
-                  fullWidth
-                  size="small"
-                  name="OutputQty"
-                  type="number"
-                  value={formData.OutputQty}
-                  onChange={handleChange}
-                  // focused
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
+              </Grid> */}
+      {/* <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Rate"
                   fullWidth
@@ -967,9 +1018,8 @@ const Dyeing = () => {
                   helperText={formErrors.GST}
                   required
                 />{' '}
-              </Grid>
-
-              {/* <Grid item xs={12} md={1.5}>
+              </Grid> */}
+      {/* <Grid item xs={12} md={1.5}>
             <TextField
               label="GST Amount"
               fullWidth
@@ -979,7 +1029,7 @@ const Dyeing = () => {
               onChange={handleChange}
             />
           </Grid> */}
-              <Grid item xs={12} md={1.5}>
+      {/* <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Total:Including Gst"
                   fullWidth
@@ -998,28 +1048,17 @@ const Dyeing = () => {
                   value={formData.UnitRatePerPo}
                   onChange={handleChange}
                 />
-              </Grid>
-              <Grid item xs={12} md={12} textAlign="right">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  onClick={handleSave}
-                >
-                  Save
-                </Button>
-              </Grid>
-            </Grid>
+              </Grid> */}
+      {/* </Grid>
           </AccordionDetails>
         </Accordion>
-      </Card>
+      </Card> */}
       <Grid item xs={12} md={12}>
         <Divider
           // color="#cc8587"
           sx={{ height: 1, width: '100%', marginTop: 1, marginBottom: 0 }}
         />
       </Grid>
-
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
@@ -1064,6 +1103,44 @@ const Dyeing = () => {
                 fileName="Dyeing&PrintingList"
               />
             )}
+            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
+              <DialogTitle
+                sx={{
+                  backgroundColor: '#A11F23',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingX: '24px',
+                  paddingY: '4px'
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="div"
+                  color="#ffffff"
+                  gutterBottom
+                  fontSize={20}
+                  fontWeight={2}
+                  fontStyle={'normal'}
+                >
+                  {'Assign Vendors '}
+                </Typography>
+                <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                <DyeingPrintingAssignVendor
+                  additionalProcessData={additionalProcessData}
+                  setAdditionalProcessData={setAdditionalProcessData}
+                  refetchDyeingPrintingData={refetchDyeingPrintingData}
+                  handleClickOpen={handleClickOpen}
+                />
+              </DialogContent>
+            </Dialog>
+
             {/* <Box
               sx={{
                 height: 500,

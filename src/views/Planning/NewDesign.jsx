@@ -24,8 +24,12 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import { useUser } from 'context/User';
+import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
 const NewDesign = () => {
+  const { user } = useUser();
+  const [initialData, setInitialData] = useState([]);
   const { data: collectionData } = useGetCollectionListQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const { data: designData, refetch } = useGetDesignListByCollectionIdQuery(
@@ -79,13 +83,30 @@ const NewDesign = () => {
     poPcs: '',
     dateOfPlanning: '',
     colorId: '',
-    appId: 1,
-    createdBy: 0,
+    appId: user.appId,
+    createdBy: user.empId,
     createdOn: new Date().toISOString(),
-    lastUpdatedBy: 0,
+    lastUpdatedBy: user.empId,
     lastUpdatedOn: new Date().toISOString()
   });
+  useEffect(() => {
+    setFormData({
+      designId: initialData?.designId || 0,
+      collectionId: initialData?.collectionId || '',
+      designNo: initialData?.designNo || 0,
+      designerName: initialData?.designerName || '',
+      poPcs: initialData?.poPcs || '',
+      dateOfPlanning: initialData?.dateOfPlanning || '',
+      colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
+      appId: initialData?.appId || user.appId,
 
+      createdOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || user.empId,
+      lastUpdatedOn: new Date().toISOString(),
+      LastUpdatedBy: user.empId
+    });
+  }, [initialData]);
+  console.log('formData', formData);
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'collectionId') {
@@ -126,42 +147,37 @@ const NewDesign = () => {
     {
       field: 'collectionId',
       headerName: 'Collection ID',
-      editable: true,
-      flex: 2,
-      type: 'singleSelect',
-      valueOptions: collectionList.map((collection) => ({
-        value: collection.collectionId,
-        label: collection.collectionName
-      }))
+      editable: true
+      // flex: 2,
+      // type: 'singleSelect',
+      // valueOptions: collectionList.map((collection) => ({
+      //   value: collection.collectionId,
+      //   label: collection.collectionName
+      // }))
     },
     {
       field: 'designNo',
-      headerName: 'Design No',
-      flex: 1,
-      editable: true
+      headerName: 'Design No'
+      // flex: 1,
+      // editable: true
     },
     {
       field: 'designerName',
-      headerName: 'Designer Name',
-      flex: 1,
-      editable: true
+      headerName: 'Designer Name'
+      // flex: 1,
+      // editable: true
     },
     {
       field: 'poPcs',
-      headerName: 'Po PCs',
-      flex: 1
+      headerName: 'Po PCs'
+      // flex: 1
       // editable: true
     },
     {
       field: 'dateOfPlanning',
       headerName: 'Date of Planning',
-      type: 'date',
-      flex: 1,
-      editable: true,
-      valueGetter: (params) => (params ? new Date(params) : null),
-      valueFormatter: (params) => {
-        const date = params;
-        if (!date) return '';
+      valueGetter: (params) => {
+        const date = new Date(params);
         return date.toLocaleDateString('en-GB', {
           day: 'numeric',
           month: 'short',
@@ -171,14 +187,14 @@ const NewDesign = () => {
     },
     {
       field: 'colorId',
-      headerName: 'Color',
-      flex: 1,
-      editable: true,
-      type: 'singleSelect',
-      valueOptions: colors.map((collection) => ({
-        value: collection.lookUpId,
-        label: collection.lookUpName
-      }))
+      headerName: 'Color'
+      // flex: 1,
+      // editable: true,
+      // type: 'singleSelect',
+      // valueOptions: colors.map((collection) => ({
+      //   value: collection.lookUpId,
+      //   label: collection.lookUpName
+      // }))
     }
   ];
 
@@ -217,7 +233,11 @@ const NewDesign = () => {
         designerName: '',
         poPcs: '',
         dateOfPlanning: '',
-        colorId: ''
+        colorId: '',
+        createdOn: new Date().toISOString(),
+        createdBy: user.empId,
+        lastUpdatedOn: new Date().toISOString(),
+        LastUpdatedBy: user.empId
       });
       refetch();
     } catch (error) {
@@ -230,7 +250,7 @@ const NewDesign = () => {
   };
 
   const deleteApi = `https://gecxc.com:4041/api/DesignRegistration/DeleteDesignById?designId=`;
-  const editAPi = 'https://gecxc.com:4041/API/DesignRegistration/SaveDesign';
+  // const editAPi = 'https://gecxc.com:4041/API/DesignRegistration/SaveDesign';
   const handleSearch = () => {
     //search api call
   };
@@ -407,7 +427,17 @@ const NewDesign = () => {
                 sx={{ paddingY: 2, paddingX: 2 }}
               >
                 <Grid item xs={12} md={12}>
-                  <EditAbleDataGrid
+                  <ReuseableDataGrid
+                    iColumns={columns}
+                    initialRows={initialRows}
+                    setInitialData={setInitialData}
+                    deleteApi={deleteApi}
+                    deleteBy="designId"
+                    refetch={refetch}
+                    // setAccordionExpanded={setAccordionExpanded}
+                    fileName="DesignList"
+                  />
+                  {/* <EditAbleDataGrid
                     initialRows={initialRows}
                     ncolumns={columns}
                     formData={formData}
@@ -415,7 +445,7 @@ const NewDesign = () => {
                     deleteApi={deleteApi}
                     deleteBy="designId"
                     refetch={refetch}
-                  />
+                  /> */}
                 </Grid>
               </Grid>
             </Card>
@@ -469,7 +499,7 @@ const NewDesign = () => {
                   initialRows={[]}
                   ncolumns={columns}
                   formData={formData}
-                  editAPi={editAPi}
+                  // editAPi={editAPi}
                   disableAddRecord={true}
 
                   // disableEdit={true}
