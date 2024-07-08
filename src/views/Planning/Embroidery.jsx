@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Grid,
@@ -31,16 +31,19 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 
+import { DataGrid } from '@mui/x-data-grid';
+import { useTheme } from '@mui/material/styles';
+import * as React from 'react';
+
 import Dialog from '@mui/material/Dialog';
+import CloseIcon from '@mui/icons-material/Close';
+import DyeingPrintingAssignVendor from 'components/DyeingPrintingAssignVendor';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import Slide from '@mui/material/Slide';
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
-
-import { DataGrid } from '@mui/x-data-grid';
-import { useTheme } from '@mui/material/styles';
+import EmbroideryAssignVendor from 'components/EmbroideryAssignVendor';
 
 import {
   useGetCollectionFromPlanningHeaderQuery,
@@ -60,8 +63,6 @@ import MainCard from 'ui-component/cards/MainCard';
 import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
 import '../../assets/scss/style.scss';
-import CloseIcon from '@mui/icons-material/Close';
-import EmbroideryAssignVendor from 'components/EmbroideryAssignVendor';
 
 const Embroidery = () => {
   const theme = useTheme();
@@ -69,7 +70,6 @@ const Embroidery = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [initialData, setInitialData] = useState([]);
   const [loading, setLoading] = useState(false); // State for loading
-  const [additionalProcessData, setAdditionalProcessData] = useState({});
 
   const [formData, setFormData] = useState({
     embroideryId: 0,
@@ -286,7 +286,7 @@ const Embroidery = () => {
   const collectionList = collectionData?.result || [];
 
   // const fetchEmbroideryData = async (batchNo) => {
-  //   const url = `https://gecxc.com:4041/api/Embroidery/GetEmbroideryListByBatchNo?batchNo=${batchNo}`;
+  //   const url = https://gecxc.com:4041/api/Embroidery/GetEmbroideryListByBatchNo?batchNo=${batchNo};
   //   try {
   //     const response = await axios.get(url);
   //     return response.data; // Assuming the API returns JSON data
@@ -607,7 +607,7 @@ const Embroidery = () => {
 
       if (!response.data.success) {
         enqueueSnackbar(
-          `${response.data.message} !`,
+          `${response.data.message}!`,
 
           {
             variant: 'error',
@@ -717,6 +717,20 @@ const Embroidery = () => {
   // };
   console.log('initialRows', initialRows);
 
+  const [initialFormData, setInitialFormData] = useState({});
+  const [open, setOpen] = React.useState(false);
+  const handleClickOpen = (data) => {
+    setInitialFormData(data);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setInitialFormData({});
+    refetchDyeingPrintingData();
+    // setDeleteId(null);
+  };
+
   const columns = [
     { field: 'designNo', headerName: 'Design' },
     { field: 'batchNo', headerName: 'Batch No.' },
@@ -731,23 +745,23 @@ const Embroidery = () => {
     { field: 'repeats', headerName: 'Repeats' },
     { field: 'cuttingSize', headerName: 'Cutting Size' },
     { field: 'itemsPerRepeat', headerName: 'Items Per Repeat' },
-    { field: 'totalPcs', headerName: 'Total Pcs' },
-    { field: 'threadStiches', headerName: 'Thread Stitches' },
-    { field: 'threadRate', headerName: 'Thread Rate' },
-    { field: 'threadAmount', headerName: 'Thread Amount' },
-    { field: 'tillaStiches', headerName: 'Tilla Stitches' },
-    { field: 'tilaRate', headerName: 'Tilla Rate' },
-    { field: 'tilaAmount', headerName: 'Tilla Amount' },
-    { field: 'sequence', headerName: 'sequence' },
-    { field: 'sequenceRate', headerName: 'Sequence Rate' },
-    { field: 'sequenceAmount', headerName: 'Sequence Amount' },
-    { field: 'isSolving', headerName: 'Is Solving' },
-    { field: 'solvingLayers', headerName: 'Solving Layers' },
-    { field: 'solvingInMeters', headerName: 'Solving In Meters' },
-    { field: 'solvingRate', headerName: 'Solving Rate' },
-    { field: 'solvingAmount', headerName: 'Solving Amount' },
-    { field: 'threadAdditional', headerName: 'ThreadAdditional' },
-    { field: 'costPerComponent', headerName: 'Cost Per Component' },
+    // { field: 'totalPcs', headerName: 'Total Pcs' },
+    // { field: 'threadStiches', headerName: 'Thread Stitches' },
+    // { field: 'threadRate', headerName: 'Thread Rate' },
+    // { field: 'threadAmount', headerName: 'Thread Amount' },
+    // { field: 'tillaStiches', headerName: 'Tilla Stitches' },
+    // { field: 'tilaRate', headerName: 'Tilla Rate' },
+    // { field: 'tilaAmount', headerName: 'Tilla Amount' },
+    // { field: 'sequence', headerName: 'sequence' },
+    // { field: 'sequenceRate', headerName: 'Sequence Rate' },
+    // { field: 'sequenceAmount', headerName: 'Sequence Amount' },
+    // { field: 'isSolving', headerName: 'Is Solving' },
+    // { field: 'solvingLayers', headerName: 'Solving Layers' },
+    // { field: 'solvingInMeters', headerName: 'Solving In Meters' },
+    // { field: 'solvingRate', headerName: 'Solving Rate' },
+    // { field: 'solvingAmount', headerName: 'Solving Amount' },
+    // { field: 'threadAdditional', headerName: 'ThreadAdditional' },
+    // { field: 'costPerComponent', headerName: 'Cost Per Component' }
     {
       field: 'AddVendor',
       headerName: 'Add Vendor',
@@ -763,20 +777,8 @@ const Embroidery = () => {
       )
     }
   ];
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = (data) => {
-    setAdditionalProcessData(data);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setAdditionalProcessData({});
-    // refetchAdditionalProcessList();
-    // setDeleteId(null);
-  };
-  const deleteApi = `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=`;
+  const deleteApi =
+    'https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=';
   return (
     <>
       {/* <div className="CardHeader"> */}
@@ -862,7 +864,7 @@ const Embroidery = () => {
                   ? null
                   : (theme) => ({
                       '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
-                        backgroundColor: `${formData.baseColorName} !important`
+                        backgroundColor: `${theme.palette.secondary[200]} !important`
                       }
                     })
               }
@@ -909,11 +911,7 @@ const Embroidery = () => {
               ))}
             </TextField>
           </Grid>
-<<<<<<< HEAD
-          <Grid item xs={12} md={3}>
-=======
           {/* <Grid item xs={12} md={3}>
->>>>>>> Develop
             <TextField
               fullWidth
               select
@@ -933,11 +931,7 @@ const Embroidery = () => {
                 </MenuItem>
               ))}
             </TextField>
-<<<<<<< HEAD
-          </Grid>
-=======
           </Grid> */}
->>>>>>> Develop
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -1037,27 +1031,18 @@ const Embroidery = () => {
               helperText={formErrors.itemsPerRepeat}
             />
           </Grid>
-<<<<<<< HEAD
-          <Grid item xs={12} md={3} textAlign="right" sx={{ mt: 2 }}>
-=======
           <Grid item xs={12} md={6} textAlign="right" sx={{ mt: 2 }}>
->>>>>>> Develop
             <Button variant="contained" size="small" onClick={handleSave}>
               Save
             </Button>
           </Grid>
-<<<<<<< HEAD
-          {/* <Divider color="#cc8587" sx={{ height: 2, width: '100%', mt: 1 }} /> */}
-=======
->>>>>>> Develop
         </Grid>
         {/* </Grid> */}
       </Card>
       <Grid item xs={12} md={12}>
         <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
       </Grid>
-
-      {/* <Card variant="outlined">
+      <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
           avatar={<AddOutlinedIcon />}
@@ -1085,9 +1070,6 @@ const Embroidery = () => {
             id="panel1-header"
             sx={{ display: 'none' }} // Hide this since we're using the icon in the CardHeader
           ></AccordionSummary>
-<<<<<<< HEAD
-          <AccordionDetails></AccordionDetails>{' '}
-=======
           <AccordionDetails>
             <Grid
               container
@@ -1403,7 +1385,6 @@ const Embroidery = () => {
               ) : null}
             </Grid>{' '}
           </AccordionDetails>{' '}
->>>>>>> Develop
         </Accordion>
       </Card>
       <Grid item xs={12} md={12}>
@@ -1411,7 +1392,7 @@ const Embroidery = () => {
           // color="#cc8587"
           sx={{ height: 1, width: '100%', marginTop: 1, marginBottom: 0 }}
         />
-      </Grid> */}
+      </Grid>
 
       <Card variant="outlined">
         <CardHeader
@@ -1428,7 +1409,7 @@ const Embroidery = () => {
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
             {' '}
-            {/* {loading ? (
+            {loading ? (
               <div
                 style={{
                   display: 'flex',
@@ -1446,17 +1427,18 @@ const Embroidery = () => {
                   }}
                 />
               </div>
-            ) : ( */}
-            <ReuseableDataGrid
-              iColumns={columns}
-              initialRows={initialRows}
-              setInitialData={setInitialData}
-              deleteApi={deleteApi}
-              deleteBy="embroideryId"
-              refetch={refetchEmbroideryList}
-              setAccordionExpanded={setAccordionExpanded}
-              fileName="Embroidery List"
-            />
+            ) : (
+              <ReuseableDataGrid
+                iColumns={columns}
+                initialRows={initialRows}
+                setInitialData={setInitialData}
+                deleteApi={deleteApi}
+                deleteBy="embroideryId"
+                refetch={refetchEmbroideryList}
+                setAccordionExpanded={setAccordionExpanded}
+                fileName="Embroidery List"
+              />
+            )}
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
               <DialogTitle
                 sx={{
@@ -1486,46 +1468,14 @@ const Embroidery = () => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                <EmbroideryAssignVendor handleClickOpen={handleClickOpen} />
+                <EmbroideryAssignVendor
+                  initialFormData={initialFormData}
+                  setInitialFormData={setInitialFormData}
+                  refetchDyeingPrintingData={refetchEmbroideryList}
+                  handleClickOpen={handleClickOpen}
+                />
               </DialogContent>
             </Dialog>
-            {/* <Box
-              sx={{
-                height: 500,
-                width: 'inherit',
-                '& .actions': {
-                  color: 'text.secondary'
-                },
-                '& .textPrimary': {
-                  color: 'text.primary'
-                }
-              }}
-            >
-              <DataGrid
-                // {...data}
-                rows={initialRows}
-                columns={columns}
-                rowLength={100}
-                sx={{
-                  boxShadow: 2,
-                  border: 2,
-                  borderColor: 'primary.light',
-                  '& .MuiDataGrid-cell:hover': {
-                    color: 'primary.main'
-                  }
-                }}
-              />
-            </Box> */}
-            {/* <EditAbleDataGrid
-            ncolumns={columns}
-            initialRows={initialRows}
-            formData={formData}
-            // editAPi={editAPi}
-            // refetch={refetchFabricRequisitionData}
-            // deleteApi={deleteApi}
-            // deleteBy="fabricationId"
-            disableAddRecord={true}
-          /> */}
           </Grid>
         </Grid>
       </Card>
