@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Grid,
@@ -31,6 +31,14 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
+import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
+
 import { DataGrid } from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles';
 
@@ -52,6 +60,8 @@ import MainCard from 'ui-component/cards/MainCard';
 import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
 import '../../assets/scss/style.scss';
+import CloseIcon from '@mui/icons-material/Close';
+import EmbroideryAssignVendor from 'components/EmbroideryAssignVendor';
 
 const Embroidery = () => {
   const theme = useTheme();
@@ -59,6 +69,7 @@ const Embroidery = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [initialData, setInitialData] = useState([]);
   const [loading, setLoading] = useState(false); // State for loading
+  const [additionalProcessData, setAdditionalProcessData] = useState({});
 
   const [formData, setFormData] = useState({
     embroideryId: 0,
@@ -736,8 +747,35 @@ const Embroidery = () => {
     { field: 'solvingRate', headerName: 'Solving Rate' },
     { field: 'solvingAmount', headerName: 'Solving Amount' },
     { field: 'threadAdditional', headerName: 'ThreadAdditional' },
-    { field: 'costPerComponent', headerName: 'Cost Per Component' }
+    { field: 'costPerComponent', headerName: 'Cost Per Component' },
+    {
+      field: 'AddVendor',
+      headerName: 'Add Vendor',
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <IconButton
+            color="primary"
+            onClick={() => handleClickOpen(params.row)}
+          >
+            <PersonAddAlt1OutlinedIcon />
+          </IconButton>
+        </div>
+      )
+    }
   ];
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = (data) => {
+    setAdditionalProcessData(data);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setAdditionalProcessData({});
+    // refetchAdditionalProcessList();
+    // setDeleteId(null);
+  };
   const deleteApi = `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=`;
   return (
     <>
@@ -830,13 +868,181 @@ const Embroidery = () => {
               }
             />
           </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Components"
+              name="componentId"
+              value={formData.componentId}
+              onChange={handleChange}
+              size="small"
+              required
+              error={!!formErrors.componentId}
+              helperText={formErrors.componentId}
+            >
+              {components.map((option) => (
+                <MenuItem key={option.componentId} value={option.componentId}>
+                  {option.componentName}
+                </MenuItem>
+              ))}
+            </TextField>{' '}
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Select Fabric"
+              defaultValue=""
+              size="small"
+              name="fabricId"
+              value={formData.fabricId}
+              onChange={handleChange}
+              required
+              error={!!formErrors.fabricId}
+              helperText={formErrors.fabricId}
+            >
+              {Fabrications.map((option) => (
+                <MenuItem key={option.fabricId} value={option.fabricId}>
+                  {option.fabric}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Vendors"
+              defaultValue=""
+              size="small"
+              name="vendorId"
+              value={formData.vendorId}
+              onChange={handleChange}
+              required
+              error={!!formErrors.vendorId}
+              helperText={formErrors.vendorId}
+            >
+              {vendors.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Color"
+              size="small"
+              name="colorId"
+              value={formData.colorId}
+              onChange={handleChange}
+              required
+              error={!!formErrors.colorId}
+              helperText={formErrors.colorId}
+            >
+              {colors.map((option) => (
+                <MenuItem key={option.colorId} value={option.colorId}>
+                  {option.color}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Po Pcs"
+              fullWidth
+              size="small"
+              name="poPcs"
+              value={formData.poPcs}
+              onChange={handleChange}
+              disabled
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Available Quantity"
+              fullWidth
+              size="small"
+              name="availableQty"
+              type="number"
+              value={formData.availableQty}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Repeats"
+              type="number"
+              fullWidth
+              size="small"
+              name="repeats"
+              value={formData.repeats}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              fullWidth
+              select
+              label="Heads"
+              defaultValue=""
+              size="small"
+              name="noOfHead"
+              value={formData.noOfHead}
+              onChange={handleChange}
+              required
+              error={!!formErrors.noOfHead}
+              helperText={formErrors.noOfHead}
+            >
+              {heads.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Cutting Size"
+              fullWidth
+              size="small"
+              name="cuttingSize"
+              type="number"
+              value={formData.cuttingSize}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="itemsPerRepeat"
+              fullWidth
+              type="number"
+              size="small"
+              name="itemsPerRepeat"
+              value={formData.itemsPerRepeat}
+              onChange={handleChange}
+              required
+              error={!!formErrors.itemsPerRepeat}
+              helperText={formErrors.itemsPerRepeat}
+            />
+          </Grid>
+          <Grid item xs={12} md={3} textAlign="right" sx={{ mt: 2 }}>
+            <Button variant="contained" size="small" onClick={handleSave}>
+              Save
+            </Button>
+          </Grid>
+          {/* <Divider color="#cc8587" sx={{ height: 2, width: '100%', mt: 1 }} /> */}
         </Grid>
         {/* </Grid> */}
       </Card>
       <Grid item xs={12} md={12}>
         <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
       </Grid>
-      <Card variant="outlined">
+
+      {/* <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
           avatar={<AddOutlinedIcon />}
@@ -864,490 +1070,7 @@ const Embroidery = () => {
             id="panel1-header"
             sx={{ display: 'none' }} // Hide this since we're using the icon in the CardHeader
           ></AccordionSummary>
-          <AccordionDetails>
-            <Grid
-              container
-              spacing={2}
-              width="Inherit"
-              sx={{ paddingY: 2, paddingX: 2 }}
-            >
-              {' '}
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Components"
-                  name="componentId"
-                  value={formData.componentId}
-                  onChange={handleChange}
-                  size="small"
-                  required
-                  error={!!formErrors.componentId}
-                  helperText={formErrors.componentId}
-                >
-                  {components.map((option) => (
-                    <MenuItem
-                      key={option.componentId}
-                      value={option.componentId}
-                    >
-                      {option.componentName}
-                    </MenuItem>
-                  ))}
-                </TextField>{' '}
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Select Fabric"
-                  defaultValue=""
-                  size="small"
-                  name="fabricId"
-                  value={formData.fabricId}
-                  onChange={handleChange}
-                  required
-                  error={!!formErrors.fabricId}
-                  helperText={formErrors.fabricId}
-                >
-                  {Fabrications.map((option) => (
-                    <MenuItem key={option.fabricId} value={option.fabricId}>
-                      {option.fabric}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Vendors"
-                  defaultValue=""
-                  size="small"
-                  name="vendorId"
-                  value={formData.vendorId}
-                  onChange={handleChange}
-                  required
-                  error={!!formErrors.vendorId}
-                  helperText={formErrors.vendorId}
-                >
-                  {vendors.map((option) => (
-                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                      {option.lookUpName}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Color"
-                  size="small"
-                  name="colorId"
-                  value={formData.colorId}
-                  onChange={handleChange}
-                  required
-                  error={!!formErrors.colorId}
-                  helperText={formErrors.colorId}
-                >
-                  {colors.map((option) => (
-                    <MenuItem key={option.colorId} value={option.colorId}>
-                      {option.color}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Po Pcs"
-                  fullWidth
-                  size="small"
-                  name="poPcs"
-                  value={formData.poPcs}
-                  onChange={handleChange}
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Available Quantity"
-                  fullWidth
-                  size="small"
-                  name="availableQty"
-                  type="number"
-                  value={formData.availableQty}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Repeats"
-                  type="number"
-                  fullWidth
-                  size="small"
-                  name="repeats"
-                  value={formData.repeats}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Heads"
-                  defaultValue=""
-                  size="small"
-                  name="noOfHead"
-                  value={formData.noOfHead}
-                  onChange={handleChange}
-                  required
-                  error={!!formErrors.noOfHead}
-                  helperText={formErrors.noOfHead}
-                >
-                  {heads.map((option) => (
-                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                      {option.lookUpName}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Cutting Size"
-                  fullWidth
-                  size="small"
-                  name="cuttingSize"
-                  type="number"
-                  value={formData.cuttingSize}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="itemsPerRepeat"
-                  fullWidth
-                  type="number"
-                  size="small"
-                  name="itemsPerRepeat"
-                  value={formData.itemsPerRepeat}
-                  onChange={handleChange}
-                  required
-                  error={!!formErrors.itemsPerRepeat}
-                  helperText={formErrors.itemsPerRepeat}
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="total Pcs."
-                  fullWidth
-                  size="small"
-                  type="number"
-                  name="totalPcs"
-                  value={formData.totalPcs}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Total Amount"
-                  fullWidth
-                  type="number"
-                  size="small"
-                  name="totalAmount"
-                  value={formData.totalAmount}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  label="Cost Per Component"
-                  fullWidth
-                  // type="number"
-                  size="small"
-                  name="costPerComponent"
-                  value={formData.costPerComponent}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={formData.isSolving}
-                      onChange={handleCheckboxChange}
-                      name="isSolving"
-                    />
-                  }
-                  label="isSolving"
-                />
-              </Grid>
-              {/* {formData.isSolving ? ( */}
-              <Grid item xs={12} md={6}>
-                {/* <FormControl fullWidth> */}
-
-                {/* <Select
-                  multiple
-                  labelId="thread-additional-label"
-                  value={formData.threadAdditional}
-                  name="threadAdditional"
-                  size="small"
-                  label="Additional"
-                  // focused
-                  onChange={handleChange}
-                  // input={<OutlinedInput label="Additional" />}
-                  fullWidth
-                  // MenuProps={MenuProps}
-                >
-                  {additionals.map((name) => (
-                    <MenuItem
-                      key={name}
-                      value={name}
-                      style={getStyles(name, formData.threadAdditional, theme)}
-                    >
-                      {name}
-                    </MenuItem>
-                  ))}
-                </Select> */}
-                <TextField
-                  select
-                  label="Additional"
-                  value={formData.threadAdditional}
-                  name="threadAdditional"
-                  size="small"
-                  onChange={handleChange}
-                  fullWidth
-                  SelectProps={{
-                    multiple: true
-                  }}
-                >
-                  {additionals.map((name) => (
-                    <MenuItem
-                      key={name}
-                      value={name}
-                      style={getStyles(name, formData.threadAdditional, theme)}
-                    >
-                      {name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                {/* </FormControl> */}
-              </Grid>
-              {/* ) : null} */}
-              {/* <Grid item xs={12} md={4}></Grid> */}
-              {/* <Divider
-                color="#cc8587"
-                sx={{ height: 1, width: '100%', mt: 2 }}
-              /> */}
-              {/* {formData.isSolving ? ( */}
-              <Grid item xs={12} md={6}>
-                <Grid container spacing={1} width="Inherit">
-                  <Grid item xs={12} md={12}>
-                    <Typography variant="h5" gutterBottom>
-                      Thread
-                    </Typography>
-                  </Grid>{' '}
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Stitches"
-                      fullWidth
-                      size="small"
-                      type="number"
-                      name="threadStiches"
-                      value={formData.threadStiches}
-                      onChange={handleChange}
-                      required
-                      // error={!!formErrors.threadStiches}
-                      // helperText={formErrors.threadStiches}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Rate"
-                      type="number"
-                      fullWidth
-                      size="small"
-                      name="threadRate"
-                      value={formData.threadRate}
-                      onChange={handleChange}
-                      required
-                      // error={!!formErrors.threadRate}
-                      // helperText={formErrors.threadRate}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Amount"
-                      fullWidth
-                      size="small"
-                      type="number"
-                      name="threadAmount"
-                      value={formData.threadAmount}
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-              {/* ) : null} */}
-              {/* {formData.isSolving ? ( */}
-              <Grid item xs={12} md={6}>
-                <Grid container spacing={1} width="Inherit">
-                  <Grid item xs={12} md={12}>
-                    <Typography variant="h5" gutterBottom>
-                      Tilla
-                    </Typography>
-                  </Grid>{' '}
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Stitches"
-                      fullWidth
-                      size="small"
-                      type="number"
-                      name="tillaStiches"
-                      value={formData.tillaStiches}
-                      onChange={handleChange}
-                      required
-                      // error={!!formErrors.tillaStiches}
-                      // helperText={formErrors.tillaStiches}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Rate"
-                      fullWidth
-                      size="small"
-                      type="number"
-                      name="tilaRate"
-                      value={formData.tilaRate}
-                      onChange={handleChange}
-                      required
-                      // error={!!formErrors.tilaRate}
-                      // helperText={formErrors.tilaRate}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Amount"
-                      fullWidth
-                      size="small"
-                      name="tilaAmount"
-                      value={formData.tilaAmount}
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-              {/* ) : null} */}
-              {/* {formData.isSolving ? ( */}
-              <Grid item xs={12} md={6}>
-                <Grid container spacing={1} width="Inherit">
-                  <Grid item xs={12} md={12}>
-                    <Typography variant="h5" gutterBottom>
-                      Sequence
-                    </Typography>
-                  </Grid>{' '}
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Sequence"
-                      fullWidth
-                      size="small"
-                      name="sequence"
-                      type="number"
-                      value={formData.sequence}
-                      onChange={handleChange}
-                      required
-                      // error={!!formErrors.sequence}
-                      // helperText={formErrors.sequence}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Rate"
-                      fullWidth
-                      type="number"
-                      size="small"
-                      name="sequenceRate"
-                      value={formData.sequenceRate}
-                      onChange={handleChange}
-                      required
-                      // error={!!formErrors.sequenceRate}
-                      // helperText={formErrors.sequenceRate}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Amount"
-                      fullWidth
-                      size="small"
-                      name="sequenceAmount"
-                      value={formData.sequenceAmount}
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                </Grid>{' '}
-              </Grid>
-              {/* ) : null} */}
-              {formData.isSolving ? (
-                <Grid item xs={12} md={6}>
-                  <Grid container spacing={1} width="Inherit">
-                    <Grid item xs={12} md={12}>
-                      <Typography variant="h5" gutterBottom>
-                        Solving
-                      </Typography>
-                    </Grid>{' '}
-                    <Grid item xs={12} md={3}>
-                      <TextField
-                        label="Layers"
-                        fullWidth
-                        size="small"
-                        type="number"
-                        name="solvingLayers"
-                        value={formData.solvingLayers}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                      <TextField
-                        label="Meters"
-                        type="number"
-                        fullWidth
-                        size="small"
-                        name="solvingInMeters"
-                        value={formData.solvingInMeters}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                      <TextField
-                        label="Rate"
-                        fullWidth
-                        type="number"
-                        size="small"
-                        name="solvingRate"
-                        value={formData.solvingRate}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                      <TextField
-                        label="Amount"
-                        fullWidth
-                        size="small"
-                        type="number"
-                        name="solvingAmount"
-                        value={formData.solvingAmount}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-              ) : null}
-              <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-                <Button variant="contained" size="small" onClick={handleSave}>
-                  Save
-                </Button>
-              </Grid>
-            </Grid>{' '}
-          </AccordionDetails>{' '}
+          <AccordionDetails></AccordionDetails>{' '}
         </Accordion>
       </Card>
       <Grid item xs={12} md={12}>
@@ -1355,7 +1078,7 @@ const Embroidery = () => {
           // color="#cc8587"
           sx={{ height: 1, width: '100%', marginTop: 1, marginBottom: 0 }}
         />
-      </Grid>
+      </Grid> */}
 
       <Card variant="outlined">
         <CardHeader
@@ -1372,7 +1095,7 @@ const Embroidery = () => {
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
             {' '}
-            {loading ? (
+            {/* {loading ? (
               <div
                 style={{
                   display: 'flex',
@@ -1390,18 +1113,49 @@ const Embroidery = () => {
                   }}
                 />
               </div>
-            ) : (
-              <ReuseableDataGrid
-                iColumns={columns}
-                initialRows={initialRows}
-                setInitialData={setInitialData}
-                deleteApi={deleteApi}
-                deleteBy="embroideryId"
-                refetch={refetchEmbroideryList}
-                setAccordionExpanded={setAccordionExpanded}
-                fileName="Embroidery List"
-              />
-            )}
+            ) : ( */}
+            <ReuseableDataGrid
+              iColumns={columns}
+              initialRows={initialRows}
+              setInitialData={setInitialData}
+              deleteApi={deleteApi}
+              deleteBy="embroideryId"
+              refetch={refetchEmbroideryList}
+              setAccordionExpanded={setAccordionExpanded}
+              fileName="Embroidery List"
+            />
+            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
+              <DialogTitle
+                sx={{
+                  backgroundColor: '#A11F23',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingX: '24px',
+                  paddingY: '4px'
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="div"
+                  color="#ffffff"
+                  gutterBottom
+                  fontSize={20}
+                  fontWeight={2}
+                  fontStyle={'normal'}
+                >
+                  {'Assign Vendors '}
+                </Typography>
+                <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                <EmbroideryAssignVendor handleClickOpen={handleClickOpen} />
+              </DialogContent>
+            </Dialog>
             {/* <Box
               sx={{
                 height: 500,
