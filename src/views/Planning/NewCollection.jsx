@@ -45,6 +45,20 @@ const NewCollection = () => {
     searchPlanningDateFrom: '',
     searchPlanningDateTo: ''
   });
+  const [isDateRangeValid, setIsDateRangeValid] = useState(true);
+  useEffect(() => {
+    // Validate date range whenever searchData changes
+    const { searchPlanningDateFrom, searchPlanningDateTo } = searchData;
+    if (
+      searchPlanningDateFrom &&
+      searchPlanningDateTo &&
+      new Date(searchPlanningDateTo) < new Date(searchPlanningDateFrom)
+    ) {
+      setIsDateRangeValid(false);
+    } else {
+      setIsDateRangeValid(true);
+    }
+  }, [searchData]);
 
   const [formData, setFormData] = useState({
     collectionId: 0,
@@ -249,6 +263,41 @@ const NewCollection = () => {
     const { name, value } = e.target;
     setSearchData({ ...searchData, [name]: value });
   };
+  // const handlesearchChange = (e) => {
+  //   const { name, value } = e.target;
+
+  //   setSearchData((prevState) => {
+  //     const newState = { ...prevState, [name]: value };
+
+  //     // Validate date range
+  //     if (
+  //       name === 'searchPlanningDateTo' &&
+  //       newState.searchPlanningDateFrom &&
+  //       new Date(value) < new Date(newState.searchPlanningDateFrom)
+  //     ) {
+  //       enqueueSnackbar('Date To cannot be earlier than Date From', {
+  //         variant: 'error',
+  //         autoHideDuration: 5000
+  //       });
+  //       return prevState;
+  //     }
+
+  //     if (
+  //       name === 'searchPlanningDateFrom' &&
+  //       newState.searchPlanningDateTo &&
+  //       new Date(newState.searchPlanningDateTo) < new Date(value)
+  //     ) {
+  //       enqueueSnackbar('Date To cannot be earlier than Date From', {
+  //         variant: 'error',
+  //         autoHideDuration: 5000
+  //       });
+  //       return prevState;
+  //     }
+
+  //     return newState;
+  //   });
+  // };
+
   const validateForm = () => {
     const errors = {};
     if (!formData.collectionName.trim()) {
@@ -344,12 +393,13 @@ const NewCollection = () => {
       );
     } catch (error) {
       console.error('Error saving data:', error);
-      enqueueSnackbar('Collection not saved !', {
+      enqueueSnackbar('Collection not saved!', {
         variant: 'error',
         autoHideDuration: 5000
       });
     }
   };
+
   console.log('searchData', searchData);
   const deleteApi =
     'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
@@ -641,7 +691,12 @@ const NewCollection = () => {
                 </Typography>
               </Grid>
               <Grid item xs={3} textAlign="right">
-                <Button variant="contained" size="small" onClick={handleSearch}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleSearch}
+                  disabled={!isDateRangeValid}
+                >
                   Search
                 </Button>
               </Grid>

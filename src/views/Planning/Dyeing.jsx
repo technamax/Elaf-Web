@@ -100,10 +100,11 @@ const Dyeing = () => {
   });
   useEffect(() => {
     setFormData({
+      ...formData,
       dpId: initialData.dpId || 0,
-      designId: initialData?.designId || '',
-      planningHeaderId: initialData?.planningHeaderId || 0,
-      batchNo: initialData?.batchNo || '',
+      // designId: initialData?.designId || '',
+      // planningHeaderId: initialData?.planningHeaderId || 0,
+      // batchNo: initialData?.batchNo || '',
       fabricId: initialData?.fabricId || '',
       colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
       color: initialData?.color || '', //from dying screen coming from fabricAPi
@@ -122,7 +123,7 @@ const Dyeing = () => {
       // TotalIncludingGst: initialData?.totalIncludingGst || '',
       // createdBy: initialData?.createdBy || 0,
       poPcs: initialData?.poPcs || 0,
-      baseColorName: initialData?.baseColorName || 0,
+      // baseColorName: initialData?.baseColorName || 0,
       createdOn: initialData?.createdOn || new Date().toISOString(),
       createdBy: initialData?.createdBy || user.empId,
       lastUpdatedOn: new Date().toISOString(),
@@ -872,6 +873,7 @@ const Dyeing = () => {
               name="availableQty"
               value={formData.availableQty}
               onChange={handleChange}
+              disabled
               // focused
             />
           </Grid>

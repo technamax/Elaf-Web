@@ -80,17 +80,19 @@ const PrePlanning = () => {
 
   useEffect(() => {
     setFormData({
+      ...formData,
       processType: initialData?.processType || 'MultiHead',
 
       planningId: initialData?.planningId || 0,
-      collectionId: initialData?.collectionId || '',
+      // collectionId: initialData?.collectionId || '',
       baseColorId: initialData?.baseColorId || '', // not in api
-      baseColorName: initialData?.baseColorName || '', // not in api
+      // baseColorName: initialData?.baseColorName || '',
+      // not in api
       noOfDesigns: initialData?.noOfDesigns || '', // not in apis
       noOfColors: initialData?.noOfColors || '', // not in api
-      planningHeaderId: initialData?.planningHeaderId || '',
-      designId: initialData?.designId || '',
-      batchNo: initialData?.batchNo || '',
+      // planningHeaderId: initialData?.planningHeaderId || '',
+      // designId: initialData?.designId || '',
+      // batchNo: initialData?.batchNo || '',
       componentId: initialData?.componentId || '',
       cuttingSize: initialData?.cuttingSize || '', // not in api
       colorId: initialData?.colorId || '',
