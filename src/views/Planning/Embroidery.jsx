@@ -33,6 +33,17 @@ import { SnackbarProvider, useSnackbar } from 'notistack';
 
 import { DataGrid } from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles';
+import * as React from 'react';
+
+import Dialog from '@mui/material/Dialog';
+import CloseIcon from '@mui/icons-material/Close';
+import DyeingPrintingAssignVendor from 'components/DyeingPrintingAssignVendor';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
+import EmbroideryAssignVendor from 'components/EmbroideryAssignVendor';
 
 import {
   useGetCollectionFromPlanningHeaderQuery,
@@ -706,6 +717,20 @@ const Embroidery = () => {
   // };
   console.log('initialRows', initialRows);
 
+  const [initialFormData, setInitialFormData] = useState({});
+  const [open, setOpen] = React.useState(false);
+  const handleClickOpen = (data) => {
+    setInitialFormData(data);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setInitialFormData({});
+    refetchDyeingPrintingData();
+    // setDeleteId(null);
+  };
+
   const columns = [
     { field: 'designNo', headerName: 'Design' },
     { field: 'batchNo', headerName: 'Batch No.' },
@@ -716,27 +741,43 @@ const Embroidery = () => {
     // { field: 'baseColorName', headerName: 'Base Color' },
     { field: 'colourName', headerName: 'Color' },
     { field: 'availableQty', headerName: 'Available Qty' },
+    { field: 'assignedQty', headerName: 'Assigned Qty' },
     { field: 'noOfHeadsName', headerName: 'No. Of Heads' },
     { field: 'repeats', headerName: 'Repeats' },
+    { field: 'assignedRepeats', headerName: 'Assigned Repeats' },
     { field: 'cuttingSize', headerName: 'Cutting Size' },
     { field: 'itemsPerRepeat', headerName: 'Items Per Repeat' },
-    { field: 'totalPcs', headerName: 'Total Pcs' },
-    { field: 'threadStiches', headerName: 'Thread Stitches' },
-    { field: 'threadRate', headerName: 'Thread Rate' },
-    { field: 'threadAmount', headerName: 'Thread Amount' },
-    { field: 'tillaStiches', headerName: 'Tilla Stitches' },
-    { field: 'tilaRate', headerName: 'Tilla Rate' },
-    { field: 'tilaAmount', headerName: 'Tilla Amount' },
-    { field: 'sequence', headerName: 'sequence' },
-    { field: 'sequenceRate', headerName: 'Sequence Rate' },
-    { field: 'sequenceAmount', headerName: 'Sequence Amount' },
-    { field: 'isSolving', headerName: 'Is Solving' },
-    { field: 'solvingLayers', headerName: 'Solving Layers' },
-    { field: 'solvingInMeters', headerName: 'Solving In Meters' },
-    { field: 'solvingRate', headerName: 'Solving Rate' },
-    { field: 'solvingAmount', headerName: 'Solving Amount' },
-    { field: 'threadAdditional', headerName: 'ThreadAdditional' },
-    { field: 'costPerComponent', headerName: 'Cost Per Component' }
+    // { field: 'totalPcs', headerName: 'Total Pcs' },
+    // { field: 'threadStiches', headerName: 'Thread Stitches' },
+    // { field: 'threadRate', headerName: 'Thread Rate' },
+    // { field: 'threadAmount', headerName: 'Thread Amount' },
+    // { field: 'tillaStiches', headerName: 'Tilla Stitches' },
+    // { field: 'tilaRate', headerName: 'Tilla Rate' },
+    // { field: 'tilaAmount', headerName: 'Tilla Amount' },
+    // { field: 'sequence', headerName: 'sequence' },
+    // { field: 'sequenceRate', headerName: 'Sequence Rate' },
+    // { field: 'sequenceAmount', headerName: 'Sequence Amount' },
+    // { field: 'isSolving', headerName: 'Is Solving' },
+    // { field: 'solvingLayers', headerName: 'Solving Layers' },
+    // { field: 'solvingInMeters', headerName: 'Solving In Meters' },
+    // { field: 'solvingRate', headerName: 'Solving Rate' },
+    // { field: 'solvingAmount', headerName: 'Solving Amount' },
+    // { field: 'threadAdditional', headerName: 'ThreadAdditional' },
+    // { field: 'costPerComponent', headerName: 'Cost Per Component' }
+    {
+      field: 'AddVendor',
+      headerName: 'Add Vendor',
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <IconButton
+            color="primary"
+            onClick={() => handleClickOpen(params.row)}
+          >
+            <PersonAddAlt1OutlinedIcon />
+          </IconButton>
+        </div>
+      )
+    }
   ];
   const deleteApi = `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=`;
   return (
@@ -1399,43 +1440,43 @@ const Embroidery = () => {
                 fileName="Embroidery List"
               />
             )}
-            {/* <Box
-              sx={{
-                height: 500,
-                width: 'inherit',
-                '& .actions': {
-                  color: 'text.secondary'
-                },
-                '& .textPrimary': {
-                  color: 'text.primary'
-                }
-              }}
-            >
-              <DataGrid
-                // {...data}
-                rows={initialRows}
-                columns={columns}
-                rowLength={100}
+            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
+              <DialogTitle
                 sx={{
-                  boxShadow: 2,
-                  border: 2,
-                  borderColor: 'primary.light',
-                  '& .MuiDataGrid-cell:hover': {
-                    color: 'primary.main'
-                  }
+                  backgroundColor: '#A11F23',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingX: '24px',
+                  paddingY: '4px'
                 }}
-              />
-            </Box> */}
-            {/* <EditAbleDataGrid
-            ncolumns={columns}
-            initialRows={initialRows}
-            formData={formData}
-            // editAPi={editAPi}
-            // refetch={refetchFabricRequisitionData}
-            // deleteApi={deleteApi}
-            // deleteBy="fabricationId"
-            disableAddRecord={true}
-          /> */}
+              >
+                <Typography
+                  variant="h4"
+                  component="div"
+                  color="#ffffff"
+                  gutterBottom
+                  fontSize={20}
+                  fontWeight={2}
+                  fontStyle={'normal'}
+                >
+                  {'Assign Vendors '}
+                </Typography>
+                <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                <EmbroideryAssignVendor
+                  initialFormData={initialFormData}
+                  setInitialFormData={setInitialFormData}
+                  refetchDyeingPrintingData={refetchEmbroideryList}
+                  handleClickOpen={handleClickOpen}
+                />
+              </DialogContent>
+            </Dialog>
           </Grid>
         </Grid>
       </Card>
