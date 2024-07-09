@@ -58,6 +58,11 @@ const NewCollection = () => {
       new Date(searchPlanningDateTo) < new Date(searchPlanningDateFrom)
     ) {
       setIsDateRangeValid(false);
+
+      enqueueSnackbar('Date To cannot be earlier than Date From', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
     } else {
       setIsDateRangeValid(true);
     }
@@ -276,9 +281,35 @@ const NewCollection = () => {
     { value: 'No', label: 'No' }
   ];
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData({ ...formData, [name]: value });
+  // };
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => {
+      const updatedFormData = { ...prevFormData, [name]: value };
+
+      // Validation check for launchDate
+      if (name === 'planningDate' || name === 'launchDate') {
+        const planningDate = new Date(updatedFormData.planningDate);
+        const launchDate = new Date(updatedFormData.launchDate);
+
+        if (planningDate > launchDate) {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            launchDate: 'Launch Date cannot be earlier than Planning Date'
+          }));
+        } else {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            launchDate: ''
+          }));
+        }
+      }
+
+      return updatedFormData;
+    });
   };
   const handlesearchChange = (e) => {
     const { name, value } = e.target;
