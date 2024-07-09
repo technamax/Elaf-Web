@@ -186,7 +186,7 @@ const NewCollection = () => {
       // flex: 2
     },
     {
-      field: 'brandId',
+      field: 'brandName',
       headerName: 'Brand'
       // editable: true,
       // flex: 1,
@@ -197,7 +197,7 @@ const NewCollection = () => {
       // }))
     },
     {
-      field: 'seasonId',
+      field: 'seasonName',
       headerName: 'Season'
       // editable: true,
       // flex: 1,
