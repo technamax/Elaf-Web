@@ -57,7 +57,7 @@ const EmbroideryAssignVendor = ({
     colourName: initialFormData.colourName || '',
     availableQty: initialFormData.availableQty || '',
     assignedQty: '',
-    remainingQty: (initialFormData.availableQty - Quantity).toFixed(2) || '',
+    remainingQty: (initialFormData.availableQty - Quantity).toFixed(2) || 0,
     noOfHead: initialFormData.noOfHead || '',
     noOfHeadsName: initialFormData.noOfHeadsName || '',
     repeats: initialFormData.repeats || '',
@@ -69,7 +69,7 @@ const EmbroideryAssignVendor = ({
     poPcs: initialFormData.poPcs || '',
 
     totalPcs: initialFormData.totalPcs || '', //repeat*itemsPerRepeat
-    remainingPcs: (initialFormData.totalPcs - totalRepeats).toFixed(2) || '', //repeat*itemsPerRepeat
+    remainingPcs: (initialFormData.totalPcs - totalRepeats).toFixed(2) || 0, //repeat*itemsPerRepeat
     requiredPcs: 0, //repeat*itemsPerRepeat
     totalAmount: 0, //
     threadStiches: 0,
@@ -110,8 +110,8 @@ const EmbroideryAssignVendor = ({
   useEffect(() => {
     setFormData({
       ...formData,
-      remainingQty: initialFormData.availableQty - Quantity || '',
-      remainingPcs: initialFormData.totalPcs - totalRepeats || ''
+      remainingQty: initialFormData.availableQty - Quantity || 0,
+      remainingPcs: initialFormData.totalPcs - totalRepeats || 0
     });
   }, [initialRows]);
   const { data: lookupData } = useGetLookUpListQuery();
@@ -400,7 +400,7 @@ const EmbroideryAssignVendor = ({
         const assignedQty = parseFloat(debouncedFormData.assignedQty) || 0;
         const availableQty = parseFloat(debouncedFormData.availableQty) || 0;
         const totalPcs = parseFloat(debouncedFormData.totalPcs) || 0;
-        return (assignedQty * (totalPcs / availableQty)).toFixed(2);
+        return Math.round(assignedQty * (totalPcs / availableQty));
       };
 
       setFormData((prevData) => ({
@@ -412,7 +412,7 @@ const EmbroideryAssignVendor = ({
         const requiredPcs = parseFloat(debouncedFormData.requiredPcs) || 0;
         const availableQty = parseFloat(debouncedFormData.availableQty) || 0;
         const totalPcs = parseFloat(debouncedFormData.totalPcs) || 0;
-        return ((requiredPcs * availableQty) / totalPcs).toFixed(2);
+        return Math.round((requiredPcs * availableQty) / totalPcs);
       };
 
       setFormData((prevData) => ({
@@ -560,7 +560,7 @@ const EmbroideryAssignVendor = ({
     { field: 'costPerComponent', headerName: 'Cost Per Component' }
   ];
 
-  const deleteApi = `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingDetailByDetId?embroideryIdDet=`;
+  const deleteApi = `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryDetailsByDetId?embroideryDetId=`;
   return (
     <Box
       noValidate
@@ -1078,6 +1078,7 @@ const EmbroideryAssignVendor = ({
             name="vendorId"
             value={formData.vendorId}
             onChange={handleChange}
+            disabled={!formData.remainingPcs && !formData.remainingQty}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -1101,6 +1102,7 @@ const EmbroideryAssignVendor = ({
             name="assignedQty"
             value={formData.assignedQty}
             onChange={handleAssignedQtyChange}
+            disabled={!formData.remainingPcs && !formData.remainingQty}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -1113,6 +1115,7 @@ const EmbroideryAssignVendor = ({
           <TextField
             label="Required Pcs"
             fullWidth
+            disabled={!formData.remainingPcs && !formData.remainingQty}
             size="small"
             type="number"
             name="requiredPcs"
@@ -1149,6 +1152,7 @@ const EmbroideryAssignVendor = ({
             fullWidth
             type="number"
             size="small"
+            disabled={!formData.remainingPcs && !formData.remainingQty}
             name="totalAmount"
             value={formData.totalAmount}
             onChange={handleChange}
@@ -1169,6 +1173,7 @@ const EmbroideryAssignVendor = ({
             name="costPerComponent"
             value={formData.costPerComponent}
             onChange={handleChange}
+            disabled={!formData.remainingPcs && !formData.remainingQty}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -1187,6 +1192,7 @@ const EmbroideryAssignVendor = ({
             size="small"
             onChange={handleChange}
             fullWidth
+            disabled={!formData.remainingPcs && !formData.remainingQty}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -1215,6 +1221,7 @@ const EmbroideryAssignVendor = ({
               <Checkbox
                 checked={formData.isSolving}
                 onChange={handleCheckboxChange}
+                disabled={!formData.remainingPcs && !formData.remainingQty}
                 name="isSolving"
               />
             }
@@ -1240,6 +1247,7 @@ const EmbroideryAssignVendor = ({
                 value={formData.threadStiches}
                 onChange={handleChange}
                 required
+                disabled={!formData.remainingPcs && !formData.remainingQty}
                 InputLabelProps={{
                   sx: {
                     // set the color of the label when not shrinked
@@ -1260,6 +1268,7 @@ const EmbroideryAssignVendor = ({
                 value={formData.threadRate}
                 onChange={handleChange}
                 required
+                disabled={!formData.remainingPcs && !formData.remainingQty}
                 InputLabelProps={{
                   sx: {
                     // set the color of the label when not shrinked
@@ -1279,6 +1288,7 @@ const EmbroideryAssignVendor = ({
                 name="threadAmount"
                 value={formData.threadAmount}
                 onChange={handleChange}
+                disabled={!formData.remainingPcs && !formData.remainingQty}
                 InputLabelProps={{
                   sx: {
                     // set the color of the label when not shrinked
@@ -1308,6 +1318,7 @@ const EmbroideryAssignVendor = ({
                 value={formData.tillaStiches}
                 onChange={handleChange}
                 required
+                disabled={!formData.remainingPcs && !formData.remainingQty}
                 InputLabelProps={{
                   sx: {
                     // set the color of the label when not shrinked
@@ -1328,6 +1339,7 @@ const EmbroideryAssignVendor = ({
                 value={formData.tilaRate}
                 onChange={handleChange}
                 required
+                disabled={!formData.remainingPcs && !formData.remainingQty}
                 InputLabelProps={{
                   sx: {
                     // set the color of the label when not shrinked
@@ -1346,6 +1358,7 @@ const EmbroideryAssignVendor = ({
                 name="tilaAmount"
                 value={formData.tilaAmount}
                 onChange={handleChange}
+                disabled={!formData.remainingPcs && !formData.remainingQty}
                 InputLabelProps={{
                   sx: {
                     // set the color of the label when not shrinked
@@ -1374,6 +1387,7 @@ const EmbroideryAssignVendor = ({
                 type="number"
                 value={formData.sequence}
                 onChange={handleChange}
+                disabled={!formData.remainingPcs && !formData.remainingQty}
                 required
                 InputLabelProps={{
                   sx: {
@@ -1395,6 +1409,7 @@ const EmbroideryAssignVendor = ({
                 value={formData.sequenceRate}
                 onChange={handleChange}
                 required
+                disabled={!formData.remainingPcs && !formData.remainingQty}
                 InputLabelProps={{
                   sx: {
                     // set the color of the label when not shrinked
@@ -1413,6 +1428,7 @@ const EmbroideryAssignVendor = ({
                 name="sequenceAmount"
                 value={formData.sequenceAmount}
                 onChange={handleChange}
+                disabled={!formData.remainingPcs && !formData.remainingQty}
                 InputLabelProps={{
                   sx: {
                     // set the color of the label when not shrinked
@@ -1441,6 +1457,7 @@ const EmbroideryAssignVendor = ({
                   name="solvingLayers"
                   value={formData.solvingLayers}
                   onChange={handleChange}
+                  disabled={!formData.remainingPcs && !formData.remainingQty}
                   InputLabelProps={{
                     sx: {
                       // set the color of the label when not shrinked
@@ -1457,6 +1474,7 @@ const EmbroideryAssignVendor = ({
                   size="small"
                   name="solvingInMeters"
                   value={formData.solvingInMeters}
+                  disabled={!formData.remainingPcs && !formData.remainingQty}
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: {
@@ -1491,6 +1509,7 @@ const EmbroideryAssignVendor = ({
                   type="number"
                   name="solvingAmount"
                   value={formData.solvingAmount}
+                  disabled={!formData.remainingPcs && !formData.remainingQty}
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: {
