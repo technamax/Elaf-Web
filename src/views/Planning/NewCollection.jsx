@@ -12,7 +12,8 @@ import {
   Box,
   Tab,
   Card,
-  CardHeader
+  CardHeader,
+  IconButton
 } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import SearchIcon from '@mui/icons-material/Search';
@@ -31,6 +32,7 @@ import { WidthFull } from '@mui/icons-material';
 import { useUser } from 'context/User';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
+import LoopOutlinedIcon from '@mui/icons-material/LoopOutlined';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
@@ -424,7 +426,25 @@ const NewCollection = () => {
     'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
   // const editAPi =
   //   'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection';
-
+  const handleReset = () => {
+    setFormData({
+      collectionId: 0,
+      collectionName: '',
+      brandId: '',
+      seasonId: '',
+      volume: '',
+      planningDate: '',
+      launchDate: '',
+      isRepeatCollection: '',
+      noOfDesigns: '',
+      noOfColors: '',
+      poPcs: '',
+      createdOn: new Date().toISOString(),
+      createdBy: user.empId,
+      lastUpdatedOn: new Date().toISOString(),
+      lastUpdatedBy: user.empId
+    });
+  };
   return (
     <MainCard
       style={{
@@ -476,6 +496,15 @@ const NewCollection = () => {
                   // }
                   title="Add Collection "
                   titleTypographyProps={{ style: { color: 'white' } }}
+                  action={
+                    <IconButton
+                      aria-label="reset"
+                      sx={{ color: 'white', mt: -2 }} // Use sx to style the color
+                      onClick={() => handleReset()}
+                    >
+                      <LoopOutlinedIcon />
+                    </IconButton>
+                  }
                 ></CardHeader>
                 <Grid
                   container

@@ -15,11 +15,13 @@ import {
   Box,
   Tab,
   Card,
-  CardHeader
+  CardHeader,
+  IconButton
 } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import SearchIcon from '@mui/icons-material/Search';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import LoopOutlinedIcon from '@mui/icons-material/LoopOutlined';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
@@ -159,18 +161,7 @@ const NewDesign = () => {
 
   const initialRows = designList.map((design, index) => ({
     id: index + 1,
-    designId: design.designId,
-    collectionId: design.collectionId,
-    designNo: design.designNo,
-    designerName: design.designerName,
-    poPcs: design.poPcs,
-    dateOfPlanning: design.dateOfPlanning,
-    colorId: design.colorId,
-    appId: design.appId,
-    createdBy: design.createdBy,
-    createdOn: design.createdOn,
-    lastUpdatedBy: design.lastUpdatedBy,
-    lastUpdatedOn: design.lastUpdatedOn
+    ...design
   }));
   console.log('initialRows', initialRows);
   const columns = [
@@ -284,7 +275,22 @@ const NewDesign = () => {
   const handleSearch = () => {
     //search api call
   };
-
+  const handleReset = () => {
+    setFormData({
+      designId: 0,
+      collectionId: '',
+      designNo: '',
+      designerName: '',
+      poPcs: '',
+      dateOfPlanning: '',
+      colorId: '',
+      appId: user.appId,
+      createdBy: user.empId,
+      createdOn: new Date().toISOString(),
+      lastUpdatedBy: user.empId,
+      lastUpdatedOn: new Date().toISOString()
+    });
+  };
   return (
     <MainCard
       style={{
@@ -332,6 +338,15 @@ const NewDesign = () => {
                 // }
                 title="Add Design "
                 titleTypographyProps={{ style: { color: 'white' } }}
+                action={
+                  <IconButton
+                    aria-label="reset"
+                    sx={{ color: 'white', mt: -2 }} // Use sx to style the color
+                    onClick={() => handleReset()}
+                  >
+                    <LoopOutlinedIcon />
+                  </IconButton>
+                }
               ></CardHeader>
               <Grid
                 container

@@ -34,3 +34,4 @@ src/api/menuService.js.orig
 src/views/Planning/NewDesign.jsx.orig
 src/views/Planning/PrePlanningCreation.jsx.orig
 .gitignore.orig
+src/views/Planning/Embroidery.jsx.orig

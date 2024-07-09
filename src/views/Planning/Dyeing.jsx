@@ -668,7 +668,6 @@ const Dyeing = () => {
             Dyeing/Printing
             </Typography>
           </Grid> */}
-
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -692,7 +691,6 @@ const Dyeing = () => {
               ))}
             </TextField>{' '}
           </Grid>
-
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -769,6 +767,9 @@ const Dyeing = () => {
                 }
               })}
             />
+          </Grid>{' '}
+          <Grid item xs={12} md={12}>
+            <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />{' '}
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
