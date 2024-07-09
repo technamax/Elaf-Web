@@ -244,7 +244,7 @@ const DyeingPrintingAssignVendor = ({
     >
       <Grid
         container
-        spacing={2}
+        spacing={1}
         width="Inherit"
         sx={{ paddingY: 2, paddingX: 2 }}
       >
@@ -389,7 +389,7 @@ const DyeingPrintingAssignVendor = ({
       <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />
       <Grid
         container
-        spacing={2}
+        spacing={1}
         width="Inherit"
         sx={{ paddingY: 2, paddingX: 2 }}
       >
