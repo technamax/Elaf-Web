@@ -226,7 +226,7 @@ const NewDesign = () => {
       (design) => design.designNo === formData.designNo
     );
 
-    if (isDuplicate) {
+    if (isDuplicate && formData.designId === 0) {
       // Show Snackbar for duplicate entry
       enqueueSnackbar('Design number already exists!', {
         variant: 'error',
