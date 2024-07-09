@@ -76,6 +76,24 @@ const NewDesign = () => {
   }, []);
 
   const collectionList = collectionData?.result || [];
+  const [searchData, setSearchData] = useState({
+    searchPlanningDateFrom: '',
+    searchPlanningDateTo: ''
+  });
+  const [isDateRangeValid, setIsDateRangeValid] = useState(true);
+  useEffect(() => {
+    // Validate date range whenever searchData changes
+    const { searchPlanningDateFrom, searchPlanningDateTo } = searchData;
+    if (
+      searchPlanningDateFrom &&
+      searchPlanningDateTo &&
+      new Date(searchPlanningDateTo) < new Date(searchPlanningDateFrom)
+    ) {
+      setIsDateRangeValid(false);
+    } else {
+      setIsDateRangeValid(true);
+    }
+  }, [searchData]);
 
   const [formData, setFormData] = useState({
     designId: 0,
@@ -218,7 +236,10 @@ const NewDesign = () => {
       // }))
     }
   ];
-
+  const handlesearchChange = (e) => {
+    const { name, value } = e.target;
+    setSearchData({ ...searchData, [name]: value });
+  };
   const handleSave = async () => {
     console.log(formData);
     // Check if the design number already exists
@@ -269,10 +290,34 @@ const NewDesign = () => {
       });
     }
   };
-
+  console.log('searchData', searchData);
   const deleteApi = `https://gecxc.com:4041/api/DesignRegistration/DeleteDesignById?designId=`;
   // const editAPi = 'https://gecxc.com:4041/API/DesignRegistration/SaveDesign';
-  const handleSearch = () => {
+  const [searchResult, setSearchResult] = useState([]);
+  const handleSearch = async () => {
+    try {
+      const response = await axios.get(
+        `https://gecxc.com:4051/API/DesignRegistration/GetDesignListByDateOfPlanning?appId=1&startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}&appId=1`
+      );
+      enqueueSnackbar('Design Search successfully!', {
+        variant: 'success',
+        autoHideDuration: 5000
+      });
+
+      console.log('Response Data:', response.data);
+      setSearchResult(
+        response.data.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+    } catch (error) {
+      console.error('Error saving data:', error);
+      enqueueSnackbar('Design Search Failed!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+    }
     //search api call
   };
   const handleReset = () => {
@@ -570,9 +615,9 @@ const NewDesign = () => {
                   size="small"
                   type="date"
                   label="Date From"
-                  name="planningDate"
-                  value={formData.planningDate}
-                  onChange={handleChange}
+                  name="searchPlanningDateFrom"
+                  value={searchData.searchPlanningDateFrom}
+                  onChange={handlesearchChange}
                   fullWidth
                   focused
                   InputLabelProps={{
@@ -588,9 +633,9 @@ const NewDesign = () => {
                   size="small"
                   type="date"
                   label="Date to"
-                  name="launchDate"
-                  value={formData.launchDate}
-                  onChange={handleChange}
+                  name="searchPlanningDateTo"
+                  value={searchData.searchPlanningDateTo}
+                  onChange={handlesearchChange}
                   fullWidth
                   focused
                   InputLabelProps={{
@@ -609,14 +654,16 @@ const NewDesign = () => {
 
             <Grid container spacing={2} width="inherit" paddingTop={2}>
               <Grid item xs={12}>
-                <EditAbleDataGrid
-                  initialRows={[]}
-                  ncolumns={columns}
-                  formData={formData}
+                <ReuseableDataGrid
+                  initialRows={searchResult}
+                  iColumns={columns}
+                  disableEdit
+                  disableDelete
+                  // formData={formData}
+                  // deleteApi={deleteApi}
+                  // deleteBy="collectionId"
                   // editAPi={editAPi}
-                  disableAddRecord={true}
-
-                  // disableEdit={true}
+                  // disableAddRecord={true}
                 />
               </Grid>
             </Grid>

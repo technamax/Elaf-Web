@@ -191,7 +191,7 @@ const NewCollection = () => {
       // flex: 2
     },
     {
-      field: 'brandId',
+      field: 'brandName',
       headerName: 'Brand'
       // editable: true,
       // flex: 1,
@@ -202,7 +202,7 @@ const NewCollection = () => {
       // }))
     },
     {
-      field: 'seasonId',
+      field: 'seasonName',
       headerName: 'Season'
       // editable: true,
       // flex: 1,
@@ -385,6 +385,18 @@ const NewCollection = () => {
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
+    }
+    const isDuplicate = collectionList.some(
+      (collection) => collection.collectionName === formData.collectionName
+    );
+
+    if (isDuplicate && formData.collectionId === 0) {
+      // Show Snackbar for duplicate entry
+      enqueueSnackbar('collection already exists!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+      return; // Exit without saving
     }
 
     try {

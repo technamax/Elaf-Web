@@ -175,7 +175,7 @@ const DyeingPrintingAssignVendor = ({
 
       // handleClickOpen();
 
-      setAccordionExpanded(false);
+      // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
     }
