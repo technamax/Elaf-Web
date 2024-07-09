@@ -276,6 +276,12 @@ const PrePlanningCreation = () => {
                     value={formData.collectionId}
                     onChange={handleChange}
                     size="small"
+                    InputLabelProps={{
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                      }
+                    }}
                   >
                     {collectionList.map((option) => (
                       <MenuItem
@@ -296,6 +302,12 @@ const PrePlanningCreation = () => {
                     value={formData.designId}
                     onChange={handleChange}
                     size="small"
+                    InputLabelProps={{
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                      }
+                    }}
                   >
                     {designOptions.map((option) => (
                       <MenuItem key={option.designId} value={option.designId}>
@@ -312,6 +324,33 @@ const PrePlanningCreation = () => {
                     name="poPcs"
                     value={formData.poPcs}
                     onChange={handleChange}
+                    sx={(theme) => ({
+                      ...(formData.poPcs !== '' && {
+                        '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input':
+                          {
+                            backgroundColor: `#c9c9c9 !important`
+                          }
+                      }),
+                      '& .MuiInputBase-input.Mui-disabled': {
+                        WebkitTextFillColor: 'black' // Adjust text color here
+                      },
+                      '& .MuiInputBase-root.Mui-disabled': {
+                        backgroundColor: '#f9f9f9' // Adjust background color here
+                      },
+                      '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                        {
+                          // borderColor: 'gray' // Adjust border color here
+                        },
+                      '& .MuiInputLabel-root.Mui-disabled': {
+                        color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                      }
+                    })}
+                    InputLabelProps={{
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                      }
+                    }}
                   />
                 </Grid>
                 <Grid

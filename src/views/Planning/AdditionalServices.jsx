@@ -221,6 +221,12 @@ export default function AdditionalServices({}) {
               value={formData.collectionId}
               onChange={handleChange}
               size="small"
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {plannedCollection.length > 0 ? (
                 plannedCollection.map((option) => (
@@ -248,6 +254,12 @@ export default function AdditionalServices({}) {
               variant="outlined"
               size="small"
               fullWidth
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {serviceType.map((option) => (
                 <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -267,6 +279,12 @@ export default function AdditionalServices({}) {
               variant="outlined"
               size="small"
               fullWidth
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {serviceList.map((option) => (
                 <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -284,6 +302,12 @@ export default function AdditionalServices({}) {
               name="vendorId"
               value={formData.vendorId}
               onChange={handleChange}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {vendors.map((option) => (
                 <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -303,6 +327,32 @@ export default function AdditionalServices({}) {
               size="small"
               fullWidth
               disabled
+              sx={(theme) => ({
+                ...(formData.poPcs !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
+                },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    // borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             />
           </Grid>
           <Grid item md={2} width="inherit" paddingX={1}>
@@ -316,6 +366,12 @@ export default function AdditionalServices({}) {
               size="small"
               required
               fullWidth
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             />
           </Grid>
           <Grid item md={2} width="inherit" paddingX={1}>
@@ -328,6 +384,12 @@ export default function AdditionalServices({}) {
               name="uomId"
               value={formData.uomId}
               onChange={handleChange}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {uoms.map((option) => (
                 <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -347,6 +409,12 @@ export default function AdditionalServices({}) {
               size="small"
               fullWidth
               required
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             />
           </Grid>
           <Grid item md={2} width="inherit" paddingX={1}>
@@ -360,6 +428,12 @@ export default function AdditionalServices({}) {
               size="small"
               fullWidth
               required
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             />
           </Grid>
           <Grid item md={2} width="inherit" paddingX={1}>
@@ -373,6 +447,12 @@ export default function AdditionalServices({}) {
               size="small"
               required
               fullWidth
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             />
           </Grid>
           <Grid item md={12} width="inherit" paddingX={1} textAlign="right">

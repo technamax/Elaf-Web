@@ -382,7 +382,7 @@ const EmbroideryAssignVendor = ({
     >
       <Grid
         container
-        spacing={2}
+        spacing={1}
         width="Inherit"
         sx={{ paddingY: 2, paddingX: 2 }}
       >
@@ -395,6 +395,32 @@ const EmbroideryAssignVendor = ({
             onChange={handleChange}
             size="small"
             disabled
+            sx={(theme) => ({
+              ...(formData.fabricName !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           >
             {/* {collectionList.map((option) => (
               <MenuItem key={option.collectionId} value={option.collectionId}>
@@ -414,6 +440,32 @@ const EmbroideryAssignVendor = ({
             onChange={handleChange}
             size="small"
             disabled
+            sx={(theme) => ({
+              ...(formData.componentName !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           >
             {/* {designList.map((option) => (
               <MenuItem key={option.designId} value={option.designId}>
@@ -433,6 +485,32 @@ const EmbroideryAssignVendor = ({
             onChange={handleChange}
             size="small"
             disabled
+            sx={(theme) => ({
+              ...(formData.colourName !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           >
             {/* {batchList.map((option) => (
               <MenuItem key={option.batchNo} value={option.batchNo}>
@@ -450,6 +528,32 @@ const EmbroideryAssignVendor = ({
             onChange={handleChange}
             size="small"
             disabled
+            sx={(theme) => ({
+              ...(formData.poPcs !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           >
             {/* {components.map((option) => (
               <MenuItem key={option.componentId} value={option.componentId}>
@@ -469,6 +573,32 @@ const EmbroideryAssignVendor = ({
             value={formData.noOfHeadsName}
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.noOfHeadsName !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           ></TextField>
         </Grid>
         <Grid item xs={12} md={3}>
@@ -481,6 +611,32 @@ const EmbroideryAssignVendor = ({
             value={formData.cuttingSize}
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.cuttingSize !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           ></TextField>
         </Grid>
         <Grid item xs={12} md={3}>
@@ -493,6 +649,32 @@ const EmbroideryAssignVendor = ({
             value={formData.itemsPerRepeat}
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.itemsPerRepeat !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           ></TextField>
         </Grid>
 
@@ -506,6 +688,32 @@ const EmbroideryAssignVendor = ({
             // type="number"
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.availableQty !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={1.5}>
@@ -518,6 +726,32 @@ const EmbroideryAssignVendor = ({
             // type="number"
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.remainingQty !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={1.5}>
@@ -530,6 +764,32 @@ const EmbroideryAssignVendor = ({
             // type="number"
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.repeats !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={1.5}>
@@ -542,6 +802,32 @@ const EmbroideryAssignVendor = ({
             // type="number"
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.totalPcs !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={1.5}>
@@ -554,13 +840,39 @@ const EmbroideryAssignVendor = ({
             // type="number"
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.remainingPcs !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
       </Grid>
       <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />
       <Grid
         container
-        spacing={2}
+        spacing={1}
         width="Inherit"
         sx={{ paddingY: 2, paddingX: 2 }}
       >
@@ -574,6 +886,12 @@ const EmbroideryAssignVendor = ({
             name="vendorId"
             value={formData.vendorId}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           >
             {vendors.map((option) => (
               <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -591,6 +909,12 @@ const EmbroideryAssignVendor = ({
             name="assignedQty"
             value={formData.assignedQty}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={1.5}>
@@ -602,6 +926,12 @@ const EmbroideryAssignVendor = ({
             name="requiredPcs"
             value={formData.requiredPcs}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={1.5}>
@@ -613,6 +943,12 @@ const EmbroideryAssignVendor = ({
             name="totalPcs"
             value={formData.totalPcs}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={1.5}>
@@ -624,6 +960,12 @@ const EmbroideryAssignVendor = ({
             name="totalAmount"
             value={formData.totalAmount}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -635,6 +977,12 @@ const EmbroideryAssignVendor = ({
             name="costPerComponent"
             value={formData.costPerComponent}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
 
@@ -647,6 +995,12 @@ const EmbroideryAssignVendor = ({
             size="small"
             onChange={handleChange}
             fullWidth
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
             SelectProps={{
               multiple: true
             }}
@@ -694,6 +1048,12 @@ const EmbroideryAssignVendor = ({
                 value={formData.threadStiches}
                 onChange={handleChange}
                 required
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
                 // error={!!formErrors.threadStiches}
                 // helperText={formErrors.threadStiches}
               />
@@ -708,6 +1068,12 @@ const EmbroideryAssignVendor = ({
                 value={formData.threadRate}
                 onChange={handleChange}
                 required
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
                 // error={!!formErrors.threadRate}
                 // helperText={formErrors.threadRate}
               />
@@ -721,6 +1087,12 @@ const EmbroideryAssignVendor = ({
                 name="threadAmount"
                 value={formData.threadAmount}
                 onChange={handleChange}
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
               />
             </Grid>
           </Grid>
@@ -744,6 +1116,12 @@ const EmbroideryAssignVendor = ({
                 value={formData.tillaStiches}
                 onChange={handleChange}
                 required
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
                 // error={!!formErrors.tillaStiches}
                 // helperText={formErrors.tillaStiches}
               />
@@ -758,6 +1136,12 @@ const EmbroideryAssignVendor = ({
                 value={formData.tilaRate}
                 onChange={handleChange}
                 required
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
                 // error={!!formErrors.tilaRate}
                 // helperText={formErrors.tilaRate}
               />
@@ -770,6 +1154,12 @@ const EmbroideryAssignVendor = ({
                 name="tilaAmount"
                 value={formData.tilaAmount}
                 onChange={handleChange}
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
               />
             </Grid>
           </Grid>
@@ -793,6 +1183,12 @@ const EmbroideryAssignVendor = ({
                 value={formData.sequence}
                 onChange={handleChange}
                 required
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
                 // error={!!formErrors.sequence}
                 // helperText={formErrors.sequence}
               />
@@ -807,6 +1203,12 @@ const EmbroideryAssignVendor = ({
                 value={formData.sequenceRate}
                 onChange={handleChange}
                 required
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
                 // error={!!formErrors.sequenceRate}
                 // helperText={formErrors.sequenceRate}
               />
@@ -819,6 +1221,12 @@ const EmbroideryAssignVendor = ({
                 name="sequenceAmount"
                 value={formData.sequenceAmount}
                 onChange={handleChange}
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
               />
             </Grid>
           </Grid>{' '}
@@ -841,6 +1249,12 @@ const EmbroideryAssignVendor = ({
                   name="solvingLayers"
                   value={formData.solvingLayers}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={3}>
@@ -852,6 +1266,12 @@ const EmbroideryAssignVendor = ({
                   name="solvingInMeters"
                   value={formData.solvingInMeters}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={3}>
@@ -863,6 +1283,12 @@ const EmbroideryAssignVendor = ({
                   name="solvingRate"
                   value={formData.solvingRate}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={3}>
@@ -874,6 +1300,12 @@ const EmbroideryAssignVendor = ({
                   name="solvingAmount"
                   value={formData.solvingAmount}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
             </Grid>
@@ -886,6 +1318,8 @@ const EmbroideryAssignVendor = ({
           </Button>
         </Grid>
       </Grid>
+      <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />
+
       <Grid
         container
         spacing={2}
