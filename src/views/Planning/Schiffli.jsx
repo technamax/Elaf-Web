@@ -684,7 +684,7 @@ const Schiffli = () => {
 
         <Grid
           container
-          spacing={2}
+          spacing={1}
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
@@ -862,7 +862,7 @@ const Schiffli = () => {
           <AccordionDetails>
             <Grid
               container
-              spacing={2}
+              spacing={1}
               width="Inherit"
               sx={{ paddingY: 2, paddingX: 2 }}
             >
