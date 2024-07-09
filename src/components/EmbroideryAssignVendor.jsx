@@ -108,7 +108,7 @@ const EmbroideryAssignVendor = ({
     setFormData({
       ...formData,
       remainingQty: initialFormData.availableQty - Quantity || '',
-      remainingRepeats: initialFormData.repeats - totalRepeats || ''
+      remainingPcs: initialFormData.totalPcs - totalRepeats || ''
     });
   }, [initialRows]);
   const { data: lookupData } = useGetLookUpListQuery();
