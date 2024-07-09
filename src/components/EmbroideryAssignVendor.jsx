@@ -34,7 +34,7 @@ const EmbroideryAssignVendor = ({
     .toFixed(2);
   console.log('Quantity', Quantity);
   const totalRepeats = initialRows
-    .reduce((sum, row) => sum + (row.repeats ?? 0), 0)
+    .reduce((sum, row) => sum + (row.requiredPcs ?? 0), 0)
     .toFixed(2);
   console.log('totalRepeats', totalRepeats);
 
@@ -65,7 +65,9 @@ const EmbroideryAssignVendor = ({
     itemsPerRepeat: initialFormData.itemsPerRepeat || '',
     poPcs: initialFormData.poPcs || '',
 
-    totalPcs: '', //repeat*itemsPerRepeat
+    totalPcs: initialFormData.totalPcs || '', //repeat*itemsPerRepeat
+    remainingPcs: initialFormData.totalPcs - totalRepeats || '', //repeat*itemsPerRepeat
+    requiredPcs: '', //repeat*itemsPerRepeat
     totalAmount: '', //
     threadStiches: '',
     threadRate: '',
@@ -337,10 +339,15 @@ const EmbroideryAssignVendor = ({
       flex: 1
     },
     {
-      field: 'assignedRepeats',
-      headerName: 'Assigned repeats',
+      field: 'requiredPcs',
+      headerName: 'Required Pcs',
       flex: 1
     },
+    // {
+    //   field: 'assignedRepeats',
+    //   headerName: 'Assigned repeats',
+    //   flex: 1
+    // },
     { field: 'additional', headerName: 'ThreadAdditional' },
     { field: 'threadStiches', headerName: 'Thread Stitches' },
     { field: 'threadRate', headerName: 'Thread Rate' },
@@ -527,11 +534,23 @@ const EmbroideryAssignVendor = ({
         </Grid>
         <Grid item xs={12} md={1.5}>
           <TextField
-            label="Remaining Repeats"
+            label="Total Pcs"
             fullWidth
             size="small"
-            name="remainingRepeats"
-            value={formData.remainingRepeats}
+            name="totalPcs"
+            value={formData.totalPcs}
+            // type="number"
+            onChange={handleChange}
+            disabled
+          />
+        </Grid>
+        <Grid item xs={12} md={1.5}>
+          <TextField
+            label="remainingPcs"
+            fullWidth
+            size="small"
+            name="remainingPcs"
+            value={formData.remainingPcs}
             // type="number"
             onChange={handleChange}
             disabled
@@ -576,12 +595,12 @@ const EmbroideryAssignVendor = ({
         </Grid>
         <Grid item xs={12} md={1.5}>
           <TextField
-            label="Assigned Repeeats"
+            label="Required Pcs"
             fullWidth
             size="small"
             type="number"
-            name="assignedRepeats"
-            value={formData.assignedRepeats}
+            name="requiredPcs"
+            value={formData.requiredPcs}
             onChange={handleChange}
           />
         </Grid>

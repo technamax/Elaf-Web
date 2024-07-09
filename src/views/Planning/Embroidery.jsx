@@ -747,7 +747,7 @@ const Embroidery = () => {
     { field: 'assignedRepeats', headerName: 'Assigned Repeats' },
     { field: 'cuttingSize', headerName: 'Cutting Size' },
     { field: 'itemsPerRepeat', headerName: 'Items Per Repeat' },
-    // { field: 'totalPcs', headerName: 'Total Pcs' },
+    { field: 'totalPcs', headerName: 'Total Pcs' },
     // { field: 'threadStiches', headerName: 'Thread Stitches' },
     // { field: 'threadRate', headerName: 'Thread Rate' },
     // { field: 'threadAmount', headerName: 'Thread Amount' },
@@ -1033,6 +1033,17 @@ const Embroidery = () => {
               helperText={formErrors.itemsPerRepeat}
             />
           </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="total Pcs."
+              fullWidth
+              size="small"
+              type="number"
+              name="totalPcs"
+              value={formData.totalPcs}
+              onChange={handleChange}
+            />
+          </Grid>
           <Grid item xs={12} md={6} textAlign="right" sx={{ mt: 2 }}>
             <Button variant="contained" size="small" onClick={handleSave}>
               Save
@@ -1080,17 +1091,6 @@ const Embroidery = () => {
               sx={{ paddingY: 2, paddingX: 2 }}
             >
               {' '}
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="total Pcs."
-                  fullWidth
-                  size="small"
-                  type="number"
-                  name="totalPcs"
-                  value={formData.totalPcs}
-                  onChange={handleChange}
-                />
-              </Grid>
               <Grid item xs={12} md={1.5}>
                 <TextField
                   label="Total Amount"
