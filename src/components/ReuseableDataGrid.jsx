@@ -5,7 +5,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { ButtonGroup, Box, IconButton } from '@mui/material';
+import { ButtonGroup, Box, IconButton, Typography } from '@mui/material';
 import {
   DataGrid,
   GridToolbarContainer,
@@ -132,6 +132,8 @@ const ReuseableDataGrid = ({
     <div
       style={{
         display: 'flex',
+        flexDirection: 'column',
+
         justifyContent: 'center',
         alignItems: 'center'
       }}
@@ -144,6 +146,9 @@ const ReuseableDataGrid = ({
           height: 200
         }}
       />
+      <Typography alignItems="center">
+        Please Select The Required Fields
+      </Typography>
     </div>
   ) : (
     <Box
