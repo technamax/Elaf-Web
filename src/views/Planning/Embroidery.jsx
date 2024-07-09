@@ -536,7 +536,8 @@ const Embroidery = () => {
         colorId: value,
         availableQty: selectedcolor ? selectedcolor.total : '',
         cuttingSize: selectedcolor ? selectedcolor.cuttingSize : '',
-        repeats: selectedcolor ? selectedcolor.repeats : ''
+        repeats: selectedcolor ? selectedcolor.repeats : '',
+        noOfHead: selectedcolor ? selectedcolor.noOfHeads : ''
       });
     } else if (name === 'batchNo') {
       const selectedBatch = batchList.find((batch) => batch.batchNo === value);
@@ -1129,6 +1130,27 @@ const Embroidery = () => {
                   color: 'black'
                 }
               }}
+              sx={(theme) => ({
+                ...(formData.noOfHead !== '' && {
+                  '.css-9ngl8c-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input':
+                    {
+                      backgroundColor: `#c9c9c9 !important`
+                    }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
+                },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
             >
               {heads.map((option) => (
                 <MenuItem key={option.lookUpId} value={option.lookUpId}>
