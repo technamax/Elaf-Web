@@ -405,7 +405,7 @@ const AdditionalProcess = () => {
 
         <Grid
           container
-          spacing={2}
+          spacing={1}
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
@@ -418,6 +418,12 @@ const AdditionalProcess = () => {
               value={selectedCollectionId}
               onChange={handleChange}
               size="small"
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {collectionList.map((option) => (
                 <MenuItem key={option.collectionId} value={option.collectionId}>
@@ -436,6 +442,12 @@ const AdditionalProcess = () => {
               value={formData.designId}
               onChange={handleChange}
               size="small"
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {designList.map((option) => (
                 <MenuItem key={option.designId} value={option.designId}>
@@ -454,27 +466,16 @@ const AdditionalProcess = () => {
               value={formData.batchNo}
               onChange={handleChange}
               size="small"
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {batchList.map((option) => (
                 <MenuItem key={option.batchNo} value={option.batchNo}>
                   {option.batchNo}
-                </MenuItem>
-              ))}
-            </TextField>{' '}
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Components"
-              name="componentId"
-              value={formData.componentId}
-              onChange={handleChange}
-              size="small"
-            >
-              {components.map((option) => (
-                <MenuItem key={option.componentId} value={option.componentId}>
-                  {option.componentName}
                 </MenuItem>
               ))}
             </TextField>{' '}
@@ -488,13 +489,244 @@ const AdditionalProcess = () => {
               value={formData.baseColorName}
               onChange={handleChange}
               disabled
+              sx={(theme) => ({
+                ...(formData.baseColorName !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
+                },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    // borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             />
+          </Grid>
+          <Grid item xs={12} md={12}>
+            <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />{' '}
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Components"
+              name="componentId"
+              value={formData.componentId}
+              onChange={handleChange}
+              size="small"
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            >
+              {components.map((option) => (
+                <MenuItem key={option.componentId} value={option.componentId}>
+                  {option.componentName}
+                </MenuItem>
+              ))}
+            </TextField>{' '}
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Select Fabric"
+              defaultValue=""
+              size="small"
+              name="fabricId"
+              value={formData.fabricId}
+              onChange={handleChange}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            >
+              {Fabrications.map((option) => (
+                <MenuItem key={option.fabricId} value={option.fabricId}>
+                  {option.fabric}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          {/* <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Vendors"
+                  defaultValue=""
+                  size="small"
+                  name="vendorId"
+                  value={formData.vendorId}
+                  onChange={handleChange}
+                >
+                  {vendors.map((option) => (
+                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                      {option.lookUpName}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid> */}
+
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Color"
+              size="small"
+              name="colorId"
+              value={formData.colorId}
+              onChange={handleChange}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            >
+              {colors.map((option) => (
+                <MenuItem key={option.colorId} value={option.colorId}>
+                  {option.color}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Po Pcs"
+              fullWidth
+              size="small"
+              name="poPcs"
+              value={formData.poPcs}
+              onChange={handleChange}
+              disabled
+              sx={(theme) => ({
+                ...(formData.poPcs !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
+                },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    // borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Pcs. Per Component"
+              fullWidth
+              size="small"
+              name="pcsPerComponent"
+              value={formData.pcsPerComponent}
+              // type="number"
+              onChange={handleChange}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="UOM"
+              type="number"
+              defaultValue={140}
+              size="small"
+              name="uomId"
+              value={formData.uomId}
+              onChange={handleChange}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+              // error={!!formErrors.uomId}
+              // helperText={formErrors.uomId}
+              // required
+              // disabled={formData.isSchiffili} // Disable when isSchiffili is checked
+            >
+              {uoms.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Process Type"
+              // defaultValue=""
+              size="small"
+              name="processTypeId"
+              value={formData.processTypeId}
+              onChange={handleChange}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            >
+              {processList.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+
+          <Grid item xs={12} textAlign="right" sx={{ mt: 0 }}>
+            <Button variant="contained" size="small" onClick={handleSave}>
+              Save
+            </Button>
           </Grid>
         </Grid>
       </Card>
       <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
 
-      <Card variant="outlined">
+      {/* <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
           avatar={<AddOutlinedIcon />}
@@ -528,135 +760,11 @@ const AdditionalProcess = () => {
               spacing={2}
               width="Inherit"
               sx={{ paddingY: 2, paddingX: 2 }}
-            >
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Select Fabric"
-                  defaultValue=""
-                  size="small"
-                  name="fabricId"
-                  value={formData.fabricId}
-                  onChange={handleChange}
-                >
-                  {Fabrications.map((option) => (
-                    <MenuItem key={option.fabricId} value={option.fabricId}>
-                      {option.fabric}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              {/* <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Vendors"
-                  defaultValue=""
-                  size="small"
-                  name="vendorId"
-                  value={formData.vendorId}
-                  onChange={handleChange}
-                >
-                  {vendors.map((option) => (
-                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                      {option.lookUpName}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid> */}
-
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Color"
-                  size="small"
-                  name="colorId"
-                  value={formData.colorId}
-                  onChange={handleChange}
-                >
-                  {colors.map((option) => (
-                    <MenuItem key={option.colorId} value={option.colorId}>
-                      {option.color}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Po Pcs"
-                  fullWidth
-                  size="small"
-                  name="poPcs"
-                  value={formData.poPcs}
-                  onChange={handleChange}
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Pcs. Per Component"
-                  fullWidth
-                  size="small"
-                  name="pcsPerComponent"
-                  value={formData.pcsPerComponent}
-                  // type="number"
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="UOM"
-                  type="number"
-                  defaultValue={140}
-                  size="small"
-                  name="uomId"
-                  value={formData.uomId}
-                  onChange={handleChange}
-                  // error={!!formErrors.uomId}
-                  // helperText={formErrors.uomId}
-                  // required
-                  // disabled={formData.isSchiffili} // Disable when isSchiffili is checked
-                >
-                  {uoms.map((option) => (
-                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                      {option.lookUpName}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  fullWidth
-                  select
-                  label="Process Type"
-                  // defaultValue=""
-                  size="small"
-                  name="processTypeId"
-                  value={formData.processTypeId}
-                  onChange={handleChange}
-                >
-                  {processList.map((option) => (
-                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                      {option.lookUpName}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-
-              <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-                <Button variant="contained" size="small" onClick={handleSave}>
-                  Save
-                </Button>
-              </Grid>
-            </Grid>
+            ></Grid>
           </AccordionDetails>
         </Accordion>
-      </Card>
-      <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
+      </Card> */}
+      {/* <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} /> */}
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"

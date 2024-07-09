@@ -400,7 +400,7 @@ const NewCollection = () => {
       const response = await axios.get(
         `https://gecxc.com:4041/API/CollectionRegistration/GetCollectionListByPlanningDate?startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}&appId=1`
       );
-      enqueueSnackbar('Collection saved successfully!', {
+      enqueueSnackbar('Collection Search successfully!', {
         variant: 'success',
         autoHideDuration: 5000
       });
@@ -414,7 +414,7 @@ const NewCollection = () => {
       );
     } catch (error) {
       console.error('Error saving data:', error);
-      enqueueSnackbar('Collection not saved!', {
+      enqueueSnackbar('Collection Search Failed!', {
         variant: 'error',
         autoHideDuration: 5000
       });
@@ -508,7 +508,7 @@ const NewCollection = () => {
                 ></CardHeader>
                 <Grid
                   container
-                  spacing={2}
+                  spacing={1}
                   width="Inherit"
                   sx={{ paddingY: 2, paddingX: 2 }}
                 >
@@ -529,6 +529,12 @@ const NewCollection = () => {
                       size="small"
                       error={!!formErrors.seasonId}
                       helperText={formErrors.seasonId}
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
                     >
                       {seasons.map((option) => (
                         <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -548,6 +554,12 @@ const NewCollection = () => {
                       size="small"
                       error={!!formErrors.brandId}
                       helperText={formErrors.brandId}
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
                     >
                       {brands.map((option) => (
                         <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -566,6 +578,12 @@ const NewCollection = () => {
                       value={formData.collectionName}
                       error={!!formErrors.collectionName}
                       helperText={formErrors.collectionName}
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
                     />
                   </Grid>
                   <Grid item xs={12} md={3}>
@@ -577,6 +595,12 @@ const NewCollection = () => {
                       value={formData.volume}
                       onChange={handleChange}
                       size="small"
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
                     >
                       {volume.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
@@ -597,6 +621,12 @@ const NewCollection = () => {
                       focused
                       error={!!formErrors.planningDate}
                       helperText={formErrors.planningDate}
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
                     />
                   </Grid>
                   <Grid item xs={12} md={3}>
@@ -611,6 +641,12 @@ const NewCollection = () => {
                       focused
                       error={!!formErrors.launchDate}
                       helperText={formErrors.launchDate}
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
                     />
                   </Grid>
 
@@ -624,6 +660,12 @@ const NewCollection = () => {
                       value={formData.isRepeatCollection}
                       onChange={handleChange}
                       size="small"
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
                     >
                       {enabled.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
@@ -643,6 +685,12 @@ const NewCollection = () => {
                       value={formData.noOfColors}
                       error={!!formErrors.noOfColors}
                       helperText={formErrors.noOfColors}
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
                     />
                   </Grid>
                   <Grid item xs={12} md={3}>
@@ -656,6 +704,12 @@ const NewCollection = () => {
                       value={formData.noOfDesigns}
                       error={!!formErrors.noOfDesigns}
                       helperText={formErrors.noOfDesigns}
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
                     />
                   </Grid>
                   <Grid item xs={12} md={3}>
@@ -669,6 +723,12 @@ const NewCollection = () => {
                       value={formData.poPcs}
                       error={!!formErrors.poPcs}
                       helperText={formErrors.poPcs}
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
                     />
                   </Grid>
                   <Grid item xs={12} md={3}>
@@ -681,6 +741,33 @@ const NewCollection = () => {
                       // onChange={handleChange}
                       value={totalPcs}
                       disabled
+                      sx={(theme) => ({
+                        ...(formData.totalPcs !== '' && {
+                          '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input':
+                            {
+                              backgroundColor: `#c9c9c9 !important`
+                            }
+                        }),
+                        '& .MuiInputBase-input.Mui-disabled': {
+                          WebkitTextFillColor: 'black' // Adjust text color here
+                        },
+                        '& .MuiInputBase-root.Mui-disabled': {
+                          backgroundColor: '#f9f9f9' // Adjust background color here
+                        },
+                        '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                          {
+                            // borderColor: 'gray' // Adjust border color here
+                          },
+                        '& .MuiInputLabel-root.Mui-disabled': {
+                          color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                        }
+                      })}
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
                     />
                   </Grid>
 
@@ -762,6 +849,12 @@ const NewCollection = () => {
                   onChange={handlesearchChange}
                   fullWidth
                   focused
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -774,6 +867,12 @@ const NewCollection = () => {
                   onChange={handlesearchChange}
                   fullWidth
                   focused
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
 

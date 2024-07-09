@@ -539,6 +539,12 @@ const Fabrication = () => {
                 onChange={handleChange}
                 size="small"
                 required
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
               >
                 {collectionList.map((option) => (
                   <MenuItem
@@ -561,6 +567,12 @@ const Fabrication = () => {
                 onChange={handleChange}
                 size="small"
                 required
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
               >
                 {designList.map((option) => (
                   <MenuItem key={option.designId} value={option.designId}>
@@ -579,6 +591,12 @@ const Fabrication = () => {
                 onChange={handleChange}
                 size="small"
                 required
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
               >
                 {batchList.map((option) => (
                   <MenuItem key={option.batchNo} value={option.batchNo}>
@@ -596,6 +614,26 @@ const Fabrication = () => {
                 value={formData.baseColorName}
                 onChange={handleChange}
                 disabled
+                sx={(theme) => ({
+                  ...(formData.baseColorName !== '' && {
+                    '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                      backgroundColor: `#c9c9c9 !important`
+                    }
+                  }),
+                  '& .MuiInputBase-input.Mui-disabled': {
+                    WebkitTextFillColor: 'black' // Adjust text color here
+                  },
+                  '& .MuiInputBase-root.Mui-disabled': {
+                    backgroundColor: '#f9f9f9' // Adjust background color here
+                  },
+                  '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                    {
+                      borderColor: 'gray' // Adjust border color here
+                    },
+                  '& .MuiInputLabel-root.Mui-disabled': {
+                    color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                  }
+                })}
               />
             </Grid>
           </Grid>
@@ -653,6 +691,12 @@ const Fabrication = () => {
                   required
                   error={!!formErrors.fabricId}
                   helperText={formErrors.fabricId}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 >
                   {Fabrications.map((option) => (
                     <MenuItem key={option.fabricId} value={option.fabricId}>
@@ -674,6 +718,12 @@ const Fabrication = () => {
                   required
                   error={!!formErrors.uomId}
                   helperText={formErrors.uomId}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 >
                   {uoms.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -693,6 +743,26 @@ const Fabrication = () => {
                   value={formData.poPcs}
                   onChange={handleChange}
                   disabled
+                  sx={(theme) => ({
+                    ...(formData.poPcs !== '' && {
+                      '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                        backgroundColor: `#c9c9c9 !important`
+                      }
+                    }),
+                    '& .MuiInputBase-input.Mui-disabled': {
+                      WebkitTextFillColor: 'black' // Adjust text color here
+                    },
+                    '& .MuiInputBase-root.Mui-disabled': {
+                      backgroundColor: '#f9f9f9' // Adjust background color here
+                    },
+                    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                      {
+                        borderColor: 'gray' // Adjust border color here
+                      },
+                    '& .MuiInputLabel-root.Mui-disabled': {
+                      color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                    }
+                  })}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -704,6 +774,12 @@ const Fabrication = () => {
                   name="quantity"
                   value={formData.quantity}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                   // required
                   // error={!!formErrors.quantity}
                   // helperText={formErrors.quantity}
@@ -721,6 +797,12 @@ const Fabrication = () => {
                   required
                   error={!!formErrors.rate}
                   helperText={formErrors.rate}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
 
@@ -733,6 +815,12 @@ const Fabrication = () => {
                   name="total"
                   value={formData.total}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -743,6 +831,12 @@ const Fabrication = () => {
                   name="unitPrice"
                   value={formData.unitPrice}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -757,6 +851,12 @@ const Fabrication = () => {
                   required
                   error={!!formErrors.gst}
                   helperText={formErrors.gst}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={3}>
@@ -768,6 +868,12 @@ const Fabrication = () => {
                   name="totalInclGst"
                   value={formData.totalInclGst}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} textAlign="right">

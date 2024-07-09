@@ -810,6 +810,12 @@ const Embroidery = () => {
               value={selectedCollectionId}
               onChange={handleChange}
               size="small"
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {collectionList.map((option) => (
                 <MenuItem key={option.collectionId} value={option.collectionId}>
@@ -827,6 +833,12 @@ const Embroidery = () => {
               value={formData.designId}
               onChange={handleChange}
               size="small"
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {designList.map((option) => (
                 <MenuItem key={option.designId} value={option.designId}>
@@ -844,6 +856,12 @@ const Embroidery = () => {
               value={formData.batchNo}
               onChange={handleChange}
               size="small"
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {batchList.map((option) => (
                 <MenuItem key={option.batchNo} value={option.batchNo}>
@@ -861,15 +879,26 @@ const Embroidery = () => {
               value={formData.baseColorName}
               onChange={handleChange}
               disabled
-              sx={
-                formData.baseColorName === ''
-                  ? null
-                  : (theme) => ({
-                      '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
-                        backgroundColor: `${theme.palette.secondary[200]} !important`
-                      }
-                    })
-              }
+              sx={(theme) => ({
+                ...(formData.repeatsInMtr !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
+                },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
             />
           </Grid>
           <Grid item xs={12} md={12}>
@@ -887,6 +916,12 @@ const Embroidery = () => {
               required
               error={!!formErrors.componentId}
               helperText={formErrors.componentId}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {components.map((option) => (
                 <MenuItem key={option.componentId} value={option.componentId}>
@@ -908,6 +943,12 @@ const Embroidery = () => {
               required
               error={!!formErrors.fabricId}
               helperText={formErrors.fabricId}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {Fabrications.map((option) => (
                 <MenuItem key={option.fabricId} value={option.fabricId}>
@@ -949,6 +990,12 @@ const Embroidery = () => {
               required
               error={!!formErrors.colorId}
               helperText={formErrors.colorId}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {colors.map((option) => (
                 <MenuItem key={option.colorId} value={option.colorId}>
@@ -966,6 +1013,26 @@ const Embroidery = () => {
               value={formData.poPcs}
               onChange={handleChange}
               disabled
+              sx={(theme) => ({
+                ...(formData.poPcs !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
+                },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
             />
           </Grid>
           <Grid item xs={12} md={1.5}>
@@ -977,6 +1044,32 @@ const Embroidery = () => {
               type="number"
               value={formData.availableQty}
               onChange={handleChange}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+              sx={(theme) => ({
+                ...(formData.availableQty !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
+                },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
             />
           </Grid>
           <Grid item xs={12} md={1.5}>
@@ -988,6 +1081,32 @@ const Embroidery = () => {
               name="repeats"
               value={formData.repeats}
               onChange={handleChange}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+              sx={(theme) => ({
+                ...(formData.repeats !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
+                },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
             />
           </Grid>
           <Grid item xs={12} md={1.5}>
@@ -1003,6 +1122,12 @@ const Embroidery = () => {
               required
               error={!!formErrors.noOfHead}
               helperText={formErrors.noOfHead}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {heads.map((option) => (
                 <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -1020,6 +1145,32 @@ const Embroidery = () => {
               type="number"
               value={formData.cuttingSize}
               onChange={handleChange}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+              sx={(theme) => ({
+                ...(formData.cuttingSize !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
+                },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
             />
           </Grid>
           <Grid item xs={12} md={1.5}>
@@ -1034,6 +1185,32 @@ const Embroidery = () => {
               required
               error={!!formErrors.itemsPerRepeat}
               helperText={formErrors.itemsPerRepeat}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+              sx={(theme) => ({
+                ...(formData.itemsPerRepeat !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
+                },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
             />
           </Grid>
           <Grid item xs={12} md={1.5}>
@@ -1058,340 +1235,7 @@ const Embroidery = () => {
       <Grid item xs={12} md={12}>
         <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
       </Grid>
-      <Card variant="outlined">
-        <CardHeader
-          className="css-4rfrnx-MuiCardHeader-root"
-          avatar={<AddOutlinedIcon />}
-          title="Add Embroidery"
-          titleTypographyProps={{ style: { color: 'white' } }}
-          action={
-            <IconButton onClick={handleAccordionToggle} sx={{ mt: '-18px' }}>
-              <ExpandMoreIcon style={{ color: 'white' }} />
-            </IconButton>
-          }
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}
-        ></CardHeader>{' '}
-        <Accordion
-          expanded={accordionExpanded}
-          onChange={handleAccordionToggle}
-          sx={{}}
-        >
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1-content"
-            id="panel1-header"
-            sx={{ display: 'none' }} // Hide this since we're using the icon in the CardHeader
-          ></AccordionSummary>
-          <AccordionDetails>
-            <Grid
-              container
-              spacing={2}
-              width="Inherit"
-              sx={{ paddingY: 2, paddingX: 2 }}
-            >
-              {' '}
-              <Grid item xs={12} md={1.5}>
-                <TextField
-                  label="Total Amount"
-                  fullWidth
-                  type="number"
-                  size="small"
-                  name="totalAmount"
-                  value={formData.totalAmount}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={3}>
-                <TextField
-                  label="Cost Per Component"
-                  fullWidth
-                  // type="number"
-                  size="small"
-                  name="costPerComponent"
-                  value={formData.costPerComponent}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} md={2}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={formData.isSolving}
-                      onChange={handleCheckboxChange}
-                      name="isSolving"
-                    />
-                  }
-                  label="isSolving"
-                />
-              </Grid>
-              {/* {formData.isSolving ? ( */}
-              <Grid item xs={12} md={4}>
-                {/* <FormControl fullWidth> */}
 
-                {/* <Select
-                  multiple
-                  labelId="thread-additional-label"
-                  value={formData.threadAdditional}
-                  name="threadAdditional"
-                  size="small"
-                  label="Additional"
-                  // focused
-                  onChange={handleChange}
-                  // input={<OutlinedInput label="Additional" />}
-                  fullWidth
-                  // MenuProps={MenuProps}
-                >
-                  {additionals.map((name) => (
-                    <MenuItem
-                      key={name}
-                      value={name}
-                      style={getStyles(name, formData.threadAdditional, theme)}
-                    >
-                      {name}
-                    </MenuItem>
-                  ))}
-                </Select> */}
-                <TextField
-                  select
-                  label="Additional"
-                  value={formData.threadAdditional}
-                  name="threadAdditional"
-                  size="small"
-                  onChange={handleChange}
-                  fullWidth
-                  SelectProps={{
-                    multiple: true
-                  }}
-                >
-                  {additionals.map((name) => (
-                    <MenuItem
-                      key={name}
-                      value={name}
-                      style={getStyles(name, formData.threadAdditional, theme)}
-                    >
-                      {name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-                {/* </FormControl> */}
-              </Grid>
-              {/* ) : null} */}
-              {/* <Grid item xs={12} md={4}></Grid> */}
-              {/* <Divider
-                color="#cc8587"
-                sx={{ height: 1, width: '100%', mt: 2 }}
-              /> */}
-              {/* {formData.isSolving ? ( */}
-              <Grid item xs={12} md={6}>
-                <Grid container spacing={1} width="Inherit">
-                  <Grid item xs={12} md={12}>
-                    <Typography variant="h5" gutterBottom>
-                      Thread
-                    </Typography>
-                  </Grid>{' '}
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Stitches"
-                      fullWidth
-                      size="small"
-                      type="number"
-                      name="threadStiches"
-                      value={formData.threadStiches}
-                      onChange={handleChange}
-                      required
-                      // error={!!formErrors.threadStiches}
-                      // helperText={formErrors.threadStiches}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Rate"
-                      type="number"
-                      fullWidth
-                      size="small"
-                      name="threadRate"
-                      value={formData.threadRate}
-                      onChange={handleChange}
-                      required
-                      // error={!!formErrors.threadRate}
-                      // helperText={formErrors.threadRate}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Amount"
-                      fullWidth
-                      size="small"
-                      type="number"
-                      name="threadAmount"
-                      value={formData.threadAmount}
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-              {/* ) : null} */}
-              {/* {formData.isSolving ? ( */}
-              <Grid item xs={12} md={6}>
-                <Grid container spacing={1} width="Inherit">
-                  <Grid item xs={12} md={12}>
-                    <Typography variant="h5" gutterBottom>
-                      Tilla
-                    </Typography>
-                  </Grid>{' '}
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Stitches"
-                      fullWidth
-                      size="small"
-                      type="number"
-                      name="tillaStiches"
-                      value={formData.tillaStiches}
-                      onChange={handleChange}
-                      required
-                      // error={!!formErrors.tillaStiches}
-                      // helperText={formErrors.tillaStiches}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Rate"
-                      fullWidth
-                      size="small"
-                      type="number"
-                      name="tilaRate"
-                      value={formData.tilaRate}
-                      onChange={handleChange}
-                      required
-                      // error={!!formErrors.tilaRate}
-                      // helperText={formErrors.tilaRate}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Amount"
-                      fullWidth
-                      size="small"
-                      name="tilaAmount"
-                      value={formData.tilaAmount}
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-              {/* ) : null} */}
-              {/* {formData.isSolving ? ( */}
-              <Grid item xs={12} md={6}>
-                <Grid container spacing={1} width="Inherit">
-                  <Grid item xs={12} md={12}>
-                    <Typography variant="h5" gutterBottom>
-                      Sequence
-                    </Typography>
-                  </Grid>{' '}
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Sequence"
-                      fullWidth
-                      size="small"
-                      name="sequence"
-                      type="number"
-                      value={formData.sequence}
-                      onChange={handleChange}
-                      required
-                      // error={!!formErrors.sequence}
-                      // helperText={formErrors.sequence}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Rate"
-                      fullWidth
-                      type="number"
-                      size="small"
-                      name="sequenceRate"
-                      value={formData.sequenceRate}
-                      onChange={handleChange}
-                      required
-                      // error={!!formErrors.sequenceRate}
-                      // helperText={formErrors.sequenceRate}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Amount"
-                      fullWidth
-                      size="small"
-                      name="sequenceAmount"
-                      value={formData.sequenceAmount}
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                </Grid>{' '}
-              </Grid>
-              {/* ) : null} */}
-              {formData.isSolving ? (
-                <Grid item xs={12} md={6}>
-                  <Grid container spacing={1} width="Inherit">
-                    <Grid item xs={12} md={12}>
-                      <Typography variant="h5" gutterBottom>
-                        Solving
-                      </Typography>
-                    </Grid>{' '}
-                    <Grid item xs={12} md={3}>
-                      <TextField
-                        label="Layers"
-                        fullWidth
-                        size="small"
-                        type="number"
-                        name="solvingLayers"
-                        value={formData.solvingLayers}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                      <TextField
-                        label="Meters"
-                        type="number"
-                        fullWidth
-                        size="small"
-                        name="solvingInMeters"
-                        value={formData.solvingInMeters}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                      <TextField
-                        label="Rate"
-                        fullWidth
-                        type="number"
-                        size="small"
-                        name="solvingRate"
-                        value={formData.solvingRate}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                      <TextField
-                        label="Amount"
-                        fullWidth
-                        size="small"
-                        type="number"
-                        name="solvingAmount"
-                        value={formData.solvingAmount}
-                        onChange={handleChange}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-              ) : null}
-            </Grid>{' '}
-          </AccordionDetails>{' '}
-        </Accordion>
-      </Card>
       <Grid item xs={12} md={12}>
         <Divider
           // color="#cc8587"

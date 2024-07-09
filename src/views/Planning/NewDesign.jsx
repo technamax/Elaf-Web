@@ -350,7 +350,7 @@ const NewDesign = () => {
               ></CardHeader>
               <Grid
                 container
-                spacing={2}
+                spacing={1}
                 width="Inherit"
                 sx={{ paddingY: 2, paddingX: 2 }}
               >
@@ -373,6 +373,12 @@ const NewDesign = () => {
                     value={formData.collectionId}
                     onChange={handleChange}
                     size="small"
+                    InputLabelProps={{
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                      }
+                    }}
                   >
                     {collectionList.map((option) => (
                       <MenuItem
@@ -393,6 +399,12 @@ const NewDesign = () => {
                     value={formData.designNo}
                     onChange={handleChange}
                     disabled={!formData.collectionId} // Disable if collectionId is not selected
+                    InputLabelProps={{
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                      }
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -404,6 +416,12 @@ const NewDesign = () => {
                     value={formData.designerName}
                     onChange={handleChange}
                     disabled={!formData.collectionId} // Disable if collectionId is not selected
+                    InputLabelProps={{
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                      }
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -416,6 +434,12 @@ const NewDesign = () => {
                     onChange={handleChange}
                     fullWidth
                     focused
+                    InputLabelProps={{
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                      }
+                    }}
                     // disabled={!formData.collectionId}
                   />
                 </Grid>
@@ -429,6 +453,33 @@ const NewDesign = () => {
                     value={formData.poPcs}
                     disabled
                     onChange={handleChange}
+                    sx={(theme) => ({
+                      ...(formData.poPcs !== '' && {
+                        '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input':
+                          {
+                            backgroundColor: `#c9c9c9 !important`
+                          }
+                      }),
+                      '& .MuiInputBase-input.Mui-disabled': {
+                        WebkitTextFillColor: 'black' // Adjust text color here
+                      },
+                      '& .MuiInputBase-root.Mui-disabled': {
+                        backgroundColor: '#f9f9f9' // Adjust background color here
+                      },
+                      '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                        {
+                          // borderColor: 'gray' // Adjust border color here
+                        },
+                      '& .MuiInputLabel-root.Mui-disabled': {
+                        color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                      }
+                    })}
+                    InputLabelProps={{
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                      }
+                    }}
                   />
                 </Grid>
                 <Grid item xs={12} md={4}>
@@ -441,6 +492,12 @@ const NewDesign = () => {
                     value={formData.colorId}
                     onChange={handleChange}
                     disabled={!formData.collectionId}
+                    InputLabelProps={{
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                      }
+                    }}
                   >
                     {colors.map((option) => (
                       <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -518,6 +575,12 @@ const NewDesign = () => {
                   onChange={handleChange}
                   fullWidth
                   focused
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={6}>
@@ -530,6 +593,12 @@ const NewDesign = () => {
                   onChange={handleChange}
                   fullWidth
                   focused
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
 

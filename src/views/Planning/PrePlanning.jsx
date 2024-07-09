@@ -17,7 +17,8 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  IconButton
+  IconButton,
+  inputLabelClasses
 } from '@mui/material';
 import LoopOutlinedIcon from '@mui/icons-material/LoopOutlined';
 
@@ -89,8 +90,8 @@ const PrePlanning = () => {
       baseColorId: initialData?.baseColorId || '', // not in api
       // baseColorName: initialData?.baseColorName || '',
       // not in api
-      noOfDesigns: initialData?.noOfDesigns || '', // not in apis
-      noOfColors: initialData?.noOfColors || '', // not in api
+      // noOfDesigns: initialData?.noOfDesigns || '', // not in apis
+      // noOfColors: initialData?.noOfColors || '', // not in api
       // planningHeaderId: initialData?.planningHeaderId || '',
       // designId: initialData?.designId || '',
       // batchNo: initialData?.batchNo || '',
@@ -727,6 +728,12 @@ const PrePlanning = () => {
                 onChange={handleChange}
                 size="small"
                 required
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
               >
                 {collectionList.map((option) => (
                   <MenuItem
@@ -748,6 +755,12 @@ const PrePlanning = () => {
                 onChange={handleChange}
                 size="small"
                 required
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
               >
                 {designList.map((option) => (
                   <MenuItem key={option.designId} value={option.designId}>
@@ -766,6 +779,12 @@ const PrePlanning = () => {
                 onChange={handleChange}
                 size="small"
                 required
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
               >
                 {batchList.map((option) => (
                   <MenuItem key={option.batchNo} value={option.batchNo}>
@@ -779,10 +798,37 @@ const PrePlanning = () => {
                 label="No of Design"
                 fullWidth
                 size="small"
+                focused
                 name="noOfDesigns"
                 value={formData.noOfDesigns}
                 onChange={handleChange}
                 disabled
+                sx={(theme) => ({
+                  ...(formData.noOfDesigns !== '' && {
+                    '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                      backgroundColor: `#c9c9c9 !important`
+                    }
+                  }),
+                  '& .MuiInputBase-input.Mui-disabled': {
+                    WebkitTextFillColor: 'black' // Adjust text color here
+                  },
+                  '& .MuiInputBase-root.Mui-disabled': {
+                    backgroundColor: '#f9f9f9' // Adjust background color here
+                  },
+                  '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                    {
+                      borderColor: 'gray' // Adjust border color here
+                    },
+                  '& .MuiInputLabel-root.Mui-disabled': {
+                    color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                  }
+                })}
+                InputLabelProps={{
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
               />
             </Grid>
             <Grid item xs={12} md={2}>
@@ -794,6 +840,26 @@ const PrePlanning = () => {
                 value={formData.noOfColors}
                 onChange={handleChange}
                 disabled
+                sx={(theme) => ({
+                  ...(formData.noOfColors !== '' && {
+                    '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                      backgroundColor: `#c9c9c9 !important`
+                    }
+                  }),
+                  '& .MuiInputBase-input.Mui-disabled': {
+                    WebkitTextFillColor: 'black' // Adjust text color here
+                  },
+                  '& .MuiInputBase-root.Mui-disabled': {
+                    backgroundColor: '#f9f9f9' // Adjust background color here
+                  },
+                  '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                    {
+                      borderColor: 'gray' // Adjust border color here
+                    },
+                  '& .MuiInputLabel-root.Mui-disabled': {
+                    color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                  }
+                })}
               />
             </Grid>
 
@@ -806,6 +872,26 @@ const PrePlanning = () => {
                 value={formData.baseColorName}
                 onChange={handleChange}
                 disabled
+                sx={(theme) => ({
+                  ...(formData.baseColorName !== '' && {
+                    '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                      backgroundColor: `#c9c9c9 !important`
+                    }
+                  }),
+                  '& .MuiInputBase-input.Mui-disabled': {
+                    WebkitTextFillColor: 'black' // Adjust text color here
+                  },
+                  '& .MuiInputBase-root.Mui-disabled': {
+                    backgroundColor: '#f9f9f9' // Adjust background color here
+                  },
+                  '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                    {
+                      borderColor: 'gray' // Adjust border color here
+                    },
+                  '& .MuiInputLabel-root.Mui-disabled': {
+                    color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                  }
+                })}
               />
             </Grid>
           </Grid>
@@ -866,6 +952,12 @@ const PrePlanning = () => {
                   onChange={handleChange}
                   size="small"
                   required
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 >
                   {processType.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpName}>
@@ -922,8 +1014,13 @@ const PrePlanning = () => {
                       required
                       error={!!formErrors.componentId}
                       helperText={formErrors.componentId}
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
                       sx={{
-                        backgroundColor: 'white', // Setting white background for the Autocomplete input
                         '& input': {
                           backgroundColor: 'white' // Setting white background for the input field inside Autocomplete
                         }
@@ -978,10 +1075,15 @@ const PrePlanning = () => {
                       required
                       error={!!formErrors.colorId}
                       helperText={formErrors.colorId}
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
                       sx={{
-                        backgroundColor: 'white', // Setting white background for the TextField
                         '& input': {
-                          backgroundColor: 'white' // Setting white background for the input inside TextField
+                          backgroundColor: 'white' // Setting white background for the input field inside Autocomplete
                         }
                       }}
                     />
@@ -1003,6 +1105,12 @@ const PrePlanning = () => {
                   required
                   error={!!formErrors.cuttingSize}
                   helperText={formErrors.cuttingSize}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -1049,8 +1157,14 @@ const PrePlanning = () => {
                       required
                       error={!!formErrors.fabricId}
                       helperText={formErrors.fabricId}
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
                       sx={{
-                        backgroundColor: 'white', // Setting white background for the TextField
+                        // backgroundColor: 'white', // Setting white background for the TextField
                         '& input': {
                           backgroundColor: 'white' // Setting white background for the input inside TextField
                         }
@@ -1093,6 +1207,12 @@ const PrePlanning = () => {
                     value={formData.operatingMachineId}
                     onChange={handleChange}
                     required
+                    InputLabelProps={{
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                      }
+                    }}
                     // error={!!formErrors.operatingMachineId}
                     // helperText={formErrors.operatingMachineId}
                   >
@@ -1112,6 +1232,12 @@ const PrePlanning = () => {
                     value={formData.noOfHeads}
                     onChange={handleChange}
                     required
+                    InputLabelProps={{
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                      }
+                    }}
                     // error={!!formErrors.noOfHeads}
                     // helperText={formErrors.noOfHeads}
                   >
@@ -1135,6 +1261,12 @@ const PrePlanning = () => {
                   error={!!formErrors.repeats}
                   helperText={formErrors.repeats}
                   required
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -1149,6 +1281,12 @@ const PrePlanning = () => {
                   error={!!formErrors.repeatSize}
                   helperText={formErrors.repeatSize}
                   required
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -1159,6 +1297,12 @@ const PrePlanning = () => {
                   name="totalFabric"
                   value={formData.totalFabric}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -1176,6 +1320,12 @@ const PrePlanning = () => {
                   helperText={formErrors.uomId}
                   required
                   disabled={formData.isSchiffili} // Disable when isSchiffili is checked
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 >
                   {uoms.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -1196,6 +1346,12 @@ const PrePlanning = () => {
                   error={!!formErrors.shrinkage}
                   helperText={formErrors.shrinkage}
                   required
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -1210,6 +1366,12 @@ const PrePlanning = () => {
                   error={!!formErrors.wastage}
                   helperText={formErrors.wastage}
                   required
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -1221,6 +1383,12 @@ const PrePlanning = () => {
                   name="total"
                   value={formData.total}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               {/* <Grid item xs={12} md={2} textAlign="right">
@@ -1247,6 +1415,27 @@ const PrePlanning = () => {
                       disabled
                       value={formData.repeatsInMtr}
                       onChange={handleChange}
+                      sx={(theme) => ({
+                        ...(formData.repeatsInMtr !== '' && {
+                          '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input':
+                            {
+                              backgroundColor: `#c9c9c9 !important`
+                            }
+                        }),
+                        '& .MuiInputBase-input.Mui-disabled': {
+                          WebkitTextFillColor: 'black' // Adjust text color here
+                        },
+                        '& .MuiInputBase-root.Mui-disabled': {
+                          backgroundColor: '#f9f9f9' // Adjust background color here
+                        },
+                        '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                          {
+                            borderColor: 'gray' // Adjust border color here
+                          },
+                        '& .MuiInputLabel-root.Mui-disabled': {
+                          color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                        }
+                      })}
                     />
                   </Grid>
                 </Grid>

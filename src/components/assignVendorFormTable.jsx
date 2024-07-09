@@ -23,7 +23,7 @@ const AssignVendorFormTable = ({
   const [formData, setFormData] = useState({
     additionalProcessDetId: 0,
     additionalProcessId: additionalProcessData.additionalProcessId || 0,
-    designId: additionalProcessData.designId || '',
+    designId: additionalProcessData.designNo || '',
     planningHeaderId: additionalProcessData.planningHeaderId || 0,
     batchNo: additionalProcessData.batchNo || '',
     componentName: additionalProcessData.componentName || '',
@@ -214,11 +214,11 @@ const AssignVendorFormTable = ({
     >
       <Grid
         container
-        spacing={2}
+        spacing={1}
         width="Inherit"
         sx={{ paddingY: 2, paddingX: 2 }}
       >
-        <Grid item xs={12} md={3}>
+        {/* <Grid item xs={12} md={3}>
           <TextField
             fullWidth
             label="Select Collection"
@@ -227,14 +227,40 @@ const AssignVendorFormTable = ({
             onChange={handleChange}
             size="small"
             disabled
+            sx={(theme) => ({
+              ...(formData.selectedCollectionId !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  // borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           >
             {/* {collectionList.map((option) => (
               <MenuItem key={option.collectionId} value={option.collectionId}>
                 {option.collectionName}
               </MenuItem>
             ))} */}
-          </TextField>{' '}
-        </Grid>
+        {/* </TextField> */}
+        {/* </Grid> */}
 
         <Grid item xs={12} md={3}>
           <TextField
@@ -246,6 +272,32 @@ const AssignVendorFormTable = ({
             onChange={handleChange}
             size="small"
             disabled
+            sx={(theme) => ({
+              ...(formData.designId !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  // borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           >
             {/* {designList.map((option) => (
               <MenuItem key={option.designId} value={option.designId}>
@@ -265,6 +317,32 @@ const AssignVendorFormTable = ({
             onChange={handleChange}
             size="small"
             disabled
+            sx={(theme) => ({
+              ...(formData.batchNo !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  // borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           >
             {/* {batchList.map((option) => (
               <MenuItem key={option.batchNo} value={option.batchNo}>
@@ -282,6 +360,32 @@ const AssignVendorFormTable = ({
             onChange={handleChange}
             size="small"
             disabled
+            sx={(theme) => ({
+              ...(formData.componentName !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  // borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           >
             {/* {components.map((option) => (
               <MenuItem key={option.componentId} value={option.componentId}>
@@ -312,6 +416,32 @@ const AssignVendorFormTable = ({
             value={formData.fabricName}
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.fabricName !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  // borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           >
             {/* {Fabrications.map((option) => (
                     <MenuItem key={option.fabricId} value={option.fabricId}>
@@ -331,6 +461,32 @@ const AssignVendorFormTable = ({
             value={formData.colorName}
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.colorName !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  // borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           >
             {/* {colors.map((option) => (
               <MenuItem key={option.colorId} value={option.colorId}>
@@ -350,6 +506,32 @@ const AssignVendorFormTable = ({
             value={formData.processTypeName}
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.processTypeName !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  // borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           >
             {/* {operatingMachineList.map((option) => (
               <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -379,6 +561,32 @@ const AssignVendorFormTable = ({
             // type="number"
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.pcsPerComponent !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  // borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={1.5}>
@@ -391,13 +599,39 @@ const AssignVendorFormTable = ({
             // type="number"
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.remainingPcsPerComponent !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  // borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
       </Grid>
       <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />
       <Grid
         container
-        spacing={2}
+        spacing={1}
         width="Inherit"
         sx={{ paddingY: 2, paddingX: 2 }}
       >
@@ -411,6 +645,12 @@ const AssignVendorFormTable = ({
             name="vendorId"
             value={formData.vendorId}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           >
             {vendors.map((option) => (
               <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -429,6 +669,12 @@ const AssignVendorFormTable = ({
             name="quantity"
             value={formData.quantity}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -440,6 +686,12 @@ const AssignVendorFormTable = ({
             name="ratePerPcs"
             value={formData.ratePerPcs}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -451,6 +703,12 @@ const AssignVendorFormTable = ({
             name="totalAmount"
             value={formData.totalAmount}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
 
@@ -464,6 +722,32 @@ const AssignVendorFormTable = ({
             value={formData.uom}
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.uom !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  // borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
 
@@ -473,6 +757,8 @@ const AssignVendorFormTable = ({
           </Button>
         </Grid>
       </Grid>
+      <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />
+
       <Grid
         container
         spacing={2}

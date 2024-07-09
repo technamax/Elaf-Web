@@ -697,6 +697,12 @@ const Schiffli = () => {
               value={selectedCollectionId}
               onChange={handleChange}
               size="small"
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {collectionList.map((option) => (
                 <MenuItem key={option.collectionId} value={option.collectionId}>
@@ -715,6 +721,12 @@ const Schiffli = () => {
               value={formData.designId}
               onChange={handleChange}
               size="small"
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {designList.map((option) => (
                 <MenuItem key={option.designId} value={option.designId}>
@@ -733,6 +745,12 @@ const Schiffli = () => {
               value={formData.batchNo}
               onChange={handleChange}
               size="small"
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {batchList.map((option) => (
                 <MenuItem key={option.batchNo} value={option.batchNo}>
@@ -753,6 +771,12 @@ const Schiffli = () => {
               required
               error={!!formErrors.componentId}
               helperText={formErrors.componentId}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
             >
               {components.map((option) => (
                 <MenuItem key={option.componentId} value={option.componentId}>
@@ -770,6 +794,32 @@ const Schiffli = () => {
               value={formData.baseColorName}
               onChange={handleChange}
               disabled
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+              sx={(theme) => ({
+                ...(formData.baseColorName !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
+                },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    // borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
             />
           </Grid>
           {/* <Grid item xs={12} textAlign="right">
@@ -829,6 +879,12 @@ const Schiffli = () => {
                   required
                   error={!!formErrors.fabricId}
                   helperText={formErrors.fabricId}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 >
                   {Fabrications.map((option) => (
                     <MenuItem key={option.fabricId} value={option.fabricId}>
@@ -850,6 +906,12 @@ const Schiffli = () => {
                   required
                   error={!!formErrors.vendorId}
                   helperText={formErrors.vendorId}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 >
                   {vendors.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -871,6 +933,12 @@ const Schiffli = () => {
                   required
                   error={!!formErrors.colorId}
                   helperText={formErrors.colorId}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 >
                   {colors.map((option) => (
                     <MenuItem key={option.colorId} value={option.colorId}>
@@ -888,6 +956,32 @@ const Schiffli = () => {
                   value={formData.poPcs}
                   disabled
                   onChange={handleChange}
+                  sx={(theme) => ({
+                    ...(formData.poPcs !== '' && {
+                      '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                        backgroundColor: `#c9c9c9 !important`
+                      }
+                    }),
+                    '& .MuiInputBase-input.Mui-disabled': {
+                      WebkitTextFillColor: 'black' // Adjust text color here
+                    },
+                    '& .MuiInputBase-root.Mui-disabled': {
+                      backgroundColor: '#f9f9f9' // Adjust background color here
+                    },
+                    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                      {
+                        // borderColor: 'gray' // Adjust border color here
+                      },
+                    '& .MuiInputLabel-root.Mui-disabled': {
+                      color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                    }
+                  })}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -899,6 +993,32 @@ const Schiffli = () => {
                   value={formData.availableQty}
                   // type="number"
                   onChange={handleChange}
+                  sx={(theme) => ({
+                    ...(formData.availableQty !== '' && {
+                      '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                        backgroundColor: `#c9c9c9 !important`
+                      }
+                    }),
+                    '& .MuiInputBase-input.Mui-disabled': {
+                      WebkitTextFillColor: 'black' // Adjust text color here
+                    },
+                    '& .MuiInputBase-root.Mui-disabled': {
+                      backgroundColor: '#f9f9f9' // Adjust background color here
+                    },
+                    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                      {
+                        // borderColor: 'gray' // Adjust border color here
+                      },
+                    '& .MuiInputLabel-root.Mui-disabled': {
+                      color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                    }
+                  })}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
 
@@ -914,6 +1034,12 @@ const Schiffli = () => {
                   required
                   error={!!formErrors.thaanQty}
                   helperText={formErrors.thaanQty}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -929,6 +1055,12 @@ const Schiffli = () => {
                   required
                   error={!!formErrors.operatingMachineId}
                   helperText={formErrors.operatingMachineId}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 >
                   {operatingMachineList.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -950,6 +1082,12 @@ const Schiffli = () => {
                   required
                   error={!!formErrors.workingHeadId}
                   helperText={formErrors.workingHeadId}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 >
                   {workingHeadList.map((option) => (
                     <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -968,6 +1106,32 @@ const Schiffli = () => {
                   name="cuttingSize"
                   value={formData.cuttingSize}
                   onChange={handleChange}
+                  sx={(theme) => ({
+                    ...(formData.cuttingSize !== '' && {
+                      '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                        backgroundColor: `#c9c9c9 !important`
+                      }
+                    }),
+                    '& .MuiInputBase-input.Mui-disabled': {
+                      WebkitTextFillColor: 'black' // Adjust text color here
+                    },
+                    '& .MuiInputBase-root.Mui-disabled': {
+                      backgroundColor: '#f9f9f9' // Adjust background color here
+                    },
+                    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                      {
+                        // borderColor: 'gray' // Adjust border color here
+                      },
+                    '& .MuiInputLabel-root.Mui-disabled': {
+                      color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                    }
+                  })}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -982,6 +1146,12 @@ const Schiffli = () => {
                   required
                   error={!!formErrors.rate}
                   helperText={formErrors.rate}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -996,6 +1166,12 @@ const Schiffli = () => {
                   required
                   error={!!formErrors.noOfStichesPerYard}
                   helperText={formErrors.noOfStichesPerYard}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
 
@@ -1011,6 +1187,12 @@ const Schiffli = () => {
                   required
                   error={!!formErrors.noOfItemPerThaan}
                   helperText={formErrors.noOfItemPerThaan}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -1022,6 +1204,12 @@ const Schiffli = () => {
                   type="number"
                   value={formData.totalEmbroidry}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -1033,6 +1221,12 @@ const Schiffli = () => {
                   name="amountPerYard"
                   value={formData.amountPerYard}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
 
@@ -1044,6 +1238,12 @@ const Schiffli = () => {
                   name="totalPcs"
                   value={formData.totalPcs}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -1054,6 +1254,12 @@ const Schiffli = () => {
                   name="costPerComponent"
                   value={formData.costPerComponent}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
 
@@ -1066,6 +1272,12 @@ const Schiffli = () => {
                   name="totalAmount"
                   value={formData.totalAmount}
                   onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={1.5}>
@@ -1092,6 +1304,12 @@ const Schiffli = () => {
                         name="laserCutRate"
                         value={formData.laserCutRate}
                         onChange={handleChange}
+                        InputLabelProps={{
+                          sx: {
+                            // set the color of the label when not shrinked
+                            color: 'black'
+                          }
+                        }}
                       />
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -1102,6 +1320,12 @@ const Schiffli = () => {
                         name="pcsForLaserCut"
                         value={formData.pcsForLaserCut}
                         onChange={handleChange}
+                        InputLabelProps={{
+                          sx: {
+                            // set the color of the label when not shrinked
+                            color: 'black'
+                          }
+                        }}
                       />
                     </Grid>
                   </Grid>
