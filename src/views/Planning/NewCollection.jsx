@@ -355,6 +355,18 @@ const NewCollection = () => {
       setFormErrors(errors);
       return;
     }
+    const isDuplicate = collectionList.some(
+      (collection) => collection.collectionName === formData.collectionName
+    );
+
+    if (isDuplicate && formData.collectionId === 0) {
+      // Show Snackbar for duplicate entry
+      enqueueSnackbar('collection already exists!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+      return; // Exit without saving
+    }
 
     try {
       const response = await axios.post(
