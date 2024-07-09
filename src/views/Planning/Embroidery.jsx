@@ -740,14 +740,15 @@ const Embroidery = () => {
     { field: 'poPcs', headerName: 'Po Pcs' },
     // { field: 'baseColorName', headerName: 'Base Color' },
     { field: 'colourName', headerName: 'Color' },
-    { field: 'availableQty', headerName: 'Available Qty' },
-    { field: 'assignedQty', headerName: 'Assigned Qty' },
     { field: 'noOfHeadsName', headerName: 'No. Of Heads' },
     { field: 'repeats', headerName: 'Repeats' },
-    { field: 'assignedRepeats', headerName: 'Assigned Repeats' },
+    // { field: 'assignedRepeats', headerName: 'Assigned Repeats' },
     { field: 'cuttingSize', headerName: 'Cutting Size' },
     { field: 'itemsPerRepeat', headerName: 'Items Per Repeat' },
+    { field: 'availableQty', headerName: 'Available Qty' },
+    { field: 'assignedQty', headerName: 'Assigned Qty' },
     { field: 'totalPcs', headerName: 'Total Pcs' },
+    { field: 'requiredPcs', headerName: 'Required Pcs' },
     // { field: 'threadStiches', headerName: 'Thread Stitches' },
     // { field: 'threadRate', headerName: 'Thread Rate' },
     // { field: 'threadAmount', headerName: 'Thread Amount' },
@@ -1288,7 +1289,7 @@ const Embroidery = () => {
                 fileName="Embroidery List"
               />
             )}
-            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
+            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
               <DialogTitle
                 sx={{
                   backgroundColor: '#A11F23',

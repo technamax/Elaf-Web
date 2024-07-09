@@ -463,6 +463,7 @@ const NewCollection = () => {
       });
     }
   };
+  const fileName = `CollectionList${new Date().toISOString()}`;
 
   console.log('searchData', searchData);
   const deleteApi =
@@ -858,7 +859,7 @@ const NewCollection = () => {
                     deleteBy="collectionId"
                     refetch={refetch}
                     // editAPi={editAPi}
-                    fileName="collectionList"
+                    fileName={fileName}
                   />
                 </Grid>
               </Grid>{' '}

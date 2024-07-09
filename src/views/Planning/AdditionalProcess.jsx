@@ -790,7 +790,7 @@ const AdditionalProcess = () => {
               setAccordionExpanded={setAccordionExpanded}
               fileName="AdditionalProcess"
             />
-            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg">
+            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
               <DialogTitle
                 sx={{
                   backgroundColor: '#A11F23',

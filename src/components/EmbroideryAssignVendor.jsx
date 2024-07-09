@@ -11,6 +11,8 @@ import {
   Typography
 } from '@mui/material';
 import ReuseableDataGrid from './ReuseableDataGrid';
+import { useSnackbar } from 'notistack';
+
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { useGetEmbroideryDetailsListByEmbroideryIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useUser } from 'context/User';
@@ -25,6 +27,7 @@ const EmbroideryAssignVendor = ({
   handleClickOpen
 }) => {
   const theme = useTheme();
+  const { enqueueSnackbar } = useSnackbar();
 
   const { user } = useUser();
   const [initialRows, setInitialRows] = useState([]);
@@ -54,7 +57,7 @@ const EmbroideryAssignVendor = ({
     colourName: initialFormData.colourName || '',
     availableQty: initialFormData.availableQty || '',
     assignedQty: '',
-    remainingQty: initialFormData.availableQty - Quantity || '',
+    remainingQty: (initialFormData.availableQty - Quantity).toFixed(2) || '',
     noOfHead: initialFormData.noOfHead || '',
     noOfHeadsName: initialFormData.noOfHeadsName || '',
     repeats: initialFormData.repeats || '',
@@ -66,27 +69,27 @@ const EmbroideryAssignVendor = ({
     poPcs: initialFormData.poPcs || '',
 
     totalPcs: initialFormData.totalPcs || '', //repeat*itemsPerRepeat
-    remainingPcs: initialFormData.totalPcs - totalRepeats || '', //repeat*itemsPerRepeat
-    requiredPcs: '', //repeat*itemsPerRepeat
-    totalAmount: '', //
-    threadStiches: '',
-    threadRate: '',
-    threadAmount: '',
-    tillaStiches: '',
-    tilaRate: '',
-    tilaAmount: '',
-    sequence: '',
-    sequenceRate: '',
-    sequenceAmount: '',
+    remainingPcs: (initialFormData.totalPcs - totalRepeats).toFixed(2) || '', //repeat*itemsPerRepeat
+    requiredPcs: 0, //repeat*itemsPerRepeat
+    totalAmount: 0, //
+    threadStiches: 0,
+    threadRate: 0,
+    threadAmount: 0,
+    tillaStiches: 0,
+    tilaRate: 0,
+    tilaAmount: 0,
+    sequence: 0,
+    sequenceRate: 0,
+    sequenceAmount: 0,
     isSolving: false,
     solvingLayers: 0,
-    solvingInMeters: '',
+    solvingInMeters: 0,
     solvingRate: 0,
-    solvingAmount: '',
+    solvingAmount: 0,
     // additional:  '',
     additional: [],
 
-    costPerComponent: '', //
+    costPerComponent: 0, //
 
     createdOn: new Date().toISOString(),
     createdBy: user.empId,
@@ -351,13 +354,13 @@ const EmbroideryAssignVendor = ({
       const tilla = parseFloat(debouncedFormData.tilaAmount) || 0;
       const sequence = parseFloat(debouncedFormData.sequenceAmount) || 0;
       const solving = parseFloat(debouncedFormData.solvingAmount) || 0;
-      return (thread + tilla + sequence + solving).toFixed(2);
+      return thread + tilla + sequence + solving;
     };
 
     const calculateCostPerComponent = () => {
       const totalAmount = parseFloat(debouncedFormData.totalAmount) || 0;
       const totalPcs = parseFloat(debouncedFormData.totalPcs) || 0;
-      return (totalAmount / totalPcs).toFixed(2);
+      return totalAmount / totalPcs;
     };
 
     setFormData((prevData) => ({
@@ -443,6 +446,14 @@ const EmbroideryAssignVendor = ({
 
   const handleSave = async () => {
     console.log(formData);
+    if (formData.totalAmount === 0 && formData.costPerComponent === 0) {
+      // Show Snackbar for duplicate entry
+      enqueueSnackbar('Please Thread, Tilla or Sequnce values ', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+      return; // Exit without saving
+    }
     try {
       // Make the API call
       const response = await axios.post(
@@ -459,27 +470,30 @@ const EmbroideryAssignVendor = ({
         ...prevFormData,
         // remainingQty:
         //   prevFormData.remainingQty - prevFormData.assignedQty,
+        vendorId: '',
         embroideryIdDet: 0,
-        totalPcs: '', //repeat*itemsPerRepeat
-        totalAmount: '', //
-        threadStiches: '',
-        threadRate: '',
-        threadAmount: '',
-        tillaStiches: '',
-        tilaRate: '',
-        tilaAmount: '',
-        sequence: '',
-        sequenceRate: '',
-        sequenceAmount: '',
+        totalPcs: 0, //repeat*itemsPerRepeat
+        totalAmount: 0, //
+        threadStiches: 0,
+        threadRate: 0,
+        threadAmount: 0,
+        tillaStiches: 0,
+        tilaRate: 0,
+        tilaAmount: 0,
+        sequence: 0,
+        sequenceRate: 0,
+        sequenceAmount: 0,
         isSolving: false,
         solvingLayers: 0,
-        solvingInMeters: '',
+        solvingInMeters: 0,
         solvingRate: 0,
-        solvingAmount: '',
+        solvingAmount: 0,
         // additional:  '',
         additional: [],
+        requiredPcs: 0,
+        assignedQty: 0,
 
-        costPerComponent: '', //
+        costPerComponent: 0, //
 
         createdOn: new Date().toISOString(),
         createdBy: user.empId,
@@ -1112,7 +1126,7 @@ const EmbroideryAssignVendor = ({
             }}
           />
         </Grid>
-        <Grid item xs={12} md={1.5}>
+        {/* <Grid item xs={12} md={1.5}>
           <TextField
             label="total Pcs."
             fullWidth
@@ -1128,8 +1142,8 @@ const EmbroideryAssignVendor = ({
               }
             }}
           />
-        </Grid>
-        <Grid item xs={12} md={1.5}>
+        </Grid> */}
+        <Grid item xs={12} md={3}>
           <TextField
             label="Total Amount"
             fullWidth
