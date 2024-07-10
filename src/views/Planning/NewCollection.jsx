@@ -665,12 +665,10 @@ const NewCollection = () => {
                       value={formData.planningDate}
                       onChange={handleChange}
                       fullWidth
-                      // focused
                       error={!!formErrors.planningDate}
                       helperText={formErrors.planningDate}
                       InputLabelProps={{
                         shrink: true,
-
                         sx: {
                           // set the color of the label when not shrinked
                           color: 'black'
@@ -687,7 +685,6 @@ const NewCollection = () => {
                       value={formData.launchDate}
                       onChange={handleChange}
                       fullWidth
-                      // focused
                       error={!!formErrors.launchDate}
                       helperText={formErrors.launchDate}
                       InputLabelProps={{
@@ -899,8 +896,8 @@ const NewCollection = () => {
                   value={searchData.searchPlanningDateFrom}
                   onChange={handlesearchChange}
                   fullWidth
-                  focused
                   InputLabelProps={{
+                    shrink: true,
                     sx: {
                       // set the color of the label when not shrinked
                       color: 'black'
@@ -917,8 +914,8 @@ const NewCollection = () => {
                   value={searchData.searchPlanningDateTo}
                   onChange={handlesearchChange}
                   fullWidth
-                  focused
                   InputLabelProps={{
+                    shrink: true,
                     sx: {
                       // set the color of the label when not shrinked
                       color: 'black'

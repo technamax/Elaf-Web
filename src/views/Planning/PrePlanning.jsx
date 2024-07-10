@@ -65,12 +65,14 @@ const PrePlanning = () => {
     fabricId: '',
     noOfHeads: 0,
     operatingMachineId: 0,
+    planningProcessTypeName: '',
     repeats: '',
     repeatSize: '',
     uomId: '',
     totalFabric: '',
     shrinkage: '',
     wastage: '',
+    planningProcessTypeId: '',
     total: '',
     appId: 1,
     createdOn: new Date().toISOString(),
@@ -388,6 +390,22 @@ const PrePlanning = () => {
       });
       setAccordionExpanded(true);
       setLoading(false);
+    } else if (name === 'planningProcessTypeId') {
+      const selectedProcess = processType.find(
+        (batch) => batch.planningProcessTypeId === value
+      );
+      setFormData({
+        ...formData,
+        planningProcessTypeId: value,
+        planningProcessTypeName: selectedProcess
+          ? selectedProcess.lookUpName
+          : '',
+
+        noOfHeads: 0,
+        operatingMachineId: 0
+      });
+      setAccordionExpanded(true);
+      setLoading(false);
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -567,7 +585,7 @@ const PrePlanning = () => {
 
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
-          return 8;
+          return 9;
         }
         return undefined;
       },
@@ -580,13 +598,19 @@ const PrePlanning = () => {
       }
     },
     {
+      field: 'planningProcessTypeName',
+      headerName: 'Process Type',
+      // editable: true,
+      // flex: 1,
+      ...baseColumnOptions
+    },
+    {
       field: 'color',
       headerName: 'Color',
       // editable: true,
       // flex: 1,
       ...baseColumnOptions
     },
-
     {
       field: 'cuttingSize',
       headerName: 'Cutting Size',
@@ -603,6 +627,12 @@ const PrePlanning = () => {
     {
       field: 'noOfHeadName',
       headerName: 'No. Of Heads',
+      // editable: true,
+      ...baseColumnOptions
+    },
+    {
+      field: 'operatingMachineName',
+      headerName: 'Operating Machine',
       // editable: true,
       ...baseColumnOptions
     },
@@ -691,7 +721,8 @@ const PrePlanning = () => {
     }
   ];
 
-  const isSchiffili = formData.processType === 'Schiffili';
+  const isSchiffili = formData.planningProcessTypeId === 198;
+  console.log('formData', formData);
 
   const getCellClassName = ({ row, field }) => {
     if (row.id === 'TOTAL_FABRIC') {
@@ -722,7 +753,7 @@ const PrePlanning = () => {
           </CardHeader>
           <Grid
             container
-            spacing={1}
+            spacing={2}
             width="Inherit"
             sx={{ paddingY: 2, paddingX: 2 }}
           >
@@ -944,7 +975,7 @@ const PrePlanning = () => {
           <AccordionDetails>
             <Grid
               container
-              spacing={1}
+              spacing={2}
               width="Inherit"
               sx={{ paddingY: 2, paddingX: 2 }}
             >
@@ -955,8 +986,8 @@ const PrePlanning = () => {
                   fullWidth
                   select
                   label="Process Type"
-                  name="processType"
-                  value={formData.processType}
+                  name="planningProcessTypeId"
+                  value={formData.planningProcessTypeId}
                   onChange={handleChange}
                   size="small"
                   required
@@ -968,7 +999,7 @@ const PrePlanning = () => {
                   }}
                 >
                   {processType.map((option) => (
-                    <MenuItem key={option.lookUpId} value={option.lookUpName}>
+                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
                       {option.lookUpName}
                     </MenuItem>
                   ))}
@@ -1322,7 +1353,7 @@ const PrePlanning = () => {
                   defaultValue=""
                   size="small"
                   name="uomId"
-                  value={formData.uomId}
+                  value={isSchiffili ? 139 : formData.uomId}
                   onChange={handleChange}
                   error={!!formErrors.uomId}
                   helperText={formErrors.uomId}
