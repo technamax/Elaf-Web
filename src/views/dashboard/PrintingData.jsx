@@ -58,7 +58,11 @@ const PrintingData = ({ isLoading }) => {
 
   const [costOfPrinting, setCostOfPrinting] = useState(null);
   useEffect(() => {
-    if (dashboardData) {
+    if (
+      dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0
+    ) {
       setCostOfPrinting(dashboardData.result[0].costOfPrinting);
     }
   }, [dashboardData]);

@@ -58,7 +58,11 @@ const EmbroideryData = ({ isLoading }) => {
 
   const [embroidery, setEmbroidery] = useState(null);
   useEffect(() => {
-    if (dashboardData) {
+    if (
+      dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0
+    ) {
       setEmbroidery(dashboardData.result[0].costOfEmbroidery);
     }
   }, [dashboardData]);
