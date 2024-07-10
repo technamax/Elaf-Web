@@ -299,7 +299,7 @@ const NewDesign = () => {
   const handleSearch = async () => {
     try {
       const response = await axios.get(
-        `https://gecxc.com:4051/API/DesignRegistration/GetDesignListByDateOfPlanning?appId=1&startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}&appId=1`
+        `https://gecxc.com:4041/API/DesignRegistration/GetDesignListByDateOfPlanning?appId=1&startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}`
       );
       enqueueSnackbar('Design Search successfully!', {
         variant: 'success',
@@ -476,12 +476,14 @@ const NewDesign = () => {
                     size="small"
                     type="date"
                     label="Planning Date"
+                    // placeholder="dd-mm-yyyy"
                     name="dateOfPlanning"
                     value={formData.dateOfPlanning}
                     onChange={handleChange}
                     fullWidth
-                    focused
+                    // focused
                     InputLabelProps={{
+                      shrink: true,
                       sx: {
                         // set the color of the label when not shrinked
                         color: 'black'
@@ -622,8 +624,8 @@ const NewDesign = () => {
                   value={searchData.searchPlanningDateFrom}
                   onChange={handlesearchChange}
                   fullWidth
-                  focused
                   InputLabelProps={{
+                    shrink: true,
                     sx: {
                       // set the color of the label when not shrinked
                       color: 'black'
@@ -640,8 +642,8 @@ const NewDesign = () => {
                   value={searchData.searchPlanningDateTo}
                   onChange={handlesearchChange}
                   fullWidth
-                  focused
                   InputLabelProps={{
+                    shrink: true,
                     sx: {
                       // set the color of the label when not shrinked
                       color: 'black'
