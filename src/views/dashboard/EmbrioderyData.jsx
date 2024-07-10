@@ -58,11 +58,17 @@ const EmbroideryData = ({ isLoading }) => {
 
   const [embroidery, setEmbroidery] = useState(null);
   useEffect(() => {
+<<<<<<< HEAD
     if (
       dashboardData &&
       dashboardData.result &&
       dashboardData.result.length > 0
     ) {
+=======
+    if ( dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0) {
+>>>>>>> UAT-Bugs-Fix
       setEmbroidery(dashboardData.result[0].costOfEmbroidery);
     }
   }, [dashboardData]);

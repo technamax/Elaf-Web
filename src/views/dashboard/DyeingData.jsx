@@ -58,11 +58,17 @@ const DyeingData = ({ isLoading }) => {
 
   const [costOfDying, setCostOfDying] = useState(null);
   useEffect(() => {
+<<<<<<< HEAD
     if (
       dashboardData &&
       dashboardData.result &&
       dashboardData.result.length > 0
     ) {
+=======
+    if ( dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0) {
+>>>>>>> UAT-Bugs-Fix
       setCostOfDying(dashboardData.result[0].costOfDying);
     }
   }, [dashboardData]);

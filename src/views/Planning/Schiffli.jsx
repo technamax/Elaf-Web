@@ -504,7 +504,7 @@ const Schiffli = () => {
         });
         console.log('response.message', response.data.message);
       } else {
-        enqueueSnackbar('Fabrication saved successfully!', {
+        enqueueSnackbar('Schiffili saved successfully!', {
           variant: 'success',
           autoHideDuration: 5000
         });
@@ -550,7 +550,7 @@ const Schiffli = () => {
       // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
-      enqueueSnackbar('Dyeing not saved successfully!', {
+      enqueueSnackbar('Schiffili not saved successfully!', {
         variant: 'error',
         autoHideDuration: 5000
       });
@@ -642,11 +642,11 @@ const Schiffli = () => {
     },
     {
       field: 'noOfStichesPerYard',
-      headerName: 'No. Of Stiches Per Yard'
+      headerName: 'Stiches Per Yard'
     },
     {
       field: 'noOfItemPerThaan',
-      headerName: 'No. Of Item Per Thaan'
+      headerName: 'Item Per Thaan'
     },
     {
       field: 'totalEmbroidry',
@@ -675,7 +675,7 @@ const Schiffli = () => {
     },
     {
       field: 'pcsForLaserCut',
-      headerName: 'Pcs.For Laser Cut'
+      headerName: 'Laser Cut Pcs.'
     }
   ];
   const deleteApi = `https://gecxc.com:449/api/Schiffli/DeleteSchiffiById?schiffiId=`;

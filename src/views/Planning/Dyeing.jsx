@@ -440,7 +440,7 @@ const Dyeing = () => {
         });
         console.log('response.message', response.data.message);
       } else {
-        enqueueSnackbar('Fabrication saved successfully!', {
+        enqueueSnackbar('Dyeing saved successfully!', {
           variant: 'success',
           autoHideDuration: 5000
         });
@@ -841,9 +841,17 @@ const Dyeing = () => {
                       color: 'black'
                     }
                   }}
+                  sx={{
+                    '& input': {
+                      backgroundColor: 'white' // Setting white background for the input field inside Autocomplete
+                    }
+                  }}
                   // value={formData.color}
                 />
               )}
+              // PaperComponent={({ children }) => (
+              //   <div style={{ backgroundColor: 'white' }}>{children}</div>
+              // )}
               value={
                 colors.find((color) => color.colorId === formData.colorId) ||
                 null
