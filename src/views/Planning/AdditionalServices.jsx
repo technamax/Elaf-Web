@@ -103,6 +103,7 @@ export default function AdditionalServices({}) {
       );
       console.log('Form data saved:', response.data);
       setFormData({
+        // ...formData,
         additionalServiceId: 0,
 
         collectionId: '',
