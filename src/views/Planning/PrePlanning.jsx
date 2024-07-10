@@ -567,7 +567,7 @@ const PrePlanning = () => {
 
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
-          return 7;
+          return 8;
         }
         return undefined;
       },
@@ -586,6 +586,7 @@ const PrePlanning = () => {
       // flex: 1,
       ...baseColumnOptions
     },
+
     {
       field: 'cuttingSize',
       headerName: 'Cutting Size',

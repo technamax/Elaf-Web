@@ -97,13 +97,19 @@ const PrePlanningCreation = () => {
       editable: true
     },
     {
+      field: 'poPcs',
+      headerName: 'Po Pcs',
+      flex: 1,
+      editable: true
+    },
+    {
       field: 'designNo',
       headerName: 'Design Number',
       flex: 1,
       editable: true
     },
     {
-      field: 'Status',
+      field: 'batchStatus',
       headerName: 'Status',
       flex: 1,
       editable: true
