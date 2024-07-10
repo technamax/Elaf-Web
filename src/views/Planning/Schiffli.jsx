@@ -491,7 +491,7 @@ const Schiffli = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:4041/api/Schiffli/SaveSchiffili',
+        'https://gecxc.com:449/api/Schiffli/SaveSchiffili',
         formData
       );
 
@@ -678,7 +678,7 @@ const Schiffli = () => {
       headerName: 'Pcs.For Laser Cut'
     }
   ];
-  const deleteApi = `https://gecxc.com:4041/api/Schiffli/DeleteSchiffiById?schiffiId=`;
+  const deleteApi = `https://gecxc.com:449/api/Schiffli/DeleteSchiffiById?schiffiId=`;
 
   return (
     <>

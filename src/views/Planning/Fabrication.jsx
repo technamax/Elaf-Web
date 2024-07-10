@@ -421,7 +421,7 @@ const Fabrication = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:4041/api/Fabrication/SaveFabrication',
+        'https://gecxc.com:449/api/Fabrication/SaveFabrication',
         formData
       );
 
@@ -498,8 +498,8 @@ const Fabrication = () => {
   };
 
   console.log('formData', formData);
-  const editAPi = `https://gecxc.com:4041/api/Fabrication/SaveFabrication`;
-  const deleteApi = `https://gecxc.com:4041/api/Fabrication/DeleteFabricByFabricId?fabricationId=`;
+  const editAPi = `https://gecxc.com:449/api/Fabrication/SaveFabrication`;
+  const deleteApi = `https://gecxc.com:449/api/Fabrication/DeleteFabricByFabricId?fabricationId=`;
   return (
     <>
       <div className="CardHeader">

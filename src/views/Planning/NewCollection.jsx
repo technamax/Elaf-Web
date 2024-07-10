@@ -404,7 +404,7 @@ const NewCollection = () => {
 
     try {
       const response = await axios.post(
-        'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection',
+        'https://gecxc.com:449/api/CollectionRegistration/SaveCollection',
         formData
       );
       enqueueSnackbar('Collection saved successfully!', {
@@ -444,7 +444,7 @@ const NewCollection = () => {
   const handleSearch = async () => {
     try {
       const response = await axios.get(
-        `https://gecxc.com:4041/API/CollectionRegistration/GetCollectionListByPlanningDate?startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}&appId=1`
+        `https://gecxc.com:449/api/CollectionRegistration/GetCollectionListByPlanningDate?startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}&appId=1`
       );
       enqueueSnackbar('Collection Search successfully!', {
         variant: 'success',
@@ -470,9 +470,9 @@ const NewCollection = () => {
 
   console.log('searchData', searchData);
   const deleteApi =
-    'https://gecxc.com:4041/API/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
+    'https://gecxc.com:449/api/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
   // const editAPi =
-  //   'https://gecxc.com:4041/API/CollectionRegistration/SaveCollection';
+  //   'https://gecxc.com:449/api/CollectionRegistration/SaveCollection';
   const handleReset = () => {
     setFormData({
       collectionId: 0,

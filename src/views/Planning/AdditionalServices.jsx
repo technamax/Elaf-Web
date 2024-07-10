@@ -98,7 +98,7 @@ export default function AdditionalServices({}) {
   const handleSave = async () => {
     try {
       const response = await axios.post(
-        'https://gecxc.com:4041/api/AdditionalServices/SaveAdditionalServices',
+        'https://gecxc.com:449/api/AdditionalServices/SaveAdditionalServices',
         formData
       );
       console.log('Form data saved:', response.data);
@@ -126,7 +126,7 @@ export default function AdditionalServices({}) {
     const getCollectionFromPlanningHeader = async () => {
       try {
         const response = await axios.get(
-          'https://gecxc.com:4041/api/CollectionRegistration/GetCollectionList?appId=1'
+          'https://gecxc.com:449/api/CollectionRegistration/GetCollectionList?appId=1'
         );
         console.log('GetCollectionFromPlanningHeader', response);
         setPlannedCollection(response.data.result);
@@ -141,7 +141,7 @@ export default function AdditionalServices({}) {
   const fetchDataInternal = useCallback(async () => {
     try {
       const response = await axios.get(
-        `https://gecxc.com:4041/api/AdditionalServices/GetAdditionalServicesListByCollectionId?collectionId=${formData.collectionId}`
+        `https://gecxc.com:449/api/AdditionalServices/GetAdditionalServicesListByCollectionId?collectionId=${formData.collectionId}`
       );
 
       // Assuming response.data.result should always be an array

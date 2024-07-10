@@ -1,6 +1,5 @@
-
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import React, { useState, useEffect, useCallback } from "react";
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 export default function AddSubMenuTable() {
@@ -9,19 +8,21 @@ export default function AddSubMenuTable() {
   // Define fetchData inside the component
   const fetchData = useCallback(async () => {
     try {
-      console.log("Fetching data...");
-      const response = await axios.get('https://gecxc.com:4041/api/Menu/GetSubMenuList');
-      console.log("Data fetched:", response.data);
+      console.log('Fetching data...');
+      const response = await axios.get(
+        'https://gecxc.com:449/api/Menu/GetSubMenuList'
+      );
+      console.log('Data fetched:', response.data);
 
       const dataWithId = response.data.result.map((row, index) => ({
-        id: index, 
-        ...row,
+        id: index,
+        ...row
       }));
-      console.log("Data with ID:", dataWithId);
+      console.log('Data with ID:', dataWithId);
 
       setRows(dataWithId); // Set the fetched data to the rows state
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   }, []);
 
@@ -31,17 +32,22 @@ export default function AddSubMenuTable() {
   }, [fetchData]);
 
   const columns = [
-    { field: "subMenuDesc", headerName: "Sub Menu Description", width: 200, flex:1 },
-    { field: "link", headerName: "Link", minWidth: 120 },
-    { field: "icon", headerName: "Icon", minWidth: 120 },
-    { field: "orderNo", headerName: "Order No.", minWidth: 120 },
-    { field: "enabled", headerName: "Enabled", minWidth: 120 },
-    { field: "createdBy", headerName: "Created By", minWidth: 120 },
-    { field: "createdOn", headerName: "Created On", minWidth: 120 }
+    {
+      field: 'subMenuDesc',
+      headerName: 'Sub Menu Description',
+      width: 200,
+      flex: 1
+    },
+    { field: 'link', headerName: 'Link', minWidth: 120 },
+    { field: 'icon', headerName: 'Icon', minWidth: 120 },
+    { field: 'orderNo', headerName: 'Order No.', minWidth: 120 },
+    { field: 'enabled', headerName: 'Enabled', minWidth: 120 },
+    { field: 'createdBy', headerName: 'Created By', minWidth: 120 },
+    { field: 'createdOn', headerName: 'Created On', minWidth: 120 }
   ];
 
   return (
-    <div style={{ height: "auto", width: "100%" }}>
+    <div style={{ height: 'auto', width: '100%' }}>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -53,11 +59,11 @@ export default function AddSubMenuTable() {
         }}
         pageSizeOptions={[10, 15]}
         localeText={{
-          toolbarDensity: "Size",
-          toolbarDensityLabel: "Size",
-          toolbarDensityCompact: "Small",
-          toolbarDensityStandard: "Medium",
-          toolbarDensityComfortable: "Large"
+          toolbarDensity: 'Size',
+          toolbarDensityLabel: 'Size',
+          toolbarDensityCompact: 'Small',
+          toolbarDensityStandard: 'Medium',
+          toolbarDensityComfortable: 'Large'
         }}
         components={{
           Toolbar: GridToolbar

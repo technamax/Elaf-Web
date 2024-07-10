@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const designApi = createApi({
   reducerPath: 'designApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://gecxc.com:4041/api/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://gecxc.com:449/api/' }),
   endpoints: (builder) => ({
     getDesignListByCollectionId: builder.query({
       query: (collectionId) =>

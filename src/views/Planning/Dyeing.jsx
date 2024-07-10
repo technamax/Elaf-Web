@@ -428,7 +428,7 @@ const Dyeing = () => {
 
     try {
       const response = await axios.post(
-        'https://gecxc.com:4041/api/DyeingPrinting/SaveDyeingPrinting',
+        'https://gecxc.com:449/api/DyeingPrinting/SaveDyeingPrinting',
         formData
       );
       console.log('Save response:', response.data);
@@ -641,7 +641,7 @@ const Dyeing = () => {
     //   )
     // }
   ];
-  const deleteApi = `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingById?DPId=`;
+  const deleteApi = `https://gecxc.com:449/api/DyeingPrinting/DeleteDyeingPrintingById?DPId=`;
 
   return (
     // <MainCard
