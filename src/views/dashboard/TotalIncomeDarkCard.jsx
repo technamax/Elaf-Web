@@ -58,7 +58,11 @@ const TotalIncomeDarkCard = ({ isLoading }) => {
 
   const [totalFabricInMeter, setTotalFabricInMeter] = useState(null);
   useEffect(() => {
-    if (dashboardData) {
+    if (
+      dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0
+    ) {
       setTotalFabricInMeter(dashboardData.result[0].totalFabricInMeter);
     }
   }, [dashboardData]);

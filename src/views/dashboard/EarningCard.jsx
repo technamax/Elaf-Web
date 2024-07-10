@@ -33,7 +33,11 @@ const EarningCard = ({ isLoading }) => {
   const { data: dashboardData } = useGetPlanningDashboardByYearQuery();
   const [totalCollection, setTotalCollection] = useState(null);
   useEffect(() => {
-    if (dashboardData) {
+    if (
+      dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0
+    ) {
       setTotalCollection(dashboardData.result[0].totalCollection);
     }
   }, [dashboardData]);

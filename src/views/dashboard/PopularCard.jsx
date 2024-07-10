@@ -36,7 +36,11 @@ const PopularCard = ({ isLoading }) => {
   const [costOfSchiffili, setCostOfSchiffili] = useState(null);
 
   useEffect(() => {
-    if (dashboardData) {
+    if (
+      dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0
+    ) {
       setCostOfDying(dashboardData.result[0].costOfDying.toLocaleString());
       setCostOfPrinting(
         dashboardData.result[0].costOfPrinting.toLocaleString()
