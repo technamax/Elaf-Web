@@ -43,6 +43,7 @@ import { useUser } from 'context/User';
 const Fabrication = () => {
   const { user } = useUser();
   const [formErrors, setFormErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
@@ -147,6 +148,7 @@ const Fabrication = () => {
   }, [fabricData]);
   useEffect(() => {
     if (fabricRequisitionData) {
+      setIsLoading(false);
       setInitialRows(
         fabricRequisitionData.result.map((row, index) => ({
           id: index,
@@ -217,6 +219,8 @@ const Fabrication = () => {
       );
       setSelectedCollectionId(value);
       setLoading(true);
+      setInitialRows([]);
+      setIsLoading(true);
 
       setFormData({
         ...formData,
@@ -241,6 +245,8 @@ const Fabrication = () => {
       const selectedDesign = designList.find(
         (design) => design.designId === parseInt(value)
       );
+      setInitialRows([]);
+      setIsLoading(true);
       setFormData({
         ...formData,
 
@@ -906,7 +912,7 @@ const Fabrication = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
-            {loading ? (
+            {/* {loading ? (
               <div
                 style={{
                   display: 'flex',
@@ -924,28 +930,19 @@ const Fabrication = () => {
                   }}
                 />
               </div>
-            ) : (
-              <ReuseableDataGrid
-                iColumns={columns}
-                initialRows={rows}
-                setInitialData={setInitialData}
-                deleteApi={deleteApi}
-                deleteBy="fabricationId"
-                refetch={refetchFabricRequisitionData}
-                setAccordionExpanded={setAccordionExpanded}
-                fileName="Fabrication Requistion List"
-              />
-            )}
-            {/* <EditAbleDataGrid
-              ncolumns={columns}
-              initialRows={initialRows}
-              formData={formData}
-              editAPi={editAPi}
-              refetch={refetchFabricRequisitionData}
+            ) : ( */}
+            <ReuseableDataGrid
+              iColumns={columns}
+              initialRows={rows}
+              setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="fabricationId"
-              disableAddRecord={true}
-            /> */}
+              refetch={refetchFabricRequisitionData}
+              setAccordionExpanded={setAccordionExpanded}
+              fileName="Fabrication Requistion List"
+              isLoading={isLoading}
+            />
+            {/* )} */}
           </Grid>
         </Grid>
       </Card>

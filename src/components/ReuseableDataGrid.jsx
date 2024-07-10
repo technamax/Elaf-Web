@@ -31,7 +31,8 @@ const ReuseableDataGrid = ({
   disableEdit,
   disableDelete,
   setIsEdit,
-  autoSizeColumns
+  autoSizeColumns,
+  isLoading
 }) => {
   const apiRef = useGridApiRef();
   const [open, setOpen] = React.useState(false);
@@ -128,7 +129,7 @@ const ReuseableDataGrid = ({
     }
   };
 
-  return initialRows.length === 0 ? (
+  return isLoading ? (
     <div
       style={{
         display: 'flex',

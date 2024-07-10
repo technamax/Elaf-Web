@@ -65,6 +65,7 @@ import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined
 const Dyeing = () => {
   const { user } = useUser();
   console.log('user', user);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
@@ -209,6 +210,8 @@ const Dyeing = () => {
   // console.log(vendors);
   useEffect(() => {
     if (dyeingPrintingData) {
+      setIsLoading(false);
+
       setInitialRows(
         dyeingPrintingData.result.map((row, index) => ({
           id: index,
@@ -235,6 +238,8 @@ const Dyeing = () => {
       );
       setSelectedCollectionId(value);
       setLoading(true);
+      setInitialRows([]);
+      setIsLoading(true);
 
       setFormData({
         ...formData,
@@ -268,6 +273,8 @@ const Dyeing = () => {
       const selectedDesign = designList.find(
         (design) => design.designId === parseInt(value)
       );
+      setInitialRows([]);
+      setIsLoading(true);
       setFormData({
         ...formData,
         designId: value,
@@ -1179,7 +1186,7 @@ const Dyeing = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid item xs={12} md={12} paddingTop={1}>
-            {loading ? (
+            {/* {loading ? (
               <div
                 style={{
                   display: 'flex',
@@ -1197,18 +1204,19 @@ const Dyeing = () => {
                   }}
                 />
               </div>
-            ) : (
-              <ReuseableDataGrid
-                iColumns={columns}
-                initialRows={initialRows}
-                setInitialData={setInitialData}
-                deleteApi={deleteApi}
-                deleteBy="dpId"
-                refetch={refetchDyeingPrintingData}
-                setAccordionExpanded={setAccordionExpanded}
-                fileName="Dyeing&PrintingList"
-              />
-            )}
+            ) : ( */}
+            <ReuseableDataGrid
+              iColumns={columns}
+              initialRows={initialRows}
+              setInitialData={setInitialData}
+              deleteApi={deleteApi}
+              deleteBy="dpId"
+              refetch={refetchDyeingPrintingData}
+              setAccordionExpanded={setAccordionExpanded}
+              fileName="Dyeing&PrintingList"
+              isLoading={isLoading}
+            />
+            {/* )} */}
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
               <DialogTitle
                 sx={{

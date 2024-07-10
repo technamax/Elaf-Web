@@ -31,6 +31,7 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
 const NewDesign = () => {
   const { user } = useUser();
+  const [isLoading, setIsLoading] = useState(true);
   const [initialData, setInitialData] = useState([]);
   const { data: collectionData } = useGetCollectionListQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
@@ -53,6 +54,7 @@ const NewDesign = () => {
 
   useEffect(() => {
     if (designData) {
+      setIsLoading(false);
       setDesignList(designData.result);
       refetch();
     }
@@ -583,6 +585,7 @@ const NewDesign = () => {
                     refetch={refetch}
                     // setAccordionExpanded={setAccordionExpanded}
                     fileName="DesignList"
+                    isLoading={isLoading}
                   />
                   {/* <EditAbleDataGrid
                     initialRows={initialRows}

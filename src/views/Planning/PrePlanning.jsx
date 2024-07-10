@@ -44,6 +44,8 @@ import { maxWidth, width } from '@mui/system';
 const PrePlanning = () => {
   const { user } = useUser();
   console.log('user', user);
+  const [isLoading, setIsLoading] = useState(true);
+
   const [initialData, setInitialData] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   const [formData, setFormData] = useState({
@@ -143,6 +145,8 @@ const PrePlanning = () => {
   }, [designData]);
   useEffect(() => {
     if (prePlanningList) {
+      setIsLoading(false);
+
       setInitialRows(
         prePlanningList.result.map((row, index) => ({
           id: index,
@@ -307,7 +311,8 @@ const PrePlanning = () => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setLoading(true);
-
+      setInitialRows([]);
+      setIsLoading(true);
       setSelectedCollectionId(value);
       setFormData({
         ...formData,
@@ -334,6 +339,8 @@ const PrePlanning = () => {
       const selectedDesign = designList.find(
         (design) => design.designId === parseInt(value)
       );
+      setInitialRows([]);
+      setIsLoading(true);
       setFormData({
         ...formData,
         processType: 'MultiHead',
@@ -1469,7 +1476,7 @@ const PrePlanning = () => {
         ></CardHeader>
         <Grid sx={{ paddingY: 1, paddingX: 1 }}>
           <Grid sx={{}} item xs={12}>
-            {loading ? (
+            {/* {loading ? (
               <div
                 style={{
                   display: 'flex',
@@ -1487,60 +1494,21 @@ const PrePlanning = () => {
                   }}
                 />
               </div>
-            ) : (
-              // <Box
-              //   sx={{
-              //     height: 500,
-              //     width: 'inherit',
-              //     '& .actions': {
-              //       color: 'text.secondary'
-              //     },
-              //     '& .textPrimary': {
-              //       color: 'text.primary'
-              //     },
-              //     '& .bold': {
-              //       fontWeight: 600
-              //     }
-              //   }}
-              // >
-              //   <DataGrid
-              //     // {...data}
-              //     rows={rows}
-              //     columns={columns}
-              //     rowLength={100}
-              //     getCellClassName={getCellClassName}
-              //     sx={{
-              //       boxShadow: 2,
-              //       border: 2,
-              //       borderColor: 'primary.light',
-              //       '& .MuiDataGrid-cell:hover': {
-              //         color: 'primary.main'
-              //       }
-              //     }}
-              //   />{' '}
-              // </Box>
-              <ReuseableDataGrid
-                iColumns={columns}
-                initialRows={rows}
-                setInitialData={setInitialData}
-                deleteApi={deleteApi}
-                deleteBy="planningId"
-                refetch={refetchPrePlanningList}
-                getCellClassName={getCellClassName}
-                setAccordionExpanded={setAccordionExpanded}
-                fileName="PrePlanningList"
-              />
-              // <EditAbleDataGrid
-              //   ncolumns={columns}
-              //   initialRows={rows}
-              //   formData={formData}
-              //   editAPi={editAPi}
-              //   deleteApi={deleteApi}
-              //   deleteBy="planningId"
-              //   disableAddRecord={true}
-              //   getCellClassName={getCellClassName}
-              // />
-            )}
+            ) : ( */}
+
+            <ReuseableDataGrid
+              iColumns={columns}
+              initialRows={rows}
+              setInitialData={setInitialData}
+              deleteApi={deleteApi}
+              deleteBy="planningId"
+              refetch={refetchPrePlanningList}
+              getCellClassName={getCellClassName}
+              setAccordionExpanded={setAccordionExpanded}
+              fileName="PrePlanningList"
+              isLoading={isLoading}
+            />
+            {/* )} */}
           </Grid>
         </Grid>
       </Card>

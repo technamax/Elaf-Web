@@ -52,6 +52,7 @@ import { SnackbarProvider, useSnackbar } from 'notistack';
 const Schiffli = () => {
   const { user } = useUser();
   const { enqueueSnackbar } = useSnackbar();
+  const [isLoading, setIsLoading] = useState(true);
 
   const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
@@ -90,20 +91,21 @@ const Schiffli = () => {
   });
   useEffect(() => {
     setFormData({
+      ...formData,
       schiffiliId: initialData.schiffiliId || 0,
       designId: initialData?.designId || '',
       planningHeaderId: initialData?.planningHeaderId || 0,
       batchNo: initialData?.batchNo || '',
       componentId: initialData?.componentId || '',
       poPcs: initialData?.poPcs || '',
-      baseColorName: initialData?.baseColorName || '',
+      // baseColorName: initialData?.baseColorName || '',
       fabricId: initialData?.fabricId || '',
       vendorId: initialData?.vendorId || '',
       colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
       availableQty: initialData?.availableQty || '',
       thaanQty: initialData?.thaanQty || 0,
       operatingMachineId: initialData?.operatingMachineId || 0,
-      operatingMachine: initialData?.operatingMachine || '',
+      operatingMachine: initialData?.operatingMachineName || '',
       workingHeadId: initialData?.workingHeadId || 0,
       cuttingSize: initialData?.cuttingSize || '',
       rate: initialData?.rate || '',
@@ -113,7 +115,8 @@ const Schiffli = () => {
       noOfStichesPerYard: initialData?.noOfStichesPerYard || 0,
       amountPerYard: initialData?.amountPerYard || 0,
       totalPcs: initialData?.totalPcs || 0,
-      laserCut: initialData?.laserCut || false,
+      laserCut:
+        initialData?.laserCutRate || initialData?.pcsForLaserCut ? true : false,
       laserCutRate: initialData?.laserCutRate || 0,
       pcsForLaserCut: initialData?.pcsForLaserCut || 0,
       totalAmount: initialData?.totalAmount || 0,
@@ -221,6 +224,8 @@ const Schiffli = () => {
   }, [componentsByBatch]);
   useEffect(() => {
     if (schiffliList) {
+      setIsLoading(false);
+
       setInitialRows(
         schiffliList.result.map((row, index) => ({
           id: index,
@@ -348,7 +353,8 @@ const Schiffli = () => {
       );
       setSelectedCollectionId(value);
       setLoading(true);
-
+      setInitialRows([]);
+      setIsLoading(true);
       setFormData({
         ...formData,
         collectionId: value,
@@ -385,6 +391,8 @@ const Schiffli = () => {
       const selectedDesign = designList.find(
         (design) => design.designId === parseInt(value)
       );
+      setInitialRows([]);
+      setIsLoading(true);
       setFormData({
         ...formData,
         designId: value,
@@ -759,32 +767,7 @@ const Schiffli = () => {
               ))}
             </TextField>{' '}
           </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Components"
-              name="componentId"
-              value={formData.componentId}
-              onChange={handleChange}
-              size="small"
-              required
-              error={!!formErrors.componentId}
-              helperText={formErrors.componentId}
-              InputLabelProps={{
-                sx: {
-                  // set the color of the label when not shrinked
-                  color: 'black'
-                }
-              }}
-            >
-              {components.map((option) => (
-                <MenuItem key={option.componentId} value={option.componentId}>
-                  {option.componentName}
-                </MenuItem>
-              ))}
-            </TextField>{' '}
-          </Grid>
+
           <Grid item xs={12} md={3}>
             <TextField
               label="Base Color"
@@ -792,7 +775,7 @@ const Schiffli = () => {
               size="small"
               name="baseColorName"
               value={formData.baseColorName}
-              onChange={handleChange}
+              // onChange={handleChange}
               disabled
               InputLabelProps={{
                 sx: {
@@ -866,6 +849,35 @@ const Schiffli = () => {
               width="Inherit"
               sx={{ paddingY: 2, paddingX: 2 }}
             >
+              <Grid item xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  select
+                  label="Components"
+                  name="componentId"
+                  value={formData.componentId}
+                  onChange={handleChange}
+                  size="small"
+                  required
+                  error={!!formErrors.componentId}
+                  helperText={formErrors.componentId}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
+                >
+                  {components.map((option) => (
+                    <MenuItem
+                      key={option.componentId}
+                      value={option.componentId}
+                    >
+                      {option.componentName}
+                    </MenuItem>
+                  ))}
+                </TextField>{' '}
+              </Grid>
               <Grid item xs={12} md={3}>
                 <TextField
                   fullWidth
@@ -1362,7 +1374,7 @@ const Schiffli = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
-            {loading ? (
+            {/* {loading ? (
               <div
                 style={{
                   display: 'flex',
@@ -1380,18 +1392,19 @@ const Schiffli = () => {
                   }}
                 />
               </div>
-            ) : (
-              <ReuseableDataGrid
-                iColumns={columns}
-                initialRows={initialRows}
-                setInitialData={setInitialData}
-                deleteApi={deleteApi}
-                deleteBy="schiffiliId"
-                refetch={refetchSchiffliList}
-                setAccordionExpanded={setAccordionExpanded}
-                fileName="Schffili List"
-              />
-            )}
+            ) : ( */}
+            <ReuseableDataGrid
+              iColumns={columns}
+              initialRows={initialRows}
+              setInitialData={setInitialData}
+              deleteApi={deleteApi}
+              deleteBy="schiffiliId"
+              refetch={refetchSchiffliList}
+              setAccordionExpanded={setAccordionExpanded}
+              fileName="Schffili List"
+              isLoading={isLoading}
+            />
+            {/* )} */}
             {/* <Box
               sx={{
                 height: 500,

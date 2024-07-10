@@ -16,6 +16,8 @@ import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
 export default function AdditionalServices({}) {
+  const [isLoading, setIsLoading] = useState(true);
+
   const { data: lookupData } = useGetLookUpListQuery();
   const [serviceType, setServiceType] = useState([]);
   const [serviceList, setServiceList] = useState([]);
@@ -144,6 +146,7 @@ export default function AdditionalServices({}) {
 
       // Assuming response.data.result should always be an array
       if (Array.isArray(response.data.result)) {
+        setIsLoading(false);
         setInitialRows(
           response.data.result.map((row, index) => ({
             id: index,
@@ -500,6 +503,8 @@ export default function AdditionalServices({}) {
         <ReuseableDataGrid
           iColumns={columns}
           initialRows={initialRows}
+          isLoading={isLoading}
+
           // setInitialData={setInitialData}
           // deleteApi={deleteApi}
           // deleteBy="additionalProcessId"

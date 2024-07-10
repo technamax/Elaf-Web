@@ -63,6 +63,8 @@ import { useUser } from 'context/User';
 
 const AdditionalProcess = () => {
   const { user } = useUser();
+  const [isLoading, setIsLoading] = useState(true);
+
   const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
     additionalProcessId: 0,
@@ -222,6 +224,8 @@ const AdditionalProcess = () => {
   }, [lookupData]);
   useEffect(() => {
     if (additionalProcessList) {
+      setIsLoading(false);
+
       setInitialRows(
         additionalProcessList.result.map((row, index) => ({
           id: index,
@@ -254,9 +258,26 @@ const AdditionalProcess = () => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
+      setInitialRows([]);
+      setIsLoading(true);
       setFormData({
         ...formData,
-        collectionId: value
+        collectionId: value,
+        designId: '',
+        planningHeaderId: 0,
+        batchNo: '',
+        componentId: '',
+        colorId: '',
+        fabricId: '',
+        uomId: '',
+        baseColorName: '',
+        poPcs: '',
+        pcsPerComponent: '',
+        processTypeId: '',
+        createdOn: new Date().toISOString(),
+        createdBy: user.empId,
+        lastUpdatedOn: new Date().toISOString(),
+        LastUpdatedBy: user.empId
 
         // poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
@@ -264,11 +285,26 @@ const AdditionalProcess = () => {
       const selectedDesign = designList.find(
         (design) => design.designId === parseInt(value)
       );
+      setInitialRows([]);
+      setIsLoading(true);
       setFormData({
         ...formData,
         designId: value,
         baseColorId: selectedDesign ? selectedDesign.colorId : '',
-        baseColorName: selectedDesign ? selectedDesign.colorName : ''
+        baseColorName: selectedDesign ? selectedDesign.colorName : '',
+        planningHeaderId: 0,
+        batchNo: '',
+        componentId: '',
+        colorId: '',
+        fabricId: '',
+        uomId: '',
+        poPcs: '',
+        pcsPerComponent: '',
+        processTypeId: '',
+        createdOn: new Date().toISOString(),
+        createdBy: user.empId,
+        lastUpdatedOn: new Date().toISOString(),
+        LastUpdatedBy: user.empId
       });
     } else if (name === 'batchNo') {
       const selectedBatch = batchList.find((batch) => batch.batchNo === value);
@@ -276,7 +312,17 @@ const AdditionalProcess = () => {
         ...formData,
         batchNo: value,
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
-        poPcs: selectedBatch ? selectedBatch.poPcs : ''
+        poPcs: selectedBatch ? selectedBatch.poPcs : '',
+        componentId: '',
+        colorId: '',
+        fabricId: '',
+        uomId: '',
+        pcsPerComponent: '',
+        processTypeId: '',
+        createdOn: new Date().toISOString(),
+        createdBy: user.empId,
+        lastUpdatedOn: new Date().toISOString(),
+        LastUpdatedBy: user.empId
       });
       setAccordionExpanded(true);
     } else {
@@ -789,6 +835,7 @@ const AdditionalProcess = () => {
               refetch={refetchAdditionalProcessList}
               setAccordionExpanded={setAccordionExpanded}
               fileName="AdditionalProcess"
+              isLoading={isLoading}
             />
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
               <DialogTitle
