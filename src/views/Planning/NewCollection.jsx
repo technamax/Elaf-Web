@@ -669,6 +669,8 @@ const NewCollection = () => {
                       error={!!formErrors.planningDate}
                       helperText={formErrors.planningDate}
                       InputLabelProps={{
+                        shrink: true,
+
                         sx: {
                           // set the color of the label when not shrinked
                           color: 'black'
@@ -689,6 +691,7 @@ const NewCollection = () => {
                       error={!!formErrors.launchDate}
                       helperText={formErrors.launchDate}
                       InputLabelProps={{
+                        shrink: true,
                         sx: {
                           // set the color of the label when not shrinked
                           color: 'black'
