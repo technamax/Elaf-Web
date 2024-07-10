@@ -58,17 +58,11 @@ const SchiffliData = ({ isLoading }) => {
 
   const [costOfSchiffili, setCostOfSchiffili] = useState(null);
   useEffect(() => {
-<<<<<<< HEAD
     if (
       dashboardData &&
       dashboardData.result &&
       dashboardData.result.length > 0
     ) {
-=======
-    if ( dashboardData &&
-      dashboardData.result &&
-      dashboardData.result.length > 0) {
->>>>>>> UAT-Bugs-Fix
       setCostOfSchiffili(dashboardData.result[0].costOfSchiffili);
     }
   }, [dashboardData]);
