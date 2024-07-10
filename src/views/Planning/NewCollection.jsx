@@ -665,7 +665,7 @@ const NewCollection = () => {
                       value={formData.planningDate}
                       onChange={handleChange}
                       fullWidth
-                      focused
+                      // focused
                       error={!!formErrors.planningDate}
                       helperText={formErrors.planningDate}
                       InputLabelProps={{
@@ -685,7 +685,7 @@ const NewCollection = () => {
                       value={formData.launchDate}
                       onChange={handleChange}
                       fullWidth
-                      focused
+                      // focused
                       error={!!formErrors.launchDate}
                       helperText={formErrors.launchDate}
                       InputLabelProps={{
