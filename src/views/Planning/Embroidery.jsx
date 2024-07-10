@@ -67,6 +67,8 @@ import '../../assets/scss/style.scss';
 const Embroidery = () => {
   const theme = useTheme();
   const { user } = useUser();
+  const [isLoading, setIsLoading] = useState(true);
+
   const { enqueueSnackbar } = useSnackbar();
   const [initialData, setInitialData] = useState([]);
   const [loading, setLoading] = useState(false); // State for loading
@@ -262,6 +264,8 @@ const Embroidery = () => {
   }, [componentsByBatch]);
   useEffect(() => {
     if (embroideryList) {
+      setIsLoading(false);
+
       setInitialRows(
         embroideryList.result.map((row, index) => ({
           id: index,
@@ -284,38 +288,6 @@ const Embroidery = () => {
   }, [lookupData]);
 
   const collectionList = collectionData?.result || [];
-
-  // const fetchEmbroideryData = async (batchNo) => {
-  //   const url = https://gecxc.com:4041/api/Embroidery/GetEmbroideryListByBatchNo?batchNo=${batchNo};
-  //   try {
-  //     const response = await axios.get(url);
-  //     return response.data; // Assuming the API returns JSON data
-  //   } catch (error) {
-  //     console.error('Error fetching embroidery data:', error);
-  //     throw error; // Re-throw the error if you want to handle it further up the call stack
-  //   }
-  // };
-  // const fetchEmbroidery = async () => {
-  //   if (!formData.planningHeaderId) {
-  //     return;
-  //   }
-  //   try {
-  //     const data = await fetchEmbroideryData(formData.planningHeaderId);
-  //     const rowsWithId = data.result.map((row, index) => ({
-  //       ...row,
-  //       id: index + 1
-  //     }));
-  //     setInitialRows(rowsWithId);
-  //     console.log('fetchEmbroideryData', data);
-  //     console.log('initialRows', initialRows);
-  //   } catch (err) {
-  //     console.error(err.message);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchEmbroidery();
-  // }, [formData.planningHeaderId]);
 
   useEffect(() => {
     const calculateTotalPcs = () => {
@@ -445,7 +417,8 @@ const Embroidery = () => {
       );
       setSelectedCollectionId(value);
       setLoading(true);
-
+      setInitialRows([]);
+      setIsLoading(true);
       setFormData({
         ...formData,
         collectionId: value,
@@ -490,6 +463,8 @@ const Embroidery = () => {
       const selectedDesign = designList.find(
         (design) => design.designId === parseInt(value)
       );
+      setInitialRows([]);
+      setIsLoading(true);
       setFormData({
         ...formData,
         designId: value,
@@ -1281,7 +1256,7 @@ const Embroidery = () => {
         >
           <Grid sx={{ marginTop: 2 }} item xs={12}>
             {' '}
-            {loading ? (
+            {/* {loading ? (
               <div
                 style={{
                   display: 'flex',
@@ -1299,18 +1274,19 @@ const Embroidery = () => {
                   }}
                 />
               </div>
-            ) : (
-              <ReuseableDataGrid
-                iColumns={columns}
-                initialRows={initialRows}
-                setInitialData={setInitialData}
-                deleteApi={deleteApi}
-                deleteBy="embroideryId"
-                refetch={refetchEmbroideryList}
-                setAccordionExpanded={setAccordionExpanded}
-                fileName="Embroidery List"
-              />
-            )}
+            ) : ( */}
+            <ReuseableDataGrid
+              iColumns={columns}
+              initialRows={initialRows}
+              setInitialData={setInitialData}
+              deleteApi={deleteApi}
+              deleteBy="embroideryId"
+              refetch={refetchEmbroideryList}
+              setAccordionExpanded={setAccordionExpanded}
+              fileName="Embroidery List"
+              isLoading={isLoading}
+            />
+            {/* )} */}
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
               <DialogTitle
                 sx={{

@@ -38,9 +38,11 @@ import LoopOutlinedIcon from '@mui/icons-material/LoopOutlined';
 
 const NewCollection = () => {
   const { user } = useUser();
+  const [isLoading, setIsLoading] = useState(true);
+
   const [initialData, setInitialData] = useState([]);
 
-  const { data, error, isLoading, refetch } = useGetCollectionListQuery();
+  const { data, error, refetch } = useGetCollectionListQuery();
   const { data: lookupData } = useGetLookUpListQuery();
   const [brands, setBrands] = useState([]);
   const [seasons, setSeasons] = useState([]);
@@ -177,6 +179,7 @@ const NewCollection = () => {
         launchDate: new Date(row.launchDate)
       }));
       setCollectionList(rowsWithId);
+      setIsLoading(false);
     }
     refetch();
   }, [data]);
@@ -860,6 +863,7 @@ const NewCollection = () => {
                     refetch={refetch}
                     // editAPi={editAPi}
                     fileName={fileName}
+                    isLoading={isLoading}
                   />
                 </Grid>
               </Grid>{' '}
