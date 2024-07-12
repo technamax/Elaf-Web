@@ -1058,7 +1058,7 @@ const Schiffli = () => {
                 <TextField
                   fullWidth
                   select
-                  label="operatingMachineId"
+                  label="Operating Machine"
                   defaultValue=""
                   size="small"
                   name="operatingMachineId"
@@ -1085,7 +1085,7 @@ const Schiffli = () => {
                 <TextField
                   fullWidth
                   select
-                  label="workingHeadId"
+                  label="Working Head"
                   defaultValue=""
                   size="small"
                   name="workingHeadId"
