@@ -272,9 +272,9 @@ const Schiffli = () => {
     }));
     const calculateTotalPcs = () => {
       const thaanQty = parseFloat(formData.thaanQty) || 0;
-      const noOfStichesPerYard = parseFloat(formData.noOfStichesPerYard) || 0;
+      const noOfItemPerThaan = parseFloat(formData.noOfItemPerThaan) || 0;
 
-      return (thaanQty * noOfStichesPerYard).toFixed(2);
+      return (thaanQty * noOfItemPerThaan).toFixed(2);
     };
 
     setFormData((prevData) => ({
