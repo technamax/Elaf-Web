@@ -1173,7 +1173,7 @@ const Embroidery = () => {
           </Grid>
           <Grid item xs={12} md={1.5}>
             <TextField
-              label="itemsPerRepeat"
+              label="Items Per Repeat"
               fullWidth
               type="number"
               size="small"
