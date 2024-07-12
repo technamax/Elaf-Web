@@ -5,6 +5,7 @@ import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { useGetAdditionalProcessDetailsByAdditionalProcessIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useUser } from 'context/User';
 import axios from 'axios';
+import { useSnackbar } from 'notistack';
 
 const AssignVendorFormTable = ({
   additionalProcessData,
@@ -14,6 +15,7 @@ const AssignVendorFormTable = ({
 }) => {
   const { user } = useUser();
   const [initialRows, setInitialRows] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
 
   const Quantity = initialRows
     .reduce((sum, row) => sum + (row.quantity ?? 0), 0)
@@ -136,6 +138,18 @@ const AssignVendorFormTable = ({
       );
 
       console.log('Save response:', response.data);
+      if (!response.data.success) {
+        enqueueSnackbar(`${response.data.message} !`, {
+          variant: 'error',
+          autoHideDuration: 5000
+        });
+        console.log('response.message', response.data.message);
+      } else {
+        enqueueSnackbar('Schiffili saved successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+      }
       refetchAdditionalProcessDetails();
 
       setFormData((prevFormData) => ({
@@ -160,9 +174,13 @@ const AssignVendorFormTable = ({
 
       // handleClickOpen();
 
-      setAccordionExpanded(false);
+      // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
+      enqueueSnackbar('Schiffili not saved successfully!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
     }
   };
 

@@ -257,6 +257,26 @@ const DyeingPrintingAssignVendor = ({
             onChange={handleChange}
             size="small"
             disabled
+            sx={(theme) => ({
+              ...(formData.availableQty !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
           >
             {/* {collectionList.map((option) => (
               <MenuItem key={option.collectionId} value={option.collectionId}>
@@ -276,6 +296,26 @@ const DyeingPrintingAssignVendor = ({
             onChange={handleChange}
             size="small"
             disabled
+            sx={(theme) => ({
+              ...(formData.availableQty !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
           >
             {/* {designList.map((option) => (
               <MenuItem key={option.designId} value={option.designId}>
@@ -295,6 +335,26 @@ const DyeingPrintingAssignVendor = ({
             onChange={handleChange}
             size="small"
             disabled
+            sx={(theme) => ({
+              ...(formData.availableQty !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
           >
             {/* {batchList.map((option) => (
               <MenuItem key={option.batchNo} value={option.batchNo}>
@@ -312,6 +372,26 @@ const DyeingPrintingAssignVendor = ({
             onChange={handleChange}
             size="small"
             disabled
+            sx={(theme) => ({
+              ...(formData.availableQty !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
           >
             {/* {components.map((option) => (
               <MenuItem key={option.componentId} value={option.componentId}>
@@ -341,6 +421,26 @@ const DyeingPrintingAssignVendor = ({
             value={formData.poPcs}
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.availableQty !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
           >
             {/* {colors.map((option) => (
               <MenuItem key={option.colorId} value={option.colorId}>
@@ -371,6 +471,26 @@ const DyeingPrintingAssignVendor = ({
             // type="number"
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.availableQty !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
           />
         </Grid>
         <Grid item xs={12} md={1.5}>
@@ -383,6 +503,26 @@ const DyeingPrintingAssignVendor = ({
             // type="number"
             onChange={handleChange}
             disabled
+            sx={(theme) => ({
+              ...(formData.availableQty !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
           />
         </Grid>
       </Grid>
@@ -403,6 +543,12 @@ const DyeingPrintingAssignVendor = ({
             name="vendorId"
             value={formData.vendorId}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           >
             {vendors.map((option) => (
               <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -421,6 +567,12 @@ const DyeingPrintingAssignVendor = ({
             name="assignedQty"
             value={formData.assignedQty}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -432,6 +584,12 @@ const DyeingPrintingAssignVendor = ({
             name="rate"
             value={formData.rate}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -443,6 +601,12 @@ const DyeingPrintingAssignVendor = ({
             name="shrinkage"
             value={formData.shrinkage}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -454,6 +618,12 @@ const DyeingPrintingAssignVendor = ({
             name="wastage"
             value={formData.wastage}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -465,6 +635,12 @@ const DyeingPrintingAssignVendor = ({
             name="outputQty"
             value={formData.outputQty}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -476,6 +652,12 @@ const DyeingPrintingAssignVendor = ({
             name="totalExcGst"
             value={formData.totalExcGst}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
 
@@ -488,6 +670,12 @@ const DyeingPrintingAssignVendor = ({
             name="gst"
             value={formData.gst}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -499,6 +687,12 @@ const DyeingPrintingAssignVendor = ({
             name="TotalIncludingGst"
             value={formData.TotalIncludingGst}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
         <Grid item xs={12} md={3}>
@@ -510,6 +704,12 @@ const DyeingPrintingAssignVendor = ({
             name="unitRatePerPo"
             value={formData.unitRatePerPo}
             onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
           />
         </Grid>
 

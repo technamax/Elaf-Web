@@ -727,6 +727,14 @@ const PrePlanning = () => {
   ];
 
   const isSchiffili = formData.planningProcessTypeId === 198;
+  useEffect(() => {
+    if (isSchiffili) {
+      setFormData({
+        ...formData,
+        uomId: 139
+      });
+    }
+  }, [isSchiffili]);
   console.log('formData', formData);
 
   const getCellClassName = ({ row, field }) => {
@@ -1358,12 +1366,12 @@ const PrePlanning = () => {
                   defaultValue=""
                   size="small"
                   name="uomId"
-                  value={isSchiffili ? 139 : formData.uomId}
+                  value={formData.uomId}
                   onChange={handleChange}
                   error={!!formErrors.uomId}
                   helperText={formErrors.uomId}
                   required
-                  disabled={formData.isSchiffili} // Disable when isSchiffili is checked
+                  disabled={isSchiffili} // Disable when isSchiffili is checked
                   InputLabelProps={{
                     sx: {
                       // set the color of the label when not shrinked

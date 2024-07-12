@@ -47,6 +47,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import schiffli from '../../assets/images/planningicons/schiffli.png';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import AssignVendorFormTable from 'components/assignVendorFormTable';
+import { useSnackbar } from 'notistack';
 
 //////
 import * as React from 'react';
@@ -63,6 +64,8 @@ import { useUser } from 'context/User';
 
 const AdditionalProcess = () => {
   const { user } = useUser();
+  const { enqueueSnackbar } = useSnackbar();
+
   const [isLoading, setIsLoading] = useState(true);
 
   const [initialData, setInitialData] = useState([]);
@@ -348,6 +351,18 @@ const AdditionalProcess = () => {
       );
 
       console.log('Save response:', response.data);
+      if (!response.data.success) {
+        enqueueSnackbar(`${response.data.message} !`, {
+          variant: 'error',
+          autoHideDuration: 5000
+        });
+        console.log('response.message', response.data.message);
+      } else {
+        enqueueSnackbar('Schiffili saved successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+      }
 
       setFormData((prevFormData) => ({
         additionalProcessId: 0,
@@ -374,6 +389,10 @@ const AdditionalProcess = () => {
       // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
+      enqueueSnackbar('Schiffili not saved successfully!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
     }
   };
   console.log('formData', formData);

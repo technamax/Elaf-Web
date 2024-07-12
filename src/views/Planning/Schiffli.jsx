@@ -272,9 +272,9 @@ const Schiffli = () => {
     }));
     const calculateTotalPcs = () => {
       const thaanQty = parseFloat(formData.thaanQty) || 0;
-      const noOfStichesPerYard = parseFloat(formData.noOfStichesPerYard) || 0;
+      const noOfItemPerThaan = parseFloat(formData.noOfItemPerThaan) || 0;
 
-      return (thaanQty * noOfStichesPerYard).toFixed(2);
+      return (thaanQty * noOfItemPerThaan).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -504,7 +504,7 @@ const Schiffli = () => {
         });
         console.log('response.message', response.data.message);
       } else {
-        enqueueSnackbar('Fabrication saved successfully!', {
+        enqueueSnackbar('Schiffili saved successfully!', {
           variant: 'success',
           autoHideDuration: 5000
         });
@@ -550,7 +550,7 @@ const Schiffli = () => {
       // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
-      enqueueSnackbar('Dyeing not saved successfully!', {
+      enqueueSnackbar('Schiffili not saved successfully!', {
         variant: 'error',
         autoHideDuration: 5000
       });
@@ -597,11 +597,44 @@ const Schiffli = () => {
     return errors;
   };
   console.log('formData', formData);
+  // const [initialRows, setInitialRows] = useState([]);
+  const [totalAmountSum, setTotalAmountSum] = useState(0);
+  const [totalEmbroiderySum, setTotalEmbroiderySum] = useState(0);
+  const [totalPcsSum, setTotalPcsSum] = useState(0);
+
+  useEffect(() => {
+    const amountSum = initialRows
+      .reduce((sum, row) => sum + (row.totalAmount ?? 0), 0)
+      .toFixed(2);
+    const embroiderySum = initialRows
+      .reduce((sum, row) => sum + (row.totalEmbroidry ?? 0), 0)
+      .toFixed(2);
+    const pcsSum = initialRows
+      .reduce((sum, row) => sum + (row.totalPcs ?? 0), 0)
+      .toFixed(2);
+
+    setTotalAmountSum(parseFloat(amountSum).toLocaleString());
+    setTotalEmbroiderySum(parseFloat(embroiderySum).toLocaleString());
+    setTotalPcsSum(parseFloat(pcsSum).toLocaleString());
+  }, [initialRows]);
+
+  const footerRow = {
+    id: 'TOTAL_SUMMARY',
+    componentName: 'Total Summary',
+    totalAmount: totalAmountSum,
+    totalEmbroidry: totalEmbroiderySum,
+    totalPcs: totalPcsSum
+  };
+
+  // Add custom footer row to initial rows
+  const rowsWithFooter = [...initialRows, footerRow];
 
   const columns = [
     {
       field: 'componentName',
-      headerName: 'Component'
+      headerName: 'Component',
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? 'Total Summary' : params.value
     },
     {
       field: 'fabricName',
@@ -642,15 +675,23 @@ const Schiffli = () => {
     },
     {
       field: 'noOfStichesPerYard',
-      headerName: 'No. Of Stiches Per Yard'
+      headerName: 'Stiches Per Yard'
     },
     {
       field: 'noOfItemPerThaan',
-      headerName: 'No. Of Item Per Thaan'
+      headerName: 'Item Per Thaan'
     },
     {
       field: 'totalEmbroidry',
-      headerName: 'Total Embroidry'
+      headerName: 'Total Embroidry',
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
     },
     {
       field: 'amountPerYard',
@@ -659,11 +700,27 @@ const Schiffli = () => {
 
     {
       field: 'totalPcs',
-      headerName: 'Total Pcs'
+      headerName: 'Total Pcs',
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
     },
     {
       field: 'totalAmount',
-      headerName: 'Total Amount'
+      headerName: 'Total Amount',
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
     },
     {
       field: 'costPerComponent',
@@ -675,7 +732,7 @@ const Schiffli = () => {
     },
     {
       field: 'pcsForLaserCut',
-      headerName: 'Pcs.For Laser Cut'
+      headerName: 'Laser Cut Pcs.'
     }
   ];
   const deleteApi = `https://gecxc.com:449/api/Schiffli/DeleteSchiffiById?schiffiId=`;
@@ -1058,7 +1115,7 @@ const Schiffli = () => {
                 <TextField
                   fullWidth
                   select
-                  label="operatingMachineId"
+                  label="Operating Machine"
                   defaultValue=""
                   size="small"
                   name="operatingMachineId"
@@ -1085,7 +1142,7 @@ const Schiffli = () => {
                 <TextField
                   fullWidth
                   select
-                  label="workingHeadId"
+                  label="Working Head"
                   defaultValue=""
                   size="small"
                   name="workingHeadId"
@@ -1168,7 +1225,7 @@ const Schiffli = () => {
               </Grid>
               <Grid item xs={12} md={1.5}>
                 <TextField
-                  label="No. Of Stiches Per Yard"
+                  label="Stiches Per Yard"
                   fullWidth
                   type="number"
                   size="small"
@@ -1189,7 +1246,7 @@ const Schiffli = () => {
 
               <Grid item xs={12} md={1.5}>
                 <TextField
-                  label="No. Of Items Per Thaan"
+                  label="Items Per Thaan"
                   fullWidth
                   size="small"
                   type="number"
@@ -1395,7 +1452,7 @@ const Schiffli = () => {
             ) : ( */}
             <ReuseableDataGrid
               iColumns={columns}
-              initialRows={initialRows}
+              initialRows={rowsWithFooter}
               setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="schiffiliId"

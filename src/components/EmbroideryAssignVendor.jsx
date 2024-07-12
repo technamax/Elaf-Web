@@ -354,13 +354,13 @@ const EmbroideryAssignVendor = ({
       const tilla = parseFloat(debouncedFormData.tilaAmount) || 0;
       const sequence = parseFloat(debouncedFormData.sequenceAmount) || 0;
       const solving = parseFloat(debouncedFormData.solvingAmount) || 0;
-      return thread + tilla + sequence + solving;
+      return (thread + tilla + sequence + solving).toFixed(2);
     };
 
     const calculateCostPerComponent = () => {
       const totalAmount = parseFloat(debouncedFormData.totalAmount) || 0;
       const totalPcs = parseFloat(debouncedFormData.totalPcs) || 0;
-      return totalAmount / totalPcs;
+      return (totalAmount / totalPcs).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -400,7 +400,8 @@ const EmbroideryAssignVendor = ({
         const assignedQty = parseFloat(debouncedFormData.assignedQty) || 0;
         const availableQty = parseFloat(debouncedFormData.availableQty) || 0;
         const totalPcs = parseFloat(debouncedFormData.totalPcs) || 0;
-        return Math.round(assignedQty * (totalPcs / availableQty));
+        // return Math.round(assignedQty * (totalPcs / availableQty));
+        return (assignedQty * (totalPcs / availableQty)).toFixed(2);
       };
 
       setFormData((prevData) => ({
@@ -412,7 +413,8 @@ const EmbroideryAssignVendor = ({
         const requiredPcs = parseFloat(debouncedFormData.requiredPcs) || 0;
         const availableQty = parseFloat(debouncedFormData.availableQty) || 0;
         const totalPcs = parseFloat(debouncedFormData.totalPcs) || 0;
-        return Math.round((requiredPcs * availableQty) / totalPcs);
+        return ((requiredPcs * availableQty) / totalPcs).toFixed(2);
+        // return Math.round((requiredPcs * availableQty) / totalPcs);
       };
 
       setFormData((prevData) => ({
@@ -463,7 +465,22 @@ const EmbroideryAssignVendor = ({
           additional: formData.additional.join(', ')
         }
       );
+      if (!response.data.success) {
+        enqueueSnackbar(
+          `${response.data.message}!`,
 
+          {
+            variant: 'error',
+            autoHideDuration: 5000
+          }
+        );
+        console.log('response.message', response.data.message);
+      } else {
+        enqueueSnackbar('Embroidery saved successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+      }
       console.log('Save response:', response.data);
 
       setFormData((prevFormData) => ({
@@ -505,9 +522,13 @@ const EmbroideryAssignVendor = ({
 
       // handleClickOpen();
 
-      setAccordionExpanded(false);
+      // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
+      enqueueSnackbar('Embroidery not saved successfully!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
     }
   };
 
@@ -1146,42 +1167,6 @@ const EmbroideryAssignVendor = ({
             }}
           />
         </Grid> */}
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="Total Amount"
-            fullWidth
-            type="number"
-            size="small"
-            disabled={!formData.remainingPcs && !formData.remainingQty}
-            name="totalAmount"
-            value={formData.totalAmount}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="Cost Per Component"
-            fullWidth
-            // type="number"
-            size="small"
-            name="costPerComponent"
-            value={formData.costPerComponent}
-            onChange={handleChange}
-            disabled={!formData.remainingPcs && !formData.remainingQty}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
 
         <Grid item xs={12} md={4.5}>
           <TextField
@@ -1228,7 +1213,7 @@ const EmbroideryAssignVendor = ({
             label="isSolving"
           />
         </Grid>
-        <Grid item xs={12} md={6}></Grid>
+        {/* <Grid item xs={12} md={6}></Grid> */}
 
         <Grid item xs={12} md={6}>
           <Grid container spacing={1} width="Inherit">
@@ -1522,6 +1507,43 @@ const EmbroideryAssignVendor = ({
             </Grid>
           </Grid>
         ) : null}
+
+        <Grid item xs={12} md={3} sx={{ mt: 4 }}>
+          <TextField
+            label="Total Amount"
+            fullWidth
+            type="number"
+            size="small"
+            disabled={!formData.remainingPcs && !formData.remainingQty}
+            name="totalAmount"
+            value={formData.totalAmount}
+            onChange={handleChange}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={3} sx={{ mt: 4 }}>
+          <TextField
+            label="Cost Per Component"
+            fullWidth
+            // type="number"
+            size="small"
+            name="costPerComponent"
+            value={formData.costPerComponent}
+            onChange={handleChange}
+            disabled={!formData.remainingPcs && !formData.remainingQty}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
+          />
+        </Grid>
 
         <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
           <Button variant="contained" size="small" onClick={handleSave}>

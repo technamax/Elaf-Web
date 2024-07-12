@@ -42,7 +42,11 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
   const { data: dashboardData } = useGetPlanningDashboardByYearQuery();
   const [noOfDesign, setNoOfDesign] = useState(null);
   useEffect(() => {
-    if (dashboardData) {
+    if (
+      dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0
+    ) {
       setNoOfDesign(dashboardData.result[0].noOfDesign);
     }
   }, [dashboardData]);
@@ -52,7 +56,11 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
   };
   const [totalFabricInMeter, setTotalFabricInMeter] = useState(null);
   useEffect(() => {
-    if (dashboardData) {
+    if (
+      dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0
+    ) {
       setTotalFabricInMeter(dashboardData.result[0].totalFabricInMeter);
     }
   }, [dashboardData]);
@@ -62,7 +70,11 @@ const TotalOrderLineChartCard = ({ isLoading }) => {
 
   const [costOfFabric, setCostOfFabric] = useState(null);
   useEffect(() => {
-    if (dashboardData) {
+    if (
+      dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0
+    ) {
       setCostOfFabric(dashboardData.result[0].costOfFabric);
     }
   }, [dashboardData]);

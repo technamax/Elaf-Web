@@ -51,7 +51,11 @@ const TotalIncomeLightCard = ({ isLoading, total, icon, label }) => {
   const { data: dashboardData } = useGetPlanningDashboardByYearQuery();
   const [costOfFabric, setCostOfFabric] = useState(null);
   useEffect(() => {
-    if (dashboardData) {
+    if (
+      dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0
+    ) {
       setCostOfFabric(dashboardData.result[0].costOfFabric);
     }
   }, [dashboardData]);
