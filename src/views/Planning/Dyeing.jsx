@@ -572,7 +572,10 @@ const Dyeing = () => {
     },
     {
       field: 'availableQty',
-      headerName: 'Available Quantitity'
+      headerName: 'Available Quantitity',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     // {
     //   field: 'shrinkage',
@@ -584,7 +587,10 @@ const Dyeing = () => {
     // },
     {
       field: 'assignedQty',
-      headerName: 'Assigned Qty'
+      headerName: 'Assigned Qty',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'AddVendor',
