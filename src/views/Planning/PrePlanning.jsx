@@ -72,6 +72,8 @@ const PrePlanning = () => {
     totalFabric: '',
     shrinkage: '',
     wastage: '',
+    poPcs: '',
+
     planningProcessTypeId: '',
     total: '',
     appId: 1,
@@ -233,8 +235,16 @@ const PrePlanning = () => {
     // }
     // setLoading(false);
   }, [formData.designId, formData.planningHeaderId]);
-
+  const isDyeing = formData.planningProcessTypeId === 212;
+  console.log('isDyeing', isDyeing);
   useEffect(() => {
+    const calculateTotalFabric1 = () => {
+      const poPcs = parseFloat(formData.poPcs) || 0;
+      const cuttingSize = parseFloat(formData.cuttingSize) || 0;
+      const totalFabric = (poPcs * cuttingSize).toFixed(2);
+      return parseFloat(totalFabric).toLocaleString();
+    };
+
     const calculateTotalFabric = () => {
       const repeats = parseFloat(formData.repeats) || 0;
       const repeatSize = parseFloat(formData.repeatSize) || 0;
@@ -242,23 +252,8 @@ const PrePlanning = () => {
       return parseFloat(totalFabric).toLocaleString();
     };
 
-    setFormData((prevData) => ({
-      ...prevData,
-      totalFabric: calculateTotalFabric()
-    }));
-
-    const calculateTotal = () => {
-      // Parse the localized totalFabric string back to a float for calculations
-      const totalFabricValue =
-        typeof formData.totalFabric === 'string'
-          ? parseFloat(formData.totalFabric.replace(/,/g, ''))
-          : formData.totalFabric;
-
+    const calculateTotal = (totalFabricValue) => {
       const totalFabric = totalFabricValue || 0;
-      // const totalFabric =
-      //   parseFloat(formData.totalFabric.replace(/,/g, '')) ||
-      //   formData.totalFabric ||
-      //   0;
       const shrinkage = parseFloat(formData.shrinkage) || 0;
       const wastage = parseFloat(formData.wastage) || 0;
       const total = (
@@ -268,41 +263,53 @@ const PrePlanning = () => {
       return parseFloat(total).toLocaleString();
     };
 
-    setFormData((prevData) => ({
-      ...prevData,
-      total: calculateTotal()
-    }));
-
     const calculateSizeinMeter = () => {
-      const repeats = parseFloat(formData.repeats) || 0;
       const repeatSize = parseFloat(formData.repeatSize) || 0;
       return (0.9144 * repeatSize).toFixed(2);
     };
 
-    setFormData((prevData) => ({
-      ...prevData,
-      repeatsInMtr: calculateSizeinMeter()
-    }));
     const calculateSizeinMeterChecked = () => {
       const repeats = parseFloat(formData.repeats) || 0;
       const repeatsInMtr = parseFloat(formData.repeatsInMtr) || 0;
       return (repeatsInMtr * repeats).toFixed(2);
     };
+
+    let totalFabricValue = 0;
+
+    if (isDyeing) {
+      totalFabricValue =
+        parseFloat(calculateTotalFabric1().replace(/,/g, '')) || 0;
+    } else {
+      totalFabricValue =
+        parseFloat(calculateTotalFabric().replace(/,/g, '')) || 0;
+    }
+
     setFormData((prevData) => ({
       ...prevData,
-      totalFabric: prevData.isSchiffili
-        ? calculateSizeinMeterChecked()
-        : calculateTotalFabric(prevData)
+      totalFabric: totalFabricValue.toLocaleString(),
+      total: calculateTotal(totalFabricValue),
+      repeatsInMtr: calculateSizeinMeter()
     }));
+
+    if (!isDyeing && formData.isSchiffili) {
+      setFormData((prevData) => ({
+        ...prevData,
+        totalFabric: calculateSizeinMeterChecked()
+      }));
+    }
   }, [
+    formData.poPcs,
+    formData.cuttingSize,
     formData.repeats,
     formData.repeatSize,
     formData.totalFabric,
     formData.shrinkage,
     formData.wastage,
     formData.repeatsInMtr,
-    formData.isSchiffili
+    formData.isSchiffili,
+    isDyeing
   ]);
+
   const calculateTotalFabric = (data) => {
     const repeats = parseFloat(data.repeats) || 0;
     const repeatSize = parseFloat(data.repeatSize) || 0;
@@ -376,6 +383,7 @@ const PrePlanning = () => {
         ...formData,
         componentId: '',
         processType: 'MultiHead', // Ensure processType is set correctly here
+        poPcs: selectedBatch ? selectedBatch.poPcs : '',
 
         cuttingSize: '', // not in api
         colorId: '',
@@ -468,6 +476,8 @@ const PrePlanning = () => {
         baseColorName: prevFormData.baseColorName, // not in api
         noOfDesigns: prevFormData.noOfDesigns, // not in apis
         noOfColors: prevFormData.noOfColors, // not in api
+        poPcs: prevFormData.poPcs,
+
         componentId: '',
         cuttingSize: '', // not in api
         colorId: '',
@@ -766,11 +776,11 @@ const PrePlanning = () => {
           </CardHeader>
           <Grid
             container
-            spacing={2}
+            spacing={1}
             width="Inherit"
             sx={{ paddingY: 2, paddingX: 2 }}
           >
-            <Grid item xs={12} md={2}>
+            <Grid item xs={12} md={2.4}>
               <TextField
                 fullWidth
                 select
@@ -797,7 +807,7 @@ const PrePlanning = () => {
                 ))}
               </TextField>{' '}
             </Grid>
-            <Grid item xs={12} md={2}>
+            <Grid item xs={12} md={2.4}>
               <TextField
                 fullWidth
                 select
@@ -821,7 +831,7 @@ const PrePlanning = () => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} md={2}>
+            <Grid item xs={12} md={2.4}>
               <TextField
                 fullWidth
                 select
@@ -845,7 +855,7 @@ const PrePlanning = () => {
                 ))}
               </TextField>{' '}
             </Grid>
-            <Grid item xs={12} md={2}>
+            {/* <Grid item xs={12} md={2.4}>
               <TextField
                 label="No of Design"
                 fullWidth
@@ -882,8 +892,8 @@ const PrePlanning = () => {
                   }
                 }}
               />
-            </Grid>
-            <Grid item xs={12} md={2}>
+            </Grid> */}
+            {/* <Grid item xs={12} md={2.4}>
               <TextField
                 label="No of Color"
                 fullWidth
@@ -913,9 +923,39 @@ const PrePlanning = () => {
                   }
                 })}
               />
+            </Grid> */}
+            <Grid item xs={12} md={2.4}>
+              <TextField
+                label="Po Pcs"
+                fullWidth
+                size="small"
+                name="poPcs"
+                value={formData.poPcs}
+                onChange={handleChange}
+                disabled
+                sx={(theme) => ({
+                  ...(formData.poPcs !== '' && {
+                    '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                      backgroundColor: `#c9c9c9 !important`
+                    }
+                  }),
+                  '& .MuiInputBase-input.Mui-disabled': {
+                    WebkitTextFillColor: 'black' // Adjust text color here
+                  },
+                  '& .MuiInputBase-root.Mui-disabled': {
+                    backgroundColor: '#f9f9f9' // Adjust background color here
+                  },
+                  '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                    {
+                      borderColor: 'gray' // Adjust border color here
+                    },
+                  '& .MuiInputLabel-root.Mui-disabled': {
+                    color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                  }
+                })}
+              />
             </Grid>
-
-            <Grid item xs={12} md={2}>
+            <Grid item xs={12} md={2.4}>
               <TextField
                 label="Base Color"
                 fullWidth
@@ -988,7 +1028,7 @@ const PrePlanning = () => {
           <AccordionDetails>
             <Grid
               container
-              spacing={2}
+              spacing={1}
               width="Inherit"
               sx={{ paddingY: 2, paddingX: 2 }}
             >
@@ -1259,6 +1299,7 @@ const PrePlanning = () => {
                     value={formData.operatingMachineId}
                     onChange={handleChange}
                     required
+                    disabled={isDyeing}
                     InputLabelProps={{
                       sx: {
                         // set the color of the label when not shrinked
@@ -1284,6 +1325,7 @@ const PrePlanning = () => {
                     value={formData.noOfHeads}
                     onChange={handleChange}
                     required
+                    disabled={isDyeing}
                     InputLabelProps={{
                       sx: {
                         // set the color of the label when not shrinked
@@ -1313,6 +1355,7 @@ const PrePlanning = () => {
                   error={!!formErrors.repeats}
                   helperText={formErrors.repeats}
                   required
+                  disabled={isDyeing}
                   InputLabelProps={{
                     sx: {
                       // set the color of the label when not shrinked
@@ -1321,6 +1364,7 @@ const PrePlanning = () => {
                   }}
                 />
               </Grid>
+
               <Grid item xs={12} md={2}>
                 <TextField
                   label="Repeat Size"
@@ -1330,6 +1374,7 @@ const PrePlanning = () => {
                   name="repeatSize"
                   value={formData.repeatSize}
                   onChange={handleChange}
+                  disabled={isDyeing}
                   error={!!formErrors.repeatSize}
                   helperText={formErrors.repeatSize}
                   required
