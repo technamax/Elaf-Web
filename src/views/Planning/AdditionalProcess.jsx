@@ -187,6 +187,13 @@ const AdditionalProcess = () => {
   const [initialRows, setInitialRows] = useState([]);
   const [components, setComponents] = useState([]);
   console.log('batchData', batchData);
+
+  const [collectionList, setCollectionList] = useState([]);
+  useEffect(() => {
+    if (collectionData) {
+      setCollectionList(collectionData.result);
+    }
+  }, [collectionData]);
   useEffect(() => {
     if (designData) {
       setDesignList(designData.result);
@@ -252,7 +259,7 @@ const AdditionalProcess = () => {
 
   console.log('initialRows', initialRows);
 
-  const collectionList = collectionData?.result || [];
+  // const collectionList = collectionData?.result || [];
 
   const handleChange = (e) => {
     const { name, value } = e.target;

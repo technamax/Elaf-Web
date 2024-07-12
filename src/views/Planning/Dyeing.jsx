@@ -227,8 +227,14 @@ const Dyeing = () => {
       setUoms(data.uomList);
     }
   }, [lookupData]);
+  const [collectionList, setCollectionList] = useState([]);
+  useEffect(() => {
+    if (collectionData) {
+      setCollectionList(collectionData.result);
+    }
+  }, [collectionData]);
 
-  const collectionList = collectionData?.result || [];
+  // const collectionList = collectionData?.result || [];
 
   const handleChange = (e) => {
     const { name, value } = e.target;

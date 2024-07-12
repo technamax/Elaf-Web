@@ -724,7 +724,7 @@ const Embroidery = () => {
     { field: 'availableQty', headerName: 'Available Qty' },
     { field: 'assignedQty', headerName: 'Assigned Qty' },
     { field: 'totalPcs', headerName: 'Total Pcs' },
-    { field: 'requiredPcs', headerName: 'Required Pcs' },
+    { field: 'requiredPcs', headerName: 'Assigned Pcs' },
     // { field: 'threadStiches', headerName: 'Thread Stitches' },
     // { field: 'threadRate', headerName: 'Thread Rate' },
     // { field: 'threadAmount', headerName: 'Thread Amount' },
@@ -1173,7 +1173,7 @@ const Embroidery = () => {
           </Grid>
           <Grid item xs={12} md={1.5}>
             <TextField
-              label="itemsPerRepeat"
+              label="Items Per Repeat"
               fullWidth
               type="number"
               size="small"

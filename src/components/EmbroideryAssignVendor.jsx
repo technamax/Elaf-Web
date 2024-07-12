@@ -354,13 +354,13 @@ const EmbroideryAssignVendor = ({
       const tilla = parseFloat(debouncedFormData.tilaAmount) || 0;
       const sequence = parseFloat(debouncedFormData.sequenceAmount) || 0;
       const solving = parseFloat(debouncedFormData.solvingAmount) || 0;
-      return thread + tilla + sequence + solving;
+      return (thread + tilla + sequence + solving).toFixed(2);
     };
 
     const calculateCostPerComponent = () => {
       const totalAmount = parseFloat(debouncedFormData.totalAmount) || 0;
       const totalPcs = parseFloat(debouncedFormData.totalPcs) || 0;
-      return totalAmount / totalPcs;
+      return (totalAmount / totalPcs).toFixed(2);
     };
 
     setFormData((prevData) => ({
@@ -401,6 +401,7 @@ const EmbroideryAssignVendor = ({
         const availableQty = parseFloat(debouncedFormData.availableQty) || 0;
         const totalPcs = parseFloat(debouncedFormData.totalPcs) || 0;
         return Math.round(assignedQty * (totalPcs / availableQty));
+        // return (assignedQty * (totalPcs / availableQty)).toFixed(2);
       };
 
       setFormData((prevData) => ({
@@ -412,7 +413,8 @@ const EmbroideryAssignVendor = ({
         const requiredPcs = parseFloat(debouncedFormData.requiredPcs) || 0;
         const availableQty = parseFloat(debouncedFormData.availableQty) || 0;
         const totalPcs = parseFloat(debouncedFormData.totalPcs) || 0;
-        return Math.round((requiredPcs * availableQty) / totalPcs);
+        return ((requiredPcs * availableQty) / totalPcs).toFixed(2);
+        // return Math.round((requiredPcs * availableQty) / totalPcs);
       };
 
       setFormData((prevData) => ({

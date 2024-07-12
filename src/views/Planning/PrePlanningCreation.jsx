@@ -177,7 +177,7 @@ const PrePlanningCreation = () => {
       if (formData.collectionId) {
         try {
           const response = await axios.get(
-            `https://gecxc.com:4041/API/DesignRegistration/GetDesignListByCollectionId?CollectionId=${formData.collectionId}`
+            `https://gecxc.com:4041/api/DesignRegistration/GetDesignListByCollectionId?CollectionId=${formData.collectionId}`
           );
           setDesignOptions(response.data.result);
         } catch (error) {

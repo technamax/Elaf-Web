@@ -259,7 +259,7 @@ const NewDesign = () => {
     }
     try {
       const response = await axios.post(
-        'https://gecxc.com:4041/API/DesignRegistration/SaveDesign',
+        'https://gecxc.com:4041/api/DesignRegistration/SaveDesign',
         formData
       );
       enqueueSnackbar('Design saved successfully!', {
@@ -294,12 +294,12 @@ const NewDesign = () => {
   };
   console.log('searchData', searchData);
   const deleteApi = `https://gecxc.com:4041/api/DesignRegistration/DeleteDesignById?designId=`;
-  // const editAPi = 'https://gecxc.com:4041/API/DesignRegistration/SaveDesign';
+  // const editAPi = 'https://gecxc.com:4041/api/DesignRegistration/SaveDesign';
   const [searchResult, setSearchResult] = useState([]);
   const handleSearch = async () => {
     try {
       const response = await axios.get(
-        `https://gecxc.com:4041/API/DesignRegistration/GetDesignListByDateOfPlanning?appId=1&startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}`
+        `https://gecxc.com:4041/api/DesignRegistration/GetDesignListByDateOfPlanning?appId=1&startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}`
       );
       enqueueSnackbar('Design Search successfully!', {
         variant: 'success',

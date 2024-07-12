@@ -58,9 +58,11 @@ const DyeingData = ({ isLoading }) => {
 
   const [costOfDying, setCostOfDying] = useState(null);
   useEffect(() => {
-    if ( dashboardData &&
+    if (
+      dashboardData &&
       dashboardData.result &&
-      dashboardData.result.length > 0) {
+      dashboardData.result.length > 0
+    ) {
       setCostOfDying(dashboardData.result[0].costOfDying);
     }
   }, [dashboardData]);

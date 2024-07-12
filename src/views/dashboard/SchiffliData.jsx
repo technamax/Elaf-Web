@@ -58,9 +58,11 @@ const SchiffliData = ({ isLoading }) => {
 
   const [costOfSchiffili, setCostOfSchiffili] = useState(null);
   useEffect(() => {
-    if ( dashboardData &&
+    if (
+      dashboardData &&
       dashboardData.result &&
-      dashboardData.result.length > 0) {
+      dashboardData.result.length > 0
+    ) {
       setCostOfSchiffili(dashboardData.result[0].costOfSchiffili);
     }
   }, [dashboardData]);

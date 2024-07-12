@@ -138,7 +138,12 @@ const PrePlanning = () => {
   const [designList, setDesignList] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   console.log('lookupData', lookupData);
-
+  const [collectionList, setCollectionList] = useState([]);
+  useEffect(() => {
+    if (collectionData) {
+      setCollectionList(collectionData.result);
+    }
+  }, [collectionData]);
   useEffect(() => {
     if (designData) {
       setDesignList(designData.result);
@@ -161,7 +166,7 @@ const PrePlanning = () => {
   console.log('designList', designList);
   console.log('collectionData', collectionData);
 
-  const collectionList = collectionData?.result || [];
+  // const collectionList = collectionData?.result || [];
   // const designList = designData?.result || [];
   const [loading, setLoading] = useState(false); // State for loading
 
