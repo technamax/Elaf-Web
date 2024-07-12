@@ -109,7 +109,7 @@ const Embroidery = () => {
     // additional:  '',
     threadAdditional: [],
 
-    costPerComponent: '', //
+    // costPerComponent: '', //
     // costPerComponent:  '', //
     createdBy: user.empId,
     createdOn: new Date().toISOString(),
@@ -152,7 +152,7 @@ const Embroidery = () => {
       solvingRate: initialData?.solvingRate || 0,
       solvingAmount: initialData?.solvingAmount || '',
       threadAdditional: initialData?.threadAdditional || [],
-      costPerComponent: initialData?.costPerComponent || '', //
+      // costPerComponent: initialData?.costPerComponent || '', //
       createdOn: initialData?.createdOn || new Date().toISOString(),
       createdBy: initialData?.createdBy || user.empId,
       lastUpdatedOn: new Date().toISOString(),
@@ -370,17 +370,17 @@ const Embroidery = () => {
       ...prevData,
       totalAmount: calculateTotalAmount() || 0
     }));
-    const calculateCostPerComponent = () => {
-      const totalAmount = parseFloat(formData.totalAmount) || 0;
-      const totalPcs = parseFloat(formData.totalPcs) || 0;
+    // const calculateCostPerComponent = () => {
+    //   const totalAmount = parseFloat(formData.totalAmount) || 0;
+    //   const totalPcs = parseFloat(formData.totalPcs) || 0;
 
-      return (totalAmount / totalPcs).toFixed(2);
-    };
+    //   return (totalAmount / totalPcs).toFixed(2);
+    // };
 
-    setFormData((prevData) => ({
-      ...prevData,
-      costPerComponent: calculateCostPerComponent() || 0
-    }));
+    // setFormData((prevData) => ({
+    //   ...prevData,
+    //   costPerComponent: calculateCostPerComponent() || 0
+    // }));
   }, [
     formData.threadAmount,
     formData.totalAmount,
@@ -454,9 +454,9 @@ const Embroidery = () => {
         solvingRate: 0,
         solvingAmount: '',
         // additional:  '',
-        threadAdditional: [],
+        threadAdditional: []
 
-        costPerComponent: '' //
+        // costPerComponent: '' //
         // poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
     } else if (name === 'designId') {
@@ -500,9 +500,9 @@ const Embroidery = () => {
         solvingRate: 0,
         solvingAmount: '',
         // additional:  '',
-        threadAdditional: [],
+        threadAdditional: []
 
-        costPerComponent: '' //
+        // costPerComponent: '' //
       });
     } else if (name === 'colorId') {
       const selectedcolor = colors.find((color) => color.colorId === value);
@@ -549,9 +549,9 @@ const Embroidery = () => {
         solvingRate: 0,
         solvingAmount: '',
         // additional:  '',
-        threadAdditional: [],
+        threadAdditional: []
 
-        costPerComponent: '' //
+        // costPerComponent: '' //
       });
 
       setAccordionExpanded(true);
@@ -635,7 +635,7 @@ const Embroidery = () => {
         solvingRate: 0,
         solvingAmount: '',
         threadAdditional: [],
-        costPerComponent: '', //
+        // costPerComponent: '', //
         createdOn: new Date().toISOString(),
         createdBy: user.empId,
         lastUpdatedOn: new Date().toISOString(),
@@ -699,14 +699,23 @@ const Embroidery = () => {
     setInitialFormData(data);
     setOpen(true);
   };
+  const [showUpperDiv, setShowUpperDiv] = useState(true); // State variable to control visibility
+
+  const handleClickOpen2 = (data) => {
+    setInitialFormData(data);
+    setOpen(true);
+    setShowUpperDiv(false);
+  };
 
   const handleClose = () => {
+    setShowUpperDiv(true);
     setOpen(false);
     setInitialFormData({});
     refetchDyeingPrintingData();
+
     // setDeleteId(null);
   };
-
+  console.log('show div', showUpperDiv);
   const columns = [
     { field: 'designNo', headerName: 'Design' },
     { field: 'batchNo', headerName: 'Batch No.' },
@@ -746,12 +755,20 @@ const Embroidery = () => {
       headerName: 'Add Vendor',
       renderCell: (params) => (
         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <IconButton
-            color="primary"
-            onClick={() => handleClickOpen(params.row)}
-          >
-            <PersonAddAlt1OutlinedIcon />
-          </IconButton>
+          <ButtonGroup variant="text" size="small">
+            <IconButton
+              color="primary"
+              onClick={() => handleClickOpen(params.row)}
+            >
+              <PersonAddAlt1OutlinedIcon />
+            </IconButton>
+            <IconButton
+              color="primary"
+              onClick={() => handleClickOpen2(params.row)}
+            >
+              <VisibilityOutlinedIcon />
+            </IconButton>
+          </ButtonGroup>
         </div>
       )
     }
@@ -1308,7 +1325,7 @@ const Embroidery = () => {
                   fontWeight={2}
                   fontStyle={'normal'}
                 >
-                  {'Assign Vendors '}
+                  {' Vendors '}
                 </Typography>
                 <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
                   <CloseIcon />
@@ -1321,6 +1338,7 @@ const Embroidery = () => {
                   setInitialFormData={setInitialFormData}
                   refetchDyeingPrintingData={refetchEmbroideryList}
                   handleClickOpen={handleClickOpen}
+                  showUpperDiv={showUpperDiv}
                 />
               </DialogContent>
             </Dialog>

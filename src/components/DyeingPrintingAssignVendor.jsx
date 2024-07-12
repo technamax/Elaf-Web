@@ -201,7 +201,9 @@ const DyeingPrintingAssignVendor = ({
     {
       field: 'assignedQty',
       headerName: 'Assigned Quantity',
-      flex: 1
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'rate',
@@ -211,7 +213,9 @@ const DyeingPrintingAssignVendor = ({
     {
       field: 'totalExcGst',
       headerName: 'Total Excl Gst.',
-      flex: 1
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'gst',
@@ -221,7 +225,9 @@ const DyeingPrintingAssignVendor = ({
     {
       field: 'totalIncludingGst',
       headerName: 'TotalIncludingGst',
-      flex: 1
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'unitRatePerPo',
@@ -543,6 +549,7 @@ const DyeingPrintingAssignVendor = ({
             name="vendorId"
             value={formData.vendorId}
             onChange={handleChange}
+            disabled={!formData.remainingQty}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -567,6 +574,7 @@ const DyeingPrintingAssignVendor = ({
             name="assignedQty"
             value={formData.assignedQty}
             onChange={handleChange}
+            disabled={!formData.remainingQty}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -584,6 +592,7 @@ const DyeingPrintingAssignVendor = ({
             name="rate"
             value={formData.rate}
             onChange={handleChange}
+            disabled={!formData.remainingQty}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -601,6 +610,7 @@ const DyeingPrintingAssignVendor = ({
             name="shrinkage"
             value={formData.shrinkage}
             onChange={handleChange}
+            disabled={!formData.remainingQty}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -618,6 +628,7 @@ const DyeingPrintingAssignVendor = ({
             name="wastage"
             value={formData.wastage}
             onChange={handleChange}
+            disabled={!formData.remainingQty}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -635,6 +646,7 @@ const DyeingPrintingAssignVendor = ({
             name="outputQty"
             value={formData.outputQty}
             onChange={handleChange}
+            disabled={!formData.remainingQty}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -652,6 +664,7 @@ const DyeingPrintingAssignVendor = ({
             name="totalExcGst"
             value={formData.totalExcGst}
             onChange={handleChange}
+            disabled={!formData.remainingQty}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -670,6 +683,7 @@ const DyeingPrintingAssignVendor = ({
             name="gst"
             value={formData.gst}
             onChange={handleChange}
+            disabled={!formData.remainingQty}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -687,6 +701,7 @@ const DyeingPrintingAssignVendor = ({
             name="TotalIncludingGst"
             value={formData.TotalIncludingGst}
             onChange={handleChange}
+            disabled={!formData.remainingQty}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -704,6 +719,7 @@ const DyeingPrintingAssignVendor = ({
             name="unitRatePerPo"
             value={formData.unitRatePerPo}
             onChange={handleChange}
+            disabled={!formData.remainingQty}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
