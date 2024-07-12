@@ -400,8 +400,8 @@ const EmbroideryAssignVendor = ({
         const assignedQty = parseFloat(debouncedFormData.assignedQty) || 0;
         const availableQty = parseFloat(debouncedFormData.availableQty) || 0;
         const totalPcs = parseFloat(debouncedFormData.totalPcs) || 0;
-        // return Math.round(assignedQty * (totalPcs / availableQty));
-        return (assignedQty * (totalPcs / availableQty)).toFixed(2);
+        return Math.round(assignedQty * (totalPcs / availableQty));
+        // return (assignedQty * (totalPcs / availableQty)).toFixed(2);
       };
 
       setFormData((prevData) => ({
