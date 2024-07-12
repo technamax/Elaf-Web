@@ -346,7 +346,7 @@ const AdditionalProcess = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:449/api/AdditionalProcess/SaveAdditionalProcess',
+        'https://gecxc.com:4041/api/AdditionalProcess/SaveAdditionalProcess',
         formData
       );
 
@@ -463,7 +463,7 @@ const AdditionalProcess = () => {
       )
     }
   ];
-  const deleteApi = `https://gecxc.com:449/api/AdditionalProcess/DeleteAdditionalProcess?adId=`;
+  const deleteApi = `https://gecxc.com:4041/api/AdditionalProcess/DeleteAdditionalProcess?adId=`;
 
   return (
     <>

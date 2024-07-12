@@ -10,7 +10,7 @@ export default function AddRoleTable() {
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(
-        `https://gecxc.com:449/api/Role/GetRoleById?id=1`
+        `https://gecxc.com:4041/api/Role/GetRoleById?id=1`
       );
 
       const dataWithId = response.data.result.map((row, index) => ({
@@ -35,7 +35,7 @@ export default function AddRoleTable() {
     try {
       console.log('Fetching data...');
       const response = await axios.get(
-        'https://gecxc.com:449/api/Role/GetRoleList?appId=1'
+        'https://gecxc.com:4041/api/Role/GetRoleList?appId=1'
       );
       console.log('Data fetched:', response.data);
 
@@ -62,7 +62,7 @@ export default function AddRoleTable() {
     try {
       console.log('Fetching data...');
       const response = await axios.get(
-        'https://gecxc.com:449/api/Role/DeleteRoleById?id=1'
+        'https://gecxc.com:4041/api/Role/DeleteRoleById?id=1'
       );
       console.log('Data fetched:', response.data);
 

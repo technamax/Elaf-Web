@@ -459,7 +459,7 @@ const EmbroideryAssignVendor = ({
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:449/api/Embroidery/SaveEmbroideryDetails',
+        'https://gecxc.com:4041/api/Embroidery/SaveEmbroideryDetails',
         {
           ...formData,
           additional: formData.additional.join(', ')
@@ -581,7 +581,7 @@ const EmbroideryAssignVendor = ({
     { field: 'costPerComponent', headerName: 'Cost Per Component' }
   ];
 
-  const deleteApi = `https://gecxc.com:449/api/Embroidery/DeleteEmbroideryDetailsByDetId?embroideryDetId=`;
+  const deleteApi = `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryDetailsByDetId?embroideryDetId=`;
   return (
     <Box
       noValidate

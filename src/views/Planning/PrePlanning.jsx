@@ -202,7 +202,7 @@ const PrePlanning = () => {
     const GetPrePlanningHeaderByDesignId = async (id) => {
       try {
         const response = await axios.get(
-          `https://gecxc.com:449/api/PrePlanning/GetPrePlanningHeaderByDesignId?designId=${id}`
+          `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningHeaderByDesignId?designId=${id}`
         );
         console.log(response.data);
         setBatchList(response.data.result);
@@ -215,7 +215,7 @@ const PrePlanning = () => {
     //   // setLoading(true);
     //   try {
     //     const response = await axios.get(
-    //       `https://gecxc.com:449/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
+    //       `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
     //     );
     //     console.log('GetPrePlanningByPlanningHeaderI', response.data.result);
     //     setInitialRows(
@@ -432,7 +432,7 @@ const PrePlanning = () => {
         total: parseFloat(formData.total.replace(/,/g, ''))
       };
       const response = await axios.post(
-        'https://gecxc.com:449/api/PrePlanning/SavePrePlanning',
+        'https://gecxc.com:4041/api/PrePlanning/SavePrePlanning',
         cleanedFormData
       );
       console.log('Data saved successfully:', response.data);
@@ -748,7 +748,7 @@ const PrePlanning = () => {
   };
   console.log('batchList:', batchList);
 
-  const deleteApi = `https://gecxc.com:449/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
+  const deleteApi = `https://gecxc.com:4041/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded); // Toggle accordion state based on the icon click
   };
