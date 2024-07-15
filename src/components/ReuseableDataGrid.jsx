@@ -129,29 +129,30 @@ const ReuseableDataGrid = ({
     }
   };
 
-  return isLoading ? (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
+  // return isLoading ? (
+  //   <div
+  //     style={{
+  //       display: 'flex',
+  //       flexDirection: 'column',
 
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}
-    >
-      <img
-        src={loadingGif}
-        alt="Loading"
-        style={{
-          width: 200,
-          height: 200
-        }}
-      />
-      <Typography alignItems="center">
-        Please Select The Required Fields
-      </Typography>
-    </div>
-  ) : (
+  //       justifyContent: 'center',
+  //       alignItems: 'center'
+  //     }}
+  //   >
+  //     <img
+  //       src={loadingGif}
+  //       alt="Loading"
+  //       style={{
+  //         width: 200,
+  //         height: 200
+  //       }}
+  //     />
+  //     <Typography alignItems="center">
+  //       Please Select The Required Fields
+  //     </Typography>
+  //   </div>
+  // ) : (
+  return (
     <Box
       sx={{
         height: 500,
@@ -199,6 +200,7 @@ const ReuseableDataGrid = ({
       </Dialog>
     </Box>
   );
+  // );
 };
 
 export default ReuseableDataGrid;
