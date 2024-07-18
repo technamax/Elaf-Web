@@ -18,7 +18,8 @@ import {
   AccordionDetails,
   AccordionSummary,
   IconButton,
-  inputLabelClasses
+  inputLabelClasses,
+  Chip
 } from '@mui/material';
 import LoopOutlinedIcon from '@mui/icons-material/LoopOutlined';
 
@@ -607,17 +608,51 @@ const PrePlanning = () => {
       valueGetter: (value, row) => {
         if (row.id === 'TOTAL_FABRIC') {
           // console.log('row', row.label);
+
           return row.label;
         }
         return value;
       }
+      // renderCell: (params) => <Chip label={params.value} color="primary" />
     },
     {
       field: 'planningProcessTypeName',
       headerName: 'Process Type',
-      // editable: true,
-      // flex: 1,
-      ...baseColumnOptions
+
+      ...baseColumnOptions,
+      renderCell: (params) => {
+        const chipColor =
+          params.value === 'MultiHead'
+            ? 'primary.dark'
+            : params.value === 'Schiffili'
+              ? theme.palette.grey[900]
+              : params.value === 'Dyeing'
+                ? 'success.dark'
+                : 'default';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
     },
     {
       field: 'color',
@@ -680,28 +715,54 @@ const PrePlanning = () => {
     {
       field: 'totalFabric',
       headerName: 'Total Fabric',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      },
+      valueGetter: (params) => params.toLocaleString(),
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_FABRIC' ? '#a11f23' : undefined,
+            fontWeight: params.row.id === 'TOTAL_FABRIC' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      ),
       ...baseColumnOptions
     },
+    // {
+    //   field: 'uom',
+    //   headerName: 'UOM',
+
+    //   colSpan: (value, row) => {
+    //     if (row.id === 'TOTAL_FABRIC') {
+    //       return 2;
+    //     }
+    //     return undefined;
+    //   },
+    //   valueGetter: (value, row) => {
+    //     if (row.id === 'TOTAL_FABRIC') {
+    //       // console.log('row', row.label);
+    //       return 'OverAll Total';
+    //     }
+    //     return value;
+    //   }
+    // },
     {
       field: 'uom',
       headerName: 'UOM',
-
-      colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          return 2;
-        }
-        return undefined;
-      },
-      valueGetter: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          // console.log('row', row.label);
-          return 'OverAll Total';
-        }
-        return value;
-      }
+      colSpan: (value, row) => (row.id === 'TOTAL_FABRIC' ? 2 : undefined),
+      valueGetter: (value, row) =>
+        row.id === 'TOTAL_FABRIC' ? 'OverAll Total' : value,
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_FABRIC' ? 'black' : undefined,
+            fontWeight: params.row.id === 'TOTAL_FABRIC' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      ),
+      ...baseColumnOptions
     },
     // {
     //   field: 'isSchiffili',
@@ -724,18 +785,21 @@ const PrePlanning = () => {
     {
       field: 'total',
       headerName: 'Total',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      },
-      colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          return 2;
-        }
-        return undefined;
-      }
+      valueGetter: (params) => params.toLocaleString(),
+      colSpan: (value, row) => (row.id === 'TOTAL_FABRIC' ? 2 : undefined),
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_FABRIC' ? '#a11f23' : undefined,
+            fontWeight: params.row.id === 'TOTAL_FABRIC' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      ),
+      ...baseColumnOptions
     }
   ];
-
   const isSchiffili = formData.planningProcessTypeId === 198;
   useEffect(() => {
     if (isSchiffili) {
