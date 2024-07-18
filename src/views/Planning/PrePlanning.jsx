@@ -1579,7 +1579,7 @@ const PrePlanning = () => {
                 <Grid container spacing={1} width="Inherit">
                   <Grid item xs={12} md={4}>
                     <TextField
-                      label="repeat in mtr"
+                      label="Repeats in Meter"
                       fullWidth
                       size="small"
                       name="repeatsInMtr"
