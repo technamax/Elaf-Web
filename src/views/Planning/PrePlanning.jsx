@@ -529,12 +529,12 @@ const PrePlanning = () => {
     // if (!formData.noOfHeads) {
     //   errors.noOfHeads = 'noOfHeads is required';
     // }
-    if (!formData.repeats) {
-      errors.repeats = 'repeats is required';
-    }
-    if (!formData.repeatSize) {
-      errors.repeatSize = 'repeatSize is required';
-    }
+    // if (!formData.repeats) {
+    //   errors.repeats = 'repeats is required';
+    // }
+    // if (!formData.repeatSize) {
+    //   errors.repeatSize = 'repeatSize is required';
+    // }
     if (!formData.uomId) {
       errors.uomId = 'uomId is required';
     }
@@ -1426,8 +1426,8 @@ const PrePlanning = () => {
                   type="number"
                   value={formData.repeats}
                   onChange={handleChange}
-                  error={!!formErrors.repeats}
-                  helperText={formErrors.repeats}
+                  // error={!!formErrors.repeats}
+                  // helperText={formErrors.repeats}
                   required
                   disabled={isDyeing}
                   InputLabelProps={{
@@ -1449,8 +1449,8 @@ const PrePlanning = () => {
                   value={formData.repeatSize}
                   onChange={handleChange}
                   disabled={isDyeing}
-                  error={!!formErrors.repeatSize}
-                  helperText={formErrors.repeatSize}
+                  // error={!!formErrors.repeatSize}
+                  // helperText={formErrors.repeatSize}
                   required
                   InputLabelProps={{
                     sx: {
