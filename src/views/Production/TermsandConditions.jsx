@@ -27,6 +27,7 @@ import { useGetMainMenuListQuery } from 'api/store/Apis/userManagementApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import AddTermsAndConditions from 'components/Production/TermsAndConditions/AddTermsAndConditions';
+import AssignTermsAndConditions from 'components/Production/TermsAndConditions/AssignTermsAndConditions';
 // import SubMenu from './SubMenu';
 
 //////
@@ -291,7 +292,9 @@ const TermsandConditions = () => {
           <TabPanel value="2">
             <AddTermsAndConditions />
           </TabPanel>
-          <TabPanel value="3">{/* <AddTermsAndConditions /> */}</TabPanel>
+          <TabPanel value="3">
+            <AssignTermsAndConditions />
+          </TabPanel>
         </TabContext>
       </Box>
     </MainCard>
