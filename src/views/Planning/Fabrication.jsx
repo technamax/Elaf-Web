@@ -291,6 +291,7 @@ const Fabrication = () => {
       setFormData({
         ...formData,
         fabricId: value,
+        uomId: selectedFabric ? selectedFabric.uomId : '0',
         quantity: selectedFabric ? selectedFabric.total : ''
       });
     } else {
