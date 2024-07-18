@@ -529,6 +529,7 @@ const Dyeing = () => {
       label: 'Printing'
     }
   ];
+  const [showUpperDiv, setShowUpperDiv] = useState(true); // State variable to control visibility
 
   const [initialFormData, setInitialFormData] = useState({});
   const [open, setOpen] = React.useState(false);
@@ -536,11 +537,17 @@ const Dyeing = () => {
     setInitialFormData(data);
     setOpen(true);
   };
-
+  const handleClickOpen2 = (data) => {
+    setInitialFormData(data);
+    setOpen(true);
+    setShowUpperDiv(false);
+  };
   const handleClose = () => {
+    setShowUpperDiv(true);
     setOpen(false);
     setInitialFormData({});
     refetchDyeingPrintingData();
+
     // setDeleteId(null);
   };
 
@@ -597,12 +604,20 @@ const Dyeing = () => {
       headerName: 'Add Vendor',
       renderCell: (params) => (
         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <IconButton
-            color="primary"
-            onClick={() => handleClickOpen(params.row)}
-          >
-            <PersonAddAlt1OutlinedIcon />
-          </IconButton>
+          <ButtonGroup variant="text" size="small">
+            <IconButton
+              color="primary"
+              onClick={() => handleClickOpen(params.row)}
+            >
+              <PersonAddAlt1OutlinedIcon />
+            </IconButton>
+            <IconButton
+              color="primary"
+              onClick={() => handleClickOpen2(params.row)}
+            >
+              <VisibilityOutlinedIcon />
+            </IconButton>
+          </ButtonGroup>
         </div>
       )
     }
@@ -1271,6 +1286,7 @@ const Dyeing = () => {
                   setInitialFormData={setInitialFormData}
                   refetchDyeingPrintingData={refetchDyeingPrintingData}
                   handleClickOpen={handleClickOpen}
+                  showUpperDiv={showUpperDiv}
                 />
               </DialogContent>
             </Dialog>

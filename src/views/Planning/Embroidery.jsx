@@ -180,15 +180,16 @@ const Embroidery = () => {
     useGetPrePlanningHeaderByDesignIdQuery(formData.designId, {
       skip: !formData.designId // Skip the query if no collection is selected
     });
-  const { data: fabricData } = useGetFabricByComponentsAndBatchNoQuery(
-    {
-      batchNo: formData.planningHeaderId,
-      componentId: formData.componentId
-    },
-    {
-      skip: !formData.planningHeaderId || !formData.componentId
-    }
-  );
+  const { data: fabricData, refetch: refetchFabrics } =
+    useGetFabricByComponentsAndBatchNoQuery(
+      {
+        batchNo: formData.planningHeaderId,
+        componentId: formData.componentId
+      },
+      {
+        skip: !formData.planningHeaderId || !formData.componentId
+      }
+    );
   const { data: colorData } =
     useGetFabricColorByComponentsBatchNoAndFabricIdQuery(
       {
@@ -247,10 +248,11 @@ const Embroidery = () => {
   }, [batchData]);
   useEffect(() => {
     if (fabricData) {
+      refetchFabrics();
       setFabrications(fabricData.result);
       // refetchBatches();
     }
-  }, [fabricData]);
+  }, [fabricData, refetchFabrics]);
   useEffect(() => {
     if (colorData) {
       setColors(fabricData.result);
