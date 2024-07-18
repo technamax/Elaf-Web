@@ -11,7 +11,8 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 // import { useGetDesignListQuery } from 'api/store/Apis/designApi';
@@ -321,8 +322,8 @@ const Fabrication = () => {
   const rows = [
     ...initialRows,
     {
-      id: 'TOTAL_FABRIC',
-      label: 'Total',
+      id: 'TOTAL_SUMMARY',
+      label: 'Total Summary',
       total: localizedTotal,
       totalInclGst: localizedTotalIncGst
     }
@@ -333,18 +334,28 @@ const Fabrication = () => {
       field: 'designNo',
       headerName: 'Design',
       colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
+        if (row.id === 'TOTAL_SUMMARY') {
           return 6;
         }
         return undefined;
       },
       valueGetter: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
+        if (row.id === 'TOTAL_SUMMARY') {
           // console.log('row', row.label);
           return row.label;
         }
         return value;
-      }
+      },
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? 'black' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      )
     },
     {
       field: 'fabricName',
@@ -364,7 +375,40 @@ const Fabrication = () => {
     },
     {
       field: 'uomName',
-      headerName: 'UOM'
+      headerName: 'UOM',
+      renderCell: (params) => {
+        const chipColor =
+          params.value === 'Meters'
+            ? 'primary.dark'
+            : params.value === 'Yards'
+              ? theme.palette.grey[900]
+              : params.value === 'Inches'
+                ? 'success.dark'
+                : 'default';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
     },
     {
       field: 'total',
@@ -372,25 +416,45 @@ const Fabrication = () => {
 
       valueGetter: (params) => {
         return params.toLocaleString();
-      }
+      },
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? '#a11f23' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      )
     },
     {
       field: 'unitPrice',
-      headerName: 'Unit Price',
+      headerName: 'Unit Price'
 
-      colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          return 2;
-        }
-        return undefined;
-      },
-      valueGetter: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          // console.log('row', row.label);
-          return 'Total Including GST';
-        }
-        return value;
-      }
+      // colSpan: (value, row) => {
+      //   if (row.id === 'TOTAL_SUMMARY') {
+      //     return 2;
+      //   }
+      //   return undefined;
+      // },
+      // valueGetter: (value, row) => {
+      //   if (row.id === 'TOTAL_SUMMARY') {
+      //     // console.log('row', row.label);
+      //     return 'Total Including GST';
+      //   }
+      //   return value;
+      // }
+      //   renderCell: (params) => (
+      //     <div
+      //       style={{
+      //         color: params.row.id === 'TOTAL_SUMMARY' ? 'black' : undefined,
+      //         fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+      //       }}
+      //     >
+      //       {params.value}
+      //     </div>
+      //   )
     },
     {
       field: 'gst',
@@ -403,8 +467,18 @@ const Fabrication = () => {
       valueGetter: (params) => {
         return params.toLocaleString();
       },
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? '#a11f23' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      ),
       colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
+        if (row.id === 'TOTAL_SUMMARY') {
           return 2;
         }
         return undefined;

@@ -15,7 +15,8 @@ import {
   IconButton,
   Accordion,
   AccordionDetails,
-  AccordionSummary
+  AccordionSummary,
+  Chip
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
@@ -620,7 +621,7 @@ const Schiffli = () => {
 
   const footerRow = {
     id: 'TOTAL_SUMMARY',
-    componentName: 'Total Summary',
+    fabricName: 'Total Summary',
     totalAmount: totalAmountSum,
     totalEmbroidry: totalEmbroiderySum,
     totalPcs: totalPcsSum
@@ -631,15 +632,50 @@ const Schiffli = () => {
 
   const columns = [
     {
-      field: 'componentName',
-      headerName: 'Component',
+      field: 'fabricName',
+      headerName: 'Fabric',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 2 : undefined),
+
       renderCell: (params) =>
-        params.row.id === 'TOTAL_SUMMARY' ? 'Total Summary' : params.value
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
     },
     {
-      field: 'fabricName',
-      headerName: 'Fabric'
+      field: 'componentName',
+      headerName: 'Component',
+      renderCell: (params) => {
+        const chipColor = 'primary.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
     },
+
     {
       field: 'vendorName',
       headerName: 'Vendor'

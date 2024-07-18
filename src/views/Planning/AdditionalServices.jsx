@@ -3,7 +3,7 @@ import AddAdditionalServices from 'components/additionalProcesses.jsx/addadditio
 import Divider from '@mui/material/Divider';
 import AdditionalServiceTable from 'components/additionalProcesses.jsx/addadditionalserviceTable';
 import MainCard from 'ui-component/cards/MainCard';
-import { Card, CardHeader, Avatar } from '@mui/material';
+import { Card, CardHeader, Avatar, Chip } from '@mui/material';
 import '../../assets/scss/style.scss';
 import { useUser } from 'context/User';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
@@ -174,22 +174,128 @@ export default function AdditionalServices({}) {
     fetchDataInternal();
   }, [fetchDataInternal]);
 
+  const [totalAmount, setTotalAmount] = useState(0);
+  useEffect(() => {
+    const totalAmount = initialRows
+      .reduce((sum, row) => sum + (row.totalAmount ?? 0), 0)
+      .toFixed(2);
+
+    setTotalAmount(parseFloat(totalAmount).toLocaleString());
+  }, [initialRows]);
+
+  const rows = [
+    ...initialRows,
+    {
+      id: 'TOTAL_SUMMARY',
+      // componentName: 'Total Summary',
+      // availableQty: totalAvailableQty,
+      totalAmount: totalAmount
+      // totalPcs: totalPcsSum,
+      // requiredPcs: totalRequiredPcs
+    }
+  ];
+
   const columns = [
     // { field: 'additionalServiceId', headerName: 'Additional Service ID' },
     // { field: 'serviceTypeId', headerName: 'Service Type ID' },
     // { field: 'serviceListId', headerName: 'Service List ID' },
     // { field: 'vendorId', headerName: 'Vendor ID' },
     // { field: 'collectionId', headerName: 'Collection ID' },
-    { field: 'collectionName', headerName: 'Collection Name', flex: 1 },
-    { field: 'serviceType', headerName: 'Service Type', flex: 1 },
-    { field: 'serviceListName', headerName: 'Service List Name', flex: 1 },
-    { field: 'vendor', headerName: 'Vendor', flex: 1 },
+    {
+      field: 'collectionName',
+      headerName: 'Collection Name',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 3 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
+    },
+    {
+      field: 'serviceType',
+      headerName: 'Service Type',
+      renderCell: (params) => {
+        const chipColor = 'primary.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
+    },
+    {
+      field: 'serviceListName',
+      headerName: 'Service List Name',
+      renderCell: (params) => {
+        const chipColor = 'success.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
+    },
+    { field: 'vendor', headerName: 'Vendor' },
 
     { field: 'poPcs', headerName: 'PO Pieces' },
     { field: 'qty', headerName: 'Quantity' },
     { field: 'uom', headerName: 'UOM' },
-    { field: 'rate', headerName: 'Rate' },
-    { field: 'totalAmount', headerName: 'Total Amount' },
+    {
+      field: 'rate',
+      headerName: 'Rate'
+    },
+    {
+      field: 'totalAmount',
+      headerName: 'Total Amount',
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
+    },
     { field: 'costperPiece', headerName: 'Cost per Piece' }
     // { field: 'createdBy', headerName: 'Created By' },
     // { field: 'createdOn', headerName: 'Created On' }
@@ -503,7 +609,7 @@ export default function AdditionalServices({}) {
           /> */}
         <ReuseableDataGrid
           iColumns={columns}
-          initialRows={initialRows}
+          initialRows={rows}
           isLoading={isLoading}
 
           // setInitialData={setInitialData}

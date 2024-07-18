@@ -304,6 +304,9 @@ const EmbroideryAssignVendor = ({
       clearTimeout(handler);
     };
   }, [formData]);
+  const formatNumberWithCommas = (number) => {
+    return new Intl.NumberFormat('en-US').format(number);
+  };
 
   useEffect(() => {
     const calculateTotalPcs = () => {
@@ -363,7 +366,9 @@ const EmbroideryAssignVendor = ({
       const totalPcs = parseFloat(debouncedFormData.totalPcs) || 0;
       return (totalAmount / totalPcs).toFixed(2);
     };
-
+    const totalAmount = calculateTotalAmount();
+    const costPerComponent = calculateCostPerComponent();
+    const threadAmount = calculateThread();
     setFormData((prevData) => ({
       ...prevData,
       totalPcs: calculateTotalPcs(),
@@ -372,8 +377,8 @@ const EmbroideryAssignVendor = ({
       sequenceAmount: calculateSequence(),
       solvingInMeters: calculateInMeters(),
       solvingAmount: calculateSolvingAmount(),
-      totalAmount: calculateTotalAmount(),
-      costPerComponent: calculateCostPerComponent()
+      totalAmount: formatNumberWithCommas(totalAmount),
+      costPerComponent: formatNumberWithCommas(costPerComponent)
     }));
   }, [
     debouncedFormData.threadAmount,
@@ -788,7 +793,7 @@ const EmbroideryAssignVendor = ({
             <TextField
               fullWidth
               // select
-              label="noOfHead"
+              label="Heads"
               size="small"
               name="noOfHeadsName"
               value={formData.noOfHeadsName}
@@ -1053,7 +1058,7 @@ const EmbroideryAssignVendor = ({
           </Grid>
           <Grid item xs={12} md={1.5}>
             <TextField
-              label="remainingPcs"
+              label="Remaining Pcs"
               fullWidth
               size="small"
               name="remainingPcs"
@@ -1520,7 +1525,7 @@ const EmbroideryAssignVendor = ({
             <TextField
               label="Total Amount"
               fullWidth
-              type="number"
+              type="text"
               size="small"
               disabled={!formData.remainingPcs && !formData.remainingQty}
               name="totalAmount"

@@ -152,6 +152,16 @@ const ReuseableDataGrid = ({
   //     </Typography>
   //   </div>
   // ) : (
+
+  const getRowStyle = (params) => {
+    if (params.id === 'TOTAL_SUMMARY') {
+      return {
+        backgroundColor: 'darkgray'
+      };
+    }
+    return {};
+  };
+
   return (
     <Box
       sx={{
@@ -177,7 +187,18 @@ const ReuseableDataGrid = ({
         getCellClassName={getCellClassName}
         onStateChange={handleStateChange}
         slots={{ toolbar: EditToolbar }}
-        sx={{ '--DataGrid-rowBorderColor': 'rgb(255 255 255)' }}
+        sx={{
+          '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+
+          '& .MuiDataGrid-row': {
+            '&.total-summary-row': {
+              backgroundColor: 'darkgray'
+            }
+          }
+        }}
+        getRowClassName={(params) =>
+          params.id === 'TOTAL_SUMMARY' ? 'total-summary-row' : ''
+        }
       />
       <Dialog
         open={open}

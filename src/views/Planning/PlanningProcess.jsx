@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Fabrication from 'views/Planning/Fabrication';
 import Embroidery from './Embroidery';
-import { Grid, TextField } from '@mui/material';
+import { Grid, TextField, Chip } from '@mui/material';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 
 import PrePlanning from './PrePlanning';

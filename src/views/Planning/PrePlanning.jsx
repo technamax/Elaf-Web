@@ -18,7 +18,8 @@ import {
   AccordionDetails,
   AccordionSummary,
   IconButton,
-  inputLabelClasses
+  inputLabelClasses,
+  Chip
 } from '@mui/material';
 import LoopOutlinedIcon from '@mui/icons-material/LoopOutlined';
 
@@ -576,7 +577,7 @@ const PrePlanning = () => {
   const rows = [
     ...initialRows,
     {
-      id: 'TOTAL_FABRIC',
+      id: 'TOTAL_SUMMARY',
       label: 'Total Fabric',
       totalFabric: localizedTotalFabric,
       total: localizedTotal
@@ -599,25 +600,69 @@ const PrePlanning = () => {
       ...baseColumnOptions,
 
       colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
+        if (row.id === 'TOTAL_SUMMARY') {
           return 9;
         }
         return undefined;
       },
       valueGetter: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
+        if (row.id === 'TOTAL_SUMMARY') {
           // console.log('row', row.label);
+
           return row.label;
         }
         return value;
-      }
+      },
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? 'black' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      )
+      // renderCell: (params) => <Chip label={params.value} color="primary" />
     },
     {
       field: 'planningProcessTypeName',
       headerName: 'Process Type',
-      // editable: true,
-      // flex: 1,
-      ...baseColumnOptions
+
+      ...baseColumnOptions,
+      renderCell: (params) => {
+        const chipColor =
+          params.value === 'MultiHead'
+            ? 'primary.dark'
+            : params.value === 'Schiffili'
+              ? theme.palette.grey[900]
+              : params.value === 'Dyeing'
+                ? 'success.dark'
+                : 'default';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
     },
     {
       field: 'color',
@@ -680,28 +725,54 @@ const PrePlanning = () => {
     {
       field: 'totalFabric',
       headerName: 'Total Fabric',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      },
+      valueGetter: (params) => params.toLocaleString(),
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? '#a11f23' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      ),
       ...baseColumnOptions
     },
+    // {
+    //   field: 'uom',
+    //   headerName: 'UOM',
+
+    //   colSpan: (value, row) => {
+    //     if (row.id === 'TOTAL_FABRIC') {
+    //       return 2;
+    //     }
+    //     return undefined;
+    //   },
+    //   valueGetter: (value, row) => {
+    //     if (row.id === 'TOTAL_FABRIC') {
+    //       // console.log('row', row.label);
+    //       return 'OverAll Total';
+    //     }
+    //     return value;
+    //   }
+    // },
     {
       field: 'uom',
       headerName: 'UOM',
-
-      colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          return 2;
-        }
-        return undefined;
-      },
-      valueGetter: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          // console.log('row', row.label);
-          return 'OverAll Total';
-        }
-        return value;
-      }
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 2 : undefined),
+      valueGetter: (value, row) =>
+        row.id === 'TOTAL_SUMMARY' ? 'OverAll Total' : value,
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? 'black' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      ),
+      ...baseColumnOptions
     },
     // {
     //   field: 'isSchiffili',
@@ -724,18 +795,21 @@ const PrePlanning = () => {
     {
       field: 'total',
       headerName: 'Total',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      },
-      colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          return 2;
-        }
-        return undefined;
-      }
+      valueGetter: (params) => params.toLocaleString(),
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 2 : undefined),
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? '#a11f23' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      ),
+      ...baseColumnOptions
     }
   ];
-
   const isSchiffili = formData.planningProcessTypeId === 198;
   useEffect(() => {
     if (isSchiffili) {
@@ -748,7 +822,7 @@ const PrePlanning = () => {
   console.log('formData', formData);
 
   const getCellClassName = ({ row, field }) => {
-    if (row.id === 'TOTAL_FABRIC') {
+    if (row.id === 'TOTAL_SUMMARY') {
       if (field === 'componentName' || field === 'uom') {
         // console.log(`Applying bold class to row ${row.id} and field ${field}`); // Debugging log
         return 'bold';
@@ -1505,7 +1579,7 @@ const PrePlanning = () => {
                 <Grid container spacing={1} width="Inherit">
                   <Grid item xs={12} md={4}>
                     <TextField
-                      label="repeat in mtr"
+                      label="Repeats in Meter"
                       fullWidth
                       size="small"
                       name="repeatsInMtr"
