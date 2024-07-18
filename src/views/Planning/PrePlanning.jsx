@@ -42,7 +42,7 @@ import { useUser } from 'context/User';
 import 'App.css';
 import '../../index.css';
 import { maxWidth, width } from '@mui/system';
-const PrePlanning = () => {
+const PrePlanning = ({ setInitialValues }) => {
   const { user } = useUser();
   console.log('user', user);
   const [isLoading, setIsLoading] = useState(true);
@@ -124,7 +124,14 @@ const PrePlanning = () => {
       repeatsInMtr: initialData?.repeatsInMtr || ''
     });
   }, [initialData]);
-
+  useEffect(() => {
+    setInitialValues({
+      collectionId: formData?.collectionId || '',
+      designId: formData?.designId || '',
+      planningHeaderId: formData?.planningHeaderId || '',
+      batchNo: formData?.batchNo || ''
+    });
+  }, [formData.collectionId, formData.designId, formData?.batchNo]);
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const { data: designData, refetch } =

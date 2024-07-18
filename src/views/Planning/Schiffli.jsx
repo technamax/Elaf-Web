@@ -50,7 +50,7 @@ import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 
-const Schiffli = () => {
+const Schiffli = ({ initialValues }) => {
   const { user } = useUser();
   const { enqueueSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(true);
@@ -135,6 +135,15 @@ const Schiffli = () => {
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
+  useEffect(() => {
+    setSelectedCollectionId(initialValues.collectionId);
+    // setFormData({
+    //   ...formData,
+    //   designId: initialValues?.designId || '',
+    //   planningHeaderId: initialValues?.planningHeaderId || '',
+    //   batchNo: initialValues?.batchNo || ''
+    // });
+  }, []);
   const { data: lookupData } = useGetLookUpListQuery();
   const { data: designData, refetch } =
     useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
