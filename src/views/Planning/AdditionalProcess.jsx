@@ -15,7 +15,8 @@ import {
   IconButton,
   Accordion,
   AccordionDetails,
-  AccordionSummary
+  AccordionSummary,
+  Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { DataGrid } from '@mui/x-data-grid';
@@ -413,10 +414,40 @@ const AdditionalProcess = () => {
     // setDeleteId(null);
   };
 
+  const [totalAssignedQty, setTotalAssignedQty] = useState(0);
+  useEffect(() => {
+    const totalAssignedQty = initialRows
+      .reduce((sum, row) => sum + (row.assignedQty ?? 0), 0)
+      .toFixed(2);
+
+    setTotalAssignedQty(parseFloat(totalAssignedQty).toLocaleString());
+  }, [initialRows]);
+
+  const rows = [
+    ...initialRows,
+    {
+      id: 'TOTAL_SUMMARY',
+      // componentName: 'Total Summary',
+      // availableQty: totalAvailableQty,
+      assignedQty: totalAssignedQty
+      // totalPcs: totalPcsSum,
+      // requiredPcs: totalRequiredPcs
+    }
+  ];
   const columns = [
     {
       field: 'designNo',
-      headerName: 'Design'
+      headerName: 'Design',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 3 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
     },
     {
       field: 'batchNo',
@@ -424,7 +455,33 @@ const AdditionalProcess = () => {
     },
     {
       field: 'componentName',
-      headerName: 'Component'
+      headerName: 'Component',
+      renderCell: (params) => {
+        const chipColor = 'primary.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
     },
     {
       field: 'fabricName',
@@ -445,7 +502,22 @@ const AdditionalProcess = () => {
     },
     {
       field: 'assignedQty',
-      headerName: 'Assigned Quantity'
+      headerName: 'Assigned Quantity',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 3 : undefined),
+
+      valueGetter: (params) => {
+        return params;
+      },
+      // colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 4 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
     },
 
     {
@@ -854,7 +926,7 @@ const AdditionalProcess = () => {
           <Grid sx={{ marginTop: 2 }} item xs={12}>
             <ReuseableDataGrid
               iColumns={columns}
-              initialRows={initialRows}
+              initialRows={rows}
               setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="additionalProcessId"

@@ -577,7 +577,7 @@ const PrePlanning = () => {
   const rows = [
     ...initialRows,
     {
-      id: 'TOTAL_FABRIC',
+      id: 'TOTAL_SUMMARY',
       label: 'Total Fabric',
       totalFabric: localizedTotalFabric,
       total: localizedTotal
@@ -600,19 +600,29 @@ const PrePlanning = () => {
       ...baseColumnOptions,
 
       colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
+        if (row.id === 'TOTAL_SUMMARY') {
           return 9;
         }
         return undefined;
       },
       valueGetter: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
+        if (row.id === 'TOTAL_SUMMARY') {
           // console.log('row', row.label);
 
           return row.label;
         }
         return value;
-      }
+      },
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? 'black' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      )
       // renderCell: (params) => <Chip label={params.value} color="primary" />
     },
     {
@@ -719,8 +729,8 @@ const PrePlanning = () => {
       renderCell: (params) => (
         <div
           style={{
-            color: params.row.id === 'TOTAL_FABRIC' ? '#a11f23' : undefined,
-            fontWeight: params.row.id === 'TOTAL_FABRIC' ? 'bold' : undefined
+            color: params.row.id === 'TOTAL_SUMMARY' ? '#a11f23' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
           }}
         >
           {params.value}
@@ -749,14 +759,14 @@ const PrePlanning = () => {
     {
       field: 'uom',
       headerName: 'UOM',
-      colSpan: (value, row) => (row.id === 'TOTAL_FABRIC' ? 2 : undefined),
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 2 : undefined),
       valueGetter: (value, row) =>
-        row.id === 'TOTAL_FABRIC' ? 'OverAll Total' : value,
+        row.id === 'TOTAL_SUMMARY' ? 'OverAll Total' : value,
       renderCell: (params) => (
         <div
           style={{
-            color: params.row.id === 'TOTAL_FABRIC' ? 'black' : undefined,
-            fontWeight: params.row.id === 'TOTAL_FABRIC' ? 'bold' : undefined
+            color: params.row.id === 'TOTAL_SUMMARY' ? 'black' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
           }}
         >
           {params.value}
@@ -786,12 +796,12 @@ const PrePlanning = () => {
       field: 'total',
       headerName: 'Total',
       valueGetter: (params) => params.toLocaleString(),
-      colSpan: (value, row) => (row.id === 'TOTAL_FABRIC' ? 2 : undefined),
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 2 : undefined),
       renderCell: (params) => (
         <div
           style={{
-            color: params.row.id === 'TOTAL_FABRIC' ? '#a11f23' : undefined,
-            fontWeight: params.row.id === 'TOTAL_FABRIC' ? 'bold' : undefined
+            color: params.row.id === 'TOTAL_SUMMARY' ? '#a11f23' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
           }}
         >
           {params.value}
@@ -812,7 +822,7 @@ const PrePlanning = () => {
   console.log('formData', formData);
 
   const getCellClassName = ({ row, field }) => {
-    if (row.id === 'TOTAL_FABRIC') {
+    if (row.id === 'TOTAL_SUMMARY') {
       if (field === 'componentName' || field === 'uom') {
         // console.log(`Applying bold class to row ${row.id} and field ${field}`); // Debugging log
         return 'bold';

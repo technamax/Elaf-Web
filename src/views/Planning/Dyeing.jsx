@@ -15,7 +15,8 @@ import {
   AccordionSummary,
   Box,
   ButtonGroup,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material';
 // import { DataGrid } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
@@ -61,6 +62,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
+import '../../assets/scss/style.scss';
 
 const Dyeing = () => {
   const { user } = useUser();
@@ -551,14 +553,60 @@ const Dyeing = () => {
     // setDeleteId(null);
   };
 
+  const [totalAvailableQty, setTotalAvailableQty] = useState(0);
+  const [totalAssignedQty, setTotalAssignedQty] = useState(0);
+  // const [totalPcsSum, setTotalPcsSum] = useState(0);
+  useEffect(() => {
+    const totalAvailableQty = initialRows
+      .reduce((sum, row) => sum + (row.availableQty ?? 0), 0)
+      .toFixed(2);
+    const totalAssignedQty = initialRows
+      .reduce((sum, row) => sum + (row.assignedQty ?? 0), 0)
+      .toFixed(2);
+    // const pcsSum = initialRows
+    //   .reduce((sum, row) => sum + (row.totalPcs ?? 0), 0)
+    //   .toFixed(2);
+
+    setTotalAvailableQty(parseFloat(totalAvailableQty).toLocaleString());
+    setTotalAssignedQty(parseFloat(totalAssignedQty).toLocaleString());
+    // setTotalPcsSum(parseFloat(pcsSum).toLocaleString());
+  }, [initialRows]);
+
+  const rows = [
+    ...initialRows,
+    {
+      id: 'TOTAL_SUMMARY',
+      componentName: 'Total Summary',
+      availableQty: totalAvailableQty,
+      assignedQty: totalAssignedQty
+      // totalPcs: totalPcsSum
+    }
+  ];
+  const baseColumnOptions = {
+    sortable: false,
+    pinnable: false,
+    hideable: false
+  };
   const columns = [
     {
       field: 'fabricName',
-      headerName: 'Fabric'
+      headerName: 'Fabric',
+      ...baseColumnOptions,
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
     },
     {
       field: 'colorName',
-      headerName: 'Color'
+      headerName: 'Color',
+      ...baseColumnOptions,
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 2 : undefined)
     },
     // {
     //   field: 'vendorName',
@@ -567,22 +615,68 @@ const Dyeing = () => {
 
     {
       field: 'processType',
-      headerName: 'Process Type'
+      headerName: 'Process Type',
+      ...baseColumnOptions,
+
+      renderCell: (params) => {
+        const chipColor =
+          params.value === 'Dyeing'
+            ? 'primary.dark'
+            : params.value === 'Printing'
+              ? 'success.dark'
+              : // : params.value === 'Inches' ? 'success.dark'
+                'default';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
     },
     {
       field: 'uom',
-      headerName: ' UOM'
+      headerName: ' UOM',
+      ...baseColumnOptions
     },
     {
       field: 'poPcs',
-      headerName: ' PO PCS.'
+      headerName: ' PO PCS.',
+      ...baseColumnOptions
     },
     {
       field: 'availableQty',
       headerName: 'Available Quantitity',
+      ...baseColumnOptions,
+
       valueGetter: (params) => {
         return params.toLocaleString();
-      }
+      },
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
     },
     // {
     //   field: 'shrinkage',
@@ -595,13 +689,27 @@ const Dyeing = () => {
     {
       field: 'assignedQty',
       headerName: 'Assigned Qty',
+      ...baseColumnOptions,
+
       valueGetter: (params) => {
         return params.toLocaleString();
-      }
+      },
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 4 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
     },
     {
       field: 'AddVendor',
       headerName: 'Add Vendor',
+      ...baseColumnOptions,
+
       renderCell: (params) => (
         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
           <ButtonGroup variant="text" size="small">
@@ -834,18 +942,46 @@ const Dyeing = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             {/* <TextField
-              fullWidth
               select
-              label="Select Color"
-              // defaultValue=""
+              fullWidth
+              label="Color"
+              name="colorId"
               size="small"
-              name="ColorId"
-              value={formData.ColorId}
-              onChange={handleChange}
+              value={formData.colorId || ''}
+              onChange={(event) => {
+                const newValue =
+                  colors.find(
+                    (color) => color.colorId === event.target.value
+                  ) || {};
+                setFormData((prevFormData) => ({
+                  ...prevFormData,
+                  colorId: newValue.colorId || '',
+                  color: newValue.color || '',
+                  availableQty: newValue.total || '',
+                  UOM: newValue.uom || '',
+                  uomId: newValue.uomId || '',
+                  Shrinkage: newValue.shrinkage || '',
+                  Wastage: newValue.wastage || ''
+                }));
+              }}
+              error={!!formErrors.colorId}
+              helperText={formErrors.colorId}
+              required
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrunk
+                  color: 'black'
+                }
+              }}
+              sx={{
+                '& .MuiSelect-select': {
+                  backgroundColor: 'white' // Setting white background for the select field
+                }
+              }}
             >
-              {colors.map((option) => (
-                <MenuItem key={option.colorId} value={option.colorId}>
-                  {option.color}
+              {colors.map((color) => (
+                <MenuItem key={color.colorId} value={color.colorId}>
+                  {color.color}
                 </MenuItem>
               ))}
             </TextField> */}
@@ -873,12 +1009,11 @@ const Dyeing = () => {
                       backgroundColor: 'white' // Setting white background for the input field inside Autocomplete
                     }
                   }}
-                  // value={formData.color}
                 />
               )}
-              // PaperComponent={({ children }) => (
-              //   <div style={{ backgroundColor: 'white' }}>{children}</div>
-              // )}
+              PaperComponent={({ children }) => (
+                <div style={{ backgroundColor: 'white' }}>{children}</div>
+              )}
               value={
                 colors.find((color) => color.colorId === formData.colorId) ||
                 null
@@ -896,24 +1031,6 @@ const Dyeing = () => {
                 }));
               }}
             />
-            {/* <Autocomplete
-              fullWidth
-              options={colors}
-              getOptionLabel={(option) => option.color}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Color"
-                  name="ColorId"
-                  size="small"
-                />
-              )}
-              value={
-                colors.find((color) => color.colorId === formData.ColorId) ||
-                null
-              }
-              onChange={handleChange}
-            /> */}
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
@@ -991,7 +1108,7 @@ const Dyeing = () => {
           </Grid>
           <Grid item xs={12} md={1.5}>
             <TextField
-              label="availableQty"
+              label="Available Qty"
               fullWidth
               size="small"
               type="number"
@@ -1242,7 +1359,7 @@ const Dyeing = () => {
             ) : ( */}
             <ReuseableDataGrid
               iColumns={columns}
-              initialRows={initialRows}
+              initialRows={rows}
               setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="dpId"

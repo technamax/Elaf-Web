@@ -18,7 +18,8 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
@@ -718,10 +719,95 @@ const Embroidery = () => {
     // setDeleteId(null);
   };
   console.log('show div', showUpperDiv);
+
+  const [totalAvailableQty, setTotalAvailableQty] = useState(0);
+  const [totalAssignedQty, setTotalAssignedQty] = useState(0);
+  const [totalPcsSum, setTotalPcsSum] = useState(0);
+  const [totalRequiredPcs, setTotalRequiredPcs] = useState(0);
+  useEffect(() => {
+    const totalAvailableQty = initialRows
+      .reduce((sum, row) => sum + (row.availableQty ?? 0), 0)
+      .toFixed(2);
+    const totalAssignedQty = initialRows
+      .reduce((sum, row) => sum + (row.assignedQty ?? 0), 0)
+      .toFixed(2);
+    const pcsSum = initialRows
+      .reduce((sum, row) => sum + (row.totalPcs ?? 0), 0)
+      .toFixed(2);
+    const totalRequiredPcs = initialRows
+      .reduce((sum, row) => sum + (row.requiredPcs ?? 0), 0)
+      .toFixed(2);
+
+    setTotalAvailableQty(parseFloat(totalAvailableQty).toLocaleString());
+    setTotalAssignedQty(parseFloat(totalAssignedQty).toLocaleString());
+    setTotalPcsSum(parseFloat(pcsSum).toLocaleString());
+    setTotalRequiredPcs(parseFloat(totalRequiredPcs).toLocaleString());
+  }, [initialRows]);
+
+  const rows = [
+    ...initialRows,
+    {
+      id: 'TOTAL_SUMMARY',
+      // componentName: 'Total Summary',
+      availableQty: totalAvailableQty,
+      assignedQty: totalAssignedQty,
+      totalPcs: totalPcsSum,
+      requiredPcs: totalRequiredPcs
+    }
+  ];
+  const baseColumnOptions = {
+    sortable: false,
+    pinnable: false,
+    hideable: false
+  };
+
   const columns = [
-    { field: 'designNo', headerName: 'Design' },
+    {
+      field: 'designNo',
+      headerName: 'Design',
+      ...baseColumnOptions,
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 3 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
+    },
     { field: 'batchNo', headerName: 'Batch No.' },
-    { field: 'componentName', headerName: 'Component ' },
+    {
+      field: 'componentName',
+      headerName: 'Component ',
+      renderCell: (params) => {
+        const chipColor = 'primary.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
+    },
     { field: 'fabricName', headerName: 'Fabric ' },
     { field: 'vendorId', headerName: 'Vendor' },
     { field: 'poPcs', headerName: 'Po Pcs' },
@@ -732,10 +818,67 @@ const Embroidery = () => {
     // { field: 'assignedRepeats', headerName: 'Assigned Repeats' },
     { field: 'cuttingSize', headerName: 'Cutting Size' },
     { field: 'itemsPerRepeat', headerName: 'Items Per Repeat' },
-    { field: 'availableQty', headerName: 'Available Qty' },
-    { field: 'assignedQty', headerName: 'Assigned Qty' },
-    { field: 'totalPcs', headerName: 'Total Pcs' },
-    { field: 'requiredPcs', headerName: 'Assigned Pcs' },
+    {
+      field: 'availableQty',
+      headerName: 'Available Qty',
+      ...baseColumnOptions,
+
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      },
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
+    },
+    {
+      field: 'assignedQty',
+      headerName: 'Assigned Qty',
+      ...baseColumnOptions,
+
+      valueGetter: (params) => {
+        return params;
+      },
+      // colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 4 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
+    },
+    {
+      field: 'totalPcs',
+      headerName: 'Total Pcs',
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
+    },
+    {
+      field: 'requiredPcs',
+      headerName: 'Assigned Pcs',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 4 : undefined),
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
+    },
     // { field: 'threadStiches', headerName: 'Thread Stitches' },
     // { field: 'threadRate', headerName: 'Thread Rate' },
     // { field: 'threadAmount', headerName: 'Thread Amount' },
@@ -1232,7 +1375,7 @@ const Embroidery = () => {
           </Grid>
           <Grid item xs={12} md={1.5}>
             <TextField
-              label="total Pcs."
+              label="Total Pcs."
               fullWidth
               size="small"
               type="number"
@@ -1296,7 +1439,7 @@ const Embroidery = () => {
             ) : ( */}
             <ReuseableDataGrid
               iColumns={columns}
-              initialRows={initialRows}
+              initialRows={rows}
               setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="embroideryId"

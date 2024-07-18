@@ -788,7 +788,7 @@ const EmbroideryAssignVendor = ({
             <TextField
               fullWidth
               // select
-              label="noOfHead"
+              label="Heads"
               size="small"
               name="noOfHeadsName"
               value={formData.noOfHeadsName}
@@ -1053,7 +1053,7 @@ const EmbroideryAssignVendor = ({
           </Grid>
           <Grid item xs={12} md={1.5}>
             <TextField
-              label="remainingPcs"
+              label="Remaining Pcs"
               fullWidth
               size="small"
               name="remainingPcs"
