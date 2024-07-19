@@ -23,6 +23,7 @@ const DyeingPrintingAssignVendor = ({
 }) => {
   const { user } = useUser();
   const [initialRows, setInitialRows] = useState([]);
+  const [initialData, setInitialData] = useState([]);
 
   const Quantity = initialRows
     .reduce((sum, row) => sum + (row.assignedQty ?? 0), 0)
@@ -36,17 +37,18 @@ const DyeingPrintingAssignVendor = ({
     batchNo: initialFormData.batchNo || '',
     planningHeaderId: initialFormData.planningHeaderId || 0,
     fabricId: initialFormData.fabricId || '',
+    fabricName: initialFormData.fabricName || '',
     colorId: initialFormData.colorId || '',
     colorName: initialFormData.colorName || '',
+    uomId: initialFormData.uomId || '',
+    uom: initialFormData.uom || '',
+    poPcs: initialFormData.poPcs || '',
     vendorId: '', /////////////checkapi
     processType: initialFormData.processType || '',
     availableQty: initialFormData.availableQty || '',
     remainingQty: initialFormData.availableQty - Quantity || '',
     shrinkage: '',
     wastage: '',
-    uomId: initialFormData.uomId || '',
-    uom: initialFormData.uom || '',
-    poPcs: initialFormData.poPcs || '',
 
     // baseColorName: initialFormData.baseColorName || '',
     // poPcs: initialFormData.poPcs || '',
@@ -68,6 +70,43 @@ const DyeingPrintingAssignVendor = ({
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: user.empId
   });
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...formData,
+      dpIdDet: initialData.dpIdDet || 0,
+      dpId: initialData.dpId || 0,
+      designId: initialData?.designId || '',
+      planningHeaderId: initialData?.planningHeaderId || 0,
+      batchNo: initialData?.batchNo || '',
+      // fabricId: initialData?.fabricId || '',
+      // colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
+      // colorName: initialData?.colorName || '', //from dying screen coming from fabricAPi
+      vendorId: initialData?.vendorId || '',
+      // processType: initialData?.processType || '',
+      // availableQty: initialData?.availableQty || '',
+      shrinkage: initialData?.shrinkage || '',
+      wastage: initialData?.wastage || '',
+      outputQty: initialData?.outputQty || 0,
+      remainingQty: prevFormData.remainingQty + initialData?.assignedQty || '',
+
+      // uom: initialData?.uom || 0,
+      // uomId: initialData?.uomId || '',
+      // poPcs: initialData?.poPcs || 0,
+      assignedQty: initialData?.assignedQty || '',
+
+      rate: initialData?.rate || 0,
+      unitRatePerPo: initialData?.unitRatePerPo || '',
+      totalExcGst: initialData?.totalExcGst || '',
+      gst: initialData?.gst || '',
+      TotalIncludingGst: initialData?.totalIncludingGst || '',
+      // createdBy: initialData?.createdBy || 0,
+      // baseColorName: initialData?.baseColorName || 0,
+      createdOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || user.empId,
+      lastUpdatedOn: new Date().toISOString(),
+      lastUpdatedBy: user.empId
+    }));
+  }, [initialData]);
   useEffect(() => {
     setFormData({
       ...formData,
@@ -105,7 +144,7 @@ const DyeingPrintingAssignVendor = ({
   };
   useEffect(() => {
     const calculateOutputQty = () => {
-      const availableQty = parseFloat(formData.availableQty) || 0;
+      const availableQty = parseFloat(formData.assignedQty) || 0;
       const shrinkage = parseFloat(formData.shrinkage) || 0;
       const wastage = parseFloat(formData.wastage) || 0;
       return ((availableQty * (100 - (shrinkage + wastage))) / 100).toFixed(2);
@@ -137,6 +176,7 @@ const DyeingPrintingAssignVendor = ({
     }));
   }, [
     formData.availableQty,
+    formData.assignedQty,
     formData.shrinkage,
     formData.wastage,
     formData.rate,
@@ -173,6 +213,7 @@ const DyeingPrintingAssignVendor = ({
         gst: '',
         // GSTAmount: '',
         TotalIncludingGst: '',
+        remainingQty: initialFormData.availableQty - Quantity || '',
 
         createdOn: new Date().toISOString(),
         createdBy: user.empId,
@@ -770,11 +811,11 @@ const DyeingPrintingAssignVendor = ({
           <ReuseableDataGrid
             iColumns={columns}
             initialRows={initialRows}
-            // setInitialData={setInitialData}
+            setInitialData={setInitialData}
             deleteApi={deleteApi}
             deleteBy="dpIdDet"
             refetch={refetchDyeingPrintingDetails}
-            disableEdit={true}
+            // disableEdit={true}
             // setAccordionExpanded={setAccordionExpanded}
             // fileName="Schffili List"
           />

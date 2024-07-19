@@ -820,7 +820,7 @@ const Embroidery = ({ initialValues }) => {
       }
     },
     { field: 'fabricName', headerName: 'Fabric ' },
-    { field: 'vendorId', headerName: 'Vendor' },
+    // { field: 'vendorId', headerName: 'Vendor' },
     { field: 'poPcs', headerName: 'Po Pcs' },
     // { field: 'baseColorName', headerName: 'Base Color' },
     { field: 'colourName', headerName: 'Color' },

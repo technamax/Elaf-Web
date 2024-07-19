@@ -32,6 +32,7 @@ const EmbroideryAssignVendor = ({
 
   const { user } = useUser();
   const [initialRows, setInitialRows] = useState([]);
+  const [initialData, setInitialData] = useState([]);
 
   const Quantity = initialRows
     .reduce((sum, row) => sum + (row.assignedQty ?? 0), 0)
@@ -59,11 +60,11 @@ const EmbroideryAssignVendor = ({
     availableQty: initialFormData.availableQty || '',
     assignedQty: '',
     remainingQty: (initialFormData.availableQty - Quantity).toFixed(2) || 0,
+    remainingRepeats: initialFormData.repeats - totalRepeats || '',
     noOfHead: initialFormData.noOfHead || '',
     noOfHeadsName: initialFormData.noOfHeadsName || '',
     repeats: initialFormData.repeats || '',
     assignedRepeats: '',
-    remainingRepeats: initialFormData.repeats - totalRepeats || '',
 
     cuttingSize: initialFormData.cuttingSize || '',
     itemsPerRepeat: initialFormData.itemsPerRepeat || '',
@@ -97,6 +98,42 @@ const EmbroideryAssignVendor = ({
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: user.empId
   });
+
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...formData,
+      embroideryIdDet: initialData.embroideryIdDet || 0,
+      embroideryId: initialData.embroideryId || 0,
+      vendorId: initialData?.vendorId || '',
+      assignedQty: initialData?.assignedQty || '',
+      requiredPcs: initialData?.requiredPcs || '',
+      // outputQty: initialData?.outputQty || 0,
+      remainingQty: prevFormData.remainingQty + initialData?.assignedQty || '',
+      remainingPcs: prevFormData.remainingPcs + initialData?.requiredPcs || '',
+      totalAmount: initialData?.totalAmount || '',
+      threadStiches: initialData?.threadStiches || 0,
+      threadRate: initialData?.threadRate || '',
+      threadAmount: initialData?.threadAmount || '',
+      tillaStiches: initialData?.tillaStiches || '',
+      tilaRate: initialData?.tilaRate || '',
+      tilaAmount: initialData?.tilaAmount || 0,
+      sequence: initialData?.sequence || 0,
+      sequenceRate: initialData?.sequenceRate || 0,
+      sequenceAmount: initialData?.sequenceAmount || 0,
+      isSolving: initialData?.isSolving || false,
+      solvingLayers: initialData?.solvingLayers || 0,
+      solvingInMeters: initialData?.solvingInMeters || 0,
+      solvingRate: initialData?.solvingRate || 0,
+      solvingAmount: initialData?.solvingAmount || 0,
+      additional: initialData?.additional || 0,
+      costPerComponent: initialData?.costPerComponent || 0,
+
+      createdOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || user.empId,
+      lastUpdatedOn: new Date().toISOString(),
+      lastUpdatedBy: user.empId
+    }));
+  }, [initialData]);
 
   const additionals = ['Boring', 'Pooni', 'Laser', 'Doori', 'Dissolving'];
   function getStyles(name, personName, theme) {
@@ -363,7 +400,7 @@ const EmbroideryAssignVendor = ({
 
     const calculateCostPerComponent = () => {
       const totalAmount = parseFloat(debouncedFormData.totalAmount) || 0;
-      const totalPcs = parseFloat(debouncedFormData.totalPcs) || 0;
+      const totalPcs = parseFloat(debouncedFormData.requiredPcs) || 0;
       return (totalAmount / totalPcs).toFixed(2);
     };
     const totalAmount = calculateTotalAmount();
@@ -397,7 +434,8 @@ const EmbroideryAssignVendor = ({
     debouncedFormData.sequence,
     debouncedFormData.solvingLayers,
     debouncedFormData.solvingInMeters,
-    debouncedFormData.solvingRate
+    debouncedFormData.solvingRate,
+    debouncedFormData.requiredPcs
   ]);
 
   useEffect(() => {
@@ -515,6 +553,8 @@ const EmbroideryAssignVendor = ({
         additional: [],
         requiredPcs: 0,
         assignedQty: 0,
+        remainingQty: (initialFormData.availableQty - Quantity).toFixed(2) || 0,
+        remainingRepeats: initialFormData.repeats - totalRepeats || '',
 
         costPerComponent: 0, //
 
@@ -567,7 +607,7 @@ const EmbroideryAssignVendor = ({
     //   headerName: 'Assigned repeats',
     //   flex: 1
     // },
-    { field: 'additional', headerName: 'ThreadAdditional' },
+    { field: 'additional', headerName: 'Additional' },
     { field: 'threadStiches', headerName: 'Thread Stitches' },
     { field: 'threadRate', headerName: 'Thread Rate' },
     { field: 'threadAmount', headerName: 'Thread Amount' },
@@ -1583,11 +1623,11 @@ const EmbroideryAssignVendor = ({
             <ReuseableDataGrid
               iColumns={columns}
               initialRows={initialRows}
-              // setInitialData={setInitialData}
+              setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="embroideryIdDet"
               refetch={refetchEmbroideryDetails}
-              disableEdit={true}
+              // disableEdit={true}
               // setAccordionExpanded={setAccordionExpanded}
               // fileName="Schffili List"
             />

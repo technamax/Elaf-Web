@@ -16,6 +16,7 @@ const AssignVendorFormTable = ({
   const { user } = useUser();
   const [initialRows, setInitialRows] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
+  const [initialData, setInitialData] = useState([]);
 
   const Quantity = initialRows
     .reduce((sum, row) => sum + (row.quantity ?? 0), 0)
@@ -55,6 +56,24 @@ const AssignVendorFormTable = ({
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: user.empId
   });
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...formData,
+      additionalProcessDetId: initialData.additionalProcessDetId || 0,
+      vendorId: initialData?.vendorId || '',
+      quantity: initialData?.quantity || '',
+      ratePerPcs: initialData?.ratePerPcs || '',
+      remainingPcsPerComponent:
+        prevFormData.remainingPcsPerComponent + initialData?.quantity || '',
+      totalAmount: initialData?.totalAmount || '',
+      costPerComponent: initialData?.costPerComponent || 0,
+
+      createdOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || user.empId,
+      lastUpdatedOn: new Date().toISOString(),
+      lastUpdatedBy: user.empId
+    }));
+  }, [initialData]);
   useEffect(() => {
     setFormData({
       ...formData,
@@ -164,7 +183,8 @@ const AssignVendorFormTable = ({
         ratePerPcs: 0,
         totalAmount: 0,
         costPerComponent: '',
-
+        remainingPcsPerComponent:
+          additionalProcessData.pcsPerComponent - Quantity || '',
         createdOn: new Date().toISOString(),
         createdBy: user.empId,
         lastUpdatedOn: new Date().toISOString(),
@@ -194,7 +214,7 @@ const AssignVendorFormTable = ({
     {
       field: 'processType',
       headerName: 'Process Type',
-      flex: 1
+      flex: 2
     },
     {
       field: 'pcsPerComponent',
@@ -645,6 +665,44 @@ const AssignVendorFormTable = ({
             }}
           />
         </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            label="UOM"
+            fullWidth
+            size="small"
+            // type="number"
+            name="uom"
+            value={formData.uom}
+            onChange={handleChange}
+            disabled
+            sx={(theme) => ({
+              ...(formData.uom !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  // borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
+          />
+        </Grid>
       </Grid>
       <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />
       <Grid
@@ -730,45 +788,6 @@ const AssignVendorFormTable = ({
           />
         </Grid>
 
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="UOM"
-            fullWidth
-            size="small"
-            // type="number"
-            name="uom"
-            value={formData.uom}
-            onChange={handleChange}
-            disabled
-            sx={(theme) => ({
-              ...(formData.uom !== '' && {
-                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
-                  backgroundColor: `#c9c9c9 !important`
-                }
-              }),
-              '& .MuiInputBase-input.Mui-disabled': {
-                WebkitTextFillColor: 'black' // Adjust text color here
-              },
-              '& .MuiInputBase-root.Mui-disabled': {
-                backgroundColor: '#f9f9f9' // Adjust background color here
-              },
-              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-                {
-                  // borderColor: 'gray' // Adjust border color here
-                },
-              '& .MuiInputLabel-root.Mui-disabled': {
-                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
-              }
-            })}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-
         <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
           <Button variant="contained" size="small" onClick={handleSave}>
             Save
@@ -787,11 +806,11 @@ const AssignVendorFormTable = ({
           <ReuseableDataGrid
             iColumns={columns}
             initialRows={initialRows}
-            // setInitialData={setInitialData}
+            setInitialData={setInitialData}
             deleteApi={deleteApi}
             deleteBy="additionalProcessDetId"
             refetch={refetchAdditionalProcessDetails}
-            disableEdit={true}
+            // disableEdit={true}
             // setAccordionExpanded={setAccordionExpanded}
             // fileName="Schffili List"
           />

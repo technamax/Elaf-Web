@@ -58,14 +58,14 @@ const ReuseableDataGrid = ({
 
   const handleEdit = (row) => {
     window.scrollTo({ top: 100, behavior: 'smooth' });
-    if (row.embroideryId) {
-      const threadAdditionalArray = row.threadAdditional
-        ? row.threadAdditional.split(',').map((item) => item.trim())
+    if (row.embroideryIdDet) {
+      const additionalArray = row.additional
+        ? row.additional.split(',').map((item) => item.trim())
         : [];
 
       setInitialData({
         ...row,
-        threadAdditional: threadAdditionalArray
+        additional: additionalArray
       });
     } else {
       if (setAccordionExpanded) {
@@ -122,36 +122,12 @@ const ReuseableDataGrid = ({
   const handleStateChange = (params) => {
     if (apiRef.current && apiRef.current.autosizeColumns) {
       apiRef.current.autosizeColumns({
-        columns: autoSizeColumns,
+        // columns: autoSizeColumns,
         includeOutliers: true,
         includeHeaders: true
       });
     }
   };
-
-  // return isLoading ? (
-  //   <div
-  //     style={{
-  //       display: 'flex',
-  //       flexDirection: 'column',
-
-  //       justifyContent: 'center',
-  //       alignItems: 'center'
-  //     }}
-  //   >
-  //     <img
-  //       src={loadingGif}
-  //       alt="Loading"
-  //       style={{
-  //         width: 200,
-  //         height: 200
-  //       }}
-  //     />
-  //     <Typography alignItems="center">
-  //       Please Select The Required Fields
-  //     </Typography>
-  //   </div>
-  // ) : (
 
   const getRowStyle = (params) => {
     if (params.id === 'TOTAL_SUMMARY') {
