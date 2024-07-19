@@ -23,7 +23,7 @@ import AddAdditionalServices from './AdditionalServices';
 import AdditionalServices from './AdditionalServices';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import '../../assets/scss/style.scss';
-
+import Summary from './Summary';
 // import { color } from '@mui/system';
 const steps = [
   'Pre Planning',
@@ -32,7 +32,8 @@ const steps = [
   'Embroidery ',
   'Schiffli',
   'Additional Process',
-  'Additional Services'
+  'Additional Services',
+  'Summary'
 ];
 
 export default function PlanningProcess() {
@@ -328,6 +329,7 @@ export default function PlanningProcess() {
           {activeStep === 6 && (
             <AdditionalServices initialValues={initialValues} />
           )}
+          {activeStep === 7 && <Summary />}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"
