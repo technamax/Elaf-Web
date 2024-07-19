@@ -15,7 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
-export default function AdditionalServices({}) {
+export default function AdditionalServices({ initialValues }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const { data: lookupData } = useGetLookUpListQuery();
@@ -49,7 +49,15 @@ export default function AdditionalServices({}) {
     createdBy: 0,
     createdOn: new Date().toISOString()
   });
-
+  useEffect(() => {
+    // setSelectedCollectionId(initialValues.collectionId);
+    setFormData({
+      ...formData,
+      collectionId: initialValues?.collectionId || ''
+      // planningHeaderId: initialValues?.planningHeaderId || '',
+      // batchNo: initialValues?.batchNo || ''
+    });
+  }, [setFormData]);
   const handleChange = async (e) => {
     const { name, value } = e.target;
     console.log(`Updating ${name} to ${value}`);

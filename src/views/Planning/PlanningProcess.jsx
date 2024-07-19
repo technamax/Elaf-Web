@@ -42,6 +42,9 @@ export default function PlanningProcess() {
   const [lookupDomains, setLookupDomains] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const { data: lookupData, refetch } = useGetLookUpListQuery();
+  const [initialValues, setInitialValues] = useState({});
+  console.log('initialValues', initialValues);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -311,14 +314,20 @@ export default function PlanningProcess() {
         <React.Fragment>
           {/* <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography> */}
 
-          {activeStep === 0 && <PrePlanning />}
-          {activeStep === 1 && <Fabrication />}
+          {activeStep === 0 && (
+            <PrePlanning setInitialValues={setInitialValues} />
+          )}
+          {activeStep === 1 && <Fabrication initialValues={initialValues} />}
 
-          {activeStep === 2 && <Dyeing />}
-          {activeStep === 3 && <Embroidery />}
-          {activeStep === 4 && <Schiffli />}
-          {activeStep === 5 && <AdditionalProcess />}
-          {activeStep === 6 && <AdditionalServices />}
+          {activeStep === 2 && <Dyeing initialValues={initialValues} />}
+          {activeStep === 3 && <Embroidery initialValues={initialValues} />}
+          {activeStep === 4 && <Schiffli initialValues={initialValues} />}
+          {activeStep === 5 && (
+            <AdditionalProcess initialValues={initialValues} />
+          )}
+          {activeStep === 6 && (
+            <AdditionalServices initialValues={initialValues} />
+          )}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"

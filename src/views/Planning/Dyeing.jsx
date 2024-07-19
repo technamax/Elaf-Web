@@ -64,7 +64,7 @@ import Slide from '@mui/material/Slide';
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
 import '../../assets/scss/style.scss';
 
-const Dyeing = () => {
+const Dyeing = ({ initialValues }) => {
   const { user } = useUser();
   console.log('user', user);
   const [isLoading, setIsLoading] = useState(true);
@@ -139,6 +139,16 @@ const Dyeing = () => {
   console.log('Dyeing form data to send', formData);
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
+  useEffect(() => {
+    setSelectedCollectionId(initialValues.collectionId);
+    // setFormData({
+    //   ...formData,
+    //   designId: initialValues?.designId || '',
+    //   planningHeaderId: initialValues?.planningHeaderId || '',
+    //   batchNo: initialValues?.batchNo || ''
+    // });
+  }, []);
+
   const { data: lookupData } = useGetLookUpListQuery();
   const { data: designData, refetch } =
     useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {

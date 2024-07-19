@@ -41,7 +41,7 @@ import '../../assets/scss/style.scss';
 import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
 
-const Fabrication = () => {
+const Fabrication = ({ initialValues }) => {
   const { user } = useUser();
   const [formErrors, setFormErrors] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -49,9 +49,9 @@ const Fabrication = () => {
   const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
     fabricationId: 0,
-    designId: '',
-    planningHeaderId: '',
-    batchNo: '',
+    designId: initialValues?.designId || '',
+    planningHeaderId: initialValues?.planningHeaderId || '',
+    batchNo: initialValues?.batchNo || '',
     baseColorId: '',
     baseColorName: '',
     fabricId: '',
@@ -68,6 +68,7 @@ const Fabrication = () => {
     lastUpdatedOn: new Date().toISOString(),
     lastUpdatedBy: user.empId
   });
+
   useEffect(() => {
     setFormData({
       fabricationId: initialData.fabricationId || 0,
@@ -101,6 +102,18 @@ const Fabrication = () => {
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   console.log(collectionData);
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
+  useEffect(() => {
+    setSelectedCollectionId(initialValues.collectionId);
+    // setFormData({
+    //   ...formData,
+    //   designId: initialValues?.designId || '',
+    //   planningHeaderId: initialValues?.planningHeaderId || '',
+    //   batchNo: initialValues?.batchNo || ''
+    // });
+  }, []);
+  // useEffect(() => {
+
+  // }, [initialValues, setSelectedCollectionId]);
   const { data: lookupData } = useGetLookUpListQuery();
   const { data: designData, refetch } =
     useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
@@ -225,10 +238,10 @@ const Fabrication = () => {
 
       setFormData({
         ...formData,
-        designId: '',
+        // designId: '',
         baseColorId: '',
-        planningHeaderId: '',
-        batchNo: '',
+        // planningHeaderId: '',
+        // batchNo: '',
         fabricId: '',
         poPcs: '',
         quantity: '',
@@ -251,8 +264,8 @@ const Fabrication = () => {
       setFormData({
         ...formData,
 
-        planningHeaderId: '',
-        batchNo: '',
+        // planningHeaderId: '',
+        // batchNo: '',
         fabricId: '',
         poPcs: '',
         quantity: '',
