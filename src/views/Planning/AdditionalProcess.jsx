@@ -359,7 +359,7 @@ const AdditionalProcess = () => {
         });
         console.log('response.message', response.data.message);
       } else {
-        enqueueSnackbar('Schiffili saved successfully!', {
+        enqueueSnackbar('Process saved successfully!', {
           variant: 'success',
           autoHideDuration: 5000
         });
@@ -390,7 +390,7 @@ const AdditionalProcess = () => {
       // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
-      enqueueSnackbar('Schiffili not saved successfully!', {
+      enqueueSnackbar('Process not saved successfully!', {
         variant: 'error',
         autoHideDuration: 5000
       });
