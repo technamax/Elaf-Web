@@ -182,45 +182,6 @@ const EmbroideryAssignVendor = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setFormData((prevFormData) => {
-      const updatedFormData = { ...prevFormData, [name]: value };
-
-      if (name === 'assignedQty' || name === 'remainingQty') {
-        const assignedQty = updatedFormData.assignedQty;
-        const remainingQty = updatedFormData.remainingQty;
-
-        if (assignedQty > remainingQty) {
-          setFormErrors((prevErrors) => ({
-            ...prevErrors,
-            assignedQty:
-              'Assigned Quantity cannot be greater than Remaining Quantity'
-          }));
-        } else {
-          setFormErrors((prevErrors) => ({
-            ...prevErrors,
-            assignedQty: ''
-          }));
-        }
-      }
-      // else if (name === 'requiredPcs' || name === 'remainingPcs') {
-      //   const requiredPcs = updatedFormData.requiredPcs;
-      //   const remainingPcs = updatedFormData.remainingPcs;
-
-      //   if (requiredPcs > remainingPcs) {
-      //     setFormErrors((prevErrors) => ({
-      //       ...prevErrors,
-      //       requiredPcs: 'Required Pcs cannot be greater than Remaining Pcs'
-      //     }));
-      //   } else {
-      //     setFormErrors((prevErrors) => ({
-      //       ...prevErrors,
-      //       requiredPcs: ''
-      //     }));
-      //   }
-      // }
-
-      return updatedFormData;
-    });
   };
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
@@ -525,20 +486,83 @@ const EmbroideryAssignVendor = ({
 
   const handleAssignedQtyChange = (e) => {
     const value = e.target.value;
+    const name = e.target.name;
     setLastUpdatedField('assignedQty');
     setFormData((prevData) => ({
       ...prevData,
       assignedQty: value
     }));
+    setFormData((prevFormData) => {
+      const updatedFormData = { ...prevFormData, [name]: value };
+
+      if (name === 'assignedQty' || name === 'remainingQty') {
+        const assignedQty = updatedFormData.assignedQty;
+        const remainingQty = updatedFormData.remainingQty;
+
+        if (assignedQty > remainingQty) {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            assignedQty:
+              'Assigned Quantity cannot be greater than Remaining Quantity'
+          }));
+        } else {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            assignedQty: ''
+          }));
+        }
+      }
+      // else if (name === 'requiredPcs' || name === 'remainingPcs') {
+      //   const requiredPcs = updatedFormData.requiredPcs;
+      //   const remainingPcs = updatedFormData.remainingPcs;
+
+      //   if (requiredPcs > remainingPcs) {
+      //     setFormErrors((prevErrors) => ({
+      //       ...prevErrors,
+      //       requiredPcs: 'Required Pcs cannot be greater than Remaining Pcs'
+      //     }));
+      //   } else {
+      //     setFormErrors((prevErrors) => ({
+      //       ...prevErrors,
+      //       requiredPcs: ''
+      //     }));
+      //   }
+      // }
+
+      return updatedFormData;
+    });
   };
 
   const handleRequiredPcsChange = (e) => {
     const value = e.target.value;
+    const name = e.target.name;
     setLastUpdatedField('requiredPcs');
     setFormData((prevData) => ({
       ...prevData,
       requiredPcs: value
     }));
+    setFormData((prevFormData) => {
+      const updatedFormData = { ...prevFormData, [name]: value };
+
+      if (name === 'requiredPcs' || name === 'remainingPcs') {
+        const requiredPcs = updatedFormData.requiredPcs;
+        const remainingPcs = updatedFormData.remainingPcs;
+
+        if (requiredPcs > remainingPcs) {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            requiredPcs: 'Required Pcs cannot be greater than Remaining Pcs'
+          }));
+        } else {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            requiredPcs: ''
+          }));
+        }
+      }
+
+      return updatedFormData;
+    });
   };
 
   // const validateForm = () => {
