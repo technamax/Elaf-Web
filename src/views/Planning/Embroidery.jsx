@@ -120,16 +120,17 @@ const Embroidery = ({ initialValues }) => {
 
   useEffect(() => {
     setFormData({
+      ...formData,
       embroideryId: initialData?.embroideryId || 0,
-      designId: initialData?.designId || '',
-      batchNo: initialData?.batchNo || '',
-      planningHeaderId: initialData?.planningHeaderId || '',
+      // designId: initialData?.designId || '',
+      // batchNo: initialData?.batchNo || '',
+      // planningHeaderId: initialData?.planningHeaderId || '',
       componentId: initialData?.componentId || '',
       fabricId: initialData?.fabricId || '',
       vendorId: initialData?.vendorId || '',
       poPcs: initialData?.poPcs || '', // coming from getcollectionapi
-      baseColorId: initialData?.baseColorId || '', // coming from getcollectionapi
-      baseColorName: initialData?.baseColorName || '',
+      // baseColorId: initialData?.baseColorId || '', // coming from getcollectionapi
+      // baseColorName: initialData?.baseColorName || '',
       colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
       availableQty: initialData?.availableQty || '',
       noOfHead: initialData?.noOfHead || '',
@@ -820,7 +821,7 @@ const Embroidery = ({ initialValues }) => {
       }
     },
     { field: 'fabricName', headerName: 'Fabric ' },
-    { field: 'vendorId', headerName: 'Vendor' },
+    // { field: 'vendorId', headerName: 'Vendor' },
     { field: 'poPcs', headerName: 'Po Pcs' },
     // { field: 'baseColorName', headerName: 'Base Color' },
     { field: 'colourName', headerName: 'Color' },

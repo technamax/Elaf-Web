@@ -788,9 +788,12 @@ const AssignVendorFormTable = ({
             name="quantity"
             value={formData.quantity}
             onChange={handleChange}
+<<<<<<< HEAD
             disabled={!formData.remainingPcsPerComponent}
+=======
             error={!!formErrors.quantity}
             helperText={formErrors.quantity}
+>>>>>>> UAT-Bugs-Fix
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
