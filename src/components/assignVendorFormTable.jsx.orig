@@ -16,6 +16,8 @@ const AssignVendorFormTable = ({
   const { user } = useUser();
   const [initialRows, setInitialRows] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
+  const [formErrors, setFormErrors] = useState({});
+
   const [initialData, setInitialData] = useState([]);
 
   const Quantity = initialRows
@@ -58,8 +60,7 @@ const AssignVendorFormTable = ({
   });
   useEffect(() => {
     setFormData((prevFormData) => ({
-<<<<<<< HEAD
-      ...formData,
+      ...prevFormData,
       additionalProcessDetId: initialData.additionalProcessDetId || 0,
       vendorId: initialData?.vendorId || '',
       quantity: initialData?.quantity || '',
@@ -75,17 +76,15 @@ const AssignVendorFormTable = ({
       lastUpdatedBy: user.empId
     }));
   }, [initialData]);
+
   useEffect(() => {
     setFormData({
       ...formData,
-=======
-      ...prevFormData,
->>>>>>> UAT-Bugs-Fix-2
       remainingPcsPerComponent:
         additionalProcessData.pcsPerComponent - Quantity >= 0
           ? additionalProcessData.pcsPerComponent - Quantity
           : ''
-    }));
+    });
   }, [initialRows, additionalProcessData.pcsPerComponent, Quantity]);
 
   const { data: lookupData } = useGetLookUpListQuery();
@@ -121,6 +120,30 @@ const AssignVendorFormTable = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setFormData((prevFormData) => {
+      const updatedFormData = { ...prevFormData, [name]: value };
+
+      if (name === 'quantity' || name === 'remainingPcsPerComponent') {
+        const quantity = updatedFormData.quantity;
+        const remainingPcsPerComponent =
+          updatedFormData.remainingPcsPerComponent;
+
+        if (quantity > remainingPcsPerComponent) {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            quantity:
+              'Assigned Quantity cannot be greater than Remaining Quantity'
+          }));
+        } else {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            quantity: ''
+          }));
+        }
+      }
+
+      return updatedFormData;
+    });
   };
   useEffect(() => {
     const calculateTotalamount = () => {
@@ -156,6 +179,19 @@ const AssignVendorFormTable = ({
 
   const handleSave = async () => {
     console.log(formData);
+
+    if (formData.quantity > formData.remainingPcsPerComponent) {
+      enqueueSnackbar(
+        `Assigned quantity can not be greater then Remaining Quantity !`,
+
+        {
+          variant: 'error',
+          autoHideDuration: 5000
+        }
+      );
+      return;
+    }
+
     try {
       // Make the API call
       const response = await axios.post(
@@ -743,7 +779,6 @@ const AssignVendorFormTable = ({
             ))}
           </TextField>
         </Grid>
-
         <Grid item xs={12} md={3}>
           <TextField
             label="Quantity"
@@ -753,7 +788,12 @@ const AssignVendorFormTable = ({
             name="quantity"
             value={formData.quantity}
             onChange={handleChange}
+<<<<<<< HEAD
             disabled={!formData.remainingPcsPerComponent}
+=======
+            error={!!formErrors.quantity}
+            helperText={formErrors.quantity}
+>>>>>>> UAT-Bugs-Fix
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -798,49 +838,7 @@ const AssignVendorFormTable = ({
             }}
           />
         </Grid>
-
-<<<<<<< HEAD
-=======
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="UOM"
-            fullWidth
-            size="small"
-            // type="number"
-            name="uom"
-            value={formData.uom}
-            onChange={handleChange}
-            disabled={!formData.remainingPcsPerComponent}
-            sx={(theme) => ({
-              ...(formData.uom !== '' && {
-                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
-                  backgroundColor: `#c9c9c9 !important`
-                }
-              }),
-              '& .MuiInputBase-input.Mui-disabled': {
-                WebkitTextFillColor: 'black' // Adjust text color here
-              },
-              '& .MuiInputBase-root.Mui-disabled': {
-                backgroundColor: '#f9f9f9' // Adjust background color here
-              },
-              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-                {
-                  // borderColor: 'gray' // Adjust border color here
-                },
-              '& .MuiInputLabel-root.Mui-disabled': {
-                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
-              }
-            })}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-
->>>>>>> UAT-Bugs-Fix-2
+        disabled={!formData.remainingPcsPerComponent}
         <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
           <Button
             variant="contained"

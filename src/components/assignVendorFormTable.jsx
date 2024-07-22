@@ -16,6 +16,8 @@ const AssignVendorFormTable = ({
   const { user } = useUser();
   const [initialRows, setInitialRows] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
+  const [formErrors, setFormErrors] = useState({});
+
   const [initialData, setInitialData] = useState([]);
 
   const Quantity = initialRows
@@ -118,6 +120,30 @@ const AssignVendorFormTable = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setFormData((prevFormData) => {
+      const updatedFormData = { ...prevFormData, [name]: value };
+
+      if (name === 'quantity' || name === 'remainingPcsPerComponent') {
+        const quantity = updatedFormData.quantity;
+        const remainingPcsPerComponent =
+          updatedFormData.remainingPcsPerComponent;
+
+        if (quantity > remainingPcsPerComponent) {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            quantity:
+              'Assigned Quantity cannot be greater than Remaining Quantity'
+          }));
+        } else {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            quantity: ''
+          }));
+        }
+      }
+
+      return updatedFormData;
+    });
   };
   useEffect(() => {
     const calculateTotalamount = () => {
@@ -153,6 +179,19 @@ const AssignVendorFormTable = ({
 
   const handleSave = async () => {
     console.log(formData);
+
+    if (formData.quantity > formData.remainingPcsPerComponent) {
+      enqueueSnackbar(
+        `Assigned quantity can not be greater then Remaining Quantity !`,
+
+        {
+          variant: 'error',
+          autoHideDuration: 5000
+        }
+      );
+      return;
+    }
+
     try {
       // Make the API call
       const response = await axios.post(
@@ -750,6 +789,8 @@ const AssignVendorFormTable = ({
             value={formData.quantity}
             onChange={handleChange}
             disabled={!formData.remainingPcsPerComponent}
+            error={!!formErrors.quantity}
+            helperText={formErrors.quantity}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
