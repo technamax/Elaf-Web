@@ -295,6 +295,7 @@ const EmbroideryAssignVendor = ({
 
   const [lastUpdatedField, setLastUpdatedField] = useState(null);
   const [debouncedFormData, setDebouncedFormData] = useState(formData);
+  const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -463,14 +464,34 @@ const EmbroideryAssignVendor = ({
     }));
   };
 
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.assignedQty) {
+      errors.assignedQty = 'Total Amount ';
+    }
+    // if (!formData.clientAddress.trim()) {
+    //   errors.clientAddress = 'Client Address is required';
+    // }
+    return errors;
+  };
+
   const handleSave = async () => {
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     console.log(formData);
-    if (formData.totalAmount === 0 && formData.costPerComponent === 0) {
+    if (formData.totalAmount == 0 || formData.costPerComponent == 0) {
       // Show Snackbar for duplicate entry
-      enqueueSnackbar('Please Thread, Tilla or Sequnce values ', {
-        variant: 'error',
-        autoHideDuration: 5000
-      });
+      enqueueSnackbar(
+        'Please Enter Thread, Tilla or Sequnce values , Total Amount cannot be zero',
+        {
+          variant: 'error',
+          autoHideDuration: 5000
+        }
+      );
       return; // Exit without saving
     }
     try {
