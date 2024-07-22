@@ -12,6 +12,8 @@ import ReuseableDataGrid from './ReuseableDataGrid';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { useGetDyeingPrintingDetailsByDpIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useUser } from 'context/User';
+import { useSnackbar } from 'notistack';
+
 import axios from 'axios';
 
 const DyeingPrintingAssignVendor = ({
@@ -24,6 +26,8 @@ const DyeingPrintingAssignVendor = ({
   const { user } = useUser();
   const [initialRows, setInitialRows] = useState([]);
   const [initialData, setInitialData] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
+  const [formErrors, setFormErrors] = useState({});
 
   const Quantity = initialRows
     .reduce((sum, row) => sum + (row.assignedQty ?? 0), 0)
@@ -141,6 +145,29 @@ const DyeingPrintingAssignVendor = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setFormData((prevFormData) => {
+      const updatedFormData = { ...prevFormData, [name]: value };
+
+      if (name === 'assignedQty' || name === 'remainingQty') {
+        const assignedQty = updatedFormData.assignedQty;
+        const remainingQty = updatedFormData.remainingQty;
+
+        if (assignedQty > remainingQty) {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            assignedQty:
+              'Assigned Quantity cannot be greater than Remaining Quantity'
+          }));
+        } else {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            assignedQty: ''
+          }));
+        }
+      }
+
+      return updatedFormData;
+    });
   };
   useEffect(() => {
     const calculateOutputQty = () => {
@@ -186,9 +213,26 @@ const DyeingPrintingAssignVendor = ({
   ]);
   console.log('formData', formData);
   const handleSave = async () => {
+    // const errors = validateForm();
+    // if (Object.keys(errors).length > 0) {
+    //   setFormErrors(errors);
+    //   return;
+    // }
     console.log(formData);
+
     try {
       // Make the API call
+      if (formData.assignedQty > formData.remainingQty) {
+        enqueueSnackbar(
+          `Assigned quantity can not be greater then Remaining Quantity !`,
+
+          {
+            variant: 'error',
+            autoHideDuration: 5000
+          }
+        );
+        return;
+      }
       const response = await axios.post(
         'https://gecxc.com:4041/api/DyeingPrinting/SaveDyeingPrintingDetails',
         formData
@@ -278,6 +322,11 @@ const DyeingPrintingAssignVendor = ({
       valueGetter: (params) => {
         return params.toLocaleString();
       }
+    },
+    {
+      field: 'outputQty',
+      headerName: 'Output Qty',
+      flex: 1
     },
     {
       field: 'unitRatePerPo',
@@ -632,6 +681,8 @@ const DyeingPrintingAssignVendor = ({
               value={formData.assignedQty}
               onChange={handleChange}
               disabled={!formData.remainingQty}
+              error={!!formErrors.assignedQty}
+              helperText={formErrors.assignedQty}
               InputLabelProps={{
                 sx: {
                   // set the color of the label when not shrinked

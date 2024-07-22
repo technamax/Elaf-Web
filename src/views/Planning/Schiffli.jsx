@@ -94,9 +94,9 @@ const Schiffli = ({ initialValues }) => {
     setFormData({
       ...formData,
       schiffiliId: initialData.schiffiliId || 0,
-      designId: initialData?.designId || '',
-      planningHeaderId: initialData?.planningHeaderId || 0,
-      batchNo: initialData?.batchNo || '',
+      // designId: initialData?.designId || '',
+      // planningHeaderId: initialData?.planningHeaderId || 0,
+      // batchNo: initialData?.batchNo || '',
       componentId: initialData?.componentId || '',
       poPcs: initialData?.poPcs || '',
       // baseColorName: initialData?.baseColorName || '',

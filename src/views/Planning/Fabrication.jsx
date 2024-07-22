@@ -71,10 +71,11 @@ const Fabrication = ({ initialValues }) => {
 
   useEffect(() => {
     setFormData({
+      ...formData,
       fabricationId: initialData.fabricationId || 0,
-      designId: initialData.designId || '',
-      planningHeaderId: initialData.planningHeaderId || '',
-      batchNo: initialData.batchNo || '',
+      // designId: initialData.designId || '',
+      // planningHeaderId: initialData.planningHeaderId || '',
+      // batchNo: initialData.batchNo || '',
       baseColorId: initialData.baseColorId || '',
       baseColorName: initialData.baseColorName || '',
       fabricId: initialData.fabricId || '',
@@ -213,7 +214,7 @@ const Fabrication = ({ initialValues }) => {
       totalInclGst: calculateTotalWithGst()
     }));
     const calculateUnitPrice = () => {
-      const total = parseFloat(formData.total) || 0;
+      const total = parseFloat(formData.totalInclGst) || 0;
       const poPcs = parseFloat(formData.poPcs) || 0;
       const unitPrice = (total / poPcs).toFixed(2);
       return isNaN(unitPrice) ? 0 : unitPrice;
@@ -223,7 +224,13 @@ const Fabrication = ({ initialValues }) => {
       ...prevData,
       unitPrice: calculateUnitPrice()
     }));
-  }, [formData.quantity, formData.rate, formData.total, formData.gst]);
+  }, [
+    formData.quantity,
+    formData.rate,
+    formData.total,
+    formData.gst,
+    formData.totalInclGst
+  ]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

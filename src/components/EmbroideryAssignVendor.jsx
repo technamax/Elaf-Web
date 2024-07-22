@@ -29,6 +29,7 @@ const EmbroideryAssignVendor = ({
 }) => {
   const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
+  const [formErrors, setFormErrors] = useState({});
 
   const { user } = useUser();
   const [initialRows, setInitialRows] = useState([]);
@@ -180,6 +181,45 @@ const EmbroideryAssignVendor = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setFormData((prevFormData) => {
+      const updatedFormData = { ...prevFormData, [name]: value };
+
+      if (name === 'assignedQty' || name === 'remainingQty') {
+        const assignedQty = updatedFormData.assignedQty;
+        const remainingQty = updatedFormData.remainingQty;
+
+        if (assignedQty > remainingQty) {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            assignedQty:
+              'Assigned Quantity cannot be greater than Remaining Quantity'
+          }));
+        } else {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            assignedQty: ''
+          }));
+        }
+      }
+      // else if (name === 'requiredPcs' || name === 'remainingPcs') {
+      //   const requiredPcs = updatedFormData.requiredPcs;
+      //   const remainingPcs = updatedFormData.remainingPcs;
+
+      //   if (requiredPcs > remainingPcs) {
+      //     setFormErrors((prevErrors) => ({
+      //       ...prevErrors,
+      //       requiredPcs: 'Required Pcs cannot be greater than Remaining Pcs'
+      //     }));
+      //   } else {
+      //     setFormErrors((prevErrors) => ({
+      //       ...prevErrors,
+      //       requiredPcs: ''
+      //     }));
+      //   }
+      // }
+
+      return updatedFormData;
+    });
   };
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
@@ -355,7 +395,7 @@ const EmbroideryAssignVendor = ({
     const calculateThread = () => {
       const stitches = parseFloat(debouncedFormData.threadStiches) || 0;
       const rate = parseFloat(debouncedFormData.threadRate) || 0;
-      const heads = parseFloat(debouncedFormData.noOfHead) || 0;
+      const heads = parseFloat(debouncedFormData.noOfHeadsName) || 0;
       const repeats = parseFloat(debouncedFormData.repeats) || 0;
       return ((stitches / 1000) * (rate * repeats * heads)).toFixed(2);
     };
@@ -363,7 +403,7 @@ const EmbroideryAssignVendor = ({
     const calculateTilla = () => {
       const stitches = parseFloat(debouncedFormData.tillaStiches) || 0;
       const rate = parseFloat(debouncedFormData.tilaRate) || 0;
-      const heads = parseFloat(debouncedFormData.noOfHead) || 0;
+      const heads = parseFloat(debouncedFormData.noOfHeadsName) || 0;
       const repeats = parseFloat(debouncedFormData.repeats) || 0;
       return ((stitches / 1000) * (rate * repeats * heads)).toFixed(2);
     };
@@ -371,14 +411,14 @@ const EmbroideryAssignVendor = ({
     const calculateSequence = () => {
       const stitches = parseFloat(debouncedFormData.sequence) || 0;
       const rate = parseFloat(debouncedFormData.sequenceRate) || 0;
-      const heads = parseFloat(debouncedFormData.noOfHead) || 0;
+      const heads = parseFloat(debouncedFormData.noOfHeadsName) || 0;
       const repeats = parseFloat(debouncedFormData.repeats) || 0;
       return ((stitches / 1000) * (rate * repeats * heads)).toFixed(2);
     };
 
     const calculateInMeters = () => {
       const repeats = parseFloat(debouncedFormData.repeats) || 0;
-      const noOfHead = parseFloat(debouncedFormData.noOfHead) || 0;
+      const noOfHead = parseFloat(debouncedFormData.noOfHeadsName) || 0;
       const layers = parseFloat(debouncedFormData.solvingLayers) || 0;
       return (((repeats * noOfHead * 13) / 39.37) * layers).toFixed(2);
     };
@@ -427,7 +467,7 @@ const EmbroideryAssignVendor = ({
     debouncedFormData.itemsPerRepeat,
     debouncedFormData.threadRate,
     debouncedFormData.threadStiches,
-    debouncedFormData.noOfHead,
+    debouncedFormData.noOfHeadsName,
     debouncedFormData.tilaRate,
     debouncedFormData.tillaStiches,
     debouncedFormData.sequenceRate,
@@ -492,6 +532,12 @@ const EmbroideryAssignVendor = ({
 
   const handleSave = async () => {
     console.log(formData);
+    // const errors = validateForm();
+    // if (Object.keys(errors).length > 0) {
+    //   setFormErrors(errors);
+    //   return;
+    // }
+
     if (formData.totalAmount === 0 && formData.costPerComponent === 0) {
       // Show Snackbar for duplicate entry
       enqueueSnackbar('Please Thread, Tilla or Sequnce values ', {
@@ -499,6 +545,28 @@ const EmbroideryAssignVendor = ({
         autoHideDuration: 5000
       });
       return; // Exit without saving
+    }
+    if (formData.assignedQty > formData.remainingQty) {
+      enqueueSnackbar(
+        `Assigned quantity can not be greater then Remaining Quantity !`,
+
+        {
+          variant: 'error',
+          autoHideDuration: 5000
+        }
+      );
+      return;
+    }
+    if (formData.requiredPcs > formData.remainingPcs) {
+      enqueueSnackbar(
+        `Required Pcs can not be greater then Remaining Pcs !`,
+
+        {
+          variant: 'error',
+          autoHideDuration: 5000
+        }
+      );
+      return;
     }
     try {
       // Make the API call
@@ -529,7 +597,6 @@ const EmbroideryAssignVendor = ({
 
       setFormData((prevFormData) => ({
         ...prevFormData,
-        // remainingQty:
         //   prevFormData.remainingQty - prevFormData.assignedQty,
         vendorId: '',
         embroideryIdDet: 0,
@@ -989,7 +1056,9 @@ const EmbroideryAssignVendor = ({
               size="small"
               name="remainingQty"
               value={formData.remainingQty}
-              // type="number"
+              type="number"
+              error={!!formErrors.remainingQty}
+              helperText={formErrors.remainingQty}
               onChange={handleChange}
               disabled
               sx={(theme) => ({
@@ -1172,10 +1241,12 @@ const EmbroideryAssignVendor = ({
               label="Assigned Qty"
               fullWidth
               size="small"
-              type="number"
+              // type="number"
               name="assignedQty"
               value={formData.assignedQty}
               onChange={handleAssignedQtyChange}
+              error={!!formErrors.assignedQty}
+              helperText={formErrors.assignedQty}
               disabled={!formData.remainingPcs && !formData.remainingQty}
               InputLabelProps={{
                 sx: {
@@ -1194,6 +1265,8 @@ const EmbroideryAssignVendor = ({
               type="number"
               name="requiredPcs"
               value={formData.requiredPcs}
+              error={!!formErrors.requiredPcs}
+              helperText={formErrors.requiredPcs}
               onChange={handleRequiredPcsChange}
               InputLabelProps={{
                 sx: {
@@ -1565,7 +1638,8 @@ const EmbroideryAssignVendor = ({
             <TextField
               label="Total Amount"
               fullWidth
-              type="text"
+              // type="number"
+              // type="text"
               size="small"
               disabled={!formData.remainingPcs && !formData.remainingQty}
               name="totalAmount"

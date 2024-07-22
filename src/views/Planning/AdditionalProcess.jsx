@@ -97,15 +97,16 @@ const AdditionalProcess = ({ initialValues }) => {
   console.log('initialData', initialData);
   useEffect(() => {
     setFormData({
+      ...formData,
       additionalProcessId: initialData?.additionalProcessId || 0,
-      designId: initialData?.designId || '',
-      planningHeaderId: initialData?.planningHeaderId || 0,
-      batchNo: initialData?.batchNo || '',
+      // designId: initialData?.designId || '',
+      // planningHeaderId: initialData?.planningHeaderId || 0,
+      // batchNo: initialData?.batchNo || '',
       componentId: initialData?.componentId || '',
       fabricId: initialData?.fabricId || '',
       colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
-      poPcs: initialData?.poPcs || '',
-      baseColorName: initialData?.baseColorName || '',
+      // poPcs: initialData?.poPcs || '',
+      // baseColorName: initialData?.baseColorName || '',
       pcsPerComponent: initialData?.pcsPerComponent || '',
       uomId: initialData?.uomId || '',
       processTypeId: initialData?.processTypeId || '',

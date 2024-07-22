@@ -1400,7 +1400,7 @@ const Dyeing = ({ initialValues }) => {
                   fontWeight={2}
                   fontStyle={'normal'}
                 >
-                  {'Assign Vendors '}
+                  {'Dyeing and Printing > Assign Vendors '}
                 </Typography>
                 <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
                   <CloseIcon />
