@@ -372,7 +372,7 @@ const EmbroideryAssignVendor = ({
 
   const [lastUpdatedField, setLastUpdatedField] = useState(null);
   const [debouncedFormData, setDebouncedFormData] = useState(formData);
-  const [formErrors, setFormErrors] = useState({});
+  // const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -561,10 +561,10 @@ const EmbroideryAssignVendor = ({
 
     console.log(formData);
     if (formData.totalAmount == 0 || formData.costPerComponent == 0) {
-    // if (Object.keys(errors).length > 0) {
-    //   setFormErrors(errors);
-    //   return;
-    // }
+      // if (Object.keys(errors).length > 0) {
+      //   setFormErrors(errors);
+      //   return;
+      // }
 
       // Show Snackbar for duplicate entry
       enqueueSnackbar(
