@@ -463,8 +463,8 @@ const PrePlanning = ({ setInitialValues }) => {
           }
         );
         console.log('response.message', response.data.message);
-      } else {
-        enqueueSnackbar('Fabrication saved successfully!', {
+      } else if (response.data.success) {
+        enqueueSnackbar('PrePlanning saved successfully!', {
           variant: 'success',
           autoHideDuration: 5000
         });
@@ -1433,28 +1433,6 @@ const PrePlanning = ({ setInitialValues }) => {
               </Grid>
               <Grid item xs={12} md={2}>
                 <TextField
-                  label="Repeats"
-                  fullWidth
-                  size="small"
-                  name="repeats"
-                  type="number"
-                  value={formData.repeats}
-                  onChange={handleChange}
-                  // error={!!formErrors.repeats}
-                  // helperText={formErrors.repeats}
-                  required
-                  disabled={isDyeing}
-                  InputLabelProps={{
-                    sx: {
-                      // set the color of the label when not shrinked
-                      color: 'black'
-                    }
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={2}>
-                <TextField
                   label="Repeat Size"
                   fullWidth
                   type="number"
@@ -1474,6 +1452,28 @@ const PrePlanning = ({ setInitialValues }) => {
                   }}
                 />
               </Grid>
+              <Grid item xs={12} md={2}>
+                <TextField
+                  label="No. of Repeats"
+                  fullWidth
+                  size="small"
+                  name="repeats"
+                  type="number"
+                  value={formData.repeats}
+                  onChange={handleChange}
+                  // error={!!formErrors.repeats}
+                  // helperText={formErrors.repeats}
+                  required
+                  disabled={isDyeing}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
+                />
+              </Grid>
+
               <Grid item xs={12} md={2}>
                 <TextField
                   label="Total Fabric"
@@ -1561,6 +1561,37 @@ const PrePlanning = ({ setInitialValues }) => {
               </Grid>
               <Grid item xs={12} md={2}>
                 <TextField
+                  label="Repeats in Meter"
+                  fullWidth
+                  size="small"
+                  name="repeatsInMtr"
+                  disabled
+                  value={formData.repeatsInMtr}
+                  onChange={handleChange}
+                  sx={(theme) => ({
+                    ...(formData.repeatsInMtr !== '' && {
+                      '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                        backgroundColor: `#c9c9c9 !important`
+                      }
+                    }),
+                    '& .MuiInputBase-input.Mui-disabled': {
+                      WebkitTextFillColor: 'black' // Adjust text color here
+                    },
+                    '& .MuiInputBase-root.Mui-disabled': {
+                      backgroundColor: '#f9f9f9' // Adjust background color here
+                    },
+                    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                      {
+                        borderColor: 'gray' // Adjust border color here
+                      },
+                    '& .MuiInputLabel-root.Mui-disabled': {
+                      color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                    }
+                  })}
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <TextField
                   label="Total"
                   fullWidth
                   // type="number"
@@ -1576,6 +1607,7 @@ const PrePlanning = ({ setInitialValues }) => {
                   }}
                 />
               </Grid>
+
               {/* <Grid item xs={12} md={2} textAlign="right">
                 <FormControlLabel
                   control={
@@ -1590,40 +1622,7 @@ const PrePlanning = ({ setInitialValues }) => {
               </Grid> */}
               {/* {formData.isSchiffili ? ( */}
               <Grid item xs={12} md={6}>
-                <Grid container spacing={1} width="Inherit">
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Repeats in Meter"
-                      fullWidth
-                      size="small"
-                      name="repeatsInMtr"
-                      disabled
-                      value={formData.repeatsInMtr}
-                      onChange={handleChange}
-                      sx={(theme) => ({
-                        ...(formData.repeatsInMtr !== '' && {
-                          '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input':
-                            {
-                              backgroundColor: `#c9c9c9 !important`
-                            }
-                        }),
-                        '& .MuiInputBase-input.Mui-disabled': {
-                          WebkitTextFillColor: 'black' // Adjust text color here
-                        },
-                        '& .MuiInputBase-root.Mui-disabled': {
-                          backgroundColor: '#f9f9f9' // Adjust background color here
-                        },
-                        '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-                          {
-                            borderColor: 'gray' // Adjust border color here
-                          },
-                        '& .MuiInputLabel-root.Mui-disabled': {
-                          color: 'rgba(0, 0, 0, 0.87)' // Darker label color
-                        }
-                      })}
-                    />
-                  </Grid>
-                </Grid>
+                <Grid container spacing={1} width="Inherit"></Grid>
               </Grid>
               {/* ) : null} */}
               <Grid item xs={12} textAlign="right">

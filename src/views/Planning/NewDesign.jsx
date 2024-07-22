@@ -186,8 +186,8 @@ const NewDesign = () => {
   console.log('initialRows', initialRows);
   const columns = [
     {
-      field: 'collectionId',
-      headerName: 'Collection ID',
+      field: 'collectionName',
+      headerName: 'Collection Name',
       editable: true
       // flex: 2,
       // type: 'singleSelect',
