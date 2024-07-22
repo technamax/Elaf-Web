@@ -49,9 +49,9 @@ const Fabrication = ({ initialValues }) => {
   const [initialData, setInitialData] = useState([]);
   const [formData, setFormData] = useState({
     fabricationId: 0,
-    designId: initialValues?.designId || '',
-    planningHeaderId: initialValues?.planningHeaderId || '',
-    batchNo: initialValues?.batchNo || '',
+    designId: '',
+    planningHeaderId: '',
+    batchNo: '',
     baseColorId: '',
     baseColorName: '',
     fabricId: '',

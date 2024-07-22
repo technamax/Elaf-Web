@@ -335,7 +335,7 @@ const EmbroideryAssignVendor = ({
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedFormData(formData);
-    }, 50);
+    }, 10);
 
     return () => {
       clearTimeout(handler);
