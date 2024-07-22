@@ -19,6 +19,7 @@ import { useUser } from 'context/User';
 import { useTheme } from '@mui/material/styles';
 
 import axios from 'axios';
+import { number } from 'prop-types';
 
 const EmbroideryAssignVendor = ({
   initialFormData,
@@ -362,9 +363,12 @@ const EmbroideryAssignVendor = ({
     };
 
     const calculateCostPerComponent = () => {
-      const totalAmount = parseFloat(debouncedFormData.totalAmount) || 0;
-      const totalPcs = parseFloat(debouncedFormData.totalPcs) || 0;
-      return (totalAmount / totalPcs).toFixed(2);
+      const totalAmount =
+        parseFloat(String(debouncedFormData.totalAmount).replace(/,/g, '')) ||
+        0;
+
+      const requiredPcs = parseFloat(debouncedFormData.requiredPcs) || 0;
+      return (totalAmount / requiredPcs).toFixed(2);
     };
     const totalAmount = calculateTotalAmount();
     const costPerComponent = calculateCostPerComponent();
@@ -377,8 +381,14 @@ const EmbroideryAssignVendor = ({
       sequenceAmount: calculateSequence(),
       solvingInMeters: calculateInMeters(),
       solvingAmount: calculateSolvingAmount(),
-      totalAmount: formatNumberWithCommas(totalAmount),
-      costPerComponent: formatNumberWithCommas(costPerComponent)
+      totalAmount:
+        // calculateTotalAmount(),
+        formatNumberWithCommas(totalAmount),
+
+      costPerComponent:
+        // calculateCostPerComponent()
+
+        formatNumberWithCommas(costPerComponent)
     }));
   }, [
     debouncedFormData.threadAmount,
@@ -397,7 +407,8 @@ const EmbroideryAssignVendor = ({
     debouncedFormData.sequence,
     debouncedFormData.solvingLayers,
     debouncedFormData.solvingInMeters,
-    debouncedFormData.solvingRate
+    debouncedFormData.solvingRate,
+    debouncedFormData.requiredPcs
   ]);
 
   useEffect(() => {
@@ -1543,7 +1554,7 @@ const EmbroideryAssignVendor = ({
             <TextField
               label="Cost Per Component"
               fullWidth
-              // type="number"
+              type="number"
               size="small"
               name="costPerComponent"
               value={formData.costPerComponent}

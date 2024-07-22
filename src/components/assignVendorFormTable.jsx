@@ -56,12 +56,15 @@ const AssignVendorFormTable = ({
     LastUpdatedBy: user.empId
   });
   useEffect(() => {
-    setFormData({
-      ...formData,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       remainingPcsPerComponent:
-        additionalProcessData.pcsPerComponent - Quantity || ''
-    });
-  }, [initialRows]);
+        additionalProcessData.pcsPerComponent - Quantity >= 0
+          ? additionalProcessData.pcsPerComponent - Quantity
+          : ''
+    }));
+  }, [initialRows, additionalProcessData.pcsPerComponent, Quantity]);
+
   const { data: lookupData } = useGetLookUpListQuery();
   const {
     data: additionalProcessDetails,
@@ -663,6 +666,7 @@ const AssignVendorFormTable = ({
             name="vendorId"
             value={formData.vendorId}
             onChange={handleChange}
+            disabled={!formData.remainingPcsPerComponent}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -687,6 +691,7 @@ const AssignVendorFormTable = ({
             name="quantity"
             value={formData.quantity}
             onChange={handleChange}
+            disabled={!formData.remainingPcsPerComponent}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -704,6 +709,7 @@ const AssignVendorFormTable = ({
             name="ratePerPcs"
             value={formData.ratePerPcs}
             onChange={handleChange}
+            disabled={!formData.remainingPcsPerComponent}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -721,6 +727,7 @@ const AssignVendorFormTable = ({
             name="totalAmount"
             value={formData.totalAmount}
             onChange={handleChange}
+            disabled={!formData.remainingPcsPerComponent}
             InputLabelProps={{
               sx: {
                 // set the color of the label when not shrinked
@@ -739,7 +746,7 @@ const AssignVendorFormTable = ({
             name="uom"
             value={formData.uom}
             onChange={handleChange}
-            disabled
+            disabled={!formData.remainingPcsPerComponent}
             sx={(theme) => ({
               ...(formData.uom !== '' && {
                 '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
@@ -770,7 +777,12 @@ const AssignVendorFormTable = ({
         </Grid>
 
         <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-          <Button variant="contained" size="small" onClick={handleSave}>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={handleSave}
+            disabled={!formData.remainingPcsPerComponent}
+          >
             Save
           </Button>
         </Grid>
