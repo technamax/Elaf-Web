@@ -166,7 +166,7 @@ const PrePlanning = ({ setInitialValues }) => {
 
       setInitialRows(
         prePlanningList.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -601,14 +601,14 @@ const PrePlanning = ({ setInitialValues }) => {
   console.log('rows', rows);
   const columns = [
     {
-      field: 'componentName',
-      headerName: 'Component',
-
+      field: 'id',
+      headerName: 'Sr#',
+      // editable: true,
+      // flex: 1,
       ...baseColumnOptions,
-
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_SUMMARY') {
-          return 9;
+          return 10;
         }
         return undefined;
       },
@@ -630,6 +630,13 @@ const PrePlanning = ({ setInitialValues }) => {
           {params.value}
         </div>
       )
+    },
+    {
+      field: 'componentName',
+      headerName: 'Component',
+
+      ...baseColumnOptions
+
       // renderCell: (params) => <Chip label={params.value} color="primary" />
     },
     {
