@@ -967,7 +967,7 @@ const AdditionalProcess = ({ initialValues }) => {
                   fontWeight={2}
                   fontStyle={'normal'}
                 >
-                  {'Assign Vendors '}
+                  {'Additional Process > Assign Vendors '}
                 </Typography>
                 <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
                   <CloseIcon />

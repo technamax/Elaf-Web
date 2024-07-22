@@ -110,9 +110,13 @@ const DyeingPrintingAssignVendor = ({
   useEffect(() => {
     setFormData({
       ...formData,
-      remainingQty: initialFormData.availableQty - Quantity || ''
+      remainingQty:
+        initialFormData.availableQty - Quantity >= 0
+          ? initialFormData.availableQty - Quantity
+          : ''
     });
-  }, [initialRows]);
+  }, [initialRows, initialFormData.availableQty, Quantity]);
+
   const { data: lookupData } = useGetLookUpListQuery();
   const { data: dyeingPrintingDetails, refetch: refetchDyeingPrintingDetails } =
     useGetDyeingPrintingDetailsByDpIdQuery(formData.dpId, {

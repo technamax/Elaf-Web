@@ -21,6 +21,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import '../../App.css';
 import MainCard from 'ui-component/cards/MainCard';
+import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
 import { useUser } from 'context/User';
 const PrePlanningCreation = () => {
@@ -45,6 +46,7 @@ const PrePlanningCreation = () => {
   // const designList = designData || [];
   const [formData, setFormData] = useState({
     collectionName: '',
+    planningHeaderId: 0,
     collectionId: '',
     plannedCollectionId: '',
     plannedDesignedId: '',
@@ -135,6 +137,7 @@ const PrePlanningCreation = () => {
       setFormData({
         ...formData,
         designId: value,
+
         plannedDesignedId: value // Update plannedDesignedId as well
       });
     } else {
@@ -217,7 +220,21 @@ const PrePlanningCreation = () => {
     };
     GetDesignFromPlanningHeaderByCollectionId();
   }, [formData.plannedCollectionId]);
+  const [initialData, setInitialData] = useState([]);
 
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      collectionId: initialData?.collectionId || '',
+      designId: initialData?.designId || '',
+      poPcs: initialData?.poPcs || '',
+      plannedCollectionId: initialData?.plannedCollectionId || '',
+      plannedDesignedId: initialData?.plannedDesignedId || '',
+      planningHeaderId: initialData?.planningHeaderId || ''
+    });
+  }, [initialData]);
+  console.log('formdata', formData);
+  console.log('InitialData', initialData);
   return (
     <MainCard
       style={{
@@ -375,12 +392,13 @@ const PrePlanningCreation = () => {
                   sx={{ height: 2, width: '100%', mt: 2 }}
                 />
                 <Grid item xs={12} paddingTop={1}>
-                  <EditAbleDataGrid
+                  <ReuseableDataGrid
                     initialRows={gridData}
-                    ncolumns={columns}
+                    iColumns={columns}
                     formData={formData}
                     fetchData={fetchData}
                     refetch={refetchCollection}
+                    setInitialData={setInitialData}
                   />
                 </Grid>
               </Grid>
@@ -454,11 +472,13 @@ const PrePlanningCreation = () => {
                   sx={{ height: 2, width: '100%', mt: 2 }}
                 />
                 <Grid item xs={12} paddingTop={1}>
-                  <EditAbleDataGrid
+                  <ReuseableDataGrid
                     initialRows={gridData}
-                    ncolumns={columns}
+                    iColumns={columns}
                     formData={formData}
                     fetchData={fetchData}
+                    refetch={refetchCollection}
+                    setInitialData={setInitialData}
                   />
                 </Grid>
               </Grid>

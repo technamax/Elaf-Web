@@ -58,7 +58,8 @@ const AssignVendorFormTable = ({
   });
   useEffect(() => {
     setFormData((prevFormData) => ({
-      ...prevFormData,
+<<<<<<< HEAD
+      ...formData,
       additionalProcessDetId: initialData.additionalProcessDetId || 0,
       vendorId: initialData?.vendorId || '',
       quantity: initialData?.quantity || '',
@@ -74,15 +75,17 @@ const AssignVendorFormTable = ({
       lastUpdatedBy: user.empId
     }));
   }, [initialData]);
-
   useEffect(() => {
     setFormData({
       ...formData,
+=======
+      ...prevFormData,
+>>>>>>> UAT-Bugs-Fix-2
       remainingPcsPerComponent:
         additionalProcessData.pcsPerComponent - Quantity >= 0
           ? additionalProcessData.pcsPerComponent - Quantity
           : ''
-    });
+    }));
   }, [initialRows, additionalProcessData.pcsPerComponent, Quantity]);
 
   const { data: lookupData } = useGetLookUpListQuery();
@@ -740,6 +743,7 @@ const AssignVendorFormTable = ({
             ))}
           </TextField>
         </Grid>
+
         <Grid item xs={12} md={3}>
           <TextField
             label="Quantity"
@@ -794,7 +798,49 @@ const AssignVendorFormTable = ({
             }}
           />
         </Grid>
-        disabled={!formData.remainingPcsPerComponent}
+
+<<<<<<< HEAD
+=======
+        <Grid item xs={12} md={3}>
+          <TextField
+            label="UOM"
+            fullWidth
+            size="small"
+            // type="number"
+            name="uom"
+            value={formData.uom}
+            onChange={handleChange}
+            disabled={!formData.remainingPcsPerComponent}
+            sx={(theme) => ({
+              ...(formData.uom !== '' && {
+                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                  backgroundColor: `#c9c9c9 !important`
+                }
+              }),
+              '& .MuiInputBase-input.Mui-disabled': {
+                WebkitTextFillColor: 'black' // Adjust text color here
+              },
+              '& .MuiInputBase-root.Mui-disabled': {
+                backgroundColor: '#f9f9f9' // Adjust background color here
+              },
+              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                {
+                  // borderColor: 'gray' // Adjust border color here
+                },
+              '& .MuiInputLabel-root.Mui-disabled': {
+                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+              }
+            })}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
+          />
+        </Grid>
+
+>>>>>>> UAT-Bugs-Fix-2
         <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
           <Button
             variant="contained"

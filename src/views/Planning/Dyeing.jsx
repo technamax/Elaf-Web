@@ -815,11 +815,6 @@ const Dyeing = ({ initialValues }) => {
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
-          {/* <Grid item xs={12} md={12}>
-            <Typography variant="h3" gutterBottom>
-            Dyeing/Printing
-            </Typography>
-          </Grid> */}
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth

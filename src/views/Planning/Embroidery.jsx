@@ -1481,7 +1481,7 @@ const Embroidery = ({ initialValues }) => {
                   fontWeight={2}
                   fontStyle={'normal'}
                 >
-                  {' Vendors '}
+                  {' Embroidery > Assign Vendors '}
                 </Typography>
                 <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
                   <CloseIcon />

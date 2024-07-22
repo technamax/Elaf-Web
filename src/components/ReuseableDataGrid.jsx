@@ -32,7 +32,8 @@ const ReuseableDataGrid = ({
   disableDelete,
   setIsEdit,
   autoSizeColumns,
-  isLoading
+  isLoading,
+  height
 }) => {
   const apiRef = useGridApiRef();
   const [open, setOpen] = React.useState(false);
@@ -141,7 +142,7 @@ const ReuseableDataGrid = ({
   return (
     <Box
       sx={{
-        height: 500,
+        height: height ? height : 500,
         width: 'inherit',
         '& .actions': {
           color: 'text.secondary'
