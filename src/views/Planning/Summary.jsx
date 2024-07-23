@@ -6,7 +6,8 @@ import {
   Card,
   CardHeader,
   Divider,
-  Typography
+  Typography,
+  CircularProgress
 } from '@mui/material';
 import {
   useGetCollectionFromPlanningHeaderQuery,
@@ -22,7 +23,7 @@ import { useUser } from 'context/User';
 import axios from 'axios';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import PropTypes from 'prop-types';
-
+import { DataGrid } from '@mui/x-data-grid';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
@@ -68,15 +69,17 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
   }
 }));
 
-const Summary = (initialValues) => {
+const Summary = (initialValues, collectionId) => {
   const { user } = useUser();
   const { enqueueSnackbar } = useSnackbar();
   const [initialData, setInitialData] = useState([]);
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
-  const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const [summaryData, setSummaryData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
+  const [selectedCollectionId, setSelectedCollectionId] = useState(
+    collectionId || ''
+  );
 
   const [formData, setFormData] = useState({
     designId: '',
@@ -169,19 +172,18 @@ const Summary = (initialValues) => {
       );
       if (response.data.success) {
         setSummaryData(response.data.result);
-        console.log(summaryData);
       } else {
-        enqueueSnackbar(response.data.message, { variant: 'error' });
+        console.error(response.data.message);
       }
     } catch (error) {
-      enqueueSnackbar('Failed to fetch summary data', { variant: 'error' });
+      console.error('Failed to fetch summary data', error);
     } finally {
       setIsLoading(false);
     }
   };
   console.log(summaryData);
 
-  const columnsPrePlanningList = [
+  const prePlanningColumns = [
     { field: 'designNo', headerName: 'Design No' },
     { field: 'batchNo', headerName: 'Batch No' },
     { field: 'planningProcessTypeName', headerName: 'Process Type' },
@@ -191,7 +193,7 @@ const Summary = (initialValues) => {
     { field: 'totalFabricRequiredSum', headerName: 'Total Fabric Required Sum' }
   ];
 
-  const columnsFabricationList = [
+  const fabricationColumns = [
     { field: 'designNo', headerName: 'Design No' },
     { field: 'batchNo', headerName: 'Batch No' },
     { field: 'fabricCount', headerName: 'Fabric Count' },
@@ -199,7 +201,7 @@ const Summary = (initialValues) => {
     { field: 'totalIncGst', headerName: 'Total Including GST' }
   ];
 
-  const columnsDyeingPrintingList = [
+  const dyeingPrintingColumns = [
     { field: 'designNo', headerName: 'Design No' },
     { field: 'batchNo', headerName: 'Batch No' },
     { field: 'processType', headerName: 'Process Type' },
@@ -211,7 +213,7 @@ const Summary = (initialValues) => {
     { field: 'totalIncGst', headerName: 'Total Including GST' }
   ];
 
-  const columnsEmbroideryList = [
+  const embroideryColumns = [
     { field: 'designNo', headerName: 'Design No', width: 150 },
     { field: 'batchNo', headerName: 'Batch No', width: 150 },
     { field: 'assignedQtySum', headerName: 'Assigned Qty Sum', width: 150 },
@@ -221,8 +223,13 @@ const Summary = (initialValues) => {
     { field: 'requiredPcsSum', headerName: 'Required Pcs Sum', width: 150 },
     { field: 'totalAmountSum', headerName: 'Total Amount Sum', width: 150 }
   ];
-
-  const columnsAdditionalProcessList = [
+  const schiffiliColumns = [
+    { field: 'availableQtySum', headerName: 'Available Qty Sum', width: 150 },
+    { field: 'totalPcsSum', headerName: 'Total Pcs Sum', width: 150 },
+    { field: 'fabricCount', headerName: 'Fabric Count', width: 150 },
+    { field: 'componentCount', headerName: 'Component Count', width: 150 }
+  ];
+  const additionalProcessColumns = [
     { field: 'designNo', headerName: 'Design No', width: 150 },
     { field: 'batchNo', headerName: 'Batch No', width: 150 },
     { field: 'fabricCount', headerName: 'Fabric Count', width: 150 },
@@ -230,15 +237,41 @@ const Summary = (initialValues) => {
     { field: 'assignedQtySum', headerName: 'Assigned Qty Sum', width: 150 }
   ];
 
-  const rowHeight = 52; // Assume each row has a height of 52px
-  const minHeight = 300; // Minimum height to ensure some rows are always visible
+  const prePlanningRows =
+    summaryData?.prePlanningList?.map((item, index) => ({
+      id: index,
+      ...item
+    })) || [];
 
-  const maxHeight = 500; // Maximum height for the grid
-  const prePlanningList = summaryData?.prePlanningList || [];
-  const calculatedHeight = Math.max(
-    minHeight,
-    Math.min(prePlanningList.length * rowHeight, maxHeight)
-  );
+  const fabricationRows =
+    summaryData?.fabricationList?.map((item, index) => ({
+      id: index,
+      ...item
+    })) || [];
+
+  const dyeingPrintingRows =
+    summaryData?.dyeingPrintingList?.map((item, index) => ({
+      id: index,
+      ...item
+    })) || [];
+  const embroideryRows =
+    summaryData?.embroideryList?.map((item, index) => ({
+      id: index,
+      ...item
+    })) || [];
+
+  const schiffiliRows =
+    summaryData?.schiffiliList?.map((item, index) => ({
+      id: index,
+      ...item
+    })) || [];
+
+  const additionalProcessRows =
+    summaryData?.additionalProcessList?.map((item, index) => ({
+      id: index,
+      ...item
+    })) || [];
+  const CustomFooter = () => <div />;
 
   return (
     <>
@@ -338,43 +371,46 @@ const Summary = (initialValues) => {
           sx={{ paddingY: 1, paddingX: 1 }}
         >
           <Grid item xs={12} md={12} paddingTop={1}>
-            {summaryData && (
+            {isLoading ? (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="100%"
+              >
+                <CircularProgress />
+              </Box>
+            ) : summaryData ? (
               <>
                 <Typography variant="h3" gutterBottom>
                   Pre Planning
                 </Typography>
-                <ReuseableDataGrid
-                  iColumns={columnsPrePlanningList}
-                  initialRows={
-                    summaryData.prePlanningList?.map((row, index) => ({
-                      ...row,
-                      id: index
-                    })) || []
-                  }
-                  setInitialData={setInitialData}
-                  isLoading={isLoading}
-                  height={calculatedHeight}
+                <DataGrid
+                  rows={prePlanningRows}
+                  columns={prePlanningColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  autoHeight
+                  hideFooter
                 />
+
                 <Divider
                   color="#921e22"
-                  sx={{ height: 2, width: '100%', mb: 1 }}
+                  sx={{ height: 3, width: '100%', mb: 1 }}
                 />
                 <Typography variant="h3" gutterBottom>
                   Fabrication
                 </Typography>
 
-                <ReuseableDataGrid
-                  iColumns={columnsFabricationList}
-                  initialRows={
-                    summaryData.fabricationList?.map((row, index) => ({
-                      ...row,
-                      id: index
-                    })) || []
-                  }
-                  setInitialData={setInitialData}
-                  isLoading={isLoading}
-                  height={calculatedHeight}
+                <DataGrid
+                  rows={fabricationRows}
+                  columns={fabricationColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  autoHeight
+                  hideFooter
                 />
+
                 <Divider
                   color="#921e22"
                   sx={{ height: 2, width: '100%', mt: 1, mb: 1 }}
@@ -383,18 +419,15 @@ const Summary = (initialValues) => {
                   Dyeing
                 </Typography>
 
-                <ReuseableDataGrid
-                  iColumns={columnsDyeingPrintingList}
-                  initialRows={
-                    summaryData.dyeingPrintingList?.map((row, index) => ({
-                      ...row,
-                      id: index
-                    })) || []
-                  }
-                  setInitialData={setInitialData}
-                  isLoading={isLoading}
-                  height={calculatedHeight}
+                <DataGrid
+                  rows={dyeingPrintingRows}
+                  columns={dyeingPrintingColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  autoHeight
+                  hideFooter
                 />
+
                 <Divider
                   color="#921e22"
                   sx={{ height: 2, width: '100%', mb: 1 }}
@@ -403,17 +436,30 @@ const Summary = (initialValues) => {
                   Embroidery
                 </Typography>
 
-                <ReuseableDataGrid
-                  iColumns={columnsEmbroideryList}
-                  initialRows={
-                    summaryData.embroideryList?.map((row, index) => ({
-                      ...row,
-                      id: index
-                    })) || []
-                  }
-                  setInitialData={setInitialData}
-                  isLoading={isLoading}
-                  height={calculatedHeight}
+                <DataGrid
+                  rows={embroideryRows}
+                  columns={embroideryColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  autoHeight
+                  hideFooter
+                />
+
+                <Divider
+                  color="#921e22"
+                  sx={{ height: 2, width: '100%', mb: 1 }}
+                />
+
+                <Typography variant="h3" gutterBottom>
+                  Schiffli
+                </Typography>
+                <DataGrid
+                  rows={schiffiliRows}
+                  columns={schiffiliColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  autoHeight
+                  hideFooter
                 />
                 <Divider
                   color="#921e22"
@@ -423,19 +469,17 @@ const Summary = (initialValues) => {
                   Additional Process
                 </Typography>
 
-                <ReuseableDataGrid
-                  iColumns={columnsAdditionalProcessList}
-                  initialRows={
-                    summaryData.additionalProcessList?.map((row, index) => ({
-                      ...row,
-                      id: index
-                    })) || []
-                  }
-                  setInitialData={setInitialData}
-                  isLoading={isLoading}
-                  height={calculatedHeight}
+                <DataGrid
+                  rows={additionalProcessRows}
+                  columns={additionalProcessColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  autoHeight
+                  hideFooter
                 />
               </>
+            ) : (
+              <CircularProgress></CircularProgress>
             )}
           </Grid>
         </Grid>
