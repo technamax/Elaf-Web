@@ -1553,38 +1553,8 @@ const PrePlanning = ({ setInitialValues }) => {
                 />
               </Grid>
               <Grid item xs={12} md={2}>
-                <TextField
-                  label="Total"
-                  fullWidth
-                  // type="number"
-                  size="small"
-                  name="total"
-                  value={formData.total}
-                  onChange={handleChange}
-                  InputLabelProps={{
-                    sx: {
-                      // set the color of the label when not shrinked
-                      color: 'black'
-                    }
-                  }}
-                />
-              </Grid>
-              {/* <Grid item xs={12} md={2} textAlign="right">
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={formData.isSchiffili}
-                      onChange={handleCheckboxChange}
-                      name="isSchiffili"
-                    />
-                  }
-                  label="Is Schiffli"
-                />
-              </Grid> */}
-              {/* {formData.isSchiffili ? ( */}
-              <Grid item xs={12} md={6}>
                 <Grid container spacing={1} width="Inherit">
-                  <Grid item xs={12} md={4}>
+                  <Grid item xs={12} md={12}>
                     <TextField
                       label="Repeats in Meter"
                       fullWidth
@@ -1618,6 +1588,37 @@ const PrePlanning = ({ setInitialValues }) => {
                   </Grid>
                 </Grid>
               </Grid>
+              <Grid item xs={12} md={2}>
+                <TextField
+                  label="Total"
+                  fullWidth
+                  // type="number"
+                  size="small"
+                  name="total"
+                  value={formData.total}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
+                />
+              </Grid>
+              {/* <Grid item xs={12} md={2} textAlign="right">
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.isSchiffili}
+                      onChange={handleCheckboxChange}
+                      name="isSchiffili"
+                    />
+                  }
+                  label="Is Schiffli"
+                />
+              </Grid> */}
+              {/* {formData.isSchiffili ? ( */}
+
               {/* ) : null} */}
               <Grid item xs={12} textAlign="right">
                 <Button variant="contained" size="small" onClick={handleSave}>

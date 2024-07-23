@@ -520,7 +520,6 @@ const AdditionalProcess = ({ initialValues }) => {
       valueGetter: (params) => {
         return params;
       },
-      // colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 4 : undefined),
 
       renderCell: (params) =>
         params.row.id === 'TOTAL_SUMMARY' ? (
