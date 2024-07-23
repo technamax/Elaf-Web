@@ -117,10 +117,12 @@ const PrePlanningCreation = () => {
       editable: true
     }
   ];
-
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
   };
+
+  const [pcs, setPcs] = useState('');
+  console.log('pcs', pcs);
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
@@ -128,6 +130,7 @@ const PrePlanningCreation = () => {
       const selectedCollection = collectionList.find(
         (collection) => collection.collectionId === parseInt(value)
       );
+      setPcs(selectedCollection.poPcs);
       setFormData({
         ...formData,
         collectionId: value,
@@ -137,6 +140,7 @@ const PrePlanningCreation = () => {
       setFormData({
         ...formData,
         designId: value,
+        poPcs: pcs,
 
         plannedDesignedId: value // Update plannedDesignedId as well
       });

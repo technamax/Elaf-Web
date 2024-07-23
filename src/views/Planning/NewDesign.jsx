@@ -22,6 +22,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import SearchIcon from '@mui/icons-material/Search';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import LoopOutlinedIcon from '@mui/icons-material/LoopOutlined';
+import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
@@ -45,12 +46,24 @@ const NewDesign = () => {
 
   const [designList, setDesignList] = useState([]);
   const [colors, setColors] = useState([]);
+  const [designers, setDesigners] = useState([]);
   const [value, setValue] = useState('1');
   const [duplicateError, setDuplicateError] = useState(false); // State to track duplicate design number error
+  const { data: lookupData } = useGetLookUpListQuery();
 
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    // fetchData();
+    if (lookupData) {
+      const data = lookupData.result[0];
+      setDesigners(data.designerList);
+    }
+  }, [lookupData]);
+
+  console.log('designers', designers);
 
   useEffect(() => {
     if (designData) {
@@ -102,6 +115,8 @@ const NewDesign = () => {
     collectionId: '',
     designNo: '',
     designerName: '',
+    designerid: '',
+
     poPcs: '',
     dateOfPlanning: '',
     colorId: '',
@@ -460,7 +475,7 @@ const NewDesign = () => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} md={4}>
+                {/* <Grid item xs={12} md={4}>
                   <TextField
                     label="Designer Name"
                     fullWidth
@@ -476,6 +491,30 @@ const NewDesign = () => {
                       }
                     }}
                   />
+                </Grid> */}
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Designer Name"
+                    size="small"
+                    name="designerName"
+                    value={formData.designerName}
+                    onChange={handleChange}
+                    disabled={!formData.collectionId}
+                    InputLabelProps={{
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                      }
+                    }}
+                  >
+                    {designers.map((option) => (
+                      <MenuItem key={option.lookUpId} value={option.lookUpName}>
+                        {option.lookUpName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <TextField

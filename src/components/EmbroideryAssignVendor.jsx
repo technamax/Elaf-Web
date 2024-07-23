@@ -150,7 +150,7 @@ const EmbroideryAssignVendor = ({
   useEffect(() => {
     setFormData({
       ...formData,
-      remainingQty: initialFormData.availableQty - Quantity || 0,
+      remainingQty: (initialFormData.availableQty - Quantity).toFixed(2) || 0,
       remainingPcs: initialFormData.totalPcs - totalRepeats || 0
     });
   }, [initialRows]);
@@ -584,39 +584,39 @@ const EmbroideryAssignVendor = ({
     // }
 
     console.log(formData);
-    // if (formData.totalAmount == 0 || formData.costPerComponent == 0) {
-    //   // Show Snackbar for duplicate entry
-    //   enqueueSnackbar(
-    //     'Please Enter Thread, Tilla or Sequnce values , Total Amount cannot be zero',
-    //     {
-    //       variant: 'error',
-    //       autoHideDuration: 5000
-    //     }
-    //   );
-    //   return; // Exit without saving
-    // }
-    // if (formData.assignedQty > formData.remainingQty) {
-    //   enqueueSnackbar(
-    //     `Assigned quantity can not be greater then Remaining Quantity !`,
+    if (formData.totalAmount == 0 || formData.costPerComponent == 0) {
+      // Show Snackbar for duplicate entry
+      enqueueSnackbar(
+        'Please Enter Thread, Tilla or Sequnce values , Total Amount cannot be zero',
+        {
+          variant: 'error',
+          autoHideDuration: 5000
+        }
+      );
+      return; // Exit without saving
+    }
+    if (formData.assignedQty > formData.remainingQty) {
+      enqueueSnackbar(
+        `Assigned quantity can not be greater then Remaining Quantity !`,
 
-    //     {
-    //       variant: 'error',
-    //       autoHideDuration: 5000
-    //     }
-    //   );
-    //   return;
-    // }
-    // if (formData.requiredPcs > formData.remainingPcs) {
-    //   enqueueSnackbar(
-    //     `Required Pcs can not be greater then Remaining Pcs !`,
+        {
+          variant: 'error',
+          autoHideDuration: 5000
+        }
+      );
+      return;
+    }
+    if (formData.requiredPcs > formData.remainingPcs) {
+      enqueueSnackbar(
+        `Required Pcs can not be greater then Remaining Pcs !`,
 
-    //     {
-    //       variant: 'error',
-    //       autoHideDuration: 5000
-    //     }
-    //   );
-    //   return;
-    // }
+        {
+          variant: 'error',
+          autoHideDuration: 5000
+        }
+      );
+      return;
+    }
     try {
       // Make the API call
       const response = await axios.post(
