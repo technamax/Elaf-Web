@@ -210,3 +210,9 @@
     transform: translateX(10px);
   }
 }
+@media print {
+  .printableComponent {
+    margin-top: 1in;
+    margin-bottom: 1in;
+  }
+}

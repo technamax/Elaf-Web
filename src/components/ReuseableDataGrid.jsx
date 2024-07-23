@@ -53,6 +53,7 @@ const ReuseableDataGrid = ({
             </IconButton>
           )}
           content={() => componentRef.current}
+          pageStyle="@page { margin-top: 1in; margin-bottom: 1in; }"
         />
       </GridToolbarContainer>
     );
