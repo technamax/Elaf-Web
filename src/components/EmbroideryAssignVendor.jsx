@@ -1266,7 +1266,7 @@ const EmbroideryAssignVendor = ({
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={4}>
             <TextField
               fullWidth
               select
@@ -1291,7 +1291,7 @@ const EmbroideryAssignVendor = ({
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} md={1.5}>
+          <Grid item xs={12} md={2}>
             <TextField
               label="Assigned Qty"
               fullWidth
@@ -1311,7 +1311,7 @@ const EmbroideryAssignVendor = ({
               }}
             />
           </Grid>
-          <Grid item xs={12} md={1.5}>
+          <Grid item xs={12} md={2}>
             <TextField
               label="Required Pcs"
               fullWidth
@@ -1349,7 +1349,7 @@ const EmbroideryAssignVendor = ({
           />
         </Grid> */}
 
-          <Grid item xs={12} md={4.5}>
+          <Grid item xs={12} md={2}>
             <TextField
               select
               label="Additional"
@@ -1381,7 +1381,7 @@ const EmbroideryAssignVendor = ({
             </TextField>
             {/* </FormControl> */}
           </Grid>
-          <Grid item xs={12} md={1.5}>
+          <Grid item xs={12} md={1}>
             <FormControlLabel
               control={
                 <Checkbox
