@@ -110,7 +110,7 @@ const AssignVendorFormTable = ({
     if (additionalProcessDetails) {
       setInitialRows(
         additionalProcessDetails.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -248,6 +248,12 @@ const AssignVendorFormTable = ({
   };
 
   const columns = [
+    {
+      field: 'id',
+      headerName: 'Sr#'
+      // editable: true,
+      // flex: 1,
+    },
     {
       field: 'vendorName',
       headerName: 'Vendor',
@@ -835,7 +841,6 @@ const AssignVendorFormTable = ({
             }}
           />
         </Grid>
-        disabled={!formData.remainingPcsPerComponent}
         <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
           <Button
             variant="contained"

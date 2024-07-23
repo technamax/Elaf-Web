@@ -158,7 +158,7 @@ export default function AdditionalServices({ initialValues }) {
         setIsLoading(false);
         setInitialRows(
           response.data.result.map((row, index) => ({
-            id: index,
+            id: index + 1,
             ...row
           }))
         );
@@ -204,15 +204,12 @@ export default function AdditionalServices({ initialValues }) {
   ];
 
   const columns = [
-    // { field: 'additionalServiceId', headerName: 'Additional Service ID' },
-    // { field: 'serviceTypeId', headerName: 'Service Type ID' },
-    // { field: 'serviceListId', headerName: 'Service List ID' },
-    // { field: 'vendorId', headerName: 'Vendor ID' },
-    // { field: 'collectionId', headerName: 'Collection ID' },
     {
-      field: 'collectionName',
-      headerName: 'Collection Name',
-      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 3 : undefined),
+      field: 'id',
+      headerName: 'Sr#',
+      // editable: true,
+      // flex: 1,
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 4 : undefined),
 
       renderCell: (params) =>
         params.row.id === 'TOTAL_SUMMARY' ? (
@@ -222,6 +219,10 @@ export default function AdditionalServices({ initialValues }) {
         ) : (
           params.value
         )
+    },
+    {
+      field: 'collectionName',
+      headerName: 'Collection Name'
     },
     {
       field: 'serviceType',

@@ -188,6 +188,12 @@ const NewCollection = () => {
 
   const columns = [
     {
+      field: 'id',
+      headerName: 'Sr#'
+      // editable: true,
+      // flex: 1,
+    },
+    {
       field: 'collectionName',
       headerName: 'Collection'
       // editable: true,
@@ -214,6 +220,14 @@ const NewCollection = () => {
       //   value: collection.lookUpId,
       //   label: collection.lookUpName
       // }))
+    },
+    {
+      field: 'volume',
+      headerName: 'Volume'
+      // flex: 1,
+      // editable: true,
+      // type: 'singleSelect',
+      // valueOptions: ['Volume 1', 'Volume 2', 'Volume 3', 'Volume 4', 'Volume 5']
     },
     {
       field: 'volume',

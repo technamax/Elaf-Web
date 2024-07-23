@@ -283,7 +283,7 @@ const Embroidery = ({ initialValues }) => {
 
       setInitialRows(
         embroideryList.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -774,6 +774,23 @@ const Embroidery = ({ initialValues }) => {
   };
 
   const columns = [
+    {
+      field: 'id',
+      headerName: 'Sr#',
+      // editable: true,
+      // flex: 1,
+      ...baseColumnOptions,
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 4 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
+    },
     {
       field: 'designNo',
       headerName: 'Design',

@@ -166,7 +166,7 @@ const Fabrication = ({ initialValues }) => {
       setIsLoading(false);
       setInitialRows(
         fabricRequisitionData.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -351,11 +351,14 @@ const Fabrication = ({ initialValues }) => {
 
   const columns = [
     {
-      field: 'designNo',
-      headerName: 'Design',
+      field: 'id',
+      headerName: 'Sr#',
+      // editable: true,
+      // flex: 1,
+      // ...baseColumnOptions,
       colSpan: (value, row) => {
         if (row.id === 'TOTAL_SUMMARY') {
-          return 6;
+          return 7;
         }
         return undefined;
       },
@@ -376,6 +379,10 @@ const Fabrication = ({ initialValues }) => {
           {params.value}
         </div>
       )
+    },
+    {
+      field: 'designNo',
+      headerName: 'Design'
     },
     {
       field: 'fabricName',

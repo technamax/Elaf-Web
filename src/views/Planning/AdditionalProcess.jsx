@@ -251,7 +251,7 @@ const AdditionalProcess = ({ initialValues }) => {
 
       setInitialRows(
         additionalProcessList.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -448,9 +448,11 @@ const AdditionalProcess = ({ initialValues }) => {
   ];
   const columns = [
     {
-      field: 'designNo',
-      headerName: 'Design',
-      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 3 : undefined),
+      field: 'id',
+      headerName: 'Sr#',
+      // editable: true,
+      // flex: 1,
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 4 : undefined),
 
       renderCell: (params) =>
         params.row.id === 'TOTAL_SUMMARY' ? (
@@ -460,6 +462,10 @@ const AdditionalProcess = ({ initialValues }) => {
         ) : (
           params.value
         )
+    },
+    {
+      field: 'designNo',
+      headerName: 'Design'
     },
     {
       field: 'batchNo',

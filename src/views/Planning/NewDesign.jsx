@@ -186,6 +186,12 @@ const NewDesign = () => {
   console.log('initialRows', initialRows);
   const columns = [
     {
+      field: 'id',
+      headerName: 'Sr#'
+      // editable: true,
+      // flex: 1,
+    },
+    {
       field: 'collectionName',
       headerName: 'Collection Name',
       editable: true

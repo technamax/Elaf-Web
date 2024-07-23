@@ -172,7 +172,7 @@ const EmbroideryAssignVendor = ({
     if (embroideryDetails) {
       setInitialRows(
         embroideryDetails.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -680,6 +680,12 @@ const EmbroideryAssignVendor = ({
   };
 
   const columns = [
+    {
+      field: 'id',
+      headerName: 'Sr#'
+      // editable: true,
+      // flex: 1,
+    },
     {
       field: 'vendorName',
       headerName: 'Vendor'

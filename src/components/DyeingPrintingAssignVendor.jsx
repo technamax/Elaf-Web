@@ -139,7 +139,7 @@ const DyeingPrintingAssignVendor = ({
     if (dyeingPrintingDetails) {
       setInitialRows(
         dyeingPrintingDetails.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -280,6 +280,12 @@ const DyeingPrintingAssignVendor = ({
   };
 
   const columns = [
+    {
+      field: 'id',
+      headerName: 'Sr#'
+      // editable: true,
+      // flex: 1,
+    },
     {
       field: 'vendorName',
       headerName: 'Vendor',

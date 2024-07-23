@@ -226,7 +226,7 @@ const Dyeing = ({ initialValues }) => {
 
       setInitialRows(
         dyeingPrintingData.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -599,10 +599,11 @@ const Dyeing = ({ initialValues }) => {
   };
   const columns = [
     {
-      field: 'fabricName',
-      headerName: 'Fabric',
+      field: 'id',
+      headerName: 'Sr#',
+      // editable: true,
+      // flex: 1,
       ...baseColumnOptions,
-
       renderCell: (params) =>
         params.row.id === 'TOTAL_SUMMARY' ? (
           <span style={{ color: 'black', fontWeight: 'bold' }}>
@@ -611,6 +612,11 @@ const Dyeing = ({ initialValues }) => {
         ) : (
           params.value
         )
+    },
+    {
+      field: 'fabricName',
+      headerName: 'Fabric',
+      ...baseColumnOptions
     },
     {
       field: 'colorName',
