@@ -199,35 +199,30 @@ const NewCollection = () => {
 
   useEffect(() => {
     const totalPoPcsSum = initialRows
-      .reduce((sum, row) => sum + (row.totalPoPcs ?? 0), 0)
+      .reduce(
+        (sum, row) =>
+          sum + (Number(row.poPcs) || 0) * (Number(row.noOfColors) || 0),
+        0
+      )
       .toFixed(2);
 
     setTotalPoPcsSum(parseFloat(totalPoPcsSum).toLocaleString());
+    console.log('totalPoPcsSum', totalPoPcsSum);
   }, [initialRows]);
 
   const rows = [
     ...initialRows,
     {
       id: 'TOTAL_SUMMARY',
-      // componentName: 'Total Summary',
-      // availableQty: totalAvailableQty,
       poPcs: totalPoPcs,
       totalPoPcs: totalPoPcsSum
-      // totalPcs: totalPcsSum,
-      // requiredPcs: totalRequiredPcs
     }
   ];
   const columns = [
     {
       field: 'id',
-      headerName: 'Sr#'
-      // editable: true,
-      // flex: 1,
-    },
-    {
-      field: 'collectionName',
-      headerName: 'Collection',
-      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 6 : undefined),
+      headerName: 'Sr#',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 8 : undefined),
 
       renderCell: (params) =>
         params.row.id === 'TOTAL_SUMMARY' ? (
@@ -237,6 +232,13 @@ const NewCollection = () => {
         ) : (
           params.value
         )
+      // editable: true,
+      // flex: 1,
+    },
+    {
+      field: 'collectionName',
+      headerName: 'Collection'
+
       // editable: true,
       // flex: 2
     },
@@ -374,7 +376,7 @@ const NewCollection = () => {
       renderCell: (params) =>
         params.row.id === 'TOTAL_SUMMARY' ? (
           <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
-            {params.value}
+            {params.row.totalPoPcs}
           </span>
         ) : (
           params.value
