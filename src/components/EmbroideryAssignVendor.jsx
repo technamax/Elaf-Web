@@ -333,6 +333,7 @@ const EmbroideryAssignVendor = ({
 
   const [lastUpdatedField, setLastUpdatedField] = useState(null);
   const [debouncedFormData, setDebouncedFormData] = useState(formData);
+  // const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -564,44 +565,58 @@ const EmbroideryAssignVendor = ({
     });
   };
 
+  // const validateForm = () => {
+  //   const errors = {};
+  //   if (!formData.assignedQty) {
+  //     errors.assignedQty = 'Assigned Qty cannot be greater than Remaining Qty ';
+  //   }
+  //   // if (!formData.clientAddress.trim()) {
+  //   //   errors.clientAddress = 'Client Address is required';
+  //   // }
+  //   return errors;
+  // };
+
   const handleSave = async () => {
-    console.log(formData);
     // const errors = validateForm();
     // if (Object.keys(errors).length > 0) {
     //   setFormErrors(errors);
     //   return;
     // }
 
-    if (formData.totalAmount === 0 && formData.costPerComponent === 0) {
-      // Show Snackbar for duplicate entry
-      enqueueSnackbar('Please Thread, Tilla or Sequnce values ', {
-        variant: 'error',
-        autoHideDuration: 5000
-      });
-      return; // Exit without saving
-    }
-    if (formData.assignedQty > formData.remainingQty) {
-      enqueueSnackbar(
-        `Assigned quantity can not be greater then Remaining Quantity !`,
+    console.log(formData);
+    // if (formData.totalAmount == 0 || formData.costPerComponent == 0) {
+    //   // Show Snackbar for duplicate entry
+    //   enqueueSnackbar(
+    //     'Please Enter Thread, Tilla or Sequnce values , Total Amount cannot be zero',
+    //     {
+    //       variant: 'error',
+    //       autoHideDuration: 5000
+    //     }
+    //   );
+    //   return; // Exit without saving
+    // }
+    // if (formData.assignedQty > formData.remainingQty) {
+    //   enqueueSnackbar(
+    //     `Assigned quantity can not be greater then Remaining Quantity !`,
 
-        {
-          variant: 'error',
-          autoHideDuration: 5000
-        }
-      );
-      return;
-    }
-    if (formData.requiredPcs > formData.remainingPcs) {
-      enqueueSnackbar(
-        `Required Pcs can not be greater then Remaining Pcs !`,
+    //     {
+    //       variant: 'error',
+    //       autoHideDuration: 5000
+    //     }
+    //   );
+    //   return;
+    // }
+    // if (formData.requiredPcs > formData.remainingPcs) {
+    //   enqueueSnackbar(
+    //     `Required Pcs can not be greater then Remaining Pcs !`,
 
-        {
-          variant: 'error',
-          autoHideDuration: 5000
-        }
-      );
-      return;
-    }
+    //     {
+    //       variant: 'error',
+    //       autoHideDuration: 5000
+    //     }
+    //   );
+    //   return;
+    // }
     try {
       // Make the API call
       const response = await axios.post(
@@ -1053,7 +1068,7 @@ const EmbroideryAssignVendor = ({
 
           <Grid item xs={12} md={1.5}>
             <TextField
-              label="Total AvailableQty"
+              label="Total Available Qty"
               fullWidth
               size="small"
               name="availableQty"

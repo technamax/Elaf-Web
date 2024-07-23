@@ -13,7 +13,8 @@ import {
   Tab,
   Card,
   CardHeader,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import SearchIcon from '@mui/icons-material/Search';
@@ -186,6 +187,36 @@ const NewCollection = () => {
 
   const initialRows = collectionList;
 
+  const [totalPoPcs, setTotalPoPcs] = useState(0);
+  const [totalPoPcsSum, setTotalPoPcsSum] = useState(0);
+  useEffect(() => {
+    const totalPoPcs = initialRows
+      .reduce((sum, row) => sum + (row.poPcs ?? 0), 0)
+      .toFixed(2);
+
+    setTotalPoPcs(parseFloat(totalPoPcs).toLocaleString());
+  }, [initialRows]);
+
+  useEffect(() => {
+    const totalPoPcsSum = initialRows
+      .reduce((sum, row) => sum + (row.totalPoPcs ?? 0), 0)
+      .toFixed(2);
+
+    setTotalPoPcsSum(parseFloat(totalPoPcsSum).toLocaleString());
+  }, [initialRows]);
+
+  const rows = [
+    ...initialRows,
+    {
+      id: 'TOTAL_SUMMARY',
+      // componentName: 'Total Summary',
+      // availableQty: totalAvailableQty,
+      poPcs: totalPoPcs,
+      totalPoPcs: totalPoPcsSum
+      // totalPcs: totalPcsSum,
+      // requiredPcs: totalRequiredPcs
+    }
+  ];
   const columns = [
     {
       field: 'id',
@@ -195,13 +226,49 @@ const NewCollection = () => {
     },
     {
       field: 'collectionName',
-      headerName: 'Collection'
+      headerName: 'Collection',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 6 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
       // editable: true,
       // flex: 2
     },
     {
       field: 'brandName',
-      headerName: 'Brand'
+      headerName: 'Brand',
+      renderCell: (params) => {
+        const chipColor = 'primary.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
       // editable: true,
       // flex: 1,
       // type: 'singleSelect',
@@ -279,9 +346,40 @@ const NewCollection = () => {
     },
     {
       field: 'poPcs',
-      headerName: 'Po Pcs'
-      // editable: true,
-      // flex: 1
+      headerName: ' Po Pcs',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 0 : undefined),
+
+      valueGetter: (params) => {
+        return params;
+      },
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
+    },
+    {
+      field: 'totalPoPcs',
+      headerName: 'Total Pcs',
+
+      valueGetter: (params, row) => {
+        const noOfColors = row?.noOfColors || 0;
+        const poPcs = row?.poPcs || 0;
+        return noOfColors * poPcs;
+      },
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        ),
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 2 : undefined)
     }
   ];
 
@@ -867,7 +965,7 @@ const NewCollection = () => {
                 {/* <Grid container spacing={2} width="inherit" paddingTop={2}> */}
                 <Grid item xs={12}>
                   <ReuseableDataGrid
-                    initialRows={initialRows}
+                    initialRows={rows}
                     iColumns={columns}
                     setInitialData={setInitialData}
                     // fetchData={fetchData}
