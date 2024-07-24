@@ -45,7 +45,8 @@ import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
 
 // assets
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
-
+import '../../assets/scss/style.scss';
+import '../../App.css';
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.primary.light,
@@ -398,7 +399,9 @@ const Summary = (initialValues, collectionId) => {
                 <Typography variant="h3" gutterBottom>
                   Pre Planning
                 </Typography>
+
                 <DataGrid
+                  // classes={{ columnHeaders: 'custom-header' }}
                   rows={prePlanningRows}
                   columns={prePlanningColumns}
                   pageSize={5}
@@ -406,6 +409,17 @@ const Summary = (initialValues, collectionId) => {
                   autoHeight
                   hideFooter
                   onStateChange={handleStateChange}
+                  // sx={{
+                  //   '& .MuiDataGrid-container--top': {
+                  //     backgroundColor: '#323232'
+                  //   },
+                  //   '& .MuiDataGrid-columnHeaders': {
+                  //     backgroundColor: '#323232'
+                  //   },
+                  //   '& .MuiDataGrid-columnHeaderTitle': {
+                  //     color: 'white'
+                  //   }
+                  // }}
                 />
 
                 <Divider
@@ -423,6 +437,8 @@ const Summary = (initialValues, collectionId) => {
                   rowsPerPageOptions={[5]}
                   autoHeight
                   hideFooter
+                  sx={{}}
+                  classes={{ columnHeaders: 'custom-header' }}
                 />
 
                 <Divider
