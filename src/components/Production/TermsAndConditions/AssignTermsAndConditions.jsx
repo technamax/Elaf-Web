@@ -182,6 +182,27 @@ const AssignTermsAndConditions = () => {
             <TextField
               fullWidth
               select
+              label="Vendors"
+              defaultValue=""
+              size="small"
+              name="vendorId"
+              value={formData.vedorId}
+              onChange={handleChange}
+              required
+              // error={!!formErrors.vendorId}
+              // helperText={formErrors.vendorId}
+            >
+              {vendors.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
               label="Category"
               name="categoryId"
               value={formData.categoryId}
@@ -201,35 +222,20 @@ const AssignTermsAndConditions = () => {
             <TextField
               fullWidth
               select
-              label="Vendors"
-              defaultValue=""
-              size="small"
-              name="vendorId"
-              value={formData.vendorId}
-              onChange={handleChange}
-              required
-              // error={!!formErrors.vendorId}
-              // helperText={formErrors.vendorId}
-            >
-              {vendors.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Enabled"
+              label="enabled"
               name="enabled"
               value={formData.enabled}
               onChange={handleChange}
               size="small"
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
-            ></TextField>
+            >
+              {options.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
           </Grid>
 
           <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
