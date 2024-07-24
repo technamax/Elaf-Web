@@ -243,7 +243,7 @@ const PrePlanningCreation = () => {
   console.log('formdata', formData);
   console.log('InitialData', initialData);
 
-  const deleteApi = `https://gecxc.com:4041/api/PrePlanning/DeletePlanningHeaderIdBylanningId/`;
+  const deleteApi = `https://gecxc.com:4041/api/PrePlanning/DeletePlanningHeaderIdByPlanningId?planningHeaderId=`;
   return (
     <MainCard
       style={{
@@ -408,7 +408,7 @@ const PrePlanningCreation = () => {
                     deleteApi={deleteApi}
                     deleteBy="planningHeaderId"
                     fetchData={fetchData}
-                    refetch={refetchCollection}
+                    refetch={fetchData}
                     setInitialData={setInitialData}
                   />
                 </Grid>
