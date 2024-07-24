@@ -41,7 +41,7 @@ import '../../assets/scss/style.scss';
 import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
 
-const Fabrication = ({ initialValues }) => {
+const Fabrication = ({ initialValues, setInitialValues }) => {
   const { user } = useUser();
   const [formErrors, setFormErrors] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -192,6 +192,18 @@ const Fabrication = ({ initialValues }) => {
 
   const collectionList = collectionData?.result || [];
   // console.log('collectionList', collectionList);
+
+  //for summary
+  useEffect(() => {
+    setSelectedCollectionId(initialValues?.collectionId || '');
+    setFormData({
+      ...formData,
+      designId: initialValues?.designId || '',
+      planningHeaderId: initialValues?.planningHeaderId || '',
+      batchNo: initialValues?.batchNo || ''
+    });
+  }, [initialValues, setInitialValues]);
+
   useEffect(() => {
     const calculateTotal = () => {
       const quantity = parseFloat(formData.quantity) || 0;

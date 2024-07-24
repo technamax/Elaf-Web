@@ -320,7 +320,12 @@ export default function PlanningProcess() {
               initialValues={initialValues}
             />
           )}
-          {activeStep === 1 && <Fabrication initialValues={initialValues} />}
+          {activeStep === 1 && (
+            <Fabrication
+              setInitialValues={setInitialValues}
+              initialValues={initialValues}
+            />
+          )}
 
           {activeStep === 2 && <Dyeing initialValues={initialValues} />}
           {activeStep === 3 && <Embroidery initialValues={initialValues} />}
