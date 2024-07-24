@@ -60,7 +60,7 @@ const EmbroideryAssignVendor = ({
     colorId: initialFormData.colorId || '',
     colourName: initialFormData.colourName || '',
     availableQty: initialFormData.availableQty || '',
-    assignedQty: '',
+    assignedQty: 0,
     remainingQty: (initialFormData.availableQty - Quantity).toFixed(2) || 0,
     remainingRepeats: initialFormData.repeats - totalRepeats || '',
     noOfHead: initialFormData.noOfHead || '',
@@ -107,11 +107,11 @@ const EmbroideryAssignVendor = ({
       embroideryIdDet: initialData.embroideryIdDet || 0,
       embroideryId: initialData.embroideryId || 0,
       vendorId: initialData?.vendorId || '',
-      assignedQty: initialData?.assignedQty || '',
-      requiredPcs: initialData?.requiredPcs || '',
+      assignedQty: initialData?.assignedQty || 0,
+      requiredPcs: initialData?.requiredPcs || 0,
       // outputQty: initialData?.outputQty || 0,
-      remainingQty: prevFormData.remainingQty + initialData?.assignedQty || '',
-      remainingPcs: prevFormData.remainingPcs + initialData?.requiredPcs || '',
+      remainingQty: prevFormData.remainingQty + initialData?.assignedQty || 0,
+      remainingPcs: prevFormData.remainingPcs + initialData?.requiredPcs || 0,
       totalAmount: initialData?.totalAmount || '',
       threadStiches: initialData?.threadStiches || 0,
       threadRate: initialData?.threadRate || '',
@@ -496,8 +496,8 @@ const EmbroideryAssignVendor = ({
       const updatedFormData = { ...prevFormData, [name]: value };
 
       if (name === 'assignedQty' || name === 'remainingQty') {
-        const assignedQty = updatedFormData.assignedQty;
-        const remainingQty = updatedFormData.remainingQty;
+        const assignedQty = parseFloat(updatedFormData.assignedQty);
+        const remainingQty = parseFloat(updatedFormData.remainingQty);
 
         if (assignedQty > remainingQty) {
           setFormErrors((prevErrors) => ({
@@ -512,23 +512,6 @@ const EmbroideryAssignVendor = ({
           }));
         }
       }
-      // else if (name === 'requiredPcs' || name === 'remainingPcs') {
-      //   const requiredPcs = updatedFormData.requiredPcs;
-      //   const remainingPcs = updatedFormData.remainingPcs;
-
-      //   if (requiredPcs > remainingPcs) {
-      //     setFormErrors((prevErrors) => ({
-      //       ...prevErrors,
-      //       requiredPcs: 'Required Pcs cannot be greater than Remaining Pcs'
-      //     }));
-      //   } else {
-      //     setFormErrors((prevErrors) => ({
-      //       ...prevErrors,
-      //       requiredPcs: ''
-      //     }));
-      //   }
-      // }
-
       return updatedFormData;
     });
   };
@@ -545,10 +528,11 @@ const EmbroideryAssignVendor = ({
       const updatedFormData = { ...prevFormData, [name]: value };
 
       if (name === 'requiredPcs' || name === 'remainingPcs') {
-        const requiredPcs = updatedFormData.requiredPcs;
-        const remainingPcs = updatedFormData.remainingPcs;
+        const requiredPcs = parseFloat(updatedFormData.requiredPcs);
+        const remainingPcs = parseFloat(updatedFormData.remainingPcs);
 
         if (requiredPcs > remainingPcs) {
+          console.log();
           setFormErrors((prevErrors) => ({
             ...prevErrors,
             requiredPcs: 'Required Pcs cannot be greater than Remaining Pcs'
@@ -1296,7 +1280,7 @@ const EmbroideryAssignVendor = ({
               label="Assigned Qty"
               fullWidth
               size="small"
-              // type="number"
+              type="number"
               name="assignedQty"
               value={formData.assignedQty}
               onChange={handleAssignedQtyChange}

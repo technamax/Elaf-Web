@@ -293,19 +293,8 @@ const NewCollection = () => {
     {
       field: 'volume',
       headerName: 'Volume'
-      // flex: 1,
-      // editable: true,
-      // type: 'singleSelect',
-      // valueOptions: ['Volume 1', 'Volume 2', 'Volume 3', 'Volume 4', 'Volume 5']
     },
-    {
-      field: 'volume',
-      headerName: 'Volume'
-      // flex: 1,
-      // editable: true,
-      // type: 'singleSelect',
-      // valueOptions: ['Volume 1', 'Volume 2', 'Volume 3', 'Volume 4', 'Volume 5']
-    },
+
     {
       field: 'planningDate',
       headerName: 'Planning Date',
