@@ -315,7 +315,10 @@ export default function PlanningProcess() {
           {/* <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography> */}
 
           {activeStep === 0 && (
-            <PrePlanning setInitialValues={setInitialValues} />
+            <PrePlanning
+              setInitialValues={setInitialValues}
+              initialValues={initialValues}
+            />
           )}
           {activeStep === 1 && <Fabrication initialValues={initialValues} />}
 
@@ -328,7 +331,13 @@ export default function PlanningProcess() {
           {activeStep === 6 && (
             <AdditionalServices initialValues={initialValues} />
           )}
-          {activeStep === 7 && <Summary setActiveStep={setActiveStep} />}
+          {activeStep === 7 && (
+            <Summary
+              setActiveStep={setActiveStep}
+              setInitialValues={setInitialValues}
+              initialValues={initialValues}
+            />
+          )}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"

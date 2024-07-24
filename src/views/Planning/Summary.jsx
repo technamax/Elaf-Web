@@ -74,7 +74,12 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
   }
 }));
 
-const Summary = ({ initialValues, setActiveStep, collectionId }) => {
+const Summary = ({
+  initialValues,
+  setActiveStep,
+  collectionId,
+  setInitialValues
+}) => {
   const { user } = useUser();
   const { enqueueSnackbar } = useSnackbar();
   const [initialData, setInitialData] = useState([]);
@@ -103,7 +108,14 @@ const Summary = ({ initialValues, setActiveStep, collectionId }) => {
   // useEffect(() => {
   //   setSelectedCollectionId(initialValues.collectionId);
   // }, [initialValues]);
-
+  useEffect(() => {
+    setInitialValues({
+      collectionId: formData?.collectionId || '',
+      designId: formData?.designId || '',
+      planningHeaderId: formData?.planningHeaderId || '',
+      batchNo: formData?.batchNo || ''
+    });
+  }, [formData.collectionId, formData.designId, formData?.batchNo]);
   const { data: designData, refetch } =
     useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
       skip: !selectedCollectionId // Skip the query if no collection is selected
@@ -401,7 +413,7 @@ const Summary = ({ initialValues, setActiveStep, collectionId }) => {
                   gutterBottom
                   sx={{
                     color: '#9f1d22',
-                    textAlign: 'center',
+                    // textAlign: 'center',
                     cursor: 'pointer', // To indicate it's clickable
                     '&:hover': {
                       textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
@@ -458,7 +470,7 @@ const Summary = ({ initialValues, setActiveStep, collectionId }) => {
                   gutterBottom
                   sx={{
                     color: '#9f1d22',
-                    textAlign: 'center',
+                    // textAlign: 'center',
                     cursor: 'pointer', // To indicate it's clickable
                     '&:hover': {
                       textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
@@ -513,7 +525,7 @@ const Summary = ({ initialValues, setActiveStep, collectionId }) => {
                   gutterBottom
                   sx={{
                     color: '#9f1d22',
-                    textAlign: 'center',
+                    // textAlign: 'center',
                     cursor: 'pointer', // To indicate it's clickable
                     '&:hover': {
                       textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
@@ -568,7 +580,7 @@ const Summary = ({ initialValues, setActiveStep, collectionId }) => {
                   gutterBottom
                   sx={{
                     color: '#9f1d22',
-                    textAlign: 'center',
+                    // textAlign: 'center',
                     cursor: 'pointer', // To indicate it's clickable
                     '&:hover': {
                       textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
@@ -624,7 +636,7 @@ const Summary = ({ initialValues, setActiveStep, collectionId }) => {
                   gutterBottom
                   sx={{
                     color: '#9f1d22',
-                    textAlign: 'center',
+                    // textAlign: 'center',
                     cursor: 'pointer', // To indicate it's clickable
                     '&:hover': {
                       textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
@@ -677,7 +689,7 @@ const Summary = ({ initialValues, setActiveStep, collectionId }) => {
                   gutterBottom
                   sx={{
                     color: '#9f1d22',
-                    textAlign: 'center',
+                    // textAlign: 'center',
                     cursor: 'pointer', // To indicate it's clickable
                     '&:hover': {
                       textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
