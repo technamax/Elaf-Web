@@ -56,6 +56,21 @@ const PrePlanningCreation = () => {
     createdBy: user.empId,
     createdOn: new Date().toISOString()
   });
+  const [initialData, setInitialData] = useState([]);
+
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      collectionId: initialData?.collectionId || '',
+      planningHeaderId: initialData?.planningHeaderId || 0,
+      plannedCollectionId: initialData?.plannedCollectionId || '',
+      plannedDesignedId: initialData?.plannedDesignedId || '',
+      designId: initialData?.designId || '',
+      poPcs: initialData?.poPcs || '',
+      batchNo: initialData?.batchNo || ''
+    });
+  }, [initialData]);
+
   const [designOptions, setDesignOptions] = useState([]);
   const [plannedCollection, setPlannedCollection] = useState([]);
   const [plannedDesign, setPlannedDesign] = useState([]);
@@ -224,21 +239,11 @@ const PrePlanningCreation = () => {
     };
     GetDesignFromPlanningHeaderByCollectionId();
   }, [formData.plannedCollectionId]);
-  const [initialData, setInitialData] = useState([]);
 
-  useEffect(() => {
-    setFormData({
-      ...formData,
-      collectionId: initialData?.collectionId || '',
-      designId: initialData?.designId || '',
-      poPcs: initialData?.poPcs || '',
-      plannedCollectionId: initialData?.plannedCollectionId || '',
-      plannedDesignedId: initialData?.plannedDesignedId || '',
-      planningHeaderId: initialData?.planningHeaderId || ''
-    });
-  }, [initialData]);
   console.log('formdata', formData);
   console.log('InitialData', initialData);
+
+  const deleteApi = `https://gecxc.com:4041/api/PrePlanning/DeletePlanningHeaderIdBylanningId/`;
   return (
     <MainCard
       style={{
@@ -400,6 +405,8 @@ const PrePlanningCreation = () => {
                     initialRows={gridData}
                     iColumns={columns}
                     formData={formData}
+                    deleteApi={deleteApi}
+                    deleteBy="planningHeaderId"
                     fetchData={fetchData}
                     refetch={refetchCollection}
                     setInitialData={setInitialData}

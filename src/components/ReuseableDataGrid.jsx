@@ -202,7 +202,24 @@ const ReuseableDataGrid = ({
         slots={{ toolbar: EditToolbar }}
         sx={{
           '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-
+          '& .css-1kyxv1r-MuiDataGrid-root': {
+            color: 'white',
+            backgroundColor: '#323232'
+          },
+          '& .MuiDataGrid-container--top [role=row]': {
+            color: 'white',
+            backgroundColor: '#323232'
+          },
+          '& .MuiDataGrid-columnSeparator': {
+            color: 'white'
+          },
+          '& .MuiDataGrid-iconButtonContainer': {
+            color: 'white'
+          },
+          '& .MuiDataGrid-sortIcon': {
+            color: 'white'
+          },
+          '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
           '& .MuiDataGrid-row': {
             '&.total-summary-row': {
               backgroundColor: 'darkgray'

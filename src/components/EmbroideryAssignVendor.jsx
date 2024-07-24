@@ -112,12 +112,12 @@ const EmbroideryAssignVendor = ({
       // outputQty: initialData?.outputQty || 0,
       remainingQty: prevFormData.remainingQty + initialData?.assignedQty || 0,
       remainingPcs: prevFormData.remainingPcs + initialData?.requiredPcs || 0,
-      totalAmount: initialData?.totalAmount || '',
+      totalAmount: initialData?.totalAmount || 0,
       threadStiches: initialData?.threadStiches || 0,
-      threadRate: initialData?.threadRate || '',
-      threadAmount: initialData?.threadAmount || '',
-      tillaStiches: initialData?.tillaStiches || '',
-      tilaRate: initialData?.tilaRate || '',
+      threadRate: initialData?.threadRate || 0,
+      threadAmount: initialData?.threadAmount || 0,
+      tillaStiches: initialData?.tillaStiches || 0,
+      tilaRate: initialData?.tilaRate || 0,
       tilaAmount: initialData?.tilaAmount || 0,
       sequence: initialData?.sequence || 0,
       sequenceRate: initialData?.sequenceRate || 0,
@@ -579,7 +579,7 @@ const EmbroideryAssignVendor = ({
       );
       return; // Exit without saving
     }
-    if (formData.assignedQty > formData.remainingQty) {
+    if (parseFloat(formData.assignedQty) > parseFloat(formData.remainingQty)) {
       enqueueSnackbar(
         `Assigned quantity can not be greater then Remaining Quantity !`,
 
@@ -590,7 +590,7 @@ const EmbroideryAssignVendor = ({
       );
       return;
     }
-    if (formData.requiredPcs > formData.remainingPcs) {
+    if (parseFloat(formData.requiredPcs) > parseFloat(formData.remainingPcs)) {
       enqueueSnackbar(
         `Required Pcs can not be greater then Remaining Pcs !`,
 
