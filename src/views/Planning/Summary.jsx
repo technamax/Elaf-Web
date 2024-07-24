@@ -301,7 +301,7 @@ const Summary = (initialValues) => {
           width="inherit"
           sx={{ paddingY: 1, paddingX: 1 }}
         >
-          <Grid item xs={12} md={12} paddingTop={1}>
+          <Grid item xs={12} md={6} paddingTop={1}>
             {/* {isLoading ? (
               <SkeletonEarningCard />
             ) : ( */}
@@ -370,7 +370,7 @@ const Summary = (initialValues) => {
                       </Grid> */}
                     </Grid>
                   </Grid>
-                  {summaryData.prePlanningList &&
+                  {/* {summaryData.prePlanningList &&
                     summaryData.prePlanningList.length > 0 && (
                       <Grid item sx={{ mb: 1.25 }}>
                         <Typography
@@ -388,7 +388,7 @@ const Summary = (initialValues) => {
                           ))}
                         </Typography>
                       </Grid>
-                    )}
+                    )} */}
                 </Grid>
               </Box>
             </MainCard>
