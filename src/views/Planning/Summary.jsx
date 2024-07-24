@@ -23,7 +23,11 @@ import { useUser } from 'context/User';
 import axios from 'axios';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import PropTypes from 'prop-types';
-import { DataGrid } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridToolbarContainer,
+  useGridApiRef
+} from '@mui/x-data-grid';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
@@ -80,7 +84,15 @@ const Summary = (initialValues, collectionId) => {
   const [selectedCollectionId, setSelectedCollectionId] = useState(
     collectionId || ''
   );
-
+  const handleStateChange = (params) => {
+    if (apiRef.current && apiRef.current.autosizeColumns) {
+      apiRef.current.autosizeColumns({
+        // columns: autoSizeColumns,
+        includeOutliers: true,
+        includeHeaders: true
+      });
+    }
+  };
   const [formData, setFormData] = useState({
     designId: '',
     planningHeaderId: 0,
@@ -272,6 +284,7 @@ const Summary = (initialValues, collectionId) => {
       ...item
     })) || [];
   const CustomFooter = () => <div />;
+  const apiRef = useGridApiRef();
 
   return (
     <>
@@ -392,6 +405,7 @@ const Summary = (initialValues, collectionId) => {
                   rowsPerPageOptions={[5]}
                   autoHeight
                   hideFooter
+                  onStateChange={handleStateChange}
                 />
 
                 <Divider
