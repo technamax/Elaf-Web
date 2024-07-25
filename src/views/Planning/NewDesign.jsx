@@ -44,7 +44,7 @@ const NewDesign = () => {
   );
   const { enqueueSnackbar } = useSnackbar();
 
-  const [designList, setDesignList] = useState([]);
+  const [initialRows, setInitialRows] = useState([]);
   const [colors, setColors] = useState([]);
   const [designers, setDesigners] = useState([]);
   const [value, setValue] = useState('1');
@@ -68,7 +68,12 @@ const NewDesign = () => {
   useEffect(() => {
     if (designData) {
       setIsLoading(false);
-      setDesignList(designData.result);
+      setInitialRows(
+        designData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
       refetch();
     }
   }, [designData]);
@@ -194,10 +199,10 @@ const NewDesign = () => {
     } else setFormData({ ...formData, [name]: value });
   };
 
-  const initialRows = designList.map((design, index) => ({
-    id: index + 1,
-    ...design
-  }));
+  // const initialRows = initialRows.map((design, index) => ({
+  //   id: index + 1,
+  //   ...design
+  // }));
   console.log('initialRows', initialRows);
   const columns = [
     {
@@ -266,7 +271,7 @@ const NewDesign = () => {
   const handleSave = async () => {
     console.log(formData);
     // Check if the design number already exists
-    const isDuplicate = designList.some(
+    const isDuplicate = initialRows.some(
       (design) => design.designNo === formData.designNo
     );
 
@@ -289,10 +294,10 @@ const NewDesign = () => {
       });
 
       console.log('Form data saved:', response.data);
-      setDesignList([...designList, response.data]);
+      // setInitialRows([...initialRows, response.data]);
       setFormData({
         ...formData,
-        collectionId: '',
+        // collectionId: '',
         designId: 0,
         designNo: '',
         designerName: '',
@@ -358,6 +363,7 @@ const NewDesign = () => {
       lastUpdatedBy: user.empId,
       lastUpdatedOn: new Date().toISOString()
     });
+    setInitialRows([]);
   };
   return (
     <MainCard

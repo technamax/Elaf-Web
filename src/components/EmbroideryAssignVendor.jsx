@@ -1250,7 +1250,7 @@ const EmbroideryAssignVendor = ({
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={2}>
             <TextField
               fullWidth
               select
@@ -1333,7 +1333,7 @@ const EmbroideryAssignVendor = ({
           />
         </Grid> */}
 
-          <Grid item xs={12} md={2}>
+          <Grid item xs={12} md={4}>
             <TextField
               select
               label="Additional"
