@@ -169,10 +169,12 @@ const DyeingPrintingAssignVendor = ({
   };
   useEffect(() => {
     const calculateOutputQty = () => {
-      const availableQty = parseFloat(formData.assignedQty) || 0;
+      const assignedQty = parseFloat(formData.assignedQty) || 0;
       const shrinkage = parseFloat(formData.shrinkage) || 0;
       const wastage = parseFloat(formData.wastage) || 0;
-      return ((availableQty * (100 - (shrinkage + wastage))) / 100).toFixed(2);
+      const shrikageWastage = shrinkage + wastage;
+
+      return ((assignedQty * 100) / (100 + shrikageWastage)).toFixed(2);
     };
 
     const calculateTotalExclGst = () => {
