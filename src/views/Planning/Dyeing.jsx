@@ -1018,12 +1018,20 @@ const Dyeing = ({ initialValues }) => {
                   sx={{
                     '& input': {
                       backgroundColor: 'white' // Setting white background for the input field inside Autocomplete
+                      // boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)' // Adding shadow to the input field
                     }
                   }}
                 />
               )}
               PaperComponent={({ children }) => (
-                <div style={{ backgroundColor: 'white' }}>{children}</div>
+                <div
+                  style={{
+                    backgroundColor: 'white',
+                    boxShadow: '0 3px 5px rgba(0, 0, 0, 0.2)' // Adding shadow to the dropdown suggestions
+                  }}
+                >
+                  {children}
+                </div>
               )}
               value={
                 colors.find((color) => color.colorId === formData.colorId) ||
