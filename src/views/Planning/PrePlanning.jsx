@@ -444,6 +444,10 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
   };
   // console.log('noOfDesigns', formData.noOfDesigns); colorId
   const [formErrors, setFormErrors] = useState({});
+  const [lock, setLock] = useState(false);
+  const handleLock = () => {
+    setLock(!lock);
+  };
 
   const handleSave = async () => {
     const errors = validateForm();
@@ -497,18 +501,19 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         noOfColors: prevFormData.noOfColors, // not in api
         poPcs: prevFormData.poPcs,
 
+        fabricId: prevFormData.fabricId,
+        shrinkage: prevFormData.shrinkage,
+        wastage: prevFormData.wastage,
+
         componentId: '',
         cuttingSize: '', // not in api
         colorId: '',
-        fabricId: '',
         noOfHeads: 0,
         operatingMachineId: 0,
         repeats: '',
         repeatSize: '',
         uomId: '',
         totalFabric: '',
-        shrinkage: '',
-        wastage: '',
         total: '',
         appId: 1,
         createdOn: new Date().toISOString(),
@@ -1129,10 +1134,134 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
               container
               spacing={1}
               width="Inherit"
-              sx={{ paddingY: 2, paddingX: 2 }}
+              // sx={{ paddingY: 2, paddingX: 2 }}
             >
               {/* <FormControl> */}
               {/* <Grid container spacing={2} width="Inherit"> */}
+              <Grid item xs={12} md={2}>
+                {/* <TextField
+                fullWidth
+                select
+                label="Fabrication"
+                defaultValue=""
+                size="small"
+                name="fabricId"
+                value={formData.fabricId}
+                onChange={handleChange}
+              >
+                {Fabrications.map((option) => (
+                  <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                    {option.lookUpName}
+                  </MenuItem>
+                ))}
+              </TextField> */}
+                <Autocomplete
+                  fullWidth
+                  options={Fabrications}
+                  getOptionLabel={(option) => option.lookUpName}
+                  value={
+                    Fabrications.find(
+                      (fabric) => fabric.lookUpId === formData.fabricId
+                    ) || null
+                  }
+                  onChange={(event, newValue) => {
+                    handleChange({
+                      target: {
+                        name: 'fabricId',
+                        value: newValue ? newValue.lookUpId : ''
+                      }
+                    });
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Fabrication"
+                      size="small"
+                      name="fabricId"
+                      value={formData.fabricId}
+                      required
+                      error={!!formErrors.fabricId}
+                      helperText={formErrors.fabricId}
+                      disabled={lock}
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
+                      sx={{
+                        // backgroundColor: 'white', // Setting white background for the TextField
+                        '& input': {
+                          backgroundColor: 'white' // Setting white background for the input inside TextField
+                        }
+                      }}
+                    />
+                  )}
+                  PaperComponent={({ children }) => (
+                    <div style={{ backgroundColor: 'white' }}>{children}</div>
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <TextField
+                  label="Shrinkage %"
+                  fullWidth
+                  size="small"
+                  type="number"
+                  name="shrinkage"
+                  value={formData.shrinkage}
+                  onChange={handleChange}
+                  error={!!formErrors.shrinkage}
+                  helperText={formErrors.shrinkage}
+                  required
+                  disabled={lock}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <TextField
+                  label="Wastage %"
+                  fullWidth
+                  size="small"
+                  type="number"
+                  name="wastage"
+                  value={formData.wastage}
+                  onChange={handleChange}
+                  error={!!formErrors.wastage}
+                  helperText={formErrors.wastage}
+                  required
+                  disabled={lock}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <Button variant="contained" size="small" onClick={handleLock}>
+                  {lock ? 'Unlock' : !lock ? 'Lock' : 'Unlock'}
+                </Button>
+              </Grid>
+
+              <Grid item xs={12} md={12}>
+                <Divider
+                  color="#cc8587"
+                  sx={{
+                    height: 2,
+                    width: '100%'
+                    // marginTop: 1,
+                    // marginBottom: 0
+                  }}
+                />
+              </Grid>
+
               <Grid item xs={12} md={2}>
                 <TextField
                   fullWidth
@@ -1304,69 +1433,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={2}>
-                {/* <TextField
-                fullWidth
-                select
-                label="Fabrication"
-                defaultValue=""
-                size="small"
-                name="fabricId"
-                value={formData.fabricId}
-                onChange={handleChange}
-              >
-                {Fabrications.map((option) => (
-                  <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                    {option.lookUpName}
-                  </MenuItem>
-                ))}
-              </TextField> */}
-                <Autocomplete
-                  fullWidth
-                  options={Fabrications}
-                  getOptionLabel={(option) => option.lookUpName}
-                  value={
-                    Fabrications.find(
-                      (fabric) => fabric.lookUpId === formData.fabricId
-                    ) || null
-                  }
-                  onChange={(event, newValue) => {
-                    handleChange({
-                      target: {
-                        name: 'fabricId',
-                        value: newValue ? newValue.lookUpId : ''
-                      }
-                    });
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Fabrication"
-                      size="small"
-                      name="fabricId"
-                      value={formData.fabricId}
-                      required
-                      error={!!formErrors.fabricId}
-                      helperText={formErrors.fabricId}
-                      InputLabelProps={{
-                        sx: {
-                          // set the color of the label when not shrinked
-                          color: 'black'
-                        }
-                      }}
-                      sx={{
-                        // backgroundColor: 'white', // Setting white background for the TextField
-                        '& input': {
-                          backgroundColor: 'white' // Setting white background for the input inside TextField
-                        }
-                      }}
-                    />
-                  )}
-                  PaperComponent={({ children }) => (
-                    <div style={{ backgroundColor: 'white' }}>{children}</div>
-                  )}
-                />
-              </Grid>
+
               <Grid item xs={12} md={2}>
                 {/* <TextField
                   fullWidth
@@ -1530,46 +1597,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                   ))}
                 </TextField>
               </Grid>
-              <Grid item xs={12} md={2}>
-                <TextField
-                  label="Shrinkage %"
-                  fullWidth
-                  size="small"
-                  type="number"
-                  name="shrinkage"
-                  value={formData.shrinkage}
-                  onChange={handleChange}
-                  error={!!formErrors.shrinkage}
-                  helperText={formErrors.shrinkage}
-                  required
-                  InputLabelProps={{
-                    sx: {
-                      // set the color of the label when not shrinked
-                      color: 'black'
-                    }
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} md={2}>
-                <TextField
-                  label="Wastage %"
-                  fullWidth
-                  size="small"
-                  type="number"
-                  name="wastage"
-                  value={formData.wastage}
-                  onChange={handleChange}
-                  error={!!formErrors.wastage}
-                  helperText={formErrors.wastage}
-                  required
-                  InputLabelProps={{
-                    sx: {
-                      // set the color of the label when not shrinked
-                      color: 'black'
-                    }
-                  }}
-                />
-              </Grid>
+
               <Grid item xs={12} md={2}>
                 <TextField
                   label="Repeats in Meter"
