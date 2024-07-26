@@ -240,16 +240,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
   console.log('initialValues', initialValues);
   console.log('selectedCollectionId', selectedCollectionId);
 
-  useEffect(() => {
-    setSelectedCollectionId(initialValues?.collectionId || '');
-    setFormData({
-      ...formData,
-      designId: initialValues?.designId || '',
-      planningHeaderId: initialValues?.planningHeaderId || '',
-      batchNo: initialValues?.batchNo || ''
-    });
-  }, [initialValues]);
-  // if (!initialValues.collectionId) {
+  // if (!initialValues) {
   //   useEffect(() => {
   //     setInitialValues({
   //       collectionId: selectedCollectionId || '',
@@ -259,6 +250,15 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
   //     });
   //   }, [setInitialValues, selectedCollectionId, formData.batchNo]);
   // }
+  useEffect(() => {
+    setSelectedCollectionId(initialValues?.collectionId || '');
+    setFormData({
+      ...formData,
+      designId: initialValues?.designId || '',
+      planningHeaderId: initialValues?.planningHeaderId || '',
+      batchNo: initialValues?.batchNo || ''
+    });
+  }, [initialValues]);
 
   useEffect(() => {
     const calculateTotalFabric1 = () => {

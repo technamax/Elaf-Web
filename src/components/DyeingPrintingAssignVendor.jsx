@@ -51,8 +51,8 @@ const DyeingPrintingAssignVendor = ({
     processType: initialFormData.processType || '',
     availableQty: initialFormData.availableQty || '',
     remainingQty: initialFormData.availableQty - Quantity || '',
-    shrinkage: '',
-    wastage: initialFormData.wastage || '',
+    shrinkage: initialFormData.allowedWastage || '',
+    wastage: initialFormData.allowedWastage || '',
 
     assignedQty: '',
 
@@ -715,7 +715,7 @@ const DyeingPrintingAssignVendor = ({
               }}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={1.5}>
             <TextField
               label="Shrinkage"
               fullWidth
@@ -724,7 +724,7 @@ const DyeingPrintingAssignVendor = ({
               name="shrinkage"
               value={formData.shrinkage}
               onChange={handleChange}
-              disabled={!formData.remainingQty}
+              disabled
               InputLabelProps={{
                 sx: {
                   // set the color of the label when not shrinked
@@ -733,7 +733,7 @@ const DyeingPrintingAssignVendor = ({
               }}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={1.5}>
             <TextField
               label="Wastage"
               fullWidth
@@ -742,7 +742,7 @@ const DyeingPrintingAssignVendor = ({
               name="wastage"
               value={formData.wastage}
               onChange={handleChange}
-              disabled={!formData.remainingQty}
+              disabled
               InputLabelProps={{
                 sx: {
                   // set the color of the label when not shrinked
