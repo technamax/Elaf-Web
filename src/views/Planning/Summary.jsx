@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   MenuItem,
   TextField,
@@ -6,7 +6,8 @@ import {
   Card,
   CardHeader,
   Divider,
-  Typography
+  Typography,
+  CircularProgress
 } from '@mui/material';
 import {
   useGetCollectionFromPlanningHeaderQuery,
@@ -22,8 +23,11 @@ import { useUser } from 'context/User';
 import axios from 'axios';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import PropTypes from 'prop-types';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-
+import {
+  DataGrid,
+  GridToolbarContainer,
+  useGridApiRef
+} from '@mui/x-data-grid';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
@@ -41,7 +45,8 @@ import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
 
 // assets
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
-
+import '../../assets/scss/style.scss';
+import '../../App.css';
 const CardWrapper = styled(MainCard)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.primary.light,
@@ -69,33 +74,48 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
   }
 }));
 
-const Summary = (initialValues) => {
+const Summary = ({
+  initialValues,
+  setActiveStep,
+  collectionId,
+  setInitialValues
+}) => {
   const { user } = useUser();
   const { enqueueSnackbar } = useSnackbar();
   const [initialData, setInitialData] = useState([]);
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
-  const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const [summaryData, setSummaryData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
+  const [selectedCollectionId, setSelectedCollectionId] = useState(
+    collectionId || ''
+  );
+  const handleStateChange = (params) => {
+    if (apiRef.current && apiRef.current.autosizeColumns) {
+      apiRef.current.autosizeColumns({
+        // columns: autoSizeColumns,
+        includeOutliers: true,
+        includeHeaders: true
+      });
+    }
+  };
   const [formData, setFormData] = useState({
     designId: '',
     planningHeaderId: 0,
     batchNo: ''
   });
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  // useEffect(() => {
+  //   setSelectedCollectionId(initialValues.collectionId);
+  // }, [initialValues]);
   useEffect(() => {
-    setSelectedCollectionId(initialValues.collectionId);
-  }, [initialValues]);
-
+    setInitialValues({
+      collectionId: formData?.collectionId || '',
+      designId: formData?.designId || '',
+      planningHeaderId: formData?.planningHeaderId || '',
+      batchNo: formData?.batchNo || ''
+    });
+  }, [formData.collectionId, formData.designId, formData?.batchNo]);
   const { data: designData, refetch } =
     useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
       skip: !selectedCollectionId // Skip the query if no collection is selected
@@ -169,16 +189,6 @@ const Summary = (initialValues) => {
   console.log('Design list:', designList);
   console.log('Batch list:', batchList);
 
-  // useEffect(() => {
-  //   if (planningHeaderId) {
-  //     fetchSummaryData(planningHeaderId);
-  //   }
-  // }, [planningHeaderId]);
-
-  useEffect(() => {
-    console.log('Updated summaryData:', summaryData);
-  }, [summaryData]);
-
   const fetchSummaryData = async (planningHeaderId) => {
     setIsLoading(true);
     try {
@@ -186,24 +196,109 @@ const Summary = (initialValues) => {
         `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningSummaryByBatchId?planningHeaderId=${planningHeaderId}`
       );
       if (response.data.success) {
-        console.log('Fetched data:', response.data.result); // Log the fetched data
         setSummaryData(response.data.result);
       } else {
-        enqueueSnackbar(response.data.message, { variant: 'error' });
+        console.error(response.data.message);
       }
     } catch (error) {
-      enqueueSnackbar('Failed to fetch summary data', { variant: 'error' });
+      console.error('Failed to fetch summary data', error);
     } finally {
       setIsLoading(false);
     }
   };
+  console.log(summaryData);
 
-  // const [prePlanning, setPreplanning] = useState(null);
-  // useEffect(() => {
-  //   if (summaryData && summaryData.result && summaryData.result.length > 0) {
-  //     setPreplanning(summaryData.result[0].totalCollection);
-  //   }
-  // }, [summaryData]);
+  const prePlanningColumns = [
+    { field: 'designNo', headerName: 'Design No' },
+    { field: 'batchNo', headerName: 'Batch No' },
+    { field: 'planningProcessTypeName', headerName: 'Process Type' },
+    { field: 'componentsCount', headerName: 'Components Count' },
+    { field: 'fabricCount', headerName: 'Fabric Count' },
+    { field: 'totalFabricSum', headerName: 'Total Fabric Sum' },
+    { field: 'totalFabricRequiredSum', headerName: 'Total Fabric Required Sum' }
+  ];
+
+  const fabricationColumns = [
+    { field: 'designNo', headerName: 'Design No' },
+    { field: 'batchNo', headerName: 'Batch No' },
+    { field: 'fabricCount', headerName: 'Fabric Count' },
+    { field: 'totalExcGst', headerName: 'Total Excluding GST' },
+    { field: 'totalIncGst', headerName: 'Total Including GST' }
+  ];
+
+  const dyeingPrintingColumns = [
+    { field: 'designNo', headerName: 'Design No' },
+    { field: 'batchNo', headerName: 'Batch No' },
+    { field: 'processType', headerName: 'Process Type' },
+    { field: 'assignedQtySum', headerName: 'Assigned Qty Sum' },
+    { field: 'availableQtySum', headerName: 'Available Qty Sum' },
+    { field: 'colorCount', headerName: 'Color Count' },
+    { field: 'fabricCount', headerName: 'Fabric Count' },
+    { field: 'outputQtySum', headerName: 'Output Qty Sum' },
+    { field: 'totalIncGst', headerName: 'Total Including GST' }
+  ];
+
+  const embroideryColumns = [
+    { field: 'designNo', headerName: 'Design No', width: 150 },
+    { field: 'batchNo', headerName: 'Batch No', width: 150 },
+    { field: 'assignedQtySum', headerName: 'Assigned Qty Sum', width: 150 },
+    { field: 'availableQtySum', headerName: 'Available Qty Sum', width: 150 },
+    { field: 'fabricCount', headerName: 'Fabric Count', width: 150 },
+    { field: 'componentCount', headerName: 'Component Count', width: 150 },
+    { field: 'requiredPcsSum', headerName: 'Required Pcs Sum', width: 150 },
+    { field: 'totalAmountSum', headerName: 'Total Amount Sum', width: 150 }
+  ];
+  const schiffiliColumns = [
+    { field: 'availableQtySum', headerName: 'Available Qty Sum', width: 150 },
+    { field: 'totalPcsSum', headerName: 'Total Pcs Sum', width: 150 },
+    { field: 'fabricCount', headerName: 'Fabric Count', width: 150 },
+    { field: 'componentCount', headerName: 'Component Count', width: 150 }
+  ];
+  const additionalProcessColumns = [
+    { field: 'designNo', headerName: 'Design No', width: 150 },
+    { field: 'batchNo', headerName: 'Batch No', width: 150 },
+    { field: 'fabricCount', headerName: 'Fabric Count', width: 150 },
+    { field: 'pcsPerComponent', headerName: 'Pcs Per Component', width: 150 },
+    { field: 'assignedQtySum', headerName: 'Assigned Qty Sum', width: 150 }
+  ];
+
+  const prePlanningRows =
+    summaryData?.prePlanningList?.map((item, index) => ({
+      id: index,
+      ...item
+    })) || [];
+
+  const fabricationRows =
+    summaryData?.fabricationList?.map((item, index) => ({
+      id: index,
+      ...item
+    })) || [];
+
+  const dyeingPrintingRows =
+    summaryData?.dyeingPrintingList?.map((item, index) => ({
+      id: index,
+      ...item
+    })) || [];
+  const embroideryRows =
+    summaryData?.embroideryList?.map((item, index) => ({
+      id: index,
+      ...item
+    })) || [];
+
+  const schiffiliRows =
+    summaryData?.schiffiliList?.map((item, index) => ({
+      id: index,
+      ...item
+    })) || [];
+
+  const additionalProcessRows =
+    summaryData?.additionalProcessList?.map((item, index) => ({
+      id: index,
+      ...item
+    })) || [];
+  const CustomFooter = () => <div />;
+  const apiRef = useGridApiRef();
+
   return (
     <>
       <Card variant="outlined">
@@ -301,719 +396,348 @@ const Summary = (initialValues) => {
           width="inherit"
           sx={{ paddingY: 1, paddingX: 1 }}
         >
-          <Grid item xs={12} md={6} paddingTop={1}>
-            {/* {isLoading ? (
-              <SkeletonEarningCard />
-            ) : ( */}
-            <MainCard
-              border={false}
-              content={false}
-              sx={{
-                bgcolor: 'primary.main',
-                color: '#fff',
-                overflow: 'hidden',
-                position: 'relative',
-                '&:after': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 210,
-                  height: 210,
-                  background: theme.palette.grey[400],
-                  borderRadius: '50%',
-                  top: { xs: -105, sm: -85 },
-                  right: { xs: -140, sm: -95 }
-                },
-                '&:before': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 210,
-                  height: 210,
-                  background: theme.palette.grey[400],
-                  borderRadius: '50%',
-                  top: { xs: -155, sm: -125 },
-                  right: { xs: -70, sm: -15 },
-                  opacity: 0.5
-                }
-              }}
-            >
-              <Box sx={{ p: 2.25 }}>
-                <Grid container direction="column">
-                  <Grid item>
-                    <Grid container alignItems="center">
-                      <Grid item>
-                        <Typography
-                          sx={{
-                            fontSize: '2.125rem',
-                            fontWeight: 500,
-                            mr: 1,
-                            mt: 1.75,
-                            mb: 0.75
-                          }}
-                        >
-                          Pre Planning
-                        </Typography>
-                      </Grid>
-                      {/* <Grid item>
-                        <Avatar
-                          sx={{
-                            cursor: 'pointer',
-                            ...theme.typography.smallAvatar,
-                            bgcolor: 'secondary.200',
-                            color: 'secondary.dark'
-                          }}
-                        >
-                          <ArrowUpwardIcon
-                            fontSize="inherit"
-                            sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }}
-                          />
-                        </Avatar>
-                      </Grid> */}
-                    </Grid>
-                  </Grid>
-                  {/* {summaryData.prePlanningList &&
-                    summaryData.prePlanningList.length > 0 && (
-                      <Grid item sx={{ mb: 1.25 }}>
-                        <Typography
-                          sx={{
-                            fontSize: '1rem',
-                            fontWeight: 500,
-                            color: 'primary.light'
-                          }}
-                        >
-                          {summaryData.prePlanningList.map((item, index) => (
-                            <div key={index}>
-                              Design No: {item.designNo}, Components:{' '}
-                              {item.componentsCount}, Fabric: {item.fabricCount}
-                            </div>
-                          ))}
-                        </Typography>
-                      </Grid>
-                    )} */}
-                </Grid>
+          <Grid item xs={12} md={12} paddingTop={1}>
+            {isLoading ? (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="100%"
+              >
+                <CircularProgress />
               </Box>
-            </MainCard>
-            {/* )} */}
-          </Grid>
-          <Grid item xs={12} md={6} paddingTop={1}>
-            {/* {isLoading ? (
-              <SkeletonEarningCard />
-            ) : ( */}
-            <MainCard
-              border={false}
-              content={false}
-              sx={{
-                bgcolor: 'primary.main',
-                color: '#fff',
-                overflow: 'hidden',
-                position: 'relative',
-                '&:after': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 210,
-                  height: 210,
-                  background: theme.palette.grey[400],
-                  borderRadius: '50%',
-                  top: { xs: -105, sm: -85 },
-                  right: { xs: -140, sm: -95 }
-                },
-                '&:before': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 210,
-                  height: 210,
-                  background: theme.palette.grey[400],
-                  borderRadius: '50%',
-                  top: { xs: -155, sm: -125 },
-                  right: { xs: -70, sm: -15 },
-                  opacity: 0.5
-                }
-              }}
-            >
-              <Box sx={{ p: 2.25 }}>
-                <Grid container direction="column">
-                  <Grid item>
-                    <Grid container justifyContent="space-between">
-                      <Grid item>
-                        <Avatar
-                          variant="rounded"
-                          sx={{
-                            ...theme.typography.commonAvatar,
-                            ...theme.typography.largeAvatar,
-                            bgcolor: theme.palette.grey[400],
-                            color: 'secondary.dark',
-                            mt: 1
-                          }}
-                        >
-                          <i
-                            class="bi bi-bag-check-fill
-"
-                          ></i>
-                        </Avatar>
-                      </Grid>
-                      <Grid item>
-                        <Menu
-                          id="menu-earning-card"
-                          anchorEl={anchorEl}
-                          keepMounted
-                          open={Boolean(anchorEl)}
-                          onClose={handleClose}
-                          variant="selectedMenu"
-                          anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right'
-                          }}
-                          transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right'
-                          }}
-                        ></Menu>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Grid container alignItems="center">
-                      <Grid item>
-                        <Typography
-                          sx={{
-                            fontSize: '2.125rem',
-                            fontWeight: 500,
-                            mr: 1,
-                            mt: 1.75,
-                            mb: 0.75
-                          }}
-                        >
-                          {/* {totalCollection} */}
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Avatar
-                          sx={{
-                            cursor: 'pointer',
-                            ...theme.typography.smallAvatar,
-                            bgcolor: 'secondary.200',
-                            color: 'secondary.dark'
-                          }}
-                        >
-                          <ArrowUpwardIcon
-                            fontSize="inherit"
-                            sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }}
-                          />
-                        </Avatar>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item sx={{ mb: 1.25 }}>
-                    <Typography
-                      sx={{
-                        fontSize: '1rem',
-                        fontWeight: 500,
-                        color: 'primary.light'
-                      }}
-                    >
-                      Total Collecions
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Box>
-            </MainCard>
-            {/* )} */}
-          </Grid>
-          <Grid item xs={12} md={6} paddingTop={1}>
-            {/* {isLoading ? (
-              <SkeletonEarningCard />
-            ) : ( */}
-            <MainCard
-              border={false}
-              content={false}
-              sx={{
-                bgcolor: 'primary.main',
-                color: '#fff',
-                overflow: 'hidden',
-                position: 'relative',
-                '&:after': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 210,
-                  height: 210,
-                  background: theme.palette.grey[400],
-                  borderRadius: '50%',
-                  top: { xs: -105, sm: -85 },
-                  right: { xs: -140, sm: -95 }
-                },
-                '&:before': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 210,
-                  height: 210,
-                  background: theme.palette.grey[400],
-                  borderRadius: '50%',
-                  top: { xs: -155, sm: -125 },
-                  right: { xs: -70, sm: -15 },
-                  opacity: 0.5
-                }
-              }}
-            >
-              <Box sx={{ p: 2.25 }}>
-                <Grid container direction="column">
-                  <Grid item>
-                    <Grid container justifyContent="space-between">
-                      <Grid item>
-                        <Avatar
-                          variant="rounded"
-                          sx={{
-                            ...theme.typography.commonAvatar,
-                            ...theme.typography.largeAvatar,
-                            bgcolor: theme.palette.grey[400],
-                            color: 'secondary.dark',
-                            mt: 1
-                          }}
-                        >
-                          <i
-                            class="bi bi-bag-check-fill
-"
-                          ></i>
-                        </Avatar>
-                      </Grid>
-                      <Grid item>
-                        <Menu
-                          id="menu-earning-card"
-                          anchorEl={anchorEl}
-                          keepMounted
-                          open={Boolean(anchorEl)}
-                          onClose={handleClose}
-                          variant="selectedMenu"
-                          anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right'
-                          }}
-                          transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right'
-                          }}
-                        ></Menu>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Grid container alignItems="center">
-                      <Grid item>
-                        <Typography
-                          sx={{
-                            fontSize: '2.125rem',
-                            fontWeight: 500,
-                            mr: 1,
-                            mt: 1.75,
-                            mb: 0.75
-                          }}
-                        >
-                          {/* {totalCollection} */}
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Avatar
-                          sx={{
-                            cursor: 'pointer',
-                            ...theme.typography.smallAvatar,
-                            bgcolor: 'secondary.200',
-                            color: 'secondary.dark'
-                          }}
-                        >
-                          <ArrowUpwardIcon
-                            fontSize="inherit"
-                            sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }}
-                          />
-                        </Avatar>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item sx={{ mb: 1.25 }}>
-                    <Typography
-                      sx={{
-                        fontSize: '1rem',
-                        fontWeight: 500,
-                        color: 'primary.light'
-                      }}
-                    >
-                      Total Collecions
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Box>
-            </MainCard>
-            {/* )} */}
-          </Grid>
+            ) : summaryData ? (
+              <>
+                <Typography
+                  variant="h3"
+                  gutterBottom
+                  sx={{
+                    color: '#9f1d22',
+                    // textAlign: 'center',
+                    cursor: 'pointer', // To indicate it's clickable
+                    '&:hover': {
+                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                    }
+                  }}
+                  onClick={() => setActiveStep(0)} // Navigate to the corresponding step
+                >
+                  Pre Planning
+                </Typography>
 
-          <Grid item xs={12} md={6} paddingTop={1}>
-            {/* {isLoading ? (
-              <SkeletonEarningCard />
-            ) : ( */}
-            <MainCard
-              border={false}
-              content={false}
-              sx={{
-                bgcolor: 'primary.main',
-                color: '#fff',
-                overflow: 'hidden',
-                position: 'relative',
-                '&:after': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 210,
-                  height: 210,
-                  background: theme.palette.grey[400],
-                  borderRadius: '50%',
-                  top: { xs: -105, sm: -85 },
-                  right: { xs: -140, sm: -95 }
-                },
-                '&:before': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 210,
-                  height: 210,
-                  background: theme.palette.grey[400],
-                  borderRadius: '50%',
-                  top: { xs: -155, sm: -125 },
-                  right: { xs: -70, sm: -15 },
-                  opacity: 0.5
-                }
-              }}
-            >
-              <Box sx={{ p: 2.25 }}>
-                <Grid container direction="column">
-                  <Grid item>
-                    <Grid container justifyContent="space-between">
-                      <Grid item>
-                        <Avatar
-                          variant="rounded"
-                          sx={{
-                            ...theme.typography.commonAvatar,
-                            ...theme.typography.largeAvatar,
-                            bgcolor: theme.palette.grey[400],
-                            color: 'secondary.dark',
-                            mt: 1
-                          }}
-                        >
-                          <i
-                            class="bi bi-bag-check-fill
-"
-                          ></i>
-                        </Avatar>
-                      </Grid>
-                      <Grid item>
-                        <Menu
-                          id="menu-earning-card"
-                          anchorEl={anchorEl}
-                          keepMounted
-                          open={Boolean(anchorEl)}
-                          onClose={handleClose}
-                          variant="selectedMenu"
-                          anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right'
-                          }}
-                          transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right'
-                          }}
-                        ></Menu>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Grid container alignItems="center">
-                      <Grid item>
-                        <Typography
-                          sx={{
-                            fontSize: '2.125rem',
-                            fontWeight: 500,
-                            mr: 1,
-                            mt: 1.75,
-                            mb: 0.75
-                          }}
-                        >
-                          {/* {totalCollection} */}
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Avatar
-                          sx={{
-                            cursor: 'pointer',
-                            ...theme.typography.smallAvatar,
-                            bgcolor: 'secondary.200',
-                            color: 'secondary.dark'
-                          }}
-                        >
-                          <ArrowUpwardIcon
-                            fontSize="inherit"
-                            sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }}
-                          />
-                        </Avatar>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item sx={{ mb: 1.25 }}>
-                    <Typography
-                      sx={{
-                        fontSize: '1rem',
-                        fontWeight: 500,
-                        color: 'primary.light'
-                      }}
-                    >
-                      Total Collecions
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Box>
-            </MainCard>
-            {/* )} */}
-          </Grid>
-          <Grid item xs={12} md={6} paddingTop={1}>
-            {/* {isLoading ? (
-              <SkeletonEarningCard />
-            ) : ( */}
-            <MainCard
-              border={false}
-              content={false}
-              sx={{
-                bgcolor: 'primary.main',
-                color: '#fff',
-                overflow: 'hidden',
-                position: 'relative',
-                '&:after': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 210,
-                  height: 210,
-                  background: theme.palette.grey[400],
-                  borderRadius: '50%',
-                  top: { xs: -105, sm: -85 },
-                  right: { xs: -140, sm: -95 }
-                },
-                '&:before': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 210,
-                  height: 210,
-                  background: theme.palette.grey[400],
-                  borderRadius: '50%',
-                  top: { xs: -155, sm: -125 },
-                  right: { xs: -70, sm: -15 },
-                  opacity: 0.5
-                }
-              }}
-            >
-              <Box sx={{ p: 2.25 }}>
-                <Grid container direction="column">
-                  <Grid item>
-                    <Grid container justifyContent="space-between">
-                      <Grid item>
-                        <Avatar
-                          variant="rounded"
-                          sx={{
-                            ...theme.typography.commonAvatar,
-                            ...theme.typography.largeAvatar,
-                            bgcolor: theme.palette.grey[400],
-                            color: 'secondary.dark',
-                            mt: 1
-                          }}
-                        >
-                          <i
-                            class="bi bi-bag-check-fill
-"
-                          ></i>
-                        </Avatar>
-                      </Grid>
-                      <Grid item>
-                        <Menu
-                          id="menu-earning-card"
-                          anchorEl={anchorEl}
-                          keepMounted
-                          open={Boolean(anchorEl)}
-                          onClose={handleClose}
-                          variant="selectedMenu"
-                          anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right'
-                          }}
-                          transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right'
-                          }}
-                        ></Menu>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Grid container alignItems="center">
-                      <Grid item>
-                        <Typography
-                          sx={{
-                            fontSize: '2.125rem',
-                            fontWeight: 500,
-                            mr: 1,
-                            mt: 1.75,
-                            mb: 0.75
-                          }}
-                        >
-                          {/* {totalCollection} */}
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Avatar
-                          sx={{
-                            cursor: 'pointer',
-                            ...theme.typography.smallAvatar,
-                            bgcolor: 'secondary.200',
-                            color: 'secondary.dark'
-                          }}
-                        >
-                          <ArrowUpwardIcon
-                            fontSize="inherit"
-                            sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }}
-                          />
-                        </Avatar>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item sx={{ mb: 1.25 }}>
-                    <Typography
-                      sx={{
-                        fontSize: '1rem',
-                        fontWeight: 500,
-                        color: 'primary.light'
-                      }}
-                    >
-                      Total Collecions
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Box>
-            </MainCard>
-            {/* )} */}
-          </Grid>
-          <Grid item xs={12} md={6} paddingTop={1}>
-            {/* {isLoading ? (
-              <SkeletonEarningCard />
-            ) : ( */}
-            <MainCard
-              border={false}
-              content={false}
-              sx={{
-                bgcolor: 'primary.main',
-                color: '#fff',
-                overflow: 'hidden',
-                position: 'relative',
-                '&:after': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 210,
-                  height: 210,
-                  background: theme.palette.grey[400],
-                  borderRadius: '50%',
-                  top: { xs: -105, sm: -85 },
-                  right: { xs: -140, sm: -95 }
-                },
-                '&:before': {
-                  content: '""',
-                  position: 'absolute',
-                  width: 210,
-                  height: 210,
-                  background: theme.palette.grey[400],
-                  borderRadius: '50%',
-                  top: { xs: -155, sm: -125 },
-                  right: { xs: -70, sm: -15 },
-                  opacity: 0.5
-                }
-              }}
-            >
-              <Box sx={{ p: 2.25 }}>
-                <Grid container direction="column">
-                  <Grid item>
-                    <Grid container justifyContent="space-between">
-                      <Grid item>
-                        <Avatar
-                          variant="rounded"
-                          sx={{
-                            ...theme.typography.commonAvatar,
-                            ...theme.typography.largeAvatar,
-                            bgcolor: theme.palette.grey[400],
-                            color: 'secondary.dark',
-                            mt: 1
-                          }}
-                        >
-                          <i
-                            class="bi bi-bag-check-fill
-"
-                          ></i>
-                        </Avatar>
-                      </Grid>
-                      <Grid item>
-                        <Menu
-                          id="menu-earning-card"
-                          anchorEl={anchorEl}
-                          keepMounted
-                          open={Boolean(anchorEl)}
-                          onClose={handleClose}
-                          variant="selectedMenu"
-                          anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right'
-                          }}
-                          transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right'
-                          }}
-                        ></Menu>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Grid container alignItems="center">
-                      <Grid item>
-                        <Typography
-                          sx={{
-                            fontSize: '2.125rem',
-                            fontWeight: 500,
-                            mr: 1,
-                            mt: 1.75,
-                            mb: 0.75
-                          }}
-                        >
-                          {/* {totalCollection} */}
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Avatar
-                          sx={{
-                            cursor: 'pointer',
-                            ...theme.typography.smallAvatar,
-                            bgcolor: 'secondary.200',
-                            color: 'secondary.dark'
-                          }}
-                        >
-                          <ArrowUpwardIcon
-                            fontSize="inherit"
-                            sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }}
-                          />
-                        </Avatar>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid item sx={{ mb: 1.25 }}>
-                    <Typography
-                      sx={{
-                        fontSize: '1rem',
-                        fontWeight: 500,
-                        color: 'primary.light'
-                      }}
-                    >
-                      Total Collecions
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Box>
-            </MainCard>
-            {/* )} */}
+                <DataGrid
+                  // classes={{ columnHeaders: 'custom-header' }}
+                  rows={prePlanningRows}
+                  columns={prePlanningColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  autoHeight
+                  hideFooter
+                  onStateChange={handleStateChange}
+                  sx={{
+                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                    '& .css-1kyxv1r-MuiDataGrid-root': {
+                      color: 'white',
+                      backgroundColor: '#323232'
+                    },
+                    '& .MuiDataGrid-container--top [role=row]': {
+                      color: 'white',
+                      backgroundColor: '#323232'
+                    },
+                    '& .MuiDataGrid-columnSeparator': {
+                      color: 'white'
+                    },
+                    '& .MuiDataGrid-iconButtonContainer': {
+                      color: 'white'
+                    },
+                    '& .MuiDataGrid-sortIcon': {
+                      color: 'white'
+                    },
+                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                    '& .MuiDataGrid-row': {
+                      '&.total-summary-row': {
+                        backgroundColor: 'darkgray'
+                      }
+                    }
+                  }}
+                />
+
+                <Divider
+                  color="#921e22"
+                  sx={{ height: 3, width: '100%', mb: 1 }}
+                />
+                <Typography
+                  variant="h3"
+                  gutterBottom
+                  sx={{
+                    color: '#9f1d22',
+                    // textAlign: 'center',
+                    cursor: 'pointer', // To indicate it's clickable
+                    '&:hover': {
+                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                    }
+                  }}
+                  onClick={() => setActiveStep(1)} // Navigate to the corresponding step
+                >
+                  Fabrication
+                </Typography>
+
+                <DataGrid
+                  rows={fabricationRows}
+                  columns={fabricationColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  autoHeight
+                  hideFooter
+                  sx={{
+                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                    '& .css-1kyxv1r-MuiDataGrid-root': {
+                      color: 'white',
+                      backgroundColor: '#323232'
+                    },
+                    '& .MuiDataGrid-container--top [role=row]': {
+                      color: 'white',
+                      backgroundColor: '#323232'
+                    },
+                    '& .MuiDataGrid-columnSeparator': {
+                      color: 'white'
+                    },
+                    '& .MuiDataGrid-iconButtonContainer': {
+                      color: 'white'
+                    },
+                    '& .MuiDataGrid-sortIcon': {
+                      color: 'white'
+                    },
+                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                    '& .MuiDataGrid-row': {
+                      '&.total-summary-row': {
+                        backgroundColor: 'darkgray'
+                      }
+                    }
+                  }}
+                />
+
+                <Divider
+                  color="#921e22"
+                  sx={{ height: 2, width: '100%', mt: 1, mb: 1 }}
+                />
+                <Typography
+                  variant="h3"
+                  gutterBottom
+                  sx={{
+                    color: '#9f1d22',
+                    // textAlign: 'center',
+                    cursor: 'pointer', // To indicate it's clickable
+                    '&:hover': {
+                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                    }
+                  }}
+                  onClick={() => setActiveStep(2)} // Navigate to the corresponding step
+                >
+                  Dyeing
+                </Typography>
+
+                <DataGrid
+                  rows={dyeingPrintingRows}
+                  columns={dyeingPrintingColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  autoHeight
+                  hideFooter
+                  sx={{
+                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                    '& .css-1kyxv1r-MuiDataGrid-root': {
+                      color: 'white',
+                      backgroundColor: '#323232'
+                    },
+                    '& .MuiDataGrid-container--top [role=row]': {
+                      color: 'white',
+                      backgroundColor: '#323232'
+                    },
+                    '& .MuiDataGrid-columnSeparator': {
+                      color: 'white'
+                    },
+                    '& .MuiDataGrid-iconButtonContainer': {
+                      color: 'white'
+                    },
+                    '& .MuiDataGrid-sortIcon': {
+                      color: 'white'
+                    },
+                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                    '& .MuiDataGrid-row': {
+                      '&.total-summary-row': {
+                        backgroundColor: 'darkgray'
+                      }
+                    }
+                  }}
+                />
+
+                <Divider
+                  color="#921e22"
+                  sx={{ height: 2, width: '100%', mb: 1 }}
+                />
+                <Typography
+                  variant="h3"
+                  gutterBottom
+                  sx={{
+                    color: '#9f1d22',
+                    // textAlign: 'center',
+                    cursor: 'pointer', // To indicate it's clickable
+                    '&:hover': {
+                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                    }
+                  }}
+                  onClick={() => setActiveStep(3)} // Navigate to the corresponding step
+                >
+                  Embroidery
+                </Typography>
+
+                <DataGrid
+                  rows={embroideryRows}
+                  columns={embroideryColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  autoHeight
+                  hideFooter
+                  sx={{
+                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                    '& .css-1kyxv1r-MuiDataGrid-root': {
+                      color: 'white',
+                      backgroundColor: '#323232'
+                    },
+                    '& .MuiDataGrid-container--top [role=row]': {
+                      color: 'white',
+                      backgroundColor: '#323232'
+                    },
+                    '& .MuiDataGrid-columnSeparator': {
+                      color: 'white'
+                    },
+                    '& .MuiDataGrid-iconButtonContainer': {
+                      color: 'white'
+                    },
+                    '& .MuiDataGrid-sortIcon': {
+                      color: 'white'
+                    },
+                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                    '& .MuiDataGrid-row': {
+                      '&.total-summary-row': {
+                        backgroundColor: 'darkgray'
+                      }
+                    }
+                  }}
+                />
+
+                <Divider
+                  color="#921e22"
+                  sx={{ height: 2, width: '100%', mb: 1 }}
+                />
+
+                <Typography
+                  variant="h3"
+                  gutterBottom
+                  sx={{
+                    color: '#9f1d22',
+                    // textAlign: 'center',
+                    cursor: 'pointer', // To indicate it's clickable
+                    '&:hover': {
+                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                    }
+                  }}
+                  onClick={() => setActiveStep(4)} // Navigate to the corresponding step
+                >
+                  Schiffli
+                </Typography>
+                <DataGrid
+                  rows={schiffiliRows}
+                  columns={schiffiliColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  autoHeight
+                  hideFooter
+                  sx={{
+                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                    '& .css-1kyxv1r-MuiDataGrid-root': {
+                      color: 'white',
+                      backgroundColor: '#323232'
+                    },
+                    '& .MuiDataGrid-container--top [role=row]': {
+                      color: 'white',
+                      backgroundColor: '#323232'
+                    },
+                    '& .MuiDataGrid-columnSeparator': {
+                      color: 'white'
+                    },
+                    '& .MuiDataGrid-iconButtonContainer': {
+                      color: 'white'
+                    },
+                    '& .MuiDataGrid-sortIcon': {
+                      color: 'white'
+                    },
+                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                    '& .MuiDataGrid-row': {
+                      '&.total-summary-row': {
+                        backgroundColor: 'darkgray'
+                      }
+                    }
+                  }}
+                />
+                <Divider
+                  color="#921e22"
+                  sx={{ height: 2, width: '100%', mb: 1 }}
+                />
+                <Typography
+                  variant="h3"
+                  gutterBottom
+                  sx={{
+                    color: '#9f1d22',
+                    // textAlign: 'center',
+                    cursor: 'pointer', // To indicate it's clickable
+                    '&:hover': {
+                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                    }
+                  }}
+                  onClick={() => setActiveStep(5)} // Navigate to the corresponding step
+                >
+                  Additional Process
+                </Typography>
+
+                <DataGrid
+                  rows={additionalProcessRows}
+                  columns={additionalProcessColumns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  autoHeight
+                  hideFooter
+                  sx={{
+                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                    '& .css-1kyxv1r-MuiDataGrid-root': {
+                      color: 'white',
+                      backgroundColor: '#323232'
+                    },
+                    '& .MuiDataGrid-container--top [role=row]': {
+                      color: 'white',
+                      backgroundColor: '#323232'
+                    },
+                    '& .MuiDataGrid-columnSeparator': {
+                      color: 'white'
+                    },
+                    '& .MuiDataGrid-iconButtonContainer': {
+                      color: 'white'
+                    },
+                    '& .MuiDataGrid-sortIcon': {
+                      color: 'white'
+                    },
+                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                    '& .MuiDataGrid-row': {
+                      '&.total-summary-row': {
+                        backgroundColor: 'darkgray'
+                      }
+                    }
+                  }}
+                />
+              </>
+            ) : (
+              <CircularProgress></CircularProgress>
+            )}
           </Grid>
         </Grid>
       </Card>

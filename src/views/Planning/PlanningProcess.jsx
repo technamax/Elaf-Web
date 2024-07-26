@@ -301,9 +301,10 @@ export default function PlanningProcess() {
       {/*//////////////////////////////////////////////////////////////////////////////////////////*/}
       {activeStep === steps.length ? (
         <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>
+          {/* <Typography sx={{ mt: 2, mb: 1 }}>
             All steps completed - you&apos;re finished
-          </Typography>
+          </Typography> */}
+          <Summary setActiveStep={setActiveStep} />
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Box sx={{ flex: '1 1 auto' }} />
             <Button onClick={handleReset}>Reset</Button>
@@ -314,9 +315,17 @@ export default function PlanningProcess() {
           {/* <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography> */}
 
           {activeStep === 0 && (
-            <PrePlanning setInitialValues={setInitialValues} />
+            <PrePlanning
+              setInitialValues={setInitialValues}
+              initialValues={initialValues}
+            />
           )}
-          {activeStep === 1 && <Fabrication initialValues={initialValues} />}
+          {activeStep === 1 && (
+            <Fabrication
+              setInitialValues={setInitialValues}
+              initialValues={initialValues}
+            />
+          )}
 
           {activeStep === 2 && <Dyeing initialValues={initialValues} />}
           {activeStep === 3 && <Embroidery initialValues={initialValues} />}
@@ -327,7 +336,13 @@ export default function PlanningProcess() {
           {activeStep === 6 && (
             <AdditionalServices initialValues={initialValues} />
           )}
-          {activeStep === 7 && <Summary />}
+          {activeStep === 7 && (
+            <Summary
+              setActiveStep={setActiveStep}
+              setInitialValues={setInitialValues}
+              initialValues={initialValues}
+            />
+          )}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"

@@ -17,6 +17,7 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import PrintIcon from '@mui/icons-material/Print';
 import ExcelExport from './ExcelExport';
 import loadingGif from '../assets/images/loading1.svg';
+import { useSnackbar } from 'notistack';
 
 import axios from 'axios';
 
@@ -40,6 +41,7 @@ const ReuseableDataGrid = ({
   const apiRef = useGridApiRef();
   const [open, setOpen] = React.useState(false);
   const [deleteId, setDeleteId] = React.useState(null);
+  const { enqueueSnackbar } = useSnackbar();
   const componentRef = React.useRef();
 
   function EditToolbar() {
@@ -93,7 +95,27 @@ const ReuseableDataGrid = ({
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`${deleteApi}${deleteId}`);
+      const response = await axios.delete(`${deleteApi}${deleteId}`);
+      if (!response.data.success) {
+        enqueueSnackbar(
+          `${response.data.message} !`,
+
+          {
+            variant: 'error',
+            autoHideDuration: 5000
+          }
+        );
+      }
+      if (response.data.success) {
+        enqueueSnackbar(
+          `${response.data.message} !`,
+
+          {
+            variant: 'success',
+            autoHideDuration: 5000
+          }
+        );
+      }
       refetch();
     } catch (error) {
       console.error('Error deleting data:', error);
@@ -180,7 +202,24 @@ const ReuseableDataGrid = ({
         slots={{ toolbar: EditToolbar }}
         sx={{
           '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-
+          '& .css-1kyxv1r-MuiDataGrid-root': {
+            color: 'white',
+            backgroundColor: '#323232'
+          },
+          '& .MuiDataGrid-container--top [role=row]': {
+            color: 'white',
+            backgroundColor: '#323232'
+          },
+          '& .MuiDataGrid-columnSeparator': {
+            color: 'white'
+          },
+          '& .MuiDataGrid-iconButtonContainer': {
+            color: 'white'
+          },
+          '& .MuiDataGrid-sortIcon': {
+            color: 'white'
+          },
+          '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
           '& .MuiDataGrid-row': {
             '&.total-summary-row': {
               backgroundColor: 'darkgray'

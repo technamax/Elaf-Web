@@ -56,6 +56,21 @@ const PrePlanningCreation = () => {
     createdBy: user.empId,
     createdOn: new Date().toISOString()
   });
+  const [initialData, setInitialData] = useState([]);
+
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      collectionId: initialData?.collectionId || '',
+      planningHeaderId: initialData?.planningHeaderId || 0,
+      plannedCollectionId: initialData?.plannedCollectionId || '',
+      plannedDesignedId: initialData?.plannedDesignedId || '',
+      designId: initialData?.designId || '',
+      poPcs: initialData?.poPcs || '',
+      batchNo: initialData?.batchNo || ''
+    });
+  }, [initialData]);
+
   const [designOptions, setDesignOptions] = useState([]);
   const [plannedCollection, setPlannedCollection] = useState([]);
   const [plannedDesign, setPlannedDesign] = useState([]);
@@ -117,10 +132,12 @@ const PrePlanningCreation = () => {
       editable: true
     }
   ];
-
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
   };
+
+  const [pcs, setPcs] = useState('');
+  console.log('pcs', pcs);
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
@@ -128,6 +145,7 @@ const PrePlanningCreation = () => {
       const selectedCollection = collectionList.find(
         (collection) => collection.collectionId === parseInt(value)
       );
+      setPcs(selectedCollection.poPcs);
       setFormData({
         ...formData,
         collectionId: value,
@@ -137,6 +155,7 @@ const PrePlanningCreation = () => {
       setFormData({
         ...formData,
         designId: value,
+        poPcs: pcs,
 
         plannedDesignedId: value // Update plannedDesignedId as well
       });
@@ -220,21 +239,11 @@ const PrePlanningCreation = () => {
     };
     GetDesignFromPlanningHeaderByCollectionId();
   }, [formData.plannedCollectionId]);
-  const [initialData, setInitialData] = useState([]);
 
-  useEffect(() => {
-    setFormData({
-      ...formData,
-      collectionId: initialData?.collectionId || '',
-      designId: initialData?.designId || '',
-      poPcs: initialData?.poPcs || '',
-      plannedCollectionId: initialData?.plannedCollectionId || '',
-      plannedDesignedId: initialData?.plannedDesignedId || '',
-      planningHeaderId: initialData?.planningHeaderId || ''
-    });
-  }, [initialData]);
   console.log('formdata', formData);
   console.log('InitialData', initialData);
+
+  const deleteApi = `https://gecxc.com:4041/api/PrePlanning/DeletePlanningHeaderIdByPlanningId?planningHeaderId=`;
   return (
     <MainCard
       style={{
@@ -396,8 +405,10 @@ const PrePlanningCreation = () => {
                     initialRows={gridData}
                     iColumns={columns}
                     formData={formData}
+                    deleteApi={deleteApi}
+                    deleteBy="planningHeaderId"
                     fetchData={fetchData}
-                    refetch={refetchCollection}
+                    refetch={fetchData}
                     setInitialData={setInitialData}
                   />
                 </Grid>

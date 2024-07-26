@@ -22,6 +22,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import SearchIcon from '@mui/icons-material/Search';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import LoopOutlinedIcon from '@mui/icons-material/LoopOutlined';
+import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import MainCard from 'ui-component/cards/MainCard';
@@ -43,19 +44,36 @@ const NewDesign = () => {
   );
   const { enqueueSnackbar } = useSnackbar();
 
-  const [designList, setDesignList] = useState([]);
+  const [initialRows, setInitialRows] = useState([]);
   const [colors, setColors] = useState([]);
+  const [designers, setDesigners] = useState([]);
   const [value, setValue] = useState('1');
   const [duplicateError, setDuplicateError] = useState(false); // State to track duplicate design number error
+  const { data: lookupData } = useGetLookUpListQuery();
 
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
   };
 
   useEffect(() => {
+    // fetchData();
+    if (lookupData) {
+      const data = lookupData.result[0];
+      setDesigners(data.designerList);
+    }
+  }, [lookupData]);
+
+  console.log('designers', designers);
+
+  useEffect(() => {
     if (designData) {
       setIsLoading(false);
-      setDesignList(designData.result);
+      setInitialRows(
+        designData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
       refetch();
     }
   }, [designData]);
@@ -102,6 +120,8 @@ const NewDesign = () => {
     collectionId: '',
     designNo: '',
     designerName: '',
+    designerid: '',
+
     poPcs: '',
     dateOfPlanning: '',
     colorId: '',
@@ -179,10 +199,10 @@ const NewDesign = () => {
     } else setFormData({ ...formData, [name]: value });
   };
 
-  const initialRows = designList.map((design, index) => ({
-    id: index + 1,
-    ...design
-  }));
+  // const initialRows = initialRows.map((design, index) => ({
+  //   id: index + 1,
+  //   ...design
+  // }));
   console.log('initialRows', initialRows);
   const columns = [
     {
@@ -251,7 +271,7 @@ const NewDesign = () => {
   const handleSave = async () => {
     console.log(formData);
     // Check if the design number already exists
-    const isDuplicate = designList.some(
+    const isDuplicate = initialRows.some(
       (design) => design.designNo === formData.designNo
     );
 
@@ -274,10 +294,10 @@ const NewDesign = () => {
       });
 
       console.log('Form data saved:', response.data);
-      setDesignList([...designList, response.data]);
+      // setInitialRows([...initialRows, response.data]);
       setFormData({
         ...formData,
-        collectionId: '',
+        // collectionId: '',
         designId: 0,
         designNo: '',
         designerName: '',
@@ -343,6 +363,7 @@ const NewDesign = () => {
       lastUpdatedBy: user.empId,
       lastUpdatedOn: new Date().toISOString()
     });
+    setInitialRows([]);
   };
   return (
     <MainCard
@@ -460,7 +481,7 @@ const NewDesign = () => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} md={4}>
+                {/* <Grid item xs={12} md={4}>
                   <TextField
                     label="Designer Name"
                     fullWidth
@@ -476,6 +497,30 @@ const NewDesign = () => {
                       }
                     }}
                   />
+                </Grid> */}
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Designer Name"
+                    size="small"
+                    name="designerName"
+                    value={formData.designerName}
+                    onChange={handleChange}
+                    disabled={!formData.collectionId}
+                    InputLabelProps={{
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                      }
+                    }}
+                  >
+                    {designers.map((option) => (
+                      <MenuItem key={option.lookUpId} value={option.lookUpName}>
+                        {option.lookUpName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <TextField

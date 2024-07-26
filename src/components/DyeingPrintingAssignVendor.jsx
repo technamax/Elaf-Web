@@ -52,14 +52,8 @@ const DyeingPrintingAssignVendor = ({
     availableQty: initialFormData.availableQty || '',
     remainingQty: initialFormData.availableQty - Quantity || '',
     shrinkage: '',
-    wastage: '',
+    wastage: initialFormData.wastage || '',
 
-    // baseColorName: initialFormData.baseColorName || '',
-    // poPcs: initialFormData.poPcs || '',
-    // availableQty: initialFormData.availableQty || '',
-    // remainingQty:
-    //   initialFormData.availableQty - Quantity || '',
-    // processTypeId: initialFormData.processTypeId || '',
     assignedQty: '',
 
     rate: '',
@@ -101,7 +95,7 @@ const DyeingPrintingAssignVendor = ({
       rate: initialData?.rate || 0,
       unitRatePerPo: initialData?.unitRatePerPo || '',
       totalExcGst: initialData?.totalExcGst || '',
-      gst: initialData?.gst || '',
+      gst: initialData?.gst || 0,
       TotalIncludingGst: initialData?.totalIncludingGst || '',
       // createdBy: initialData?.createdBy || 0,
       // baseColorName: initialData?.baseColorName || 0,
@@ -337,12 +331,12 @@ const DyeingPrintingAssignVendor = ({
       field: 'outputQty',
       headerName: 'Output Qty',
       flex: 1
-    },
-    {
-      field: 'unitRatePerPo',
-      headerName: 'unitRatePerPo.',
-      flex: 1
     }
+    // {
+    //   field: 'unitRatePerPo',
+    //   headerName: 'unitRatePerPo.',
+    //   flex: 1
+    // }
   ];
 
   const deleteApi = `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingDetailByDetId?dpIdDet=`;

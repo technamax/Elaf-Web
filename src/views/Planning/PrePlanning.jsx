@@ -42,7 +42,7 @@ import { useUser } from 'context/User';
 import 'App.css';
 import '../../index.css';
 import { maxWidth, width } from '@mui/system';
-const PrePlanning = ({ setInitialValues }) => {
+const PrePlanning = ({ setInitialValues, initialValues }) => {
   const { user } = useUser();
   console.log('user', user);
   const [isLoading, setIsLoading] = useState(true);
@@ -124,14 +124,14 @@ const PrePlanning = ({ setInitialValues }) => {
       repeatsInMtr: initialData?.repeatsInMtr || ''
     });
   }, [initialData]);
-  useEffect(() => {
-    setInitialValues({
-      collectionId: formData?.collectionId || '',
-      designId: formData?.designId || '',
-      planningHeaderId: formData?.planningHeaderId || '',
-      batchNo: formData?.batchNo || ''
-    });
-  }, [formData.collectionId, formData.designId, formData?.batchNo]);
+  // useEffect(() => {
+  //   setInitialValues({
+  //     // collectionId: formData?.collectionId || '',
+  //     designId: formData?.designId || '',
+  //     planningHeaderId: formData?.planningHeaderId || '',
+  //     batchNo: formData?.batchNo || ''
+  //   });
+  // }, [setInitialValues]);
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const { data: designData, refetch } =
@@ -244,7 +244,18 @@ const PrePlanning = ({ setInitialValues }) => {
     // setLoading(false);
   }, [formData.designId, formData.planningHeaderId]);
   const isDyeing = formData.planningProcessTypeId === 212;
-  console.log('isDyeing', isDyeing);
+  console.log('initialValues', initialValues);
+
+  useEffect(() => {
+    setSelectedCollectionId(initialValues?.collectionId || '');
+    setFormData({
+      ...formData,
+      designId: initialValues?.designId || '',
+      planningHeaderId: initialValues?.planningHeaderId || '',
+      batchNo: initialValues?.batchNo || ''
+    });
+  }, [initialValues, setInitialValues]);
+
   useEffect(() => {
     const calculateTotalFabric1 = () => {
       const poPcs = parseFloat(formData.poPcs) || 0;
