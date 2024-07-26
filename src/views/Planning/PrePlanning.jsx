@@ -124,14 +124,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       repeatsInMtr: initialData?.repeatsInMtr || ''
     });
   }, [initialData]);
-  // useEffect(() => {
-  //   setInitialValues({
-  //     // collectionId: formData?.collectionId || '',
-  //     designId: formData?.designId || '',
-  //     planningHeaderId: formData?.planningHeaderId || '',
-  //     batchNo: formData?.batchNo || ''
-  //   });
-  // }, [setInitialValues]);
+
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   const { data: designData, refetch } =
@@ -245,6 +238,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
   }, [formData.designId, formData.planningHeaderId]);
   const isDyeing = formData.planningProcessTypeId === 212;
   console.log('initialValues', initialValues);
+  console.log('selectedCollectionId', selectedCollectionId);
 
   useEffect(() => {
     setSelectedCollectionId(initialValues?.collectionId || '');
@@ -254,7 +248,17 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       planningHeaderId: initialValues?.planningHeaderId || '',
       batchNo: initialValues?.batchNo || ''
     });
-  }, [initialValues, setInitialValues]);
+  }, [initialValues]);
+  // if (!initialValues.collectionId) {
+  //   useEffect(() => {
+  //     setInitialValues({
+  //       collectionId: selectedCollectionId || '',
+  //       designId: formData?.designId || '',
+  //       planningHeaderId: formData?.planningHeaderId || '',
+  //       batchNo: formData?.batchNo || ''
+  //     });
+  //   }, [setInitialValues, selectedCollectionId, formData.batchNo]);
+  // }
 
   useEffect(() => {
     const calculateTotalFabric1 = () => {
@@ -890,7 +894,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                 select
                 label="Select Collection"
                 name="collectionId"
-                value={formData.collectionId}
+                value={selectedCollectionId}
                 onChange={handleChange}
                 size="small"
                 required
