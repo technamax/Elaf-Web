@@ -54,12 +54,6 @@ const DyeingPrintingAssignVendor = ({
     shrinkage: '',
     wastage: initialFormData.wastage || '',
 
-    // baseColorName: initialFormData.baseColorName || '',
-    // poPcs: initialFormData.poPcs || '',
-    // availableQty: initialFormData.availableQty || '',
-    // remainingQty:
-    //   initialFormData.availableQty - Quantity || '',
-    // processTypeId: initialFormData.processTypeId || '',
     assignedQty: '',
 
     rate: '',
