@@ -587,7 +587,7 @@ const Embroidery = ({ initialValues }) => {
 
     try {
       const response = await axios.post(
-        'https://gecxc.com:4041/api/Embroidery/SaveEmbroidery',
+        'https://gecxc.com:449/api/Embroidery/SaveEmbroidery',
         {
           ...formData,
           threadAdditional: formData.threadAdditional.join(', ')
@@ -947,7 +947,7 @@ const Embroidery = ({ initialValues }) => {
       )
     }
   ];
-  const deleteApi = `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=`;
+  const deleteApi = `https://gecxc.com:449/api/Embroidery/DeleteEmbroideryById?embroideryId=`;
 
   return (
     <>

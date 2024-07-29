@@ -35,7 +35,7 @@ export default function AddSubMenu({ onSaveSuccess }) {
     console.log(formData);
     try {
       const response = await axios.post(
-        'https://gecxc.com:4041/api/Menu/SaveSubMenu',
+        'https://gecxc.com:449/api/Menu/SaveSubMenu',
         formData
       );
       console.log('Form data saved:', response.data);

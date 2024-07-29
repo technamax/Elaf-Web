@@ -193,7 +193,7 @@ const Summary = ({
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningSummaryByBatchId?planningHeaderId=${planningHeaderId}`
+        `https://gecxc.com:449/api/PrePlanning/GetPrePlanningSummaryByBatchId?planningHeaderId=${planningHeaderId}`
       );
       if (response.data.success) {
         setSummaryData(response.data.result);

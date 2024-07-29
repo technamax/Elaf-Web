@@ -234,7 +234,7 @@ const DyeingPrintingAssignVendor = ({
         return;
       }
       const response = await axios.post(
-        'https://gecxc.com:4041/api/DyeingPrinting/SaveDyeingPrintingDetails',
+        'https://gecxc.com:449/api/DyeingPrinting/SaveDyeingPrintingDetails',
         formData
       );
 
@@ -341,7 +341,7 @@ const DyeingPrintingAssignVendor = ({
     // }
   ];
 
-  const deleteApi = `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingDetailByDetId?dpIdDet=`;
+  const deleteApi = `https://gecxc.com:449/api/DyeingPrinting/DeleteDyeingPrintingDetailByDetId?dpIdDet=`;
   return (
     <Box
       noValidate

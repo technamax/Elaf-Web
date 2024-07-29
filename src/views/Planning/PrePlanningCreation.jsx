@@ -81,7 +81,7 @@ const PrePlanningCreation = () => {
     try {
       if (formData.plannedDesignedId) {
         const response = await axios.get(
-          `https://gecxc.com:4041/api/PrePlanning/GetPlanningHeaderListByDesignId?designId=${formData.plannedDesignedId}`
+          `https://gecxc.com:449/api/PrePlanning/GetPlanningHeaderListByDesignId?designId=${formData.plannedDesignedId}`
         );
         const rowsWithId = response.data.result.map((row, index) => ({
           ...row,
@@ -167,7 +167,7 @@ const PrePlanningCreation = () => {
   const handleSave = async () => {
     try {
       const response = await axios.post(
-        'https://gecxc.com:4041/api/PrePlanning/SavePrePlanningHeader',
+        'https://gecxc.com:449/api/PrePlanning/SavePrePlanningHeader',
         formData
       );
       enqueueSnackbar('Planning Batch saved successfully!', {
@@ -199,7 +199,7 @@ const PrePlanningCreation = () => {
       if (formData.collectionId) {
         try {
           const response = await axios.get(
-            `https://gecxc.com:4041/api/DesignRegistration/GetDesignListByCollectionId?CollectionId=${formData.collectionId}`
+            `https://gecxc.com:449/api/DesignRegistration/GetDesignListByCollectionId?CollectionId=${formData.collectionId}`
           );
           setDesignOptions(response.data.result);
         } catch (error) {
@@ -214,7 +214,7 @@ const PrePlanningCreation = () => {
     const GetCollectionFromPlanningHeader = async () => {
       try {
         const response = await axios.get(
-          'https://gecxc.com:4041/api/PrePlanning/GetCollectionListFromPlanningHeader'
+          'https://gecxc.com:449/api/PrePlanning/GetCollectionListFromPlanningHeader'
         );
         setPlannedCollection(response.data.result);
       } catch (error) {
@@ -229,7 +229,7 @@ const PrePlanningCreation = () => {
       if (formData.plannedCollectionId) {
         try {
           const response = await axios.get(
-            `https://gecxc.com:4041/api/PrePlanning/GetDesignFromPlanningHeaderByCollectionId?collectionid=${formData.plannedCollectionId}`
+            `https://gecxc.com:449/api/PrePlanning/GetDesignFromPlanningHeaderByCollectionId?collectionid=${formData.plannedCollectionId}`
           );
           setPlannedDesign(response.data.result);
         } catch (error) {
@@ -243,7 +243,7 @@ const PrePlanningCreation = () => {
   console.log('formdata', formData);
   console.log('InitialData', initialData);
 
-  const deleteApi = `https://gecxc.com:4041/api/PrePlanning/DeletePlanningHeaderIdByPlanningId?planningHeaderId=`;
+  const deleteApi = `https://gecxc.com:449/api/PrePlanning/DeletePlanningHeaderIdByPlanningId?planningHeaderId=`;
   return (
     <MainCard
       style={{
