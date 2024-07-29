@@ -34,6 +34,12 @@ const PrePlanningCreation = Loadable(
 const TermsandConditions = Loadable(
   lazy(() => import('views/Production/TermsandConditions'))
 );
+const ProductionBatch = Loadable(
+  lazy(() => import('views/Production/ProductionBatch'))
+);
+const ProductionProcess = Loadable(
+  lazy(() => import('views/Production/ProductionProcess'))
+);
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 const WelcomePage = Loadable(lazy(() => import('views/welcome/WelcomePage')));
 
@@ -97,15 +103,15 @@ const MainRoutes = {
         {
           path: 'TermsandConditions',
           element: <ProtectedRoute element={TermsandConditions} />
+        },
+        {
+          path: 'ProductionBatch',
+          element: <ProtectedRoute element={ProductionBatch} />
+        },
+        {
+          path: 'ProductionProcess',
+          element: <ProtectedRoute element={ProductionProcess} />
         }
-        // {
-        //   path: 'NewDesign',
-        //   element: <ProtectedRoute element={PlanningNewDesign} />
-        // },
-        // {
-        //   path: 'PlanningProcess',
-        //   element: <ProtectedRoute element={PlanningProcess} />
-        // },
         // {
         //   path: 'PrePlanningCreation',
         //   element: <ProtectedRoute element={PrePlanningCreation} />
