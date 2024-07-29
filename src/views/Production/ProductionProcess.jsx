@@ -237,6 +237,7 @@ const ProductionProcess = () => {
                       sx: {
                         // set the color of the label when not shrinked
                         color: 'black'
+                        // fontWeight: 'bold' // Use fontWeight to set the font to bold
                       }
                     }}
                     // error={!!formErrors.collectionName}
