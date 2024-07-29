@@ -29,6 +29,8 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import AddTermsAndConditions from 'components/Production/TermsAndConditions/AddTermsAndConditions';
 import AssignTermsAndConditions from 'components/Production/TermsAndConditions/AssignTermsAndConditions';
 // import SubMenu from './SubMenu';
+import { useGetCollectionListFromPlanningHeaderQuery } from 'api/store/Apis/productionApi';
+import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 
 //////
 import * as React from 'react';
@@ -38,9 +40,11 @@ const ProductionProcess = () => {
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [processType, setProcessType] = useState([]);
+
   const [formData, setFormData] = useState({
     productionId: 0,
-    productionName: '',
+    collectionId: '',
     processType: '',
     startDate: new Date().toISOString(),
     appId: user.appId,
@@ -82,25 +86,66 @@ const ProductionProcess = () => {
     setAccordionExpanded(!accordionExpanded);
   };
 
-  const { data: mainMenuData, refetch } = useGetMainMenuListQuery();
+  // const { data: mainMenuData, refetch } = useGetMainMenuListQuery();
 
+  // useEffect(() => {
+  //   if (mainMenuData) {
+  //     setInitialRows(
+  //       mainMenuData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [mainMenuData, refetch]);
+
+  console.log('initialRows', initialRows);
+  const { data: lookupData } = useGetLookUpListQuery();
   useEffect(() => {
-    if (mainMenuData) {
-      setInitialRows(
-        mainMenuData.result.map((row, index) => ({
+    if (lookupData) {
+      const data = lookupData.result[0];
+      // const data = response.data.result[0];
+      // setComponents(data.componentList);
+      // setColors(data.colorList);
+      // setFabrications(data.fabricList);
+      // setHeads(data.noOfHeadsList);
+      // setUoms(data.uomList);
+      setProcessType(data.productionProcessList);
+      // setOperatingMachineList(data.operatingMachineList);
+    }
+  }, [lookupData]);
+  const { data: collectionData, refetch } =
+    useGetCollectionListFromPlanningHeaderQuery();
+
+  const [collectionList, setCollectionList] = useState([]);
+  useEffect(() => {
+    if (collectionData) {
+      setCollectionList(
+        collectionData.result.map((row, index) => ({
           id: index + 1,
           ...row
         }))
       );
     }
-  }, [mainMenuData, refetch]);
+  }, [collectionData, refetch]);
 
   console.log('initialRows', initialRows);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'collectionId') {
+      const selectedCollection = collectionList.find(
+        (collection) => collection.collectionId === parseInt(value)
+      );
 
-    setFormData({ ...formData, [name]: value });
+      setFormData({
+        ...formData,
+        collectionId: value,
+        orderNumber: selectedCollection ? selectedCollection.orderNumber : ''
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSave = async () => {
@@ -223,13 +268,13 @@ const ProductionProcess = () => {
               >
                 <Grid item xs={12} md={3}>
                   <TextField
-                    label="Select Production"
-                    select
+                    label="Collection"
                     fullWidth
+                    select
                     size="small"
-                    name="production"
+                    name="collectionId"
                     onChange={handleChange}
-                    value={formData.productionName}
+                    value={formData.collectionId}
                     required
                     disabled={isEdit}
                     InputLabelProps={{
@@ -242,7 +287,16 @@ const ProductionProcess = () => {
                     }}
                     // error={!!formErrors.collectionName}
                     // helperText={formErrors.collectionName}
-                  />
+                  >
+                    {collectionList.map((option) => (
+                      <MenuItem
+                        key={option.collectionId}
+                        value={option.collectionId}
+                      >
+                        {option.collectionName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
 
                 <Grid item xs={12} md={3}>
@@ -264,9 +318,9 @@ const ProductionProcess = () => {
                     // error={!!formErrors.brandId}
                     // helperText={formErrors.brandId}
                   >
-                    {options.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
+                    {processType.map((option) => (
+                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                        {option.lookUpName}
                       </MenuItem>
                     ))}
                   </TextField>
