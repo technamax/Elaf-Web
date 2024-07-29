@@ -669,7 +669,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
           params.value === 'MultiHead'
             ? 'primary.dark'
             : params.value === 'Schiffili'
-              ? theme.palette.grey[900]
+              ? 'primary'
               : params.value === 'Dyeing'
                 ? 'success.dark'
                 : 'default';
