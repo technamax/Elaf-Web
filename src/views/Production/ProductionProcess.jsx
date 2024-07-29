@@ -11,7 +11,10 @@ import {
   Card,
   CardHeader,
   Avatar,
-  FormControl
+  FormControl,
+  CircularProgress,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
@@ -22,6 +25,11 @@ import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import {} from '@mui/material';
 import '../../assets/scss/style.scss';
+import {
+  DataGrid,
+  GridToolbarContainer,
+  useGridApiRef
+} from '@mui/x-data-grid';
 
 import { useGetMainMenuListQuery } from 'api/store/Apis/userManagementApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -31,21 +39,35 @@ import AssignTermsAndConditions from 'components/Production/TermsAndConditions/A
 // import SubMenu from './SubMenu';
 import { useGetCollectionListFromPlanningHeaderQuery } from 'api/store/Apis/productionApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
+import { styled } from '@mui/material/styles';
 
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
+
+const SmallTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiInputBase-input': {
+    fontSize: '0.875rem', // Adjust font size
+    padding: '4px 6px' // Adjust padding
+  },
+  width: 'auto', // Let width adjust automatically
+  height: 'auto', // Let height adjust automatically
+  minWidth: '100px', // Set minimum width to ensure it's usable
+  minHeight: '30px' // Set minimum height to ensure it's usable
+}));
 
 const ProductionProcess = () => {
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [processType, setProcessType] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     productionId: 0,
     collectionId: '',
     processType: '',
+    AssignQty: '',
     startDate: new Date().toISOString(),
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -53,16 +75,8 @@ const ProductionProcess = () => {
     lastUpdatedOn: new Date().toISOString(),
     lastUpdatedBy: user.empId
   });
-  const options = [
-    {
-      value: 'Yes',
-      label: 'Yes'
-    },
-    {
-      value: 'No',
-      label: 'No'
-    }
-  ];
+  console.log('Form Data:', formData); // Debugging line
+
   const [value, setValue] = useState('1');
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
@@ -70,17 +84,19 @@ const ProductionProcess = () => {
   // console.log('initialData', initialData);
   useEffect(() => {
     setFormData({
-      categoryId: initialData?.categoryId || 0,
-      description: initialData?.description || '',
-      enabled: initialData?.enabled || '',
-      appId: initialData?.appId || user.appId,
-      createdOn: initialData?.createdOn || new Date().toISOString(),
-      createdBy: initialData?.createdBy || user.empId,
-      lastUpdatedOn: new Date().toISOString(),
-      lastUpdatedBy: user.empId
+      // categoryId: initialData?.categoryId || 0,
+      // description: initialData?.description || '',
+      // enabled: initialData?.enabled || '',
+      // appId: initialData?.appId || user.appId,
+      // createdOn: initialData?.createdOn || new Date().toISOString(),
+      // createdBy: initialData?.createdBy || user.empId,
+      // lastUpdatedOn: new Date().toISOString(),
+      // lastUpdatedBy: user.empId
     });
   }, [initialData]);
   const [initialRows, setInitialRows] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
+
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded);
@@ -99,19 +115,12 @@ const ProductionProcess = () => {
   //   }
   // }, [mainMenuData, refetch]);
 
-  console.log('initialRows', initialRows);
   const { data: lookupData } = useGetLookUpListQuery();
   useEffect(() => {
     if (lookupData) {
       const data = lookupData.result[0];
-      // const data = response.data.result[0];
-      // setComponents(data.componentList);
-      // setColors(data.colorList);
-      // setFabrications(data.fabricList);
-      // setHeads(data.noOfHeadsList);
-      // setUoms(data.uomList);
+
       setProcessType(data.productionProcessList);
-      // setOperatingMachineList(data.operatingMachineList);
     }
   }, [lookupData]);
   const { data: collectionData, refetch } =
@@ -119,17 +128,28 @@ const ProductionProcess = () => {
 
   const [collectionList, setCollectionList] = useState([]);
   useEffect(() => {
-    if (collectionData) {
-      setCollectionList(
-        collectionData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [collectionData, refetch]);
+    const fetchCollectionData = async () => {
+      try {
+        const response = await axios.get(
+          'https://gecxc.com:449/api/Production/GetProductionBatchForProcessing?appId=1'
+        );
+        if (response.data.success) {
+          setCollectionList(
+            response.data.result.map((row, index) => ({
+              id: index + 1,
+              ...row
+            }))
+          );
+        } else {
+          console.error(response.data.message);
+        }
+      } catch (error) {
+        console.error('Failed to fetch collection data', error);
+      }
+    };
 
-  console.log('initialRows', initialRows);
+    fetchCollectionData();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -141,63 +161,187 @@ const ProductionProcess = () => {
       setFormData({
         ...formData,
         collectionId: value,
-        orderNumber: selectedCollection ? selectedCollection.orderNumber : ''
+        productionId: selectedCollection ? selectedCollection.productionId : '',
+        status: selectedCollection ? selectedCollection.status : ''
       });
+      GetFabricForProductionByCollectionId(1, value);
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
-  const handleSave = async () => {
-    console.log('formData', formData);
+  const GetFabricForProductionByCollectionId = async (appId, collectionId) => {
+    setIsLoading(true);
     try {
-      // Make the API call
-      const response = await axios.post(
-        'https://gecxc.com:449/api/TermsConditions/SaveCategory',
-        formData
+      const response = await axios.get(
+        `https://gecxc.com:449/api/Production/GetFabricForProductionByCollectionId?appId=${appId}&collectionid=${collectionId}`
       );
-
-      console.log('Save response:', response.data);
-
-      setFormData((prevFormData) => ({
-        categoryId: 0,
-        description: '',
-        enabled: '',
-
-        appId: user.appId,
-        createdOn: new Date().toISOString(),
-        createdBy: user.empId,
-        lastUpdatedOn: new Date().toISOString(),
-        lastUpdatedBy: user.empId
-      }));
-
-      refetch();
-      setIsEdit(false);
-      // setAccordionExpanded(false);
+      //in 449 url this api doesnt exist
+      if (response.data.success) {
+        // Add id property to each row
+        const rowsWithId = response.data.result.map((row, index) => ({
+          ...row,
+          id: row.fabricId,
+          sr: index + 1 // Add serial number
+        }));
+        setInitialRows(rowsWithId);
+      } else {
+        console.error(response.data.message);
+      }
     } catch (error) {
-      console.error('Error saving data:', error);
+      console.error('Failed to fetch fabric for production data', error);
+    } finally {
+      setIsLoading(false);
     }
   };
-  console.log('formData', formData);
+  console.log(initialRows);
 
+  const handleCellEdit = (params) => {
+    const { id, field, value } = params;
+    console.log('Editing cell:', params); // Debugging line
+
+    if (field === 'AssignQty') {
+      setInitialRows((prevRows) =>
+        prevRows.map((row) =>
+          row.id === id ? { ...row, AssignQty: value } : row
+        )
+      );
+    }
+  };
   const columns = [
     {
       field: 'id',
-      headerName: 'Sr#',
-      flex: 1
+      headerName: 'FabricId'
     },
     {
-      field: 'description',
-      headerName: 'Description',
-      flex: 1
+      field: 'sr',
+      headerName: 'Sr#'
+    },
+    {
+      field: 'collectionName',
+      headerName: 'Collection Name'
+    },
+    {
+      field: 'fabricName',
+      headerName: 'Fabric Name'
+    },
+    {
+      field: 'quantity',
+      headerName: 'Quantity'
+    },
+    {
+      field: 'AssignQty',
+      headerName: 'Assign Quantity',
+      renderCell: (params) => (
+        <SmallTextField
+          variant="outlined"
+          size="small"
+          sx={{ mt: 1, width: 100 }} // Adjust width and height as needed
+          value={params.row.AssignQty || ''}
+          onChange={(event) =>
+            handleCellEdit({
+              id: params.id,
+              field: 'AssignQty',
+              value: event.target.value
+            })
+          }
+          type="number"
+          InputProps={{
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+          }}
+        />
+      )
+    },
+    {
+      field: 'bxQuantity',
+      headerName: 'BX Quantity'
     },
 
     {
-      field: 'enabled',
-      headerName: 'Enabled',
-      flex: 1
+      field: 'uomName',
+      headerName: 'UOM'
     }
   ];
+  console.log('Selected Rows:', selectedRows); // Debugging line
+
+  const handleRowSelection = (newSelection) => {
+    setSelectedRows(newSelection);
+    console.log('New Selection:', newSelection); // Debugging line
+  };
+
+  const handleSave = async () => {
+    try {
+      console.log('FormData:', formData); // Debugging line
+      console.log('Selected Rows:', selectedRows); // Debugging line
+      console.log('Initial Rows:', initialRows); // Debugging line
+
+      const selectedRowsData = initialRows.filter((row) =>
+        selectedRows.includes(row.id)
+      );
+
+      const productionDetails = selectedRowsData.map((row) => ({
+        productionHeaderDetId: 0,
+        productionHeaderId: formData.productionId || 0,
+        fabricId: row.fabricId,
+        totalQuantity: row.quantity || 0,
+        assignQty: row.AssignQty || '0',
+        status: formData.status || 'Draft',
+        uomId: row.uomId || 0,
+        createdBy: formData.createdBy || 0,
+        createdOn: formData.createdOn || new Date().toISOString(),
+        lastUpdatedBy: formData.lastUpdatedBy || 0,
+        lastUpdatedOn: formData.lastUpdatedOn || new Date().toISOString(),
+        rate: row.rate || 0,
+        tax: row.tax || 0,
+        totalBeforeTax: row.totalBeforeTax || 0,
+        totalAfterTax: row.totalAfterTax || 0
+      }));
+
+      const payload = {
+        productionHeaderId: formData.productionId || 0,
+        productionId: formData.productionId || 0,
+        processTypeId: formData.processType || 0,
+        status: 'Ready',
+        startDate: formData.startDate || new Date().toISOString(),
+        createdOn: formData.createdOn || new Date().toISOString(),
+        createdBy: formData.createdBy || 0,
+        lastUpdatedOn: formData.lastUpdatedOn || new Date().toISOString(),
+        lastUpdatedBy: formData.lastUpdatedBy || 0,
+        productionDetails
+      };
+
+      console.log('Payload:', payload); // Debugging line
+
+      const response = await axios.post(
+        'https://gecxc.com:449/api/Production/StartProductionProcess',
+        payload
+      );
+
+      if (response.data.success) {
+        alert('Production process started successfully!');
+        console.log('API saved successfully');
+        console.log('Response:', response);
+        // Optionally, reset form and state here
+      } else {
+        console.error(response.data.message);
+        alert('Failed to start production process');
+      }
+    } catch (error) {
+      console.error('Error starting production process', error);
+      alert('An error occurred while starting the production process');
+    }
+  };
+  const apiRef = useGridApiRef();
+
+  const handleStateChange = (params) => {
+    if (apiRef.current && apiRef.current.autosizeColumns) {
+      apiRef.current.autosizeColumns({
+        // columns: autoSizeColumns,
+        includeOutliers: true,
+        includeHeaders: true
+      });
+    }
+  };
 
   return (
     <MainCard
@@ -374,12 +518,45 @@ const ProductionProcess = () => {
                 // sx={{ paddingY: 2, paddingX: 2 }}
               >
                 <Grid item xs={12}>
-                  <ReuseableDataGrid
-                    initialRows={initialRows}
-                    iColumns={columns}
+                  <DataGrid
+                    rows={initialRows}
+                    checkboxSelection
+                    columns={columns}
                     disableDelete={true}
-                    setInitialData={setInitialData}
-                    setIsEdit={setIsEdit}
+                    getRowId={(row) => row.id}
+                    disableRowSelectionOnClick
+                    autosizeOnMount
+                    apiRef={apiRef}
+                    onStateChange={handleStateChange}
+                    onRowSelectionModelChange={(newSelectionModel) =>
+                      handleRowSelection(newSelectionModel)
+                    }
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
                   />
                 </Grid>
               </Grid>

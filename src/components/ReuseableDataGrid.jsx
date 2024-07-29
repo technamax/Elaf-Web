@@ -36,7 +36,10 @@ const ReuseableDataGrid = ({
   setIsEdit,
   autoSizeColumns,
   isLoading,
-  height
+  height,
+  checkboxSelection,
+  onRowSelectionModelChange
+  // Make sure to pass checkboxSelection
 }) => {
   const apiRef = useGridApiRef();
   const [open, setOpen] = React.useState(false);
@@ -197,7 +200,9 @@ const ReuseableDataGrid = ({
         apiRef={apiRef}
         ref={componentRef}
         autosizeOnMount
+        checkboxSelection={checkboxSelection}
         getCellClassName={getCellClassName}
+        onRowSelectionModelChange={onRowSelectionModelChange}
         onStateChange={handleStateChange}
         slots={{ toolbar: EditToolbar }}
         sx={{
