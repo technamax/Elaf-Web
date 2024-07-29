@@ -1,5 +1,5 @@
+// src/reducer.js
 import { combineReducers } from 'redux';
-
 // reducer import
 import customizationReducer from './customizationReducer';
 import { collectionApi } from 'api/store/Apis/collectionApi';

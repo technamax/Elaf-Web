@@ -18,8 +18,8 @@ const store = configureStore({
       .concat(lookupApi.middleware)
       .concat(prePlanningHeaderApi.middleware)
       .concat(userManagementApi.middleware)
-      .concat(dashboardApi.middleware)
-      .concat(productionApi.middleware) // Include the API middleware
+      .concat(dashboardApi.middleware) // Include the API middleware
+      .concat(productionApi.middleware)
 });
 
 export default store;

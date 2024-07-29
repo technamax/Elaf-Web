@@ -13,6 +13,8 @@ import {
   Avatar,
   FormControl
 } from '@mui/material';
+import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
+
 import MainCard from 'ui-component/cards/MainCard';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -24,7 +26,10 @@ import {} from '@mui/material';
 import '../../assets/scss/style.scss';
 
 import { useGetMainMenuListQuery } from 'api/store/Apis/userManagementApi';
-import { useGetCollectionListFromPlanningHeaderQuery } from 'api/store/Apis/productionApi';
+import {
+  useGetCollectionListFromPlanningHeaderQuery,
+  useGetDesignListFromCompletedCollectionIdQuery
+} from 'api/store/Apis/productionApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import AddTermsAndConditions from 'components/Production/TermsAndConditions/AddTermsAndConditions';
@@ -39,12 +44,16 @@ const ProductionBatch = () => {
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [selectedDesigns, setSelectedDesigns] = React.useState([]);
+
   const [formData, setFormData] = useState({
-    categoryId: 0,
+    productionId: 0,
     collectionId: '',
     orderNumber: '',
-    description: '',
-    enabled: '',
+    launchDate: '',
+    status: '',
+    remarks: '',
+    productionBatchDetails: [selectedDesigns],
 
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -52,6 +61,7 @@ const ProductionBatch = () => {
     lastUpdatedOn: new Date().toISOString(),
     lastUpdatedBy: user.empId
   });
+  console.log('formData', formData);
   const options = [
     {
       value: 'Yes',
@@ -69,9 +79,14 @@ const ProductionBatch = () => {
   // console.log('initialData', initialData);
   useEffect(() => {
     setFormData({
-      categoryId: initialData?.categoryId || 0,
-      description: initialData?.description || '',
-      enabled: initialData?.enabled || '',
+      productionId: initialData?.productionId || 0,
+      collectionId: initialData?.collectionId || '',
+      orderNumber: initialData?.orderNumber || '',
+      launchDate: initialData?.launchDate || '',
+      status: initialData?.status || '',
+      remarks: initialData?.remarks || '',
+      // productionBatchDetails: initialData?.productionBatchDetails || [],
+
       appId: initialData?.appId || user.appId,
       createdOn: initialData?.createdOn || new Date().toISOString(),
       createdBy: initialData?.createdBy || user.empId,
@@ -87,6 +102,10 @@ const ProductionBatch = () => {
 
   const { data: collectionData, refetch } =
     useGetCollectionListFromPlanningHeaderQuery();
+  const { data: designData, refetch: refetchDesignData } =
+    useGetDesignListFromCompletedCollectionIdQuery(formData.collectionId, {
+      skip: !formData.collectionId // Skip the query if no collection is selected
+    });
 
   const [collectionList, setCollectionList] = useState([]);
   useEffect(() => {
@@ -99,6 +118,16 @@ const ProductionBatch = () => {
       );
     }
   }, [collectionData, refetch]);
+  useEffect(() => {
+    if (designData) {
+      setInitialRows(
+        designData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [designData, refetchDesignData]);
 
   console.log('initialRows', initialRows);
 
@@ -112,7 +141,8 @@ const ProductionBatch = () => {
       setFormData({
         ...formData,
         collectionId: value,
-        orderNumber: selectedCollection ? selectedCollection.orderNumber : ''
+        orderNumber: selectedCollection ? selectedCollection.orderNumber : '',
+        status: selectedCollection ? selectedCollection.batchStatus : ''
       });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -124,16 +154,20 @@ const ProductionBatch = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:449/api/TermsConditions/SaveCategory',
+        'https://gecxc.com:449/api/Production/SaveProductionBatchHeader',
         formData
       );
 
       console.log('Save response:', response.data);
 
       setFormData((prevFormData) => ({
-        categoryId: 0,
-        description: '',
-        enabled: '',
+        productionId: 0,
+        collectionId: '',
+        orderNumber: '',
+        launchDate: '',
+        status: '',
+        remarks: '',
+        // productionBatchDetails: [],
 
         appId: user.appId,
         createdOn: new Date().toISOString(),
@@ -142,9 +176,8 @@ const ProductionBatch = () => {
         lastUpdatedBy: user.empId
       }));
 
-      refetch();
-      setIsEdit(false);
-      // setAccordionExpanded(false);
+      // refetch();
+      // setIsEdit(false);
     } catch (error) {
       console.error('Error saving data:', error);
     }
@@ -154,22 +187,87 @@ const ProductionBatch = () => {
   const columns = [
     {
       field: 'id',
-      headerName: 'Sr#',
-      flex: 1
+      headerName: 'Sr#'
+      // flex: 1
     },
     {
-      field: 'description',
-      headerName: 'Description',
-      flex: 1
+      field: 'orderNumber',
+      headerName: 'Order Number'
+      // flex: 1
     },
-
     {
-      field: 'enabled',
-      headerName: 'Enabled',
-      flex: 1
+      field: 'designNo',
+      headerName: 'Design No.'
+      // flex: 1
+    },
+    {
+      field: 'designerName',
+      headerName: 'DesignerName'
+      // flex: 1
+    },
+    {
+      field: 'poPcs',
+      headerName: 'PO Pcs..'
+      // flex: 1
+    },
+    {
+      field: 'planningDate',
+      headerName: 'Date Of Planning',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+      // flex: 1
+    },
+    {
+      field: 'colorName',
+      headerName: 'Color'
+      // flex: 1
     }
   ];
+  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
+  const apiRef = useGridApiRef();
 
+  const handleRowSelectionModelChange = React.useCallback(
+    (newRowSelectionModel) => {
+      setRowSelectionModel(newRowSelectionModel);
+      const planningHeaderIds = newRowSelectionModel
+        .map((id) => {
+          const rowData = apiRef.current.getRow(id);
+          console.log('rowData', rowData);
+          return rowData ? rowData['planningHeaderId'] : null; // Adjust the field name to match your data
+        })
+        .filter((id) => id !== null); // Filter out any null values
+
+      const designs = planningHeaderIds.map((planningHeaderId) => ({
+        prodctionDetId: 0,
+        productionId: 0,
+        planningHeaderId: planningHeaderId,
+        createdOn: new Date().toISOString(),
+        createdBy: user.empId,
+        lastUpdatedBy: user.empId,
+        lastUpdatedOn: new Date().toISOString()
+      }));
+
+      setSelectedDesigns(designs);
+    },
+    [apiRef]
+  );
+
+  useEffect(() => {
+    setFormData({ ...formData, productionBatchDetails: selectedDesigns });
+  }, [selectedDesigns]);
+  React.useEffect(() => {
+    if (apiRef.current) {
+      console.log('API ref is ready:', apiRef.current);
+    }
+  }, [apiRef]);
+
+  console.log('selectedDesigns:', selectedDesigns);
   return (
     <MainCard
       style={{
@@ -190,7 +288,7 @@ const ProductionBatch = () => {
             // avatar={
             // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
             // }
-            title="Production Creation"
+            title="Production Batch"
             titleTypographyProps={{ style: { color: 'white' } }}
           ></CardHeader>
           <Grid
@@ -237,34 +335,78 @@ const ProductionBatch = () => {
                 // helperText={formErrors.collectionName}
               />
             </Grid>
-
-            <Grid item xs={12} md={3}>
+            <Grid item xs={12} md={4}>
               <TextField
-                fullWidth
-                select
-                label="enabled"
-                name="enabled"
-                value={formData.enabled}
-                onChange={handleChange}
                 size="small"
-                // error={!!formErrors.brandId}
-                // helperText={formErrors.brandId}
-              >
-                {options.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
+                type="date"
+                label="Launch Date"
+                name="launchDate"
+                value={formData.launchDate}
+                onChange={handleChange}
+                fullWidth
+                // error={!!formErrors.launchDate}
+                // helperText={formErrors.launchDate}
+                InputLabelProps={{
+                  shrink: true,
+                  sx: {
+                    // set the color of the label when not shrinked
+                    color: 'black'
+                  }
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={8}>
+              <TextField
+                label="Remarks"
+                fullWidth
+                size="small"
+                name="remarks"
+                onChange={handleChange}
+                value={formData.remarks}
+                // error={!!formErrors.collectionName}
+                // helperText={formErrors.collectionName}
+                InputLabelProps={{
+                  sx: {
+                    color: 'black'
+                  }
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                label="Status"
+                fullWidth
+                size="small"
+                name="status"
+                onChange={handleChange}
+                value={formData.status}
+                required
+                disabled={isEdit}
+                // error={!!formErrors.collectionName}
+                // helperText={formErrors.collectionName}
+              />
             </Grid>
             <Grid item xs={12}>
-              <ReuseableDataGrid
+              {/* <ReuseableDataGrid
                 initialRows={initialRows}
                 iColumns={columns}
                 disableDelete={true}
                 setInitialData={setInitialData}
                 setIsEdit={setIsEdit}
-              />
+                checkboxSelection={true}
+                onRowSelectionModelChange={handleRowSelectionModelChange}
+                rowSelectionModel={rowSelectionModel}
+              /> */}
+              <div style={{ height: 400, width: '100%' }}>
+                <DataGrid
+                  rows={initialRows}
+                  columns={columns}
+                  apiRef={apiRef}
+                  checkboxSelection
+                  onRowSelectionModelChange={handleRowSelectionModelChange}
+                  rowSelectionModel={rowSelectionModel}
+                />
+              </div>
             </Grid>
 
             <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
