@@ -8,6 +8,7 @@ import { lookupApi } from 'api/store/Apis/lookupApi';
 import { prePlanningHeaderApi } from 'api/store/Apis/prePlanningHeaderApi';
 import { userManagementApi } from 'api/store/Apis/userManagementApi';
 import { dashboardApi } from 'api/store/Apis/dashboardApi';
+import { productionApi } from 'api/store/Apis/productionApi';
 
 // ==============================|| COMBINE REDUCER ||============================== //
 
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
   [lookupApi.reducerPath]: lookupApi.reducer,
   [prePlanningHeaderApi.reducerPath]: prePlanningHeaderApi.reducer,
   [userManagementApi.reducerPath]: userManagementApi.reducer,
-  [dashboardApi.reducerPath]: dashboardApi.reducer
+  [dashboardApi.reducerPath]: dashboardApi.reducer,
+  [productionApi.reducerPath]: productionApi.reducer
 });
 
 export default rootReducer;
