@@ -21,6 +21,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import '../../App.css';
 import MainCard from 'ui-component/cards/MainCard';
+import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
 import { useUser } from 'context/User';
 const PrePlanningCreation = () => {
@@ -45,6 +46,7 @@ const PrePlanningCreation = () => {
   // const designList = designData || [];
   const [formData, setFormData] = useState({
     collectionName: '',
+    planningHeaderId: 0,
     collectionId: '',
     plannedCollectionId: '',
     plannedDesignedId: '',
@@ -54,6 +56,21 @@ const PrePlanningCreation = () => {
     createdBy: user.empId,
     createdOn: new Date().toISOString()
   });
+  const [initialData, setInitialData] = useState([]);
+
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      collectionId: initialData?.collectionId || '',
+      planningHeaderId: initialData?.planningHeaderId || 0,
+      plannedCollectionId: initialData?.plannedCollectionId || '',
+      plannedDesignedId: initialData?.plannedDesignedId || '',
+      designId: initialData?.designId || '',
+      poPcs: initialData?.poPcs || '',
+      batchNo: initialData?.batchNo || ''
+    });
+  }, [initialData]);
+
   const [designOptions, setDesignOptions] = useState([]);
   const [plannedCollection, setPlannedCollection] = useState([]);
   const [plannedDesign, setPlannedDesign] = useState([]);
@@ -64,7 +81,7 @@ const PrePlanningCreation = () => {
     try {
       if (formData.plannedDesignedId) {
         const response = await axios.get(
-          `https://gecxc.com:449/api/PrePlanning/GetPlanningHeaderListByDesignId?designId=${formData.plannedDesignedId}`
+          `https://gecxc.com:4041/api/PrePlanning/GetPlanningHeaderListByDesignId?designId=${formData.plannedDesignedId}`
         );
         const rowsWithId = response.data.result.map((row, index) => ({
           ...row,
@@ -115,10 +132,12 @@ const PrePlanningCreation = () => {
       editable: true
     }
   ];
-
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
   };
+
+  const [pcs, setPcs] = useState('');
+  console.log('pcs', pcs);
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
@@ -126,6 +145,7 @@ const PrePlanningCreation = () => {
       const selectedCollection = collectionList.find(
         (collection) => collection.collectionId === parseInt(value)
       );
+      setPcs(selectedCollection.poPcs);
       setFormData({
         ...formData,
         collectionId: value,
@@ -135,6 +155,8 @@ const PrePlanningCreation = () => {
       setFormData({
         ...formData,
         designId: value,
+        poPcs: pcs,
+
         plannedDesignedId: value // Update plannedDesignedId as well
       });
     } else {
@@ -145,7 +167,7 @@ const PrePlanningCreation = () => {
   const handleSave = async () => {
     try {
       const response = await axios.post(
-        'https://gecxc.com:449/api/PrePlanning/SavePrePlanningHeader',
+        'https://gecxc.com:4041/api/PrePlanning/SavePrePlanningHeader',
         formData
       );
       enqueueSnackbar('Planning Batch saved successfully!', {
@@ -177,7 +199,7 @@ const PrePlanningCreation = () => {
       if (formData.collectionId) {
         try {
           const response = await axios.get(
-            `https://gecxc.com:449/api/DesignRegistration/GetDesignListByCollectionId?CollectionId=${formData.collectionId}`
+            `https://gecxc.com:4041/api/DesignRegistration/GetDesignListByCollectionId?CollectionId=${formData.collectionId}`
           );
           setDesignOptions(response.data.result);
         } catch (error) {
@@ -192,7 +214,7 @@ const PrePlanningCreation = () => {
     const GetCollectionFromPlanningHeader = async () => {
       try {
         const response = await axios.get(
-          'https://gecxc.com:449/api/PrePlanning/GetCollectionListFromPlanningHeader'
+          'https://gecxc.com:4041/api/PrePlanning/GetCollectionListFromPlanningHeader'
         );
         setPlannedCollection(response.data.result);
       } catch (error) {
@@ -207,7 +229,7 @@ const PrePlanningCreation = () => {
       if (formData.plannedCollectionId) {
         try {
           const response = await axios.get(
-            `https://gecxc.com:449/api/PrePlanning/GetDesignFromPlanningHeaderByCollectionId?collectionid=${formData.plannedCollectionId}`
+            `https://gecxc.com:4041/api/PrePlanning/GetDesignFromPlanningHeaderByCollectionId?collectionid=${formData.plannedCollectionId}`
           );
           setPlannedDesign(response.data.result);
         } catch (error) {
@@ -218,6 +240,10 @@ const PrePlanningCreation = () => {
     GetDesignFromPlanningHeaderByCollectionId();
   }, [formData.plannedCollectionId]);
 
+  console.log('formdata', formData);
+  console.log('InitialData', initialData);
+
+  const deleteApi = `https://gecxc.com:4041/api/PrePlanning/DeletePlanningHeaderIdByPlanningId?planningHeaderId=`;
   return (
     <MainCard
       style={{
@@ -375,12 +401,15 @@ const PrePlanningCreation = () => {
                   sx={{ height: 2, width: '100%', mt: 2 }}
                 />
                 <Grid item xs={12} paddingTop={1}>
-                  <EditAbleDataGrid
+                  <ReuseableDataGrid
                     initialRows={gridData}
-                    ncolumns={columns}
+                    iColumns={columns}
                     formData={formData}
+                    deleteApi={deleteApi}
+                    deleteBy="planningHeaderId"
                     fetchData={fetchData}
-                    refetch={refetchCollection}
+                    refetch={fetchData}
+                    setInitialData={setInitialData}
                   />
                 </Grid>
               </Grid>
@@ -454,11 +483,13 @@ const PrePlanningCreation = () => {
                   sx={{ height: 2, width: '100%', mt: 2 }}
                 />
                 <Grid item xs={12} paddingTop={1}>
-                  <EditAbleDataGrid
+                  <ReuseableDataGrid
                     initialRows={gridData}
-                    ncolumns={columns}
+                    iColumns={columns}
                     formData={formData}
                     fetchData={fetchData}
+                    refetch={refetchCollection}
+                    setInitialData={setInitialData}
                   />
                 </Grid>
               </Grid>

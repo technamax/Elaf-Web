@@ -18,7 +18,8 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
@@ -64,7 +65,7 @@ import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
 import '../../assets/scss/style.scss';
 
-const Embroidery = () => {
+const Embroidery = ({ initialValues }) => {
   const theme = useTheme();
   const { user } = useUser();
   const [isLoading, setIsLoading] = useState(true);
@@ -109,7 +110,7 @@ const Embroidery = () => {
     // additional:  '',
     threadAdditional: [],
 
-    costPerComponent: '', //
+    // costPerComponent: '', //
     // costPerComponent:  '', //
     createdBy: user.empId,
     createdOn: new Date().toISOString(),
@@ -119,16 +120,17 @@ const Embroidery = () => {
 
   useEffect(() => {
     setFormData({
+      ...formData,
       embroideryId: initialData?.embroideryId || 0,
-      designId: initialData?.designId || '',
-      batchNo: initialData?.batchNo || '',
-      planningHeaderId: initialData?.planningHeaderId || '',
+      // designId: initialData?.designId || '',
+      // batchNo: initialData?.batchNo || '',
+      // planningHeaderId: initialData?.planningHeaderId || '',
       componentId: initialData?.componentId || '',
       fabricId: initialData?.fabricId || '',
       vendorId: initialData?.vendorId || '',
       poPcs: initialData?.poPcs || '', // coming from getcollectionapi
-      baseColorId: initialData?.baseColorId || '', // coming from getcollectionapi
-      baseColorName: initialData?.baseColorName || '',
+      // baseColorId: initialData?.baseColorId || '', // coming from getcollectionapi
+      // baseColorName: initialData?.baseColorName || '',
       colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
       availableQty: initialData?.availableQty || '',
       noOfHead: initialData?.noOfHead || '',
@@ -152,7 +154,7 @@ const Embroidery = () => {
       solvingRate: initialData?.solvingRate || 0,
       solvingAmount: initialData?.solvingAmount || '',
       threadAdditional: initialData?.threadAdditional || [],
-      costPerComponent: initialData?.costPerComponent || '', //
+      // costPerComponent: initialData?.costPerComponent || '', //
       createdOn: initialData?.createdOn || new Date().toISOString(),
       createdBy: initialData?.createdBy || user.empId,
       lastUpdatedOn: new Date().toISOString(),
@@ -171,6 +173,17 @@ const Embroidery = () => {
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
+
+  useEffect(() => {
+    setSelectedCollectionId(initialValues.collectionId);
+    // setFormData({
+    //   ...formData,
+    //   designId: initialValues?.designId || '',
+    //   planningHeaderId: initialValues?.planningHeaderId || '',
+    //   batchNo: initialValues?.batchNo || ''
+    // });
+  }, []);
+
   const { data: lookupData } = useGetLookUpListQuery();
   const { data: designData, refetch } =
     useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
@@ -180,15 +193,16 @@ const Embroidery = () => {
     useGetPrePlanningHeaderByDesignIdQuery(formData.designId, {
       skip: !formData.designId // Skip the query if no collection is selected
     });
-  const { data: fabricData } = useGetFabricByComponentsAndBatchNoQuery(
-    {
-      batchNo: formData.planningHeaderId,
-      componentId: formData.componentId
-    },
-    {
-      skip: !formData.planningHeaderId || !formData.componentId
-    }
-  );
+  const { data: fabricData, refetch: refetchFabrics } =
+    useGetFabricByComponentsAndBatchNoQuery(
+      {
+        batchNo: formData.planningHeaderId,
+        componentId: formData.componentId
+      },
+      {
+        skip: !formData.planningHeaderId || !formData.componentId
+      }
+    );
   const { data: colorData } =
     useGetFabricColorByComponentsBatchNoAndFabricIdQuery(
       {
@@ -247,10 +261,11 @@ const Embroidery = () => {
   }, [batchData]);
   useEffect(() => {
     if (fabricData) {
+      refetchFabrics();
       setFabrications(fabricData.result);
       // refetchBatches();
     }
-  }, [fabricData]);
+  }, [fabricData, refetchFabrics]);
   useEffect(() => {
     if (colorData) {
       setColors(fabricData.result);
@@ -268,7 +283,7 @@ const Embroidery = () => {
 
       setInitialRows(
         embroideryList.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -370,17 +385,17 @@ const Embroidery = () => {
       ...prevData,
       totalAmount: calculateTotalAmount() || 0
     }));
-    const calculateCostPerComponent = () => {
-      const totalAmount = parseFloat(formData.totalAmount) || 0;
-      const totalPcs = parseFloat(formData.totalPcs) || 0;
+    // const calculateCostPerComponent = () => {
+    //   const totalAmount = parseFloat(formData.totalAmount) || 0;
+    //   const totalPcs = parseFloat(formData.totalPcs) || 0;
 
-      return (totalAmount / totalPcs).toFixed(2);
-    };
+    //   return (totalAmount / totalPcs).toFixed(2);
+    // };
 
-    setFormData((prevData) => ({
-      ...prevData,
-      costPerComponent: calculateCostPerComponent() || 0
-    }));
+    // setFormData((prevData) => ({
+    //   ...prevData,
+    //   costPerComponent: calculateCostPerComponent() || 0
+    // }));
   }, [
     formData.threadAmount,
     formData.totalAmount,
@@ -454,9 +469,9 @@ const Embroidery = () => {
         solvingRate: 0,
         solvingAmount: '',
         // additional:  '',
-        threadAdditional: [],
+        threadAdditional: []
 
-        costPerComponent: '' //
+        // costPerComponent: '' //
         // poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
     } else if (name === 'designId') {
@@ -500,9 +515,9 @@ const Embroidery = () => {
         solvingRate: 0,
         solvingAmount: '',
         // additional:  '',
-        threadAdditional: [],
+        threadAdditional: []
 
-        costPerComponent: '' //
+        // costPerComponent: '' //
       });
     } else if (name === 'colorId') {
       const selectedcolor = colors.find((color) => color.colorId === value);
@@ -549,9 +564,9 @@ const Embroidery = () => {
         solvingRate: 0,
         solvingAmount: '',
         // additional:  '',
-        threadAdditional: [],
+        threadAdditional: []
 
-        costPerComponent: '' //
+        // costPerComponent: '' //
       });
 
       setAccordionExpanded(true);
@@ -572,7 +587,7 @@ const Embroidery = () => {
 
     try {
       const response = await axios.post(
-        'https://gecxc.com:449/api/Embroidery/SaveEmbroidery',
+        'https://gecxc.com:4041/api/Embroidery/SaveEmbroidery',
         {
           ...formData,
           threadAdditional: formData.threadAdditional.join(', ')
@@ -635,7 +650,7 @@ const Embroidery = () => {
         solvingRate: 0,
         solvingAmount: '',
         threadAdditional: [],
-        costPerComponent: '', //
+        // costPerComponent: '', //
         createdOn: new Date().toISOString(),
         createdBy: user.empId,
         lastUpdatedOn: new Date().toISOString(),
@@ -699,20 +714,131 @@ const Embroidery = () => {
     setInitialFormData(data);
     setOpen(true);
   };
+  const [showUpperDiv, setShowUpperDiv] = useState(true); // State variable to control visibility
+
+  const handleClickOpen2 = (data) => {
+    setInitialFormData(data);
+    setOpen(true);
+    setShowUpperDiv(false);
+  };
 
   const handleClose = () => {
+    setShowUpperDiv(true);
     setOpen(false);
     setInitialFormData({});
     refetchDyeingPrintingData();
+
     // setDeleteId(null);
+  };
+  console.log('show div', showUpperDiv);
+
+  const [totalAvailableQty, setTotalAvailableQty] = useState(0);
+  const [totalAssignedQty, setTotalAssignedQty] = useState(0);
+  const [totalPcsSum, setTotalPcsSum] = useState(0);
+  const [totalRequiredPcs, setTotalRequiredPcs] = useState(0);
+  useEffect(() => {
+    const totalAvailableQty = initialRows
+      .reduce((sum, row) => sum + (row.availableQty ?? 0), 0)
+      .toFixed(2);
+    const totalAssignedQty = initialRows
+      .reduce((sum, row) => sum + (row.assignedQty ?? 0), 0)
+      .toFixed(2);
+    const pcsSum = initialRows
+      .reduce((sum, row) => sum + (row.totalPcs ?? 0), 0)
+      .toFixed(2);
+    const totalRequiredPcs = initialRows
+      .reduce((sum, row) => sum + (row.requiredPcs ?? 0), 0)
+      .toFixed(2);
+
+    setTotalAvailableQty(parseFloat(totalAvailableQty).toLocaleString());
+    setTotalAssignedQty(parseFloat(totalAssignedQty).toLocaleString());
+    setTotalPcsSum(parseFloat(pcsSum).toLocaleString());
+    setTotalRequiredPcs(parseFloat(totalRequiredPcs).toLocaleString());
+  }, [initialRows]);
+
+  const rows = [
+    ...initialRows,
+    {
+      id: 'TOTAL_SUMMARY',
+      // componentName: 'Total Summary',
+      availableQty: totalAvailableQty,
+      assignedQty: totalAssignedQty,
+      totalPcs: totalPcsSum,
+      requiredPcs: totalRequiredPcs
+    }
+  ];
+  const baseColumnOptions = {
+    sortable: false,
+    pinnable: false,
+    hideable: false
   };
 
   const columns = [
-    { field: 'designNo', headerName: 'Design' },
+    {
+      field: 'id',
+      headerName: 'Sr#',
+      // editable: true,
+      // flex: 1,
+      ...baseColumnOptions,
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 4 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
+    },
+    {
+      field: 'designNo',
+      headerName: 'Design',
+      ...baseColumnOptions,
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 3 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
+    },
     { field: 'batchNo', headerName: 'Batch No.' },
-    { field: 'componentName', headerName: 'Component ' },
+    {
+      field: 'componentName',
+      headerName: 'Component ',
+      renderCell: (params) => {
+        const chipColor = 'primary.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
+    },
     { field: 'fabricName', headerName: 'Fabric ' },
-    { field: 'vendorId', headerName: 'Vendor' },
+    // { field: 'vendorId', headerName: 'Vendor' },
     { field: 'poPcs', headerName: 'Po Pcs' },
     // { field: 'baseColorName', headerName: 'Base Color' },
     { field: 'colourName', headerName: 'Color' },
@@ -721,10 +847,67 @@ const Embroidery = () => {
     // { field: 'assignedRepeats', headerName: 'Assigned Repeats' },
     { field: 'cuttingSize', headerName: 'Cutting Size' },
     { field: 'itemsPerRepeat', headerName: 'Items Per Repeat' },
-    { field: 'availableQty', headerName: 'Available Qty' },
-    { field: 'assignedQty', headerName: 'Assigned Qty' },
-    { field: 'totalPcs', headerName: 'Total Pcs' },
-    { field: 'requiredPcs', headerName: 'Assigned Pcs' },
+    {
+      field: 'availableQty',
+      headerName: 'Available Qty',
+      ...baseColumnOptions,
+
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      },
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
+    },
+    {
+      field: 'assignedQty',
+      headerName: 'Assigned Qty',
+      ...baseColumnOptions,
+
+      valueGetter: (params) => {
+        return params;
+      },
+      // colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 4 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
+    },
+    {
+      field: 'totalPcs',
+      headerName: 'Total Pcs',
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
+    },
+    {
+      field: 'requiredPcs',
+      headerName: 'Assigned Pcs',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 4 : undefined),
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
+    },
     // { field: 'threadStiches', headerName: 'Thread Stitches' },
     // { field: 'threadRate', headerName: 'Thread Rate' },
     // { field: 'threadAmount', headerName: 'Thread Amount' },
@@ -746,17 +929,25 @@ const Embroidery = () => {
       headerName: 'Add Vendor',
       renderCell: (params) => (
         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <IconButton
-            color="primary"
-            onClick={() => handleClickOpen(params.row)}
-          >
-            <PersonAddAlt1OutlinedIcon />
-          </IconButton>
+          <ButtonGroup variant="text" size="small">
+            <IconButton
+              color="primary"
+              onClick={() => handleClickOpen(params.row)}
+            >
+              <PersonAddAlt1OutlinedIcon />
+            </IconButton>
+            <IconButton
+              color="primary"
+              onClick={() => handleClickOpen2(params.row)}
+            >
+              <VisibilityOutlinedIcon />
+            </IconButton>
+          </ButtonGroup>
         </div>
       )
     }
   ];
-  const deleteApi = `https://gecxc.com:449/api/Embroidery/DeleteEmbroideryById?embroideryId=`;
+  const deleteApi = `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryById?embroideryId=`;
 
   return (
     <>
@@ -1213,7 +1404,7 @@ const Embroidery = () => {
           </Grid>
           <Grid item xs={12} md={1.5}>
             <TextField
-              label="total Pcs."
+              label="Total Pcs."
               fullWidth
               size="small"
               type="number"
@@ -1277,7 +1468,7 @@ const Embroidery = () => {
             ) : ( */}
             <ReuseableDataGrid
               iColumns={columns}
-              initialRows={initialRows}
+              initialRows={rows}
               setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="embroideryId"
@@ -1308,7 +1499,7 @@ const Embroidery = () => {
                   fontWeight={2}
                   fontStyle={'normal'}
                 >
-                  {'Assign Vendors '}
+                  {' Embroidery > Assign Vendors '}
                 </Typography>
                 <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
                   <CloseIcon />
@@ -1321,6 +1512,7 @@ const Embroidery = () => {
                   setInitialFormData={setInitialFormData}
                   refetchDyeingPrintingData={refetchEmbroideryList}
                   handleClickOpen={handleClickOpen}
+                  showUpperDiv={showUpperDiv}
                 />
               </DialogContent>
             </Dialog>

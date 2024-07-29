@@ -3,7 +3,7 @@ import AddAdditionalServices from 'components/additionalProcesses.jsx/addadditio
 import Divider from '@mui/material/Divider';
 import AdditionalServiceTable from 'components/additionalProcesses.jsx/addadditionalserviceTable';
 import MainCard from 'ui-component/cards/MainCard';
-import { Card, CardHeader, Avatar } from '@mui/material';
+import { Card, CardHeader, Avatar, Chip } from '@mui/material';
 import '../../assets/scss/style.scss';
 import { useUser } from 'context/User';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
@@ -15,7 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
-export default function AdditionalServices({}) {
+export default function AdditionalServices({ initialValues }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const { data: lookupData } = useGetLookUpListQuery();
@@ -49,7 +49,15 @@ export default function AdditionalServices({}) {
     createdBy: 0,
     createdOn: new Date().toISOString()
   });
-
+  useEffect(() => {
+    // setSelectedCollectionId(initialValues.collectionId);
+    setFormData({
+      ...formData,
+      collectionId: initialValues?.collectionId || ''
+      // planningHeaderId: initialValues?.planningHeaderId || '',
+      // batchNo: initialValues?.batchNo || ''
+    });
+  }, [setFormData]);
   const handleChange = async (e) => {
     const { name, value } = e.target;
     console.log(`Updating ${name} to ${value}`);
@@ -98,7 +106,7 @@ export default function AdditionalServices({}) {
   const handleSave = async () => {
     try {
       const response = await axios.post(
-        'https://gecxc.com:449/api/AdditionalServices/SaveAdditionalServices',
+        'https://gecxc.com:4041/api/AdditionalServices/SaveAdditionalServices',
         formData
       );
       console.log('Form data saved:', response.data);
@@ -127,7 +135,7 @@ export default function AdditionalServices({}) {
     const getCollectionFromPlanningHeader = async () => {
       try {
         const response = await axios.get(
-          'https://gecxc.com:449/api/CollectionRegistration/GetCollectionList?appId=1'
+          'https://gecxc.com:4041/api/CollectionRegistration/GetCollectionList?appId=1'
         );
         console.log('GetCollectionFromPlanningHeader', response);
         setPlannedCollection(response.data.result);
@@ -142,7 +150,7 @@ export default function AdditionalServices({}) {
   const fetchDataInternal = useCallback(async () => {
     try {
       const response = await axios.get(
-        `https://gecxc.com:449/api/AdditionalServices/GetAdditionalServicesListByCollectionId?collectionId=${formData.collectionId}`
+        `https://gecxc.com:4041/api/AdditionalServices/GetAdditionalServicesListByCollectionId?collectionId=${formData.collectionId}`
       );
 
       // Assuming response.data.result should always be an array
@@ -150,7 +158,7 @@ export default function AdditionalServices({}) {
         setIsLoading(false);
         setInitialRows(
           response.data.result.map((row, index) => ({
-            id: index,
+            id: index + 1,
             ...row
           }))
         );
@@ -174,22 +182,129 @@ export default function AdditionalServices({}) {
     fetchDataInternal();
   }, [fetchDataInternal]);
 
+  const [totalAmount, setTotalAmount] = useState(0);
+  useEffect(() => {
+    const totalAmount = initialRows
+      .reduce((sum, row) => sum + (row.totalAmount ?? 0), 0)
+      .toFixed(2);
+
+    setTotalAmount(parseFloat(totalAmount).toLocaleString());
+  }, [initialRows]);
+
+  const rows = [
+    ...initialRows,
+    {
+      id: 'TOTAL_SUMMARY',
+      // componentName: 'Total Summary',
+      // availableQty: totalAvailableQty,
+      totalAmount: totalAmount
+      // totalPcs: totalPcsSum,
+      // requiredPcs: totalRequiredPcs
+    }
+  ];
+
   const columns = [
-    // { field: 'additionalServiceId', headerName: 'Additional Service ID' },
-    // { field: 'serviceTypeId', headerName: 'Service Type ID' },
-    // { field: 'serviceListId', headerName: 'Service List ID' },
-    // { field: 'vendorId', headerName: 'Vendor ID' },
-    // { field: 'collectionId', headerName: 'Collection ID' },
-    { field: 'collectionName', headerName: 'Collection Name', flex: 1 },
-    { field: 'serviceType', headerName: 'Service Type', flex: 1 },
-    { field: 'serviceListName', headerName: 'Service List Name', flex: 1 },
-    { field: 'vendor', headerName: 'Vendor', flex: 1 },
+    {
+      field: 'id',
+      headerName: 'Sr#',
+      // editable: true,
+      // flex: 1,
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 4 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
+    },
+    {
+      field: 'collectionName',
+      headerName: 'Collection Name'
+    },
+    {
+      field: 'serviceType',
+      headerName: 'Service Type',
+      renderCell: (params) => {
+        const chipColor = 'primary.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
+    },
+    {
+      field: 'serviceListName',
+      headerName: 'Service List Name',
+      renderCell: (params) => {
+        const chipColor = 'success.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
+    },
+    { field: 'vendor', headerName: 'Vendor' },
 
     { field: 'poPcs', headerName: 'PO Pieces' },
     { field: 'qty', headerName: 'Quantity' },
     { field: 'uom', headerName: 'UOM' },
-    { field: 'rate', headerName: 'Rate' },
-    { field: 'totalAmount', headerName: 'Total Amount' },
+    {
+      field: 'rate',
+      headerName: 'Rate'
+    },
+    {
+      field: 'totalAmount',
+      headerName: 'Total Amount',
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
+    },
     { field: 'costperPiece', headerName: 'Cost per Piece' }
     // { field: 'createdBy', headerName: 'Created By' },
     // { field: 'createdOn', headerName: 'Created On' }
@@ -503,7 +618,7 @@ export default function AdditionalServices({}) {
           /> */}
         <ReuseableDataGrid
           iColumns={columns}
-          initialRows={initialRows}
+          initialRows={rows}
           isLoading={isLoading}
 
           // setInitialData={setInitialData}

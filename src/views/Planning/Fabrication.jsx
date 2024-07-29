@@ -11,7 +11,8 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
 // import { useGetDesignListQuery } from 'api/store/Apis/designApi';
@@ -40,7 +41,7 @@ import '../../assets/scss/style.scss';
 import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
 
-const Fabrication = () => {
+const Fabrication = ({ initialValues, setInitialValues }) => {
   const { user } = useUser();
   const [formErrors, setFormErrors] = useState({});
   const [isLoading, setIsLoading] = useState(true);
@@ -67,12 +68,14 @@ const Fabrication = () => {
     lastUpdatedOn: new Date().toISOString(),
     lastUpdatedBy: user.empId
   });
+
   useEffect(() => {
     setFormData({
+      ...formData,
       fabricationId: initialData.fabricationId || 0,
-      designId: initialData.designId || '',
-      planningHeaderId: initialData.planningHeaderId || '',
-      batchNo: initialData.batchNo || '',
+      // designId: initialData.designId || '',
+      // planningHeaderId: initialData.planningHeaderId || '',
+      // batchNo: initialData.batchNo || '',
       baseColorId: initialData.baseColorId || '',
       baseColorName: initialData.baseColorName || '',
       fabricId: initialData.fabricId || '',
@@ -100,6 +103,18 @@ const Fabrication = () => {
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   console.log(collectionData);
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
+  useEffect(() => {
+    setSelectedCollectionId(initialValues.collectionId);
+    // setFormData({
+    //   ...formData,
+    //   designId: initialValues?.designId || '',
+    //   planningHeaderId: initialValues?.planningHeaderId || '',
+    //   batchNo: initialValues?.batchNo || ''
+    // });
+  }, []);
+  // useEffect(() => {
+
+  // }, [initialValues, setSelectedCollectionId]);
   const { data: lookupData } = useGetLookUpListQuery();
   const { data: designData, refetch } =
     useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
@@ -151,7 +166,7 @@ const Fabrication = () => {
       setIsLoading(false);
       setInitialRows(
         fabricRequisitionData.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -177,6 +192,18 @@ const Fabrication = () => {
 
   const collectionList = collectionData?.result || [];
   // console.log('collectionList', collectionList);
+
+  //for summary
+  useEffect(() => {
+    setSelectedCollectionId(initialValues?.collectionId || '');
+    setFormData({
+      ...formData,
+      designId: initialValues?.designId || '',
+      planningHeaderId: initialValues?.planningHeaderId || '',
+      batchNo: initialValues?.batchNo || ''
+    });
+  }, [initialValues, setInitialValues]);
+
   useEffect(() => {
     const calculateTotal = () => {
       const quantity = parseFloat(formData.quantity) || 0;
@@ -199,7 +226,7 @@ const Fabrication = () => {
       totalInclGst: calculateTotalWithGst()
     }));
     const calculateUnitPrice = () => {
-      const total = parseFloat(formData.total) || 0;
+      const total = parseFloat(formData.totalInclGst) || 0;
       const poPcs = parseFloat(formData.poPcs) || 0;
       const unitPrice = (total / poPcs).toFixed(2);
       return isNaN(unitPrice) ? 0 : unitPrice;
@@ -209,7 +236,13 @@ const Fabrication = () => {
       ...prevData,
       unitPrice: calculateUnitPrice()
     }));
-  }, [formData.quantity, formData.rate, formData.total, formData.gst]);
+  }, [
+    formData.quantity,
+    formData.rate,
+    formData.total,
+    formData.gst,
+    formData.totalInclGst
+  ]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -224,10 +257,10 @@ const Fabrication = () => {
 
       setFormData({
         ...formData,
-        designId: '',
+        // designId: '',
         baseColorId: '',
-        planningHeaderId: '',
-        batchNo: '',
+        // planningHeaderId: '',
+        // batchNo: '',
         fabricId: '',
         poPcs: '',
         quantity: '',
@@ -250,8 +283,8 @@ const Fabrication = () => {
       setFormData({
         ...formData,
 
-        planningHeaderId: '',
-        batchNo: '',
+        // planningHeaderId: '',
+        // batchNo: '',
         fabricId: '',
         poPcs: '',
         quantity: '',
@@ -291,6 +324,7 @@ const Fabrication = () => {
       setFormData({
         ...formData,
         fabricId: value,
+        uomId: selectedFabric ? selectedFabric.uomId : '0',
         quantity: selectedFabric ? selectedFabric.total : ''
       });
     } else {
@@ -320,8 +354,8 @@ const Fabrication = () => {
   const rows = [
     ...initialRows,
     {
-      id: 'TOTAL_FABRIC',
-      label: 'Total',
+      id: 'TOTAL_SUMMARY',
+      label: 'Total Summary',
       total: localizedTotal,
       totalInclGst: localizedTotalIncGst
     }
@@ -329,21 +363,38 @@ const Fabrication = () => {
 
   const columns = [
     {
-      field: 'designNo',
-      headerName: 'Design',
+      field: 'id',
+      headerName: 'Sr#',
+      // editable: true,
+      // flex: 1,
+      // ...baseColumnOptions,
       colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          return 6;
+        if (row.id === 'TOTAL_SUMMARY') {
+          return 7;
         }
         return undefined;
       },
       valueGetter: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
+        if (row.id === 'TOTAL_SUMMARY') {
           // console.log('row', row.label);
           return row.label;
         }
         return value;
-      }
+      },
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? 'black' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      )
+    },
+    {
+      field: 'designNo',
+      headerName: 'Design'
     },
     {
       field: 'fabricName',
@@ -363,7 +414,40 @@ const Fabrication = () => {
     },
     {
       field: 'uomName',
-      headerName: 'UOM'
+      headerName: 'UOM',
+      renderCell: (params) => {
+        const chipColor =
+          params.value === 'Meters'
+            ? 'primary.dark'
+            : params.value === 'Yards'
+              ? theme.palette.grey[900]
+              : params.value === 'Inches'
+                ? 'success.dark'
+                : 'default';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
     },
     {
       field: 'total',
@@ -371,25 +455,45 @@ const Fabrication = () => {
 
       valueGetter: (params) => {
         return params.toLocaleString();
-      }
+      },
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? '#a11f23' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      )
     },
     {
       field: 'unitPrice',
-      headerName: 'Unit Price',
+      headerName: 'Unit Price'
 
-      colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          return 2;
-        }
-        return undefined;
-      },
-      valueGetter: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          // console.log('row', row.label);
-          return 'Total Including GST';
-        }
-        return value;
-      }
+      // colSpan: (value, row) => {
+      //   if (row.id === 'TOTAL_SUMMARY') {
+      //     return 2;
+      //   }
+      //   return undefined;
+      // },
+      // valueGetter: (value, row) => {
+      //   if (row.id === 'TOTAL_SUMMARY') {
+      //     // console.log('row', row.label);
+      //     return 'Total Including GST';
+      //   }
+      //   return value;
+      // }
+      //   renderCell: (params) => (
+      //     <div
+      //       style={{
+      //         color: params.row.id === 'TOTAL_SUMMARY' ? 'black' : undefined,
+      //         fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+      //       }}
+      //     >
+      //       {params.value}
+      //     </div>
+      //   )
     },
     {
       field: 'gst',
@@ -402,8 +506,18 @@ const Fabrication = () => {
       valueGetter: (params) => {
         return params.toLocaleString();
       },
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? '#a11f23' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      ),
       colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
+        if (row.id === 'TOTAL_SUMMARY') {
           return 2;
         }
         return undefined;
@@ -421,7 +535,7 @@ const Fabrication = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:449/api/Fabrication/SaveFabrication',
+        'https://gecxc.com:4041/api/Fabrication/SaveFabrication',
         formData
       );
 
@@ -498,8 +612,8 @@ const Fabrication = () => {
   };
 
   console.log('formData', formData);
-  const editAPi = `https://gecxc.com:449/api/Fabrication/SaveFabrication`;
-  const deleteApi = `https://gecxc.com:449/api/Fabrication/DeleteFabricByFabricId?fabricationId=`;
+  const editAPi = `https://gecxc.com:4041/api/Fabrication/SaveFabrication`;
+  const deleteApi = `https://gecxc.com:4041/api/Fabrication/DeleteFabricByFabricId?fabricationId=`;
   return (
     <>
       <div className="CardHeader">

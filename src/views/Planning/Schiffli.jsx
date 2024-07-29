@@ -15,7 +15,8 @@ import {
   IconButton,
   Accordion,
   AccordionDetails,
-  AccordionSummary
+  AccordionSummary,
+  Chip
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
@@ -49,7 +50,7 @@ import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 
-const Schiffli = () => {
+const Schiffli = ({ initialValues }) => {
   const { user } = useUser();
   const { enqueueSnackbar } = useSnackbar();
   const [isLoading, setIsLoading] = useState(true);
@@ -93,9 +94,9 @@ const Schiffli = () => {
     setFormData({
       ...formData,
       schiffiliId: initialData.schiffiliId || 0,
-      designId: initialData?.designId || '',
-      planningHeaderId: initialData?.planningHeaderId || 0,
-      batchNo: initialData?.batchNo || '',
+      // designId: initialData?.designId || '',
+      // planningHeaderId: initialData?.planningHeaderId || 0,
+      // batchNo: initialData?.batchNo || '',
       componentId: initialData?.componentId || '',
       poPcs: initialData?.poPcs || '',
       // baseColorName: initialData?.baseColorName || '',
@@ -134,6 +135,15 @@ const Schiffli = () => {
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
+  useEffect(() => {
+    setSelectedCollectionId(initialValues.collectionId);
+    // setFormData({
+    //   ...formData,
+    //   designId: initialValues?.designId || '',
+    //   planningHeaderId: initialValues?.planningHeaderId || '',
+    //   batchNo: initialValues?.batchNo || ''
+    // });
+  }, []);
   const { data: lookupData } = useGetLookUpListQuery();
   const { data: designData, refetch } =
     useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
@@ -228,7 +238,7 @@ const Schiffli = () => {
 
       setInitialRows(
         schiffliList.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -491,7 +501,7 @@ const Schiffli = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:449/api/Schiffli/SaveSchiffili',
+        'https://gecxc.com:4041/api/Schiffli/SaveSchiffili',
         formData
       );
 
@@ -620,7 +630,7 @@ const Schiffli = () => {
 
   const footerRow = {
     id: 'TOTAL_SUMMARY',
-    componentName: 'Total Summary',
+    fabricName: 'Total Summary',
     totalAmount: totalAmountSum,
     totalEmbroidry: totalEmbroiderySum,
     totalPcs: totalPcsSum
@@ -631,15 +641,67 @@ const Schiffli = () => {
 
   const columns = [
     {
-      field: 'componentName',
-      headerName: 'Component',
+      field: 'id',
+      headerName: 'Sr#',
+      // editable: true,
+      // flex: 1,
+      // ...baseColumnOptions,
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 3 : undefined),
+
       renderCell: (params) =>
-        params.row.id === 'TOTAL_SUMMARY' ? 'Total Summary' : params.value
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
     },
     {
       field: 'fabricName',
-      headerName: 'Fabric'
+      headerName: 'Fabric',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 2 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
     },
+    {
+      field: 'componentName',
+      headerName: 'Component',
+      renderCell: (params) => {
+        const chipColor = 'primary.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
+    },
+
     {
       field: 'vendorName',
       headerName: 'Vendor'
@@ -735,7 +797,7 @@ const Schiffli = () => {
       headerName: 'Laser Cut Pcs.'
     }
   ];
-  const deleteApi = `https://gecxc.com:449/api/Schiffli/DeleteSchiffiById?schiffiId=`;
+  const deleteApi = `https://gecxc.com:4041/api/Schiffli/DeleteSchiffiById?schiffiId=`;
 
   return (
     <>

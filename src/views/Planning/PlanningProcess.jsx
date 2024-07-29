@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Fabrication from 'views/Planning/Fabrication';
 import Embroidery from './Embroidery';
-import { Grid, TextField } from '@mui/material';
+import { Grid, TextField, Chip } from '@mui/material';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 
 import PrePlanning from './PrePlanning';
@@ -23,7 +23,7 @@ import AddAdditionalServices from './AdditionalServices';
 import AdditionalServices from './AdditionalServices';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import '../../assets/scss/style.scss';
-
+import Summary from './Summary';
 // import { color } from '@mui/system';
 const steps = [
   'Pre Planning',
@@ -32,7 +32,8 @@ const steps = [
   'Embroidery ',
   'Schiffli',
   'Additional Process',
-  'Additional Services'
+  'Additional Services',
+  'Summary'
 ];
 
 export default function PlanningProcess() {
@@ -42,6 +43,9 @@ export default function PlanningProcess() {
   const [lookupDomains, setLookupDomains] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const { data: lookupData, refetch } = useGetLookUpListQuery();
+  const [initialValues, setInitialValues] = useState({});
+  console.log('initialValues', initialValues);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -117,7 +121,7 @@ export default function PlanningProcess() {
 
     try {
       const response = await axios.get(
-        `https://gecxc.com:449/api/Common/SaveLookUp?lookupDomain=${formData.lookUpDomain}&LookUpName=${formData.lookUpName}&appId=1`
+        `https://gecxc.com:4041/api/Common/SaveLookUp?lookupDomain=${formData.lookUpDomain}&LookUpName=${formData.lookUpName}&appId=1`
       );
       console.log('Form data saved:', response.data);
       enqueueSnackbar('Lookup saved successfully!', {
@@ -157,7 +161,7 @@ export default function PlanningProcess() {
     const GetLookUpDomains = async () => {
       try {
         const response = await axios.get(
-          `https://gecxc.com:449/api/Common/GetLookUpDomains?appId=${1}`
+          `https://gecxc.com:4041/api/Common/GetLookUpDomains?appId=${1}`
         );
         console.log('LookupData', response);
         setLookupDomains(response.data.result);
@@ -297,9 +301,10 @@ export default function PlanningProcess() {
       {/*//////////////////////////////////////////////////////////////////////////////////////////*/}
       {activeStep === steps.length ? (
         <React.Fragment>
-          <Typography sx={{ mt: 2, mb: 1 }}>
+          {/* <Typography sx={{ mt: 2, mb: 1 }}>
             All steps completed - you&apos;re finished
-          </Typography>
+          </Typography> */}
+          <Summary setActiveStep={setActiveStep} />
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Box sx={{ flex: '1 1 auto' }} />
             <Button onClick={handleReset}>Reset</Button>
@@ -309,14 +314,35 @@ export default function PlanningProcess() {
         <React.Fragment>
           {/* <Typography sx={{ mt: 2, mb: 1 }}>Step {activeStep + 1}</Typography> */}
 
-          {activeStep === 0 && <PrePlanning />}
-          {activeStep === 1 && <Fabrication />}
+          {activeStep === 0 && (
+            <PrePlanning
+              setInitialValues={setInitialValues}
+              initialValues={initialValues}
+            />
+          )}
+          {activeStep === 1 && (
+            <Fabrication
+              setInitialValues={setInitialValues}
+              initialValues={initialValues}
+            />
+          )}
 
-          {activeStep === 2 && <Dyeing />}
-          {activeStep === 3 && <Embroidery />}
-          {activeStep === 4 && <Schiffli />}
-          {activeStep === 5 && <AdditionalProcess />}
-          {activeStep === 6 && <AdditionalServices />}
+          {activeStep === 2 && <Dyeing initialValues={initialValues} />}
+          {activeStep === 3 && <Embroidery initialValues={initialValues} />}
+          {activeStep === 4 && <Schiffli initialValues={initialValues} />}
+          {activeStep === 5 && (
+            <AdditionalProcess initialValues={initialValues} />
+          )}
+          {activeStep === 6 && (
+            <AdditionalServices initialValues={initialValues} />
+          )}
+          {activeStep === 7 && (
+            <Summary
+              setActiveStep={setActiveStep}
+              setInitialValues={setInitialValues}
+              initialValues={initialValues}
+            />
+          )}
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"

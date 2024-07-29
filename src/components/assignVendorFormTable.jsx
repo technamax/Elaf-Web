@@ -16,6 +16,9 @@ const AssignVendorFormTable = ({
   const { user } = useUser();
   const [initialRows, setInitialRows] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
+  const [formErrors, setFormErrors] = useState({});
+
+  const [initialData, setInitialData] = useState([]);
 
   const Quantity = initialRows
     .reduce((sum, row) => sum + (row.quantity ?? 0), 0)
@@ -56,12 +59,34 @@ const AssignVendorFormTable = ({
     LastUpdatedBy: user.empId
   });
   useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      additionalProcessDetId: initialData.additionalProcessDetId || 0,
+      vendorId: initialData?.vendorId || '',
+      quantity: initialData?.quantity || '',
+      ratePerPcs: initialData?.ratePerPcs || '',
+      remainingPcsPerComponent:
+        prevFormData.remainingPcsPerComponent + initialData?.quantity || '',
+      totalAmount: initialData?.totalAmount || '',
+      costPerComponent: initialData?.costPerComponent || 0,
+
+      createdOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || user.empId,
+      lastUpdatedOn: new Date().toISOString(),
+      lastUpdatedBy: user.empId
+    }));
+  }, [initialData]);
+
+  useEffect(() => {
     setFormData({
       ...formData,
       remainingPcsPerComponent:
-        additionalProcessData.pcsPerComponent - Quantity || ''
+        additionalProcessData.pcsPerComponent - Quantity >= 0
+          ? additionalProcessData.pcsPerComponent - Quantity
+          : ''
     });
-  }, [initialRows]);
+  }, [initialRows, additionalProcessData.pcsPerComponent, Quantity]);
+
   const { data: lookupData } = useGetLookUpListQuery();
   const {
     data: additionalProcessDetails,
@@ -85,7 +110,7 @@ const AssignVendorFormTable = ({
     if (additionalProcessDetails) {
       setInitialRows(
         additionalProcessDetails.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -95,6 +120,30 @@ const AssignVendorFormTable = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setFormData((prevFormData) => {
+      const updatedFormData = { ...prevFormData, [name]: value };
+
+      if (name === 'quantity' || name === 'remainingPcsPerComponent') {
+        const quantity = updatedFormData.quantity;
+        const remainingPcsPerComponent =
+          updatedFormData.remainingPcsPerComponent;
+
+        if (quantity > remainingPcsPerComponent) {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            quantity:
+              'Assigned Quantity cannot be greater than Remaining Quantity'
+          }));
+        } else {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            quantity: ''
+          }));
+        }
+      }
+
+      return updatedFormData;
+    });
   };
   useEffect(() => {
     const calculateTotalamount = () => {
@@ -130,10 +179,23 @@ const AssignVendorFormTable = ({
 
   const handleSave = async () => {
     console.log(formData);
+
+    if (formData.quantity > formData.remainingPcsPerComponent) {
+      enqueueSnackbar(
+        `Assigned quantity can not be greater then Remaining Quantity !`,
+
+        {
+          variant: 'error',
+          autoHideDuration: 5000
+        }
+      );
+      return;
+    }
+
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:449/api/AdditionalProcess/SaveAdditionalProcessDetails',
+        'https://gecxc.com:4041/api/AdditionalProcess/SaveAdditionalProcessDetails',
         formData
       );
 
@@ -164,7 +226,8 @@ const AssignVendorFormTable = ({
         ratePerPcs: 0,
         totalAmount: 0,
         costPerComponent: '',
-
+        remainingPcsPerComponent:
+          additionalProcessData.pcsPerComponent - Quantity || '',
         createdOn: new Date().toISOString(),
         createdBy: user.empId,
         lastUpdatedOn: new Date().toISOString(),
@@ -186,6 +249,12 @@ const AssignVendorFormTable = ({
 
   const columns = [
     {
+      field: 'id',
+      headerName: 'Sr#'
+      // editable: true,
+      // flex: 1,
+    },
+    {
       field: 'vendorName',
       headerName: 'Vendor',
       flex: 2
@@ -194,7 +263,7 @@ const AssignVendorFormTable = ({
     {
       field: 'processType',
       headerName: 'Process Type',
-      flex: 1
+      flex: 2
     },
     {
       field: 'pcsPerComponent',
@@ -218,7 +287,7 @@ const AssignVendorFormTable = ({
     }
   ];
 
-  const deleteApi = `https://gecxc.com:449/api/AdditionalProcess/DeleteAdditionalProcessDetails?apdId=`;
+  const deleteApi = `https://gecxc.com:4041/api/AdditionalProcess/DeleteAdditionalProcessDetails?apdId=`;
   return (
     <Box
       noValidate
@@ -645,91 +714,6 @@ const AssignVendorFormTable = ({
             }}
           />
         </Grid>
-      </Grid>
-      <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />
-      <Grid
-        container
-        spacing={1}
-        width="Inherit"
-        sx={{ paddingY: 2, paddingX: 2 }}
-      >
-        <Grid item xs={12} md={3}>
-          <TextField
-            fullWidth
-            select
-            label="Vendors"
-            // defaultValue=""
-            size="small"
-            name="vendorId"
-            value={formData.vendorId}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          >
-            {vendors.map((option) => (
-              <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                {option.lookUpName}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
-
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="Quantity"
-            fullWidth
-            type="number"
-            size="small"
-            name="quantity"
-            value={formData.quantity}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="Rate Per Pcs"
-            type="number"
-            fullWidth
-            size="small"
-            name="ratePerPcs"
-            value={formData.ratePerPcs}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="Total Amount"
-            fullWidth
-            type="number"
-            size="small"
-            name="totalAmount"
-            value={formData.totalAmount}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-
         <Grid item xs={12} md={3}>
           <TextField
             label="UOM"
@@ -768,9 +752,102 @@ const AssignVendorFormTable = ({
             }}
           />
         </Grid>
-
+      </Grid>
+      <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />
+      <Grid
+        container
+        spacing={1}
+        width="Inherit"
+        sx={{ paddingY: 2, paddingX: 2 }}
+      >
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            select
+            label="Vendors"
+            // defaultValue=""
+            size="small"
+            name="vendorId"
+            value={formData.vendorId}
+            onChange={handleChange}
+            disabled={!formData.remainingPcsPerComponent}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
+          >
+            {vendors.map((option) => (
+              <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                {option.lookUpName}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            label="Quantity"
+            fullWidth
+            type="number"
+            size="small"
+            name="quantity"
+            value={formData.quantity}
+            onChange={handleChange}
+            disabled={!formData.remainingPcsPerComponent}
+            error={!!formErrors.quantity}
+            helperText={formErrors.quantity}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            label="Rate Per Pcs"
+            type="number"
+            fullWidth
+            size="small"
+            name="ratePerPcs"
+            value={formData.ratePerPcs}
+            onChange={handleChange}
+            disabled={!formData.remainingPcsPerComponent}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            label="Total Amount"
+            fullWidth
+            type="number"
+            size="small"
+            name="totalAmount"
+            value={formData.totalAmount}
+            onChange={handleChange}
+            disabled={!formData.remainingPcsPerComponent}
+            InputLabelProps={{
+              sx: {
+                // set the color of the label when not shrinked
+                color: 'black'
+              }
+            }}
+          />
+        </Grid>
         <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-          <Button variant="contained" size="small" onClick={handleSave}>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={handleSave}
+            disabled={!formData.remainingPcsPerComponent}
+          >
             Save
           </Button>
         </Grid>
@@ -787,11 +864,11 @@ const AssignVendorFormTable = ({
           <ReuseableDataGrid
             iColumns={columns}
             initialRows={initialRows}
-            // setInitialData={setInitialData}
+            setInitialData={setInitialData}
             deleteApi={deleteApi}
             deleteBy="additionalProcessDetId"
             refetch={refetchAdditionalProcessDetails}
-            disableEdit={true}
+            // disableEdit={true}
             // setAccordionExpanded={setAccordionExpanded}
             // fileName="Schffili List"
           />

@@ -13,7 +13,8 @@ import {
   Tab,
   Card,
   CardHeader,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import SearchIcon from '@mui/icons-material/Search';
@@ -186,16 +187,90 @@ const NewCollection = () => {
 
   const initialRows = collectionList;
 
+  const [totalPoPcs, setTotalPoPcs] = useState(0);
+  const [totalPoPcsSum, setTotalPoPcsSum] = useState(0);
+  useEffect(() => {
+    const totalPoPcs = initialRows
+      .reduce((sum, row) => sum + (row.poPcs ?? 0), 0)
+      .toFixed(2);
+
+    setTotalPoPcs(parseFloat(totalPoPcs).toLocaleString());
+  }, [initialRows]);
+
+  useEffect(() => {
+    const totalPoPcsSum = initialRows
+      .reduce(
+        (sum, row) =>
+          sum + (Number(row.poPcs) || 0) * (Number(row.noOfColors) || 0),
+        0
+      )
+      .toFixed(2);
+
+    setTotalPoPcsSum(parseFloat(totalPoPcsSum).toLocaleString());
+    console.log('totalPoPcsSum', totalPoPcsSum);
+  }, [initialRows]);
+
+  const rows = [
+    ...initialRows,
+    {
+      id: 'TOTAL_SUMMARY',
+      poPcs: totalPoPcs,
+      totalPoPcs: totalPoPcsSum
+    }
+  ];
   const columns = [
+    {
+      field: 'id',
+      headerName: 'Sr#',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 8 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
+      // editable: true,
+      // flex: 1,
+    },
     {
       field: 'collectionName',
       headerName: 'Collection'
+
       // editable: true,
       // flex: 2
     },
     {
       field: 'brandName',
-      headerName: 'Brand'
+      headerName: 'Brand',
+      renderCell: (params) => {
+        const chipColor = 'primary.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
       // editable: true,
       // flex: 1,
       // type: 'singleSelect',
@@ -218,11 +293,8 @@ const NewCollection = () => {
     {
       field: 'volume',
       headerName: 'Volume'
-      // flex: 1,
-      // editable: true,
-      // type: 'singleSelect',
-      // valueOptions: ['Volume 1', 'Volume 2', 'Volume 3', 'Volume 4', 'Volume 5']
     },
+
     {
       field: 'planningDate',
       headerName: 'Planning Date',
@@ -265,9 +337,40 @@ const NewCollection = () => {
     },
     {
       field: 'poPcs',
-      headerName: 'Po Pcs'
-      // editable: true,
-      // flex: 1
+      headerName: ' Po Pcs',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 0 : undefined),
+
+      valueGetter: (params) => {
+        return params;
+      },
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
+    },
+    {
+      field: 'totalPoPcs',
+      headerName: 'Total Pcs',
+
+      valueGetter: (params, row) => {
+        const noOfColors = row?.noOfColors || 0;
+        const poPcs = row?.poPcs || 0;
+        return noOfColors * poPcs;
+      },
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.row.totalPoPcs}
+          </span>
+        ) : (
+          params.value
+        ),
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 2 : undefined)
     }
   ];
 
@@ -404,7 +507,7 @@ const NewCollection = () => {
 
     try {
       const response = await axios.post(
-        'https://gecxc.com:449/api/CollectionRegistration/SaveCollection',
+        'https://gecxc.com:4041/api/CollectionRegistration/SaveCollection',
         formData
       );
       enqueueSnackbar('Collection saved successfully!', {
@@ -444,7 +547,7 @@ const NewCollection = () => {
   const handleSearch = async () => {
     try {
       const response = await axios.get(
-        `https://gecxc.com:449/api/CollectionRegistration/GetCollectionListByPlanningDate?startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}&appId=1`
+        `https://gecxc.com:4041/api/CollectionRegistration/GetCollectionListByPlanningDate?startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}&appId=1`
       );
       enqueueSnackbar('Collection Search successfully!', {
         variant: 'success',
@@ -470,9 +573,9 @@ const NewCollection = () => {
 
   console.log('searchData', searchData);
   const deleteApi =
-    'https://gecxc.com:449/api/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
+    'https://gecxc.com:4041/api/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
   // const editAPi =
-  //   'https://gecxc.com:449/api/CollectionRegistration/SaveCollection';
+  //   'https://gecxc.com:4041/api/CollectionRegistration/SaveCollection';
   const handleReset = () => {
     setFormData({
       collectionId: 0,
@@ -853,7 +956,7 @@ const NewCollection = () => {
                 {/* <Grid container spacing={2} width="inherit" paddingTop={2}> */}
                 <Grid item xs={12}>
                   <ReuseableDataGrid
-                    initialRows={initialRows}
+                    initialRows={rows}
                     iColumns={columns}
                     setInitialData={setInitialData}
                     // fetchData={fetchData}

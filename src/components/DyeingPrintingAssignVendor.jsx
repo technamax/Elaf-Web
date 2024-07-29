@@ -1,19 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField, Button, Box, Divider, MenuItem } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Button,
+  Box,
+  Divider,
+  MenuItem,
+  Typography
+} from '@mui/material';
 import ReuseableDataGrid from './ReuseableDataGrid';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { useGetDyeingPrintingDetailsByDpIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useUser } from 'context/User';
+import { useSnackbar } from 'notistack';
+
 import axios from 'axios';
 
 const DyeingPrintingAssignVendor = ({
   initialFormData,
   setAdditionalProcessData,
   refetchDyeingPrintingData,
-  handleClickOpen
+  handleClickOpen,
+  showUpperDiv
 }) => {
   const { user } = useUser();
   const [initialRows, setInitialRows] = useState([]);
+  const [initialData, setInitialData] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
+  const [formErrors, setFormErrors] = useState({});
 
   const Quantity = initialRows
     .reduce((sum, row) => sum + (row.assignedQty ?? 0), 0)
@@ -27,24 +41,19 @@ const DyeingPrintingAssignVendor = ({
     batchNo: initialFormData.batchNo || '',
     planningHeaderId: initialFormData.planningHeaderId || 0,
     fabricId: initialFormData.fabricId || '',
+    fabricName: initialFormData.fabricName || '',
     colorId: initialFormData.colorId || '',
     colorName: initialFormData.colorName || '',
+    uomId: initialFormData.uomId || '',
+    uom: initialFormData.uom || '',
+    poPcs: initialFormData.poPcs || '',
     vendorId: '', /////////////checkapi
     processType: initialFormData.processType || '',
     availableQty: initialFormData.availableQty || '',
     remainingQty: initialFormData.availableQty - Quantity || '',
-    shrinkage: '',
-    wastage: '',
-    uomId: initialFormData.uomId || '',
-    uom: initialFormData.uom || '',
-    poPcs: initialFormData.poPcs || '',
+    shrinkage: initialFormData.allowedWastage || '',
+    wastage: initialFormData.allowedWastage || '',
 
-    // baseColorName: initialFormData.baseColorName || '',
-    // poPcs: initialFormData.poPcs || '',
-    // availableQty: initialFormData.availableQty || '',
-    // remainingQty:
-    //   initialFormData.availableQty - Quantity || '',
-    // processTypeId: initialFormData.processTypeId || '',
     assignedQty: '',
 
     rate: '',
@@ -60,11 +69,52 @@ const DyeingPrintingAssignVendor = ({
     LastUpdatedBy: user.empId
   });
   useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...formData,
+      dpIdDet: initialData.dpIdDet || 0,
+      dpId: initialData.dpId || 0,
+      designId: initialData?.designId || '',
+      planningHeaderId: initialData?.planningHeaderId || 0,
+      batchNo: initialData?.batchNo || '',
+      // fabricId: initialData?.fabricId || '',
+      // colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
+      // colorName: initialData?.colorName || '', //from dying screen coming from fabricAPi
+      vendorId: initialData?.vendorId || '',
+      // processType: initialData?.processType || '',
+      // availableQty: initialData?.availableQty || '',
+      shrinkage: initialData?.shrinkage || '',
+      wastage: initialData?.wastage || '',
+      outputQty: initialData?.outputQty || 0,
+      remainingQty: prevFormData.remainingQty + initialData?.assignedQty || '',
+
+      // uom: initialData?.uom || 0,
+      // uomId: initialData?.uomId || '',
+      // poPcs: initialData?.poPcs || 0,
+      assignedQty: initialData?.assignedQty || '',
+
+      rate: initialData?.rate || 0,
+      unitRatePerPo: initialData?.unitRatePerPo || '',
+      totalExcGst: initialData?.totalExcGst || '',
+      gst: initialData?.gst || 0,
+      TotalIncludingGst: initialData?.totalIncludingGst || '',
+      // createdBy: initialData?.createdBy || 0,
+      // baseColorName: initialData?.baseColorName || 0,
+      createdOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || user.empId,
+      lastUpdatedOn: new Date().toISOString(),
+      lastUpdatedBy: user.empId
+    }));
+  }, [initialData]);
+  useEffect(() => {
     setFormData({
       ...formData,
-      remainingQty: initialFormData.availableQty - Quantity || ''
+      remainingQty:
+        initialFormData.availableQty - Quantity >= 0
+          ? initialFormData.availableQty - Quantity
+          : ''
     });
-  }, [initialRows]);
+  }, [initialRows, initialFormData.availableQty, Quantity]);
+
   const { data: lookupData } = useGetLookUpListQuery();
   const { data: dyeingPrintingDetails, refetch: refetchDyeingPrintingDetails } =
     useGetDyeingPrintingDetailsByDpIdQuery(formData.dpId, {
@@ -83,7 +133,7 @@ const DyeingPrintingAssignVendor = ({
     if (dyeingPrintingDetails) {
       setInitialRows(
         dyeingPrintingDetails.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -93,13 +143,38 @@ const DyeingPrintingAssignVendor = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setFormData((prevFormData) => {
+      const updatedFormData = { ...prevFormData, [name]: value };
+
+      if (name === 'assignedQty' || name === 'remainingQty') {
+        const assignedQty = updatedFormData.assignedQty;
+        const remainingQty = updatedFormData.remainingQty;
+
+        if (assignedQty > remainingQty) {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            assignedQty:
+              'Assigned Quantity cannot be greater than Remaining Quantity'
+          }));
+        } else {
+          setFormErrors((prevErrors) => ({
+            ...prevErrors,
+            assignedQty: ''
+          }));
+        }
+      }
+
+      return updatedFormData;
+    });
   };
   useEffect(() => {
     const calculateOutputQty = () => {
-      const availableQty = parseFloat(formData.availableQty) || 0;
+      const assignedQty = parseFloat(formData.assignedQty) || 0;
       const shrinkage = parseFloat(formData.shrinkage) || 0;
       const wastage = parseFloat(formData.wastage) || 0;
-      return ((availableQty * (100 - (shrinkage + wastage))) / 100).toFixed(2);
+      const shrikageWastage = shrinkage + wastage;
+
+      return ((assignedQty * 100) / (100 + shrikageWastage)).toFixed(2);
     };
 
     const calculateTotalExclGst = () => {
@@ -128,6 +203,7 @@ const DyeingPrintingAssignVendor = ({
     }));
   }, [
     formData.availableQty,
+    formData.assignedQty,
     formData.shrinkage,
     formData.wastage,
     formData.rate,
@@ -137,11 +213,28 @@ const DyeingPrintingAssignVendor = ({
   ]);
   console.log('formData', formData);
   const handleSave = async () => {
+    // const errors = validateForm();
+    // if (Object.keys(errors).length > 0) {
+    //   setFormErrors(errors);
+    //   return;
+    // }
     console.log(formData);
+
     try {
       // Make the API call
+      if (formData.assignedQty > formData.remainingQty) {
+        enqueueSnackbar(
+          `Assigned quantity can not be greater then Remaining Quantity !`,
+
+          {
+            variant: 'error',
+            autoHideDuration: 5000
+          }
+        );
+        return;
+      }
       const response = await axios.post(
-        'https://gecxc.com:449/api/DyeingPrinting/SaveDyeingPrintingDetails',
+        'https://gecxc.com:4041/api/DyeingPrinting/SaveDyeingPrintingDetails',
         formData
       );
 
@@ -164,6 +257,7 @@ const DyeingPrintingAssignVendor = ({
         gst: '',
         // GSTAmount: '',
         TotalIncludingGst: '',
+        remainingQty: initialFormData.availableQty - Quantity || '',
 
         createdOn: new Date().toISOString(),
         createdBy: user.empId,
@@ -183,6 +277,12 @@ const DyeingPrintingAssignVendor = ({
 
   const columns = [
     {
+      field: 'id',
+      headerName: 'Sr#'
+      // editable: true,
+      // flex: 1,
+    },
+    {
       field: 'vendorName',
       headerName: 'Vendor',
       flex: 2
@@ -201,7 +301,9 @@ const DyeingPrintingAssignVendor = ({
     {
       field: 'assignedQty',
       headerName: 'Assigned Quantity',
-      flex: 1
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'rate',
@@ -211,7 +313,9 @@ const DyeingPrintingAssignVendor = ({
     {
       field: 'totalExcGst',
       headerName: 'Total Excl Gst.',
-      flex: 1
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'gst',
@@ -221,16 +325,23 @@ const DyeingPrintingAssignVendor = ({
     {
       field: 'totalIncludingGst',
       headerName: 'TotalIncludingGst',
-      flex: 1
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
-      field: 'unitRatePerPo',
-      headerName: 'unitRatePerPo.',
+      field: 'outputQty',
+      headerName: 'Output Qty',
       flex: 1
     }
+    // {
+    //   field: 'unitRatePerPo',
+    //   headerName: 'unitRatePerPo.',
+    //   flex: 1
+    // }
   ];
 
-  const deleteApi = `https://gecxc.com:449/api/DyeingPrinting/DeleteDyeingPrintingDetailByDetId?dpIdDet=`;
+  const deleteApi = `https://gecxc.com:4041/api/DyeingPrinting/DeleteDyeingPrintingDetailByDetId?dpIdDet=`;
   return (
     <Box
       noValidate
@@ -242,166 +353,173 @@ const DyeingPrintingAssignVendor = ({
         width: 'Inherit'
       }}
     >
-      <Grid
-        container
-        spacing={1}
-        width="Inherit"
-        sx={{ paddingY: 2, paddingX: 2 }}
-      >
-        <Grid item xs={12} md={3}>
-          <TextField
-            fullWidth
-            label="Fabric"
-            name="fabricName"
-            value={formData.fabricName}
-            onChange={handleChange}
-            size="small"
-            disabled
-            sx={(theme) => ({
-              ...(formData.availableQty !== '' && {
-                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
-                  backgroundColor: `#c9c9c9 !important`
-                }
-              }),
-              '& .MuiInputBase-input.Mui-disabled': {
-                WebkitTextFillColor: 'black' // Adjust text color here
-              },
-              '& .MuiInputBase-root.Mui-disabled': {
-                backgroundColor: '#f9f9f9' // Adjust background color here
-              },
-              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-                {
-                  borderColor: 'gray' // Adjust border color here
+      <div hidden={!showUpperDiv}>
+        <Grid
+          container
+          spacing={1}
+          width="Inherit"
+          sx={{ paddingY: 2, paddingX: 2 }}
+        >
+          <Grid item xs={12} md={12}>
+            <Typography variant="h4" gutterBottom>
+              Assign Vendor
+            </Typography>
+          </Grid>
+
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              label="Fabric"
+              name="fabricName"
+              value={formData.fabricName}
+              onChange={handleChange}
+              size="small"
+              disabled
+              sx={(theme) => ({
+                ...(formData.availableQty !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
                 },
-              '& .MuiInputLabel-root.Mui-disabled': {
-                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
-              }
-            })}
-          >
-            {/* {collectionList.map((option) => (
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
+            >
+              {/* {collectionList.map((option) => (
               <MenuItem key={option.collectionId} value={option.collectionId}>
                 {option.collectionName}
               </MenuItem>
             ))} */}
-          </TextField>{' '}
-        </Grid>
+            </TextField>{' '}
+          </Grid>
 
-        <Grid item xs={12} md={3}>
-          <TextField
-            fullWidth
-            // select
-            label="Process Type"
-            name="processType"
-            value={formData.processType}
-            onChange={handleChange}
-            size="small"
-            disabled
-            sx={(theme) => ({
-              ...(formData.availableQty !== '' && {
-                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
-                  backgroundColor: `#c9c9c9 !important`
-                }
-              }),
-              '& .MuiInputBase-input.Mui-disabled': {
-                WebkitTextFillColor: 'black' // Adjust text color here
-              },
-              '& .MuiInputBase-root.Mui-disabled': {
-                backgroundColor: '#f9f9f9' // Adjust background color here
-              },
-              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-                {
-                  borderColor: 'gray' // Adjust border color here
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              // select
+              label="Process Type"
+              name="processType"
+              value={formData.processType}
+              onChange={handleChange}
+              size="small"
+              disabled
+              sx={(theme) => ({
+                ...(formData.availableQty !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
                 },
-              '& .MuiInputLabel-root.Mui-disabled': {
-                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
-              }
-            })}
-          >
-            {/* {designList.map((option) => (
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
+            >
+              {/* {designList.map((option) => (
               <MenuItem key={option.designId} value={option.designId}>
                 {option.designNo}
               </MenuItem>
             ))} */}
-          </TextField>
-        </Grid>
+            </TextField>
+          </Grid>
 
-        <Grid item xs={12} md={3}>
-          <TextField
-            fullWidth
-            // select
-            label="Color"
-            name="colorName"
-            value={formData.colorName}
-            onChange={handleChange}
-            size="small"
-            disabled
-            sx={(theme) => ({
-              ...(formData.availableQty !== '' && {
-                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
-                  backgroundColor: `#c9c9c9 !important`
-                }
-              }),
-              '& .MuiInputBase-input.Mui-disabled': {
-                WebkitTextFillColor: 'black' // Adjust text color here
-              },
-              '& .MuiInputBase-root.Mui-disabled': {
-                backgroundColor: '#f9f9f9' // Adjust background color here
-              },
-              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-                {
-                  borderColor: 'gray' // Adjust border color here
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              // select
+              label="Color"
+              name="colorName"
+              value={formData.colorName}
+              onChange={handleChange}
+              size="small"
+              disabled
+              sx={(theme) => ({
+                ...(formData.availableQty !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
                 },
-              '& .MuiInputLabel-root.Mui-disabled': {
-                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
-              }
-            })}
-          >
-            {/* {batchList.map((option) => (
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
+            >
+              {/* {batchList.map((option) => (
               <MenuItem key={option.batchNo} value={option.batchNo}>
                 {option.batchNo}
               </MenuItem>
             ))} */}
-          </TextField>{' '}
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <TextField
-            fullWidth
-            label="UOM"
-            name="uom"
-            value={formData.uom}
-            onChange={handleChange}
-            size="small"
-            disabled
-            sx={(theme) => ({
-              ...(formData.availableQty !== '' && {
-                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
-                  backgroundColor: `#c9c9c9 !important`
-                }
-              }),
-              '& .MuiInputBase-input.Mui-disabled': {
-                WebkitTextFillColor: 'black' // Adjust text color here
-              },
-              '& .MuiInputBase-root.Mui-disabled': {
-                backgroundColor: '#f9f9f9' // Adjust background color here
-              },
-              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-                {
-                  borderColor: 'gray' // Adjust border color here
+            </TextField>{' '}
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              label="UOM"
+              name="uom"
+              value={formData.uom}
+              onChange={handleChange}
+              size="small"
+              disabled
+              sx={(theme) => ({
+                ...(formData.availableQty !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
                 },
-              '& .MuiInputLabel-root.Mui-disabled': {
-                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
-              }
-            })}
-          >
-            {/* {components.map((option) => (
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
+            >
+              {/* {components.map((option) => (
               <MenuItem key={option.componentId} value={option.componentId}>
                 {option.componentName}
               </MenuItem>
             ))} */}
-          </TextField>{' '}
-        </Grid>
-        {/* <Grid item xs={12} md={3}> */}
-        {/* <TextField
+            </TextField>{' '}
+          </Grid>
+          {/* <Grid item xs={12} md={3}> */}
+          {/* <TextField
             label="Base Color"
             fullWidth
             size="small"
@@ -411,46 +529,46 @@ const DyeingPrintingAssignVendor = ({
             disabled
           />
         </Grid> */}
-        <Grid item xs={12} md={3}>
-          <TextField
-            fullWidth
-            // select
-            label="PO Pcs"
-            size="small"
-            name="poPcs"
-            value={formData.poPcs}
-            onChange={handleChange}
-            disabled
-            sx={(theme) => ({
-              ...(formData.availableQty !== '' && {
-                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
-                  backgroundColor: `#c9c9c9 !important`
-                }
-              }),
-              '& .MuiInputBase-input.Mui-disabled': {
-                WebkitTextFillColor: 'black' // Adjust text color here
-              },
-              '& .MuiInputBase-root.Mui-disabled': {
-                backgroundColor: '#f9f9f9' // Adjust background color here
-              },
-              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-                {
-                  borderColor: 'gray' // Adjust border color here
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              // select
+              label="PO Pcs"
+              size="small"
+              name="poPcs"
+              value={formData.poPcs}
+              onChange={handleChange}
+              disabled
+              sx={(theme) => ({
+                ...(formData.availableQty !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
                 },
-              '& .MuiInputLabel-root.Mui-disabled': {
-                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
-              }
-            })}
-          >
-            {/* {colors.map((option) => (
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
+            >
+              {/* {colors.map((option) => (
               <MenuItem key={option.colorId} value={option.colorId}>
                 {option.color}
               </MenuItem>
             ))} */}
-          </TextField>
-        </Grid>
+            </TextField>
+          </Grid>
 
-        {/* <Grid item xs={12} md={1.5}>
+          {/* <Grid item xs={12} md={1.5}>
           <TextField
             label="Po Pcs"
             fullWidth
@@ -461,279 +579,300 @@ const DyeingPrintingAssignVendor = ({
             disabled
           />
         </Grid> */}
-        <Grid item xs={12} md={1.5}>
-          <TextField
-            label="Total AvailableQty"
-            fullWidth
-            size="small"
-            name="availableQty"
-            value={formData.availableQty}
-            // type="number"
-            onChange={handleChange}
-            disabled
-            sx={(theme) => ({
-              ...(formData.availableQty !== '' && {
-                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
-                  backgroundColor: `#c9c9c9 !important`
-                }
-              }),
-              '& .MuiInputBase-input.Mui-disabled': {
-                WebkitTextFillColor: 'black' // Adjust text color here
-              },
-              '& .MuiInputBase-root.Mui-disabled': {
-                backgroundColor: '#f9f9f9' // Adjust background color here
-              },
-              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-                {
-                  borderColor: 'gray' // Adjust border color here
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Total AvailableQty"
+              fullWidth
+              size="small"
+              name="availableQty"
+              value={formData.availableQty}
+              // type="number"
+              onChange={handleChange}
+              disabled
+              sx={(theme) => ({
+                ...(formData.availableQty !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
                 },
-              '& .MuiInputLabel-root.Mui-disabled': {
-                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
-              }
-            })}
-          />
-        </Grid>
-        <Grid item xs={12} md={1.5}>
-          <TextField
-            label="Remaining Qty"
-            fullWidth
-            size="small"
-            name="remainingQty"
-            value={formData.remainingQty}
-            // type="number"
-            onChange={handleChange}
-            disabled
-            sx={(theme) => ({
-              ...(formData.availableQty !== '' && {
-                '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
-                  backgroundColor: `#c9c9c9 !important`
-                }
-              }),
-              '& .MuiInputBase-input.Mui-disabled': {
-                WebkitTextFillColor: 'black' // Adjust text color here
-              },
-              '& .MuiInputBase-root.Mui-disabled': {
-                backgroundColor: '#f9f9f9' // Adjust background color here
-              },
-              '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-                {
-                  borderColor: 'gray' // Adjust border color here
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
                 },
-              '& .MuiInputLabel-root.Mui-disabled': {
-                color: 'rgba(0, 0, 0, 0.87)' // Darker label color
-              }
-            })}
-          />
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Remaining Qty"
+              fullWidth
+              size="small"
+              name="remainingQty"
+              value={formData.remainingQty}
+              // type="number"
+              onChange={handleChange}
+              disabled
+              sx={(theme) => ({
+                ...(formData.availableQty !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
+                },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
+            />
+          </Grid>
         </Grid>
-      </Grid>
+        <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />
+        <Grid
+          container
+          spacing={1}
+          width="Inherit"
+          sx={{ paddingY: 2, paddingX: 2 }}
+        >
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Vendors"
+              // defaultValue=""
+              size="small"
+              name="vendorId"
+              value={formData.vendorId}
+              onChange={handleChange}
+              disabled={!formData.remainingQty}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            >
+              {vendors.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Assign Quantity"
+              fullWidth
+              type="number"
+              size="small"
+              name="assignedQty"
+              value={formData.assignedQty}
+              onChange={handleChange}
+              disabled={!formData.remainingQty}
+              error={!!formErrors.assignedQty}
+              helperText={formErrors.assignedQty}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Rate Per uom"
+              type="number"
+              fullWidth
+              size="small"
+              name="rate"
+              value={formData.rate}
+              onChange={handleChange}
+              disabled={!formData.remainingQty}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Shrinkage"
+              fullWidth
+              type="number"
+              size="small"
+              name="shrinkage"
+              value={formData.shrinkage}
+              onChange={handleChange}
+              disabled
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Wastage"
+              fullWidth
+              type="number"
+              size="small"
+              name="wastage"
+              value={formData.wastage}
+              onChange={handleChange}
+              disabled
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Output Qty"
+              fullWidth
+              type="number"
+              size="small"
+              name="outputQty"
+              value={formData.outputQty}
+              onChange={handleChange}
+              disabled={!formData.remainingQty}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Total Excl. Gst"
+              fullWidth
+              type="number"
+              size="small"
+              name="totalExcGst"
+              value={formData.totalExcGst}
+              onChange={handleChange}
+              disabled={!formData.remainingQty}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="GST"
+              fullWidth
+              size="small"
+              // type="number"
+              name="gst"
+              value={formData.gst}
+              onChange={handleChange}
+              disabled={!formData.remainingQty}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Total Including Gst"
+              fullWidth
+              size="small"
+              // type="number"
+              name="TotalIncludingGst"
+              value={formData.TotalIncludingGst}
+              onChange={handleChange}
+              disabled={!formData.remainingQty}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="UnitRate Per PO."
+              fullWidth
+              size="small"
+              // type="number"
+              name="unitRatePerPo"
+              value={formData.unitRatePerPo}
+              onChange={handleChange}
+              disabled={!formData.remainingQty}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
+            <Button variant="contained" size="small" onClick={handleSave}>
+              Save
+            </Button>
+          </Grid>
+        </Grid>
+      </div>
       <Divider color="#921e22" sx={{ height: 2, width: '100%' }} />
-      <Grid
-        container
-        spacing={1}
-        width="Inherit"
-        sx={{ paddingY: 2, paddingX: 2 }}
-      >
-        <Grid item xs={12} md={3}>
-          <TextField
-            fullWidth
-            select
-            label="Vendors"
-            // defaultValue=""
-            size="small"
-            name="vendorId"
-            value={formData.vendorId}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          >
-            {vendors.map((option) => (
-              <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                {option.lookUpName}
-              </MenuItem>
-            ))}
-          </TextField>
-        </Grid>
 
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="Assign Quantity"
-            fullWidth
-            type="number"
-            size="small"
-            name="assignedQty"
-            value={formData.assignedQty}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="Rate Per uom"
-            type="number"
-            fullWidth
-            size="small"
-            name="rate"
-            value={formData.rate}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="Shrinkage"
-            fullWidth
-            type="number"
-            size="small"
-            name="shrinkage"
-            value={formData.shrinkage}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="Wastage"
-            fullWidth
-            type="number"
-            size="small"
-            name="wastage"
-            value={formData.wastage}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="Output Qty"
-            fullWidth
-            type="number"
-            size="small"
-            name="outputQty"
-            value={formData.outputQty}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="Total Excl. Gst"
-            fullWidth
-            type="number"
-            size="small"
-            name="totalExcGst"
-            value={formData.totalExcGst}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="GST"
-            fullWidth
-            size="small"
-            // type="number"
-            name="gst"
-            value={formData.gst}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="Total Including Gst"
-            fullWidth
-            size="small"
-            // type="number"
-            name="TotalIncludingGst"
-            value={formData.TotalIncludingGst}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <TextField
-            label="UnitRate Per PO."
-            fullWidth
-            size="small"
-            // type="number"
-            name="unitRatePerPo"
-            value={formData.unitRatePerPo}
-            onChange={handleChange}
-            InputLabelProps={{
-              sx: {
-                // set the color of the label when not shrinked
-                color: 'black'
-              }
-            }}
-          />
-        </Grid>
-
-        <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-          <Button variant="contained" size="small" onClick={handleSave}>
-            Save
-          </Button>
-        </Grid>
-      </Grid>
       <Grid
         container
         spacing={2}
         width="Inherit"
         sx={{ paddingY: 2, paddingX: 2 }}
       >
+        <Grid item xs={12} md={12}>
+          <Typography variant="h4" gutterBottom>
+            View Vendor
+          </Typography>
+        </Grid>
+
         <Grid sx={{ marginTop: 2 }} item xs={12}>
           <ReuseableDataGrid
             iColumns={columns}
             initialRows={initialRows}
-            // setInitialData={setInitialData}
+            setInitialData={setInitialData}
             deleteApi={deleteApi}
             deleteBy="dpIdDet"
             refetch={refetchDyeingPrintingDetails}
-            disableEdit={true}
+            // disableEdit={true}
             // setAccordionExpanded={setAccordionExpanded}
             // fileName="Schffili List"
           />

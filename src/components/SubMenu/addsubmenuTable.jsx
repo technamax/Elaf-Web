@@ -10,7 +10,7 @@ export default function AddSubMenuTable() {
     try {
       console.log('Fetching data...');
       const response = await axios.get(
-        'https://gecxc.com:449/api/Menu/GetSubMenuList'
+        'https://gecxc.com:4041/api/Menu/GetSubMenuList'
       );
       console.log('Data fetched:', response.data);
 

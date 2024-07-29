@@ -18,7 +18,8 @@ import {
   AccordionDetails,
   AccordionSummary,
   IconButton,
-  inputLabelClasses
+  inputLabelClasses,
+  Chip
 } from '@mui/material';
 import LoopOutlinedIcon from '@mui/icons-material/LoopOutlined';
 
@@ -28,7 +29,7 @@ import { useGetPrePlanningByPlanningHeaderIdQuery } from 'api/store/Apis/prePlan
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 
 import { Card, CardHeader, Avatar } from '@mui/material';
-import { SnackbarProvider, useSnackbar } from 'notistack';
+import { useSnackbar } from 'notistack';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SendAndArchiveIcon from '@mui/icons-material/SendAndArchive';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
@@ -41,7 +42,7 @@ import { useUser } from 'context/User';
 import 'App.css';
 import '../../index.css';
 import { maxWidth, width } from '@mui/system';
-const PrePlanning = () => {
+const PrePlanning = ({ setInitialValues, initialValues }) => {
   const { user } = useUser();
   console.log('user', user);
   const [isLoading, setIsLoading] = useState(true);
@@ -72,6 +73,8 @@ const PrePlanning = () => {
     totalFabric: '',
     shrinkage: '',
     wastage: '',
+    poPcs: '',
+
     planningProcessTypeId: '',
     total: '',
     appId: 1,
@@ -156,7 +159,7 @@ const PrePlanning = () => {
 
       setInitialRows(
         prePlanningList.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -202,7 +205,7 @@ const PrePlanning = () => {
     const GetPrePlanningHeaderByDesignId = async (id) => {
       try {
         const response = await axios.get(
-          `https://gecxc.com:449/api/PrePlanning/GetPrePlanningHeaderByDesignId?designId=${id}`
+          `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningHeaderByDesignId?designId=${id}`
         );
         console.log(response.data);
         setBatchList(response.data.result);
@@ -215,7 +218,7 @@ const PrePlanning = () => {
     //   // setLoading(true);
     //   try {
     //     const response = await axios.get(
-    //       `https://gecxc.com:449/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
+    //       `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
     //     );
     //     console.log('GetPrePlanningByPlanningHeaderI', response.data.result);
     //     setInitialRows(
@@ -233,8 +236,38 @@ const PrePlanning = () => {
     // }
     // setLoading(false);
   }, [formData.designId, formData.planningHeaderId]);
+  const isDyeing = formData.planningProcessTypeId === 212;
+  console.log('initialValues', initialValues);
+  console.log('selectedCollectionId', selectedCollectionId);
+
+  // if (!initialValues) {
+  //   useEffect(() => {
+  //     setInitialValues({
+  //       collectionId: selectedCollectionId || '',
+  //       designId: formData?.designId || '',
+  //       planningHeaderId: formData?.planningHeaderId || '',
+  //       batchNo: formData?.batchNo || ''
+  //     });
+  //   }, [setInitialValues, selectedCollectionId, formData.batchNo]);
+  // }
+  useEffect(() => {
+    setSelectedCollectionId(initialValues?.collectionId || '');
+    setFormData({
+      ...formData,
+      designId: initialValues?.designId || '',
+      planningHeaderId: initialValues?.planningHeaderId || '',
+      batchNo: initialValues?.batchNo || ''
+    });
+  }, [initialValues]);
 
   useEffect(() => {
+    const calculateTotalFabric1 = () => {
+      const poPcs = parseFloat(formData.poPcs) || 0;
+      const cuttingSize = parseFloat(formData.cuttingSize) || 0;
+      const totalFabric = (poPcs * cuttingSize).toFixed(2);
+      return parseFloat(totalFabric).toLocaleString();
+    };
+
     const calculateTotalFabric = () => {
       const repeats = parseFloat(formData.repeats) || 0;
       const repeatSize = parseFloat(formData.repeatSize) || 0;
@@ -242,23 +275,8 @@ const PrePlanning = () => {
       return parseFloat(totalFabric).toLocaleString();
     };
 
-    setFormData((prevData) => ({
-      ...prevData,
-      totalFabric: calculateTotalFabric()
-    }));
-
-    const calculateTotal = () => {
-      // Parse the localized totalFabric string back to a float for calculations
-      const totalFabricValue =
-        typeof formData.totalFabric === 'string'
-          ? parseFloat(formData.totalFabric.replace(/,/g, ''))
-          : formData.totalFabric;
-
+    const calculateTotal = (totalFabricValue) => {
       const totalFabric = totalFabricValue || 0;
-      // const totalFabric =
-      //   parseFloat(formData.totalFabric.replace(/,/g, '')) ||
-      //   formData.totalFabric ||
-      //   0;
       const shrinkage = parseFloat(formData.shrinkage) || 0;
       const wastage = parseFloat(formData.wastage) || 0;
       const total = (
@@ -268,41 +286,53 @@ const PrePlanning = () => {
       return parseFloat(total).toLocaleString();
     };
 
-    setFormData((prevData) => ({
-      ...prevData,
-      total: calculateTotal()
-    }));
-
     const calculateSizeinMeter = () => {
-      const repeats = parseFloat(formData.repeats) || 0;
       const repeatSize = parseFloat(formData.repeatSize) || 0;
       return (0.9144 * repeatSize).toFixed(2);
     };
 
-    setFormData((prevData) => ({
-      ...prevData,
-      repeatsInMtr: calculateSizeinMeter()
-    }));
     const calculateSizeinMeterChecked = () => {
       const repeats = parseFloat(formData.repeats) || 0;
       const repeatsInMtr = parseFloat(formData.repeatsInMtr) || 0;
       return (repeatsInMtr * repeats).toFixed(2);
     };
+
+    let totalFabricValue = 0;
+
+    if (isDyeing) {
+      totalFabricValue =
+        parseFloat(calculateTotalFabric1().replace(/,/g, '')) || 0;
+    } else {
+      totalFabricValue =
+        parseFloat(calculateTotalFabric().replace(/,/g, '')) || 0;
+    }
+
     setFormData((prevData) => ({
       ...prevData,
-      totalFabric: prevData.isSchiffili
-        ? calculateSizeinMeterChecked()
-        : calculateTotalFabric(prevData)
+      totalFabric: totalFabricValue.toLocaleString(),
+      total: calculateTotal(totalFabricValue),
+      repeatsInMtr: calculateSizeinMeter()
     }));
+
+    if (!isDyeing && formData.isSchiffili) {
+      setFormData((prevData) => ({
+        ...prevData,
+        totalFabric: calculateSizeinMeterChecked()
+      }));
+    }
   }, [
+    formData.poPcs,
+    formData.cuttingSize,
     formData.repeats,
     formData.repeatSize,
     formData.totalFabric,
     formData.shrinkage,
     formData.wastage,
     formData.repeatsInMtr,
-    formData.isSchiffili
+    formData.isSchiffili,
+    isDyeing
   ]);
+
   const calculateTotalFabric = (data) => {
     const repeats = parseFloat(data.repeats) || 0;
     const repeatSize = parseFloat(data.repeatSize) || 0;
@@ -376,6 +406,7 @@ const PrePlanning = () => {
         ...formData,
         componentId: '',
         processType: 'MultiHead', // Ensure processType is set correctly here
+        poPcs: selectedBatch ? selectedBatch.poPcs : '',
 
         cuttingSize: '', // not in api
         colorId: '',
@@ -417,6 +448,10 @@ const PrePlanning = () => {
   };
   // console.log('noOfDesigns', formData.noOfDesigns); colorId
   const [formErrors, setFormErrors] = useState({});
+  const [lock, setLock] = useState(false);
+  const handleLock = () => {
+    setLock(!lock);
+  };
 
   const handleSave = async () => {
     const errors = validateForm();
@@ -432,7 +467,7 @@ const PrePlanning = () => {
         total: parseFloat(formData.total.replace(/,/g, ''))
       };
       const response = await axios.post(
-        'https://gecxc.com:449/api/PrePlanning/SavePrePlanning',
+        'https://gecxc.com:4041/api/PrePlanning/SavePrePlanning',
         cleanedFormData
       );
       console.log('Data saved successfully:', response.data);
@@ -447,8 +482,8 @@ const PrePlanning = () => {
           }
         );
         console.log('response.message', response.data.message);
-      } else {
-        enqueueSnackbar('Fabrication saved successfully!', {
+      } else if (response.data.success) {
+        enqueueSnackbar('PrePlanning saved successfully!', {
           variant: 'success',
           autoHideDuration: 5000
         });
@@ -468,18 +503,21 @@ const PrePlanning = () => {
         baseColorName: prevFormData.baseColorName, // not in api
         noOfDesigns: prevFormData.noOfDesigns, // not in apis
         noOfColors: prevFormData.noOfColors, // not in api
+        poPcs: prevFormData.poPcs,
+
+        fabricId: prevFormData.fabricId,
+        shrinkage: prevFormData.shrinkage,
+        wastage: prevFormData.wastage,
+
         componentId: '',
         cuttingSize: '', // not in api
         colorId: '',
-        fabricId: '',
         noOfHeads: 0,
         operatingMachineId: 0,
         repeats: '',
         repeatSize: '',
         uomId: '',
         totalFabric: '',
-        shrinkage: '',
-        wastage: '',
         total: '',
         appId: 1,
         createdOn: new Date().toISOString(),
@@ -518,12 +556,12 @@ const PrePlanning = () => {
     // if (!formData.noOfHeads) {
     //   errors.noOfHeads = 'noOfHeads is required';
     // }
-    if (!formData.repeats) {
-      errors.repeats = 'repeats is required';
-    }
-    if (!formData.repeatSize) {
-      errors.repeatSize = 'repeatSize is required';
-    }
+    // if (!formData.repeats) {
+    //   errors.repeats = 'repeats is required';
+    // }
+    // if (!formData.repeatSize) {
+    //   errors.repeatSize = 'repeatSize is required';
+    // }
     if (!formData.uomId) {
       errors.uomId = 'uomId is required';
     }
@@ -566,7 +604,7 @@ const PrePlanning = () => {
   const rows = [
     ...initialRows,
     {
-      id: 'TOTAL_FABRIC',
+      id: 'TOTAL_SUMMARY',
       label: 'Total Fabric',
       totalFabric: localizedTotalFabric,
       total: localizedTotal
@@ -583,31 +621,82 @@ const PrePlanning = () => {
   console.log('rows', rows);
   const columns = [
     {
-      field: 'componentName',
-      headerName: 'Component',
-
+      field: 'id',
+      headerName: 'Sr#',
+      // editable: true,
+      // flex: 1,
       ...baseColumnOptions,
-
       colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          return 9;
+        if (row.id === 'TOTAL_SUMMARY') {
+          return 10;
         }
         return undefined;
       },
       valueGetter: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
+        if (row.id === 'TOTAL_SUMMARY') {
           // console.log('row', row.label);
+
           return row.label;
         }
         return value;
-      }
+      },
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? 'black' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      )
+    },
+    {
+      field: 'componentName',
+      headerName: 'Component',
+
+      ...baseColumnOptions
+
+      // renderCell: (params) => <Chip label={params.value} color="primary" />
     },
     {
       field: 'planningProcessTypeName',
       headerName: 'Process Type',
-      // editable: true,
-      // flex: 1,
-      ...baseColumnOptions
+
+      ...baseColumnOptions,
+      renderCell: (params) => {
+        const chipColor =
+          params.value === 'MultiHead'
+            ? 'primary.dark'
+            : params.value === 'Schiffili'
+              ? theme.palette.grey[900]
+              : params.value === 'Dyeing'
+                ? 'success.dark'
+                : 'default';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
     },
     {
       field: 'color',
@@ -670,28 +759,54 @@ const PrePlanning = () => {
     {
       field: 'totalFabric',
       headerName: 'Total Fabric',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      },
+      valueGetter: (params) => params.toLocaleString(),
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? '#a11f23' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      ),
       ...baseColumnOptions
     },
+    // {
+    //   field: 'uom',
+    //   headerName: 'UOM',
+
+    //   colSpan: (value, row) => {
+    //     if (row.id === 'TOTAL_FABRIC') {
+    //       return 2;
+    //     }
+    //     return undefined;
+    //   },
+    //   valueGetter: (value, row) => {
+    //     if (row.id === 'TOTAL_FABRIC') {
+    //       // console.log('row', row.label);
+    //       return 'OverAll Total';
+    //     }
+    //     return value;
+    //   }
+    // },
     {
       field: 'uom',
       headerName: 'UOM',
-
-      colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          return 2;
-        }
-        return undefined;
-      },
-      valueGetter: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          // console.log('row', row.label);
-          return 'OverAll Total';
-        }
-        return value;
-      }
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 2 : undefined),
+      valueGetter: (value, row) =>
+        row.id === 'TOTAL_SUMMARY' ? 'OverAll Total' : value,
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? 'black' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      ),
+      ...baseColumnOptions
     },
     // {
     //   field: 'isSchiffili',
@@ -714,18 +829,21 @@ const PrePlanning = () => {
     {
       field: 'total',
       headerName: 'Total',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      },
-      colSpan: (value, row) => {
-        if (row.id === 'TOTAL_FABRIC') {
-          return 2;
-        }
-        return undefined;
-      }
+      valueGetter: (params) => params.toLocaleString(),
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 2 : undefined),
+      renderCell: (params) => (
+        <div
+          style={{
+            color: params.row.id === 'TOTAL_SUMMARY' ? '#a11f23' : undefined,
+            fontWeight: params.row.id === 'TOTAL_SUMMARY' ? 'bold' : undefined
+          }}
+        >
+          {params.value}
+        </div>
+      ),
+      ...baseColumnOptions
     }
   ];
-
   const isSchiffili = formData.planningProcessTypeId === 198;
   useEffect(() => {
     if (isSchiffili) {
@@ -738,7 +856,7 @@ const PrePlanning = () => {
   console.log('formData', formData);
 
   const getCellClassName = ({ row, field }) => {
-    if (row.id === 'TOTAL_FABRIC') {
+    if (row.id === 'TOTAL_SUMMARY') {
       if (field === 'componentName' || field === 'uom') {
         // console.log(`Applying bold class to row ${row.id} and field ${field}`); // Debugging log
         return 'bold';
@@ -748,7 +866,7 @@ const PrePlanning = () => {
   };
   console.log('batchList:', batchList);
 
-  const deleteApi = `https://gecxc.com:449/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
+  const deleteApi = `https://gecxc.com:4041/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded); // Toggle accordion state based on the icon click
   };
@@ -766,17 +884,17 @@ const PrePlanning = () => {
           </CardHeader>
           <Grid
             container
-            spacing={2}
+            spacing={1}
             width="Inherit"
             sx={{ paddingY: 2, paddingX: 2 }}
           >
-            <Grid item xs={12} md={2}>
+            <Grid item xs={12} md={2.4}>
               <TextField
                 fullWidth
                 select
                 label="Select Collection"
                 name="collectionId"
-                value={formData.collectionId}
+                value={selectedCollectionId}
                 onChange={handleChange}
                 size="small"
                 required
@@ -797,7 +915,7 @@ const PrePlanning = () => {
                 ))}
               </TextField>{' '}
             </Grid>
-            <Grid item xs={12} md={2}>
+            <Grid item xs={12} md={2.4}>
               <TextField
                 fullWidth
                 select
@@ -821,7 +939,7 @@ const PrePlanning = () => {
                 ))}
               </TextField>
             </Grid>
-            <Grid item xs={12} md={2}>
+            <Grid item xs={12} md={2.4}>
               <TextField
                 fullWidth
                 select
@@ -845,7 +963,7 @@ const PrePlanning = () => {
                 ))}
               </TextField>{' '}
             </Grid>
-            <Grid item xs={12} md={2}>
+            {/* <Grid item xs={12} md={2.4}>
               <TextField
                 label="No of Design"
                 fullWidth
@@ -882,8 +1000,8 @@ const PrePlanning = () => {
                   }
                 }}
               />
-            </Grid>
-            <Grid item xs={12} md={2}>
+            </Grid> */}
+            {/* <Grid item xs={12} md={2.4}>
               <TextField
                 label="No of Color"
                 fullWidth
@@ -913,9 +1031,39 @@ const PrePlanning = () => {
                   }
                 })}
               />
+            </Grid> */}
+            <Grid item xs={12} md={2.4}>
+              <TextField
+                label="Po Pcs"
+                fullWidth
+                size="small"
+                name="poPcs"
+                value={formData.poPcs}
+                onChange={handleChange}
+                disabled
+                sx={(theme) => ({
+                  ...(formData.poPcs !== '' && {
+                    '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                      backgroundColor: `#c9c9c9 !important`
+                    }
+                  }),
+                  '& .MuiInputBase-input.Mui-disabled': {
+                    WebkitTextFillColor: 'black' // Adjust text color here
+                  },
+                  '& .MuiInputBase-root.Mui-disabled': {
+                    backgroundColor: '#f9f9f9' // Adjust background color here
+                  },
+                  '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                    {
+                      borderColor: 'gray' // Adjust border color here
+                    },
+                  '& .MuiInputLabel-root.Mui-disabled': {
+                    color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                  }
+                })}
+              />
             </Grid>
-
-            <Grid item xs={12} md={2}>
+            <Grid item xs={12} md={2.4}>
               <TextField
                 label="Base Color"
                 fullWidth
@@ -988,12 +1136,136 @@ const PrePlanning = () => {
           <AccordionDetails>
             <Grid
               container
-              spacing={2}
+              spacing={1}
               width="Inherit"
-              sx={{ paddingY: 2, paddingX: 2 }}
+              // sx={{ paddingY: 2, paddingX: 2 }}
             >
               {/* <FormControl> */}
               {/* <Grid container spacing={2} width="Inherit"> */}
+              <Grid item xs={12} md={2}>
+                {/* <TextField
+                fullWidth
+                select
+                label="Fabrication"
+                defaultValue=""
+                size="small"
+                name="fabricId"
+                value={formData.fabricId}
+                onChange={handleChange}
+              >
+                {Fabrications.map((option) => (
+                  <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                    {option.lookUpName}
+                  </MenuItem>
+                ))}
+              </TextField> */}
+                <Autocomplete
+                  fullWidth
+                  options={Fabrications}
+                  getOptionLabel={(option) => option.lookUpName}
+                  value={
+                    Fabrications.find(
+                      (fabric) => fabric.lookUpId === formData.fabricId
+                    ) || null
+                  }
+                  onChange={(event, newValue) => {
+                    handleChange({
+                      target: {
+                        name: 'fabricId',
+                        value: newValue ? newValue.lookUpId : ''
+                      }
+                    });
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Fabrication"
+                      size="small"
+                      name="fabricId"
+                      value={formData.fabricId}
+                      required
+                      error={!!formErrors.fabricId}
+                      helperText={formErrors.fabricId}
+                      disabled={lock}
+                      InputLabelProps={{
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
+                      sx={{
+                        // backgroundColor: 'white', // Setting white background for the TextField
+                        '& input': {
+                          backgroundColor: 'white' // Setting white background for the input inside TextField
+                        }
+                      }}
+                    />
+                  )}
+                  PaperComponent={({ children }) => (
+                    <div style={{ backgroundColor: 'white' }}>{children}</div>
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <TextField
+                  label="Shrinkage %"
+                  fullWidth
+                  size="small"
+                  type="number"
+                  name="shrinkage"
+                  value={formData.shrinkage}
+                  onChange={handleChange}
+                  error={!!formErrors.shrinkage}
+                  helperText={formErrors.shrinkage}
+                  required
+                  disabled={lock}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <TextField
+                  label="Wastage %"
+                  fullWidth
+                  size="small"
+                  type="number"
+                  name="wastage"
+                  value={formData.wastage}
+                  onChange={handleChange}
+                  error={!!formErrors.wastage}
+                  helperText={formErrors.wastage}
+                  required
+                  disabled={lock}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <Button variant="contained" size="small" onClick={handleLock}>
+                  {lock ? 'Unlock' : !lock ? 'Lock' : 'Unlock'}
+                </Button>
+              </Grid>
+
+              <Grid item xs={12} md={12}>
+                <Divider
+                  color="#cc8587"
+                  sx={{
+                    height: 2,
+                    width: '100%'
+                    // marginTop: 1,
+                    // marginBottom: 0
+                  }}
+                />
+              </Grid>
+
               <Grid item xs={12} md={2}>
                 <TextField
                   fullWidth
@@ -1165,69 +1437,7 @@ const PrePlanning = () => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={2}>
-                {/* <TextField
-                fullWidth
-                select
-                label="Fabrication"
-                defaultValue=""
-                size="small"
-                name="fabricId"
-                value={formData.fabricId}
-                onChange={handleChange}
-              >
-                {Fabrications.map((option) => (
-                  <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                    {option.lookUpName}
-                  </MenuItem>
-                ))}
-              </TextField> */}
-                <Autocomplete
-                  fullWidth
-                  options={Fabrications}
-                  getOptionLabel={(option) => option.lookUpName}
-                  value={
-                    Fabrications.find(
-                      (fabric) => fabric.lookUpId === formData.fabricId
-                    ) || null
-                  }
-                  onChange={(event, newValue) => {
-                    handleChange({
-                      target: {
-                        name: 'fabricId',
-                        value: newValue ? newValue.lookUpId : ''
-                      }
-                    });
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Fabrication"
-                      size="small"
-                      name="fabricId"
-                      value={formData.fabricId}
-                      required
-                      error={!!formErrors.fabricId}
-                      helperText={formErrors.fabricId}
-                      InputLabelProps={{
-                        sx: {
-                          // set the color of the label when not shrinked
-                          color: 'black'
-                        }
-                      }}
-                      sx={{
-                        // backgroundColor: 'white', // Setting white background for the TextField
-                        '& input': {
-                          backgroundColor: 'white' // Setting white background for the input inside TextField
-                        }
-                      }}
-                    />
-                  )}
-                  PaperComponent={({ children }) => (
-                    <div style={{ backgroundColor: 'white' }}>{children}</div>
-                  )}
-                />
-              </Grid>
+
               <Grid item xs={12} md={2}>
                 {/* <TextField
                   fullWidth
@@ -1259,6 +1469,7 @@ const PrePlanning = () => {
                     value={formData.operatingMachineId}
                     onChange={handleChange}
                     required
+                    disabled={isDyeing}
                     InputLabelProps={{
                       sx: {
                         // set the color of the label when not shrinked
@@ -1284,6 +1495,7 @@ const PrePlanning = () => {
                     value={formData.noOfHeads}
                     onChange={handleChange}
                     required
+                    disabled={isDyeing}
                     InputLabelProps={{
                       sx: {
                         // set the color of the label when not shrinked
@@ -1303,15 +1515,16 @@ const PrePlanning = () => {
               </Grid>
               <Grid item xs={12} md={2}>
                 <TextField
-                  label="Repeats"
+                  label="Repeat Size"
                   fullWidth
-                  size="small"
-                  name="repeats"
                   type="number"
-                  value={formData.repeats}
+                  size="small"
+                  name="repeatSize"
+                  value={formData.repeatSize}
                   onChange={handleChange}
-                  error={!!formErrors.repeats}
-                  helperText={formErrors.repeats}
+                  disabled={isDyeing}
+                  // error={!!formErrors.repeatSize}
+                  // helperText={formErrors.repeatSize}
                   required
                   InputLabelProps={{
                     sx: {
@@ -1323,16 +1536,17 @@ const PrePlanning = () => {
               </Grid>
               <Grid item xs={12} md={2}>
                 <TextField
-                  label="Repeat Size"
+                  label="No. of Repeats"
                   fullWidth
-                  type="number"
                   size="small"
-                  name="repeatSize"
-                  value={formData.repeatSize}
+                  name="repeats"
+                  type="number"
+                  value={formData.repeats}
                   onChange={handleChange}
-                  error={!!formErrors.repeatSize}
-                  helperText={formErrors.repeatSize}
+                  // error={!!formErrors.repeats}
+                  // helperText={formErrors.repeats}
                   required
+                  disabled={isDyeing}
                   InputLabelProps={{
                     sx: {
                       // set the color of the label when not shrinked
@@ -1341,6 +1555,7 @@ const PrePlanning = () => {
                   }}
                 />
               </Grid>
+
               <Grid item xs={12} md={2}>
                 <TextField
                   label="Total Fabric"
@@ -1386,44 +1601,36 @@ const PrePlanning = () => {
                   ))}
                 </TextField>
               </Grid>
+
               <Grid item xs={12} md={2}>
                 <TextField
-                  label="Shrinkage %"
+                  label="Repeats in Meter"
                   fullWidth
                   size="small"
-                  type="number"
-                  name="shrinkage"
-                  value={formData.shrinkage}
+                  name="repeatsInMtr"
+                  disabled
+                  value={formData.repeatsInMtr}
                   onChange={handleChange}
-                  error={!!formErrors.shrinkage}
-                  helperText={formErrors.shrinkage}
-                  required
-                  InputLabelProps={{
-                    sx: {
-                      // set the color of the label when not shrinked
-                      color: 'black'
+                  sx={(theme) => ({
+                    ...(formData.repeatsInMtr !== '' && {
+                      '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                        backgroundColor: `#c9c9c9 !important`
+                      }
+                    }),
+                    '& .MuiInputBase-input.Mui-disabled': {
+                      WebkitTextFillColor: 'black' // Adjust text color here
+                    },
+                    '& .MuiInputBase-root.Mui-disabled': {
+                      backgroundColor: '#f9f9f9' // Adjust background color here
+                    },
+                    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                      {
+                        borderColor: 'gray' // Adjust border color here
+                      },
+                    '& .MuiInputLabel-root.Mui-disabled': {
+                      color: 'rgba(0, 0, 0, 0.87)' // Darker label color
                     }
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12} md={2}>
-                <TextField
-                  label="Wastage %"
-                  fullWidth
-                  size="small"
-                  type="number"
-                  name="wastage"
-                  value={formData.wastage}
-                  onChange={handleChange}
-                  error={!!formErrors.wastage}
-                  helperText={formErrors.wastage}
-                  required
-                  InputLabelProps={{
-                    sx: {
-                      // set the color of the label when not shrinked
-                      color: 'black'
-                    }
-                  }}
+                  })}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -1443,6 +1650,7 @@ const PrePlanning = () => {
                   }}
                 />
               </Grid>
+
               {/* <Grid item xs={12} md={2} textAlign="right">
                 <FormControlLabel
                   control={
@@ -1457,40 +1665,7 @@ const PrePlanning = () => {
               </Grid> */}
               {/* {formData.isSchiffili ? ( */}
               <Grid item xs={12} md={6}>
-                <Grid container spacing={1} width="Inherit">
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="repeat in mtr"
-                      fullWidth
-                      size="small"
-                      name="repeatsInMtr"
-                      disabled
-                      value={formData.repeatsInMtr}
-                      onChange={handleChange}
-                      sx={(theme) => ({
-                        ...(formData.repeatsInMtr !== '' && {
-                          '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input':
-                            {
-                              backgroundColor: `#c9c9c9 !important`
-                            }
-                        }),
-                        '& .MuiInputBase-input.Mui-disabled': {
-                          WebkitTextFillColor: 'black' // Adjust text color here
-                        },
-                        '& .MuiInputBase-root.Mui-disabled': {
-                          backgroundColor: '#f9f9f9' // Adjust background color here
-                        },
-                        '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-                          {
-                            borderColor: 'gray' // Adjust border color here
-                          },
-                        '& .MuiInputLabel-root.Mui-disabled': {
-                          color: 'rgba(0, 0, 0, 0.87)' // Darker label color
-                        }
-                      })}
-                    />
-                  </Grid>
-                </Grid>
+                <Grid container spacing={1} width="Inherit"></Grid>
               </Grid>
               {/* ) : null} */}
               <Grid item xs={12} textAlign="right">

@@ -15,7 +15,8 @@ import {
   IconButton,
   Accordion,
   AccordionDetails,
-  AccordionSummary
+  AccordionSummary,
+  Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { DataGrid } from '@mui/x-data-grid';
@@ -62,7 +63,7 @@ import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined
 import { useUser } from 'context/User';
 ///////
 
-const AdditionalProcess = () => {
+const AdditionalProcess = ({ initialValues }) => {
   const { user } = useUser();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -96,15 +97,16 @@ const AdditionalProcess = () => {
   console.log('initialData', initialData);
   useEffect(() => {
     setFormData({
+      ...formData,
       additionalProcessId: initialData?.additionalProcessId || 0,
-      designId: initialData?.designId || '',
-      planningHeaderId: initialData?.planningHeaderId || 0,
-      batchNo: initialData?.batchNo || '',
+      // designId: initialData?.designId || '',
+      // planningHeaderId: initialData?.planningHeaderId || 0,
+      // batchNo: initialData?.batchNo || '',
       componentId: initialData?.componentId || '',
       fabricId: initialData?.fabricId || '',
       colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
-      poPcs: initialData?.poPcs || '',
-      baseColorName: initialData?.baseColorName || '',
+      // poPcs: initialData?.poPcs || '',
+      // baseColorName: initialData?.baseColorName || '',
       pcsPerComponent: initialData?.pcsPerComponent || '',
       uomId: initialData?.uomId || '',
       processTypeId: initialData?.processTypeId || '',
@@ -126,6 +128,17 @@ const AdditionalProcess = () => {
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
+
+  useEffect(() => {
+    setSelectedCollectionId(initialValues.collectionId);
+    // setFormData({
+    //   ...formData,
+    //   designId: initialValues?.designId || '',
+    //   planningHeaderId: initialValues?.planningHeaderId || '',
+    //   batchNo: initialValues?.batchNo || ''
+    // });
+  }, []);
+
   const { data: lookupData } = useGetLookUpListQuery();
   const { data: designData, refetch } =
     useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
@@ -238,7 +251,7 @@ const AdditionalProcess = () => {
 
       setInitialRows(
         additionalProcessList.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
@@ -346,7 +359,7 @@ const AdditionalProcess = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:449/api/AdditionalProcess/SaveAdditionalProcess',
+        'https://gecxc.com:4041/api/AdditionalProcess/SaveAdditionalProcess',
         formData
       );
 
@@ -358,7 +371,7 @@ const AdditionalProcess = () => {
         });
         console.log('response.message', response.data.message);
       } else {
-        enqueueSnackbar('Schiffili saved successfully!', {
+        enqueueSnackbar('Process saved successfully!', {
           variant: 'success',
           autoHideDuration: 5000
         });
@@ -389,7 +402,7 @@ const AdditionalProcess = () => {
       // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
-      enqueueSnackbar('Schiffili not saved successfully!', {
+      enqueueSnackbar('Process not saved successfully!', {
         variant: 'error',
         autoHideDuration: 5000
       });
@@ -413,7 +426,43 @@ const AdditionalProcess = () => {
     // setDeleteId(null);
   };
 
+  const [totalAssignedQty, setTotalAssignedQty] = useState(0);
+  useEffect(() => {
+    const totalAssignedQty = initialRows
+      .reduce((sum, row) => sum + (row.assignedQty ?? 0), 0)
+      .toFixed(2);
+
+    setTotalAssignedQty(parseFloat(totalAssignedQty).toLocaleString());
+  }, [initialRows]);
+
+  const rows = [
+    ...initialRows,
+    {
+      id: 'TOTAL_SUMMARY',
+      // componentName: 'Total Summary',
+      // availableQty: totalAvailableQty,
+      assignedQty: totalAssignedQty
+      // totalPcs: totalPcsSum,
+      // requiredPcs: totalRequiredPcs
+    }
+  ];
   const columns = [
+    {
+      field: 'id',
+      headerName: 'Sr#',
+      // editable: true,
+      // flex: 1,
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 4 : undefined),
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
+    },
     {
       field: 'designNo',
       headerName: 'Design'
@@ -424,7 +473,33 @@ const AdditionalProcess = () => {
     },
     {
       field: 'componentName',
-      headerName: 'Component'
+      headerName: 'Component',
+      renderCell: (params) => {
+        const chipColor = 'primary.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
     },
     {
       field: 'fabricName',
@@ -445,7 +520,21 @@ const AdditionalProcess = () => {
     },
     {
       field: 'assignedQty',
-      headerName: 'Assigned Quantity'
+      headerName: 'Assigned Quantity',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 3 : undefined),
+
+      valueGetter: (params) => {
+        return params;
+      },
+
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
     },
 
     {
@@ -463,7 +552,7 @@ const AdditionalProcess = () => {
       )
     }
   ];
-  const deleteApi = `https://gecxc.com:449/api/AdditionalProcess/DeleteAdditionalProcess?adId=`;
+  const deleteApi = `https://gecxc.com:4041/api/AdditionalProcess/DeleteAdditionalProcess?adId=`;
 
   return (
     <>
@@ -854,7 +943,7 @@ const AdditionalProcess = () => {
           <Grid sx={{ marginTop: 2 }} item xs={12}>
             <ReuseableDataGrid
               iColumns={columns}
-              initialRows={initialRows}
+              initialRows={rows}
               setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="additionalProcessId"
@@ -884,7 +973,7 @@ const AdditionalProcess = () => {
                   fontWeight={2}
                   fontStyle={'normal'}
                 >
-                  {'Assign Vendors '}
+                  {'Additional Process > Assign Vendors '}
                 </Typography>
                 <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
                   <CloseIcon />

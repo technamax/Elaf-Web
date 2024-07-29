@@ -11,7 +11,7 @@ export default function AdditionalServiceTable({
   const fetchDataInternal = useCallback(async () => {
     try {
       const response = await axios.get(
-        `https://gecxc.com:449/api/AdditionalServices/GetAdditionalServicesListByAdditionalServiceId?additionalServiceId=1`
+        `https://gecxc.com:4041/api/AdditionalServices/GetAdditionalServicesListByAdditionalServiceId?additionalServiceId=1`
       );
       const dataWithId = response.data.result.map((row, index) => ({
         id: index,
