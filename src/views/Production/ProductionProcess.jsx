@@ -4,6 +4,7 @@ import {
   Grid,
   TextField,
   Button,
+  Typography,
   MenuItem,
   Divider,
   Box,
@@ -209,10 +210,10 @@ const ProductionProcess = () => {
     }
   };
   const columns = [
-    {
-      field: 'id',
-      headerName: 'FabricId'
-    },
+    // {
+    //   field: 'id',
+    //   headerName: 'FabricId'
+    // },
     {
       field: 'sr',
       headerName: 'Sr#'
@@ -227,7 +228,12 @@ const ProductionProcess = () => {
     },
     {
       field: 'quantity',
-      headerName: 'Quantity'
+      headerName: 'Quantity',
+      renderCell: (params) => (
+        <Typography sx={{ fontWeight: 'bold', mt: 2 }}>
+          {params.value}
+        </Typography>
+      )
     },
     {
       field: 'AssignQty',
@@ -517,7 +523,7 @@ const ProductionProcess = () => {
                 width="Inherit"
                 // sx={{ paddingY: 2, paddingX: 2 }}
               >
-                <Grid item xs={12}>
+                <Grid item xs={12} mt={2}>
                   <DataGrid
                     rows={initialRows}
                     checkboxSelection
