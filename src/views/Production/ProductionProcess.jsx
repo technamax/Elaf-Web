@@ -69,6 +69,7 @@ const ProductionProcess = () => {
     collectionId: '',
     processType: '',
     AssignQty: '',
+    status: '',
     startDate: new Date().toISOString(),
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -150,6 +151,32 @@ const ProductionProcess = () => {
     };
 
     fetchCollectionData();
+  }, []);
+  //For View Collection dropdown
+  const [productioncollectionList, setProductionCollectionList] = useState([]);
+  useEffect(() => {
+    const fetchProductionProcess = async () => {
+      try {
+        const response = await axios.get(
+          `https://gecxc.com:449/api/Production/GetProductionProcessList?appId=1&status=${formData.status}`
+        );
+        if (response.data.success) {
+          setProductionCollectionList(
+            response.data.result.map((row, index) => ({
+              id: index + 1,
+              ...row
+            }))
+          );
+          console.log(response);
+        } else {
+          console.error(response.data.message);
+        }
+      } catch (error) {
+        console.error('Failed to fetch collection data', error);
+      }
+    };
+
+    fetchProductionProcess();
   }, []);
 
   const handleChange = (e) => {
@@ -307,7 +334,7 @@ const ProductionProcess = () => {
         productionHeaderId: formData.productionId || 0,
         productionId: formData.productionId || 0,
         processTypeId: formData.processType || 0,
-        status: 'Ready',
+        status: formData.status,
         startDate: formData.startDate || new Date().toISOString(),
         createdOn: formData.createdOn || new Date().toISOString(),
         createdBy: formData.createdBy || 0,
@@ -571,9 +598,9 @@ const ProductionProcess = () => {
                     fullWidth
                     select
                     size="small"
-                    name="collectionId"
+                    // name="collectionId"
                     onChange={handleChange}
-                    value={formData.collectionId}
+                    // value={formData.collectionId}
                     required
                     disabled={isEdit}
                     InputLabelProps={{
@@ -587,12 +614,44 @@ const ProductionProcess = () => {
                     // error={!!formErrors.collectionName}
                     // helperText={formErrors.collectionName}
                   >
-                    {collectionList.map((option) => (
+                    {productioncollectionList.map((option) => (
                       <MenuItem
                         key={option.collectionId}
                         value={option.collectionId}
                       >
                         {option.collectionName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Status"
+                    fullWidth
+                    select
+                    size="small"
+                    name="status"
+                    onChange={handleChange}
+                    value={formData.status}
+                    required
+                    disabled={isEdit}
+                    InputLabelProps={{
+                      shrink: true,
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                        // fontWeight: 'bold' // Use fontWeight to set the font to bold
+                      }
+                    }}
+                    // error={!!formErrors.collectionName}
+                    // helperText={formErrors.collectionName}
+                  >
+                    {productioncollectionList.map((option) => (
+                      <MenuItem
+                        key={option.productionHeaderId}
+                        value={option.status}
+                      >
+                        {option.status}
                       </MenuItem>
                     ))}
                   </TextField>
