@@ -8,8 +8,15 @@ export const productionApi = createApi({
   endpoints: (builder) => ({
     getCollectionListFromPlanningHeader: builder.query({
       query: () => `GetCollectionListFromPlanningHeader?appId=1`
+    }),
+    getDesignListFromCompletedCollectionId: builder.query({
+      query: (collectionId) =>
+        `GetDesignListFromCompletedCollectionId?appId=1&Collectionid=${collectionId}`
     })
   })
 });
 
-export const { useGetCollectionListFromPlanningHeaderQuery } = productionApi;
+export const {
+  useGetCollectionListFromPlanningHeaderQuery,
+  useGetDesignListFromCompletedCollectionIdQuery
+} = productionApi;
