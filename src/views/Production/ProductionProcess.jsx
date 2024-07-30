@@ -507,23 +507,7 @@ const ProductionProcess = () => {
                     Start Process
                   </Button>
                 </Grid>
-              </Grid>{' '}
-            </Card>
-            <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
-            <Card variant="outlined">
-              <CardHeader
-                className="css-4rfrnx-MuiCardHeader-root"
-                avatar={<VisibilityOutlinedIcon />}
-                title="View Production Process"
-                titleTypographyProps={{ style: { color: 'white' } }}
-              ></CardHeader>
-              <Grid
-                container
-                spacing={2}
-                width="Inherit"
-                // sx={{ paddingY: 2, paddingX: 2 }}
-              >
-                <Grid item xs={12} mt={2}>
+                <Grid item xs={12} mt={1}>
                   <DataGrid
                     rows={initialRows}
                     checkboxSelection
@@ -564,6 +548,96 @@ const ProductionProcess = () => {
                       }
                     }}
                   />
+                </Grid>
+              </Grid>
+            </Card>
+            <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
+            <Card variant="outlined">
+              <CardHeader
+                className="css-4rfrnx-MuiCardHeader-root"
+                avatar={<VisibilityOutlinedIcon />}
+                title="View Production Process"
+                titleTypographyProps={{ style: { color: 'white' } }}
+              ></CardHeader>
+              <Grid
+                container
+                spacing={2}
+                width="Inherit"
+                sx={{ paddingY: 2, paddingX: 2 }}
+              >
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Collection"
+                    fullWidth
+                    select
+                    size="small"
+                    name="collectionId"
+                    onChange={handleChange}
+                    value={formData.collectionId}
+                    required
+                    disabled={isEdit}
+                    InputLabelProps={{
+                      shrink: true,
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                        // fontWeight: 'bold' // Use fontWeight to set the font to bold
+                      }
+                    }}
+                    // error={!!formErrors.collectionName}
+                    // helperText={formErrors.collectionName}
+                  >
+                    {collectionList.map((option) => (
+                      <MenuItem
+                        key={option.collectionId}
+                        value={option.collectionId}
+                      >
+                        {option.collectionName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} mt={2}>
+                  {/* <DataGrid
+                    rows={initialRows}
+                    checkboxSelection
+                    columns={columns}
+                    disableDelete={true}
+                    getRowId={(row) => row.id}
+                    disableRowSelectionOnClick
+                    autosizeOnMount
+                    apiRef={apiRef}
+                    onStateChange={handleStateChange}
+                    onRowSelectionModelChange={(newSelectionModel) =>
+                      handleRowSelection(newSelectionModel)
+                    }
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
+                  /> */}
                 </Grid>
               </Grid>
             </Card>
