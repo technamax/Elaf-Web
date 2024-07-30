@@ -19,8 +19,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import MenuIcon from '@mui/icons-material/Menu';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
-import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import {} from '@mui/material';
 import '../../assets/scss/style.scss';
@@ -32,8 +31,7 @@ import {
 } from 'api/store/Apis/productionApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
-import AddTermsAndConditions from 'components/Production/TermsAndConditions/AddTermsAndConditions';
-import AssignTermsAndConditions from 'components/Production/TermsAndConditions/AssignTermsAndConditions';
+import ViewProductionBatch from 'components/Production/ProductionBatch/ViewProductionBatch';
 // import SubMenu from './SubMenu';
 
 //////
@@ -281,113 +279,151 @@ const ProductionBatch = () => {
       }}
     >
       <Box sx={{ width: '100%', typography: 'body1' }}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}></Box>
-        <Card variant="outlined">
-          <CardHeader
-            className="css-4rfrnx-MuiCardHeader-root"
-            // avatar={
-            // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
-            // }
-            title="Production Batch"
-            titleTypographyProps={{ style: { color: 'white' } }}
-          ></CardHeader>
-          <Grid
-            container
-            spacing={1}
-            width="Inherit"
-            sx={{ paddingY: 2, paddingX: 2 }}
-          >
-            <Grid item xs={12} md={4}>
-              <TextField
-                label="Collection"
-                fullWidth
-                select
-                size="small"
-                name="collectionId"
-                onChange={handleChange}
-                value={formData.collectionId}
-                required
-                disabled={isEdit}
-                // error={!!formErrors.collectionName}
-                // helperText={formErrors.collectionName}
+        <TabContext value={value}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <TabList
+              onChange={handleChangeTabs}
+              aria-label="lab API tabs example"
+            >
+              <Tab
+                icon={<AddCircleOutlineOutlinedIcon />}
+                label="Add Production Batch"
+                value="1"
+                sx={(theme) => ({
+                  '& .MuiTouchRipple-child': {
+                    backgroundColor: `${theme.palette.primary.main} !important`
+                  }
+                })}
+              />
+              <Tab
+                icon={<PreviewOutlinedIcon />}
+                label="View Production Batch"
+                value="2"
+                sx={(theme) => ({
+                  '& .MuiTouchRipple-child': {
+                    backgroundColor: `${theme.palette.primary.main} !important`
+                  }
+                })}
+              />
+              {/* <Tab
+                icon={<AssignmentOutlinedIcon />}
+                label="Assign Terms and Conditions"
+                value="3"
+                sx={(theme) => ({
+                  '& .MuiTouchRipple-child': {
+                    backgroundColor: `${theme.palette.primary.main} !important`
+                  }
+                })}
+              /> */}
+            </TabList>
+          </Box>
+          <TabPanel value="1">
+            <Card variant="outlined">
+              <CardHeader
+                className="css-4rfrnx-MuiCardHeader-root"
+                // avatar={
+                // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
+                // }
+                title="Production Batch"
+                titleTypographyProps={{ style: { color: 'white' } }}
+              ></CardHeader>
+              <Grid
+                container
+                spacing={1}
+                width="Inherit"
+                sx={{ paddingY: 2, paddingX: 2 }}
               >
-                {collectionList.map((option) => (
-                  <MenuItem
-                    key={option.collectionId}
-                    value={option.collectionId}
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    label="Collection"
+                    fullWidth
+                    select
+                    size="small"
+                    name="collectionId"
+                    onChange={handleChange}
+                    value={formData.collectionId}
+                    required
+                    disabled={isEdit}
+                    // error={!!formErrors.collectionName}
+                    // helperText={formErrors.collectionName}
                   >
-                    {option.collectionName}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                label="Order Number"
-                fullWidth
-                size="small"
-                name="orderNumber"
-                onChange={handleChange}
-                value={formData.orderNumber}
-                required
-                disabled={isEdit}
-                // error={!!formErrors.collectionName}
-                // helperText={formErrors.collectionName}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                size="small"
-                type="date"
-                label="Launch Date"
-                name="launchDate"
-                value={formData.launchDate}
-                onChange={handleChange}
-                fullWidth
-                // error={!!formErrors.launchDate}
-                // helperText={formErrors.launchDate}
-                InputLabelProps={{
-                  shrink: true,
-                  sx: {
-                    // set the color of the label when not shrinked
-                    color: 'black'
-                  }
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={8}>
-              <TextField
-                label="Remarks"
-                fullWidth
-                size="small"
-                name="remarks"
-                onChange={handleChange}
-                value={formData.remarks}
-                // error={!!formErrors.collectionName}
-                // helperText={formErrors.collectionName}
-                InputLabelProps={{
-                  sx: {
-                    color: 'black'
-                  }
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <TextField
-                label="Status"
-                fullWidth
-                size="small"
-                name="status"
-                onChange={handleChange}
-                value={formData.status}
-                required
-                disabled={isEdit}
-                // error={!!formErrors.collectionName}
-                // helperText={formErrors.collectionName}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              {/* <ReuseableDataGrid
+                    {collectionList.map((option) => (
+                      <MenuItem
+                        key={option.collectionId}
+                        value={option.collectionId}
+                      >
+                        {option.collectionName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    label="Order Number"
+                    fullWidth
+                    size="small"
+                    name="orderNumber"
+                    onChange={handleChange}
+                    value={formData.orderNumber}
+                    required
+                    disabled={isEdit}
+                    // error={!!formErrors.collectionName}
+                    // helperText={formErrors.collectionName}
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    size="small"
+                    type="date"
+                    label="Launch Date"
+                    name="launchDate"
+                    value={formData.launchDate}
+                    onChange={handleChange}
+                    fullWidth
+                    // error={!!formErrors.launchDate}
+                    // helperText={formErrors.launchDate}
+                    InputLabelProps={{
+                      shrink: true,
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                      }
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={8}>
+                  <TextField
+                    label="Remarks"
+                    fullWidth
+                    size="small"
+                    name="remarks"
+                    onChange={handleChange}
+                    value={formData.remarks}
+                    // error={!!formErrors.collectionName}
+                    // helperText={formErrors.collectionName}
+                    InputLabelProps={{
+                      sx: {
+                        color: 'black'
+                      }
+                    }}
+                  />
+                </Grid>
+                {/* <Grid item xs={12} md={4}>
+                  <TextField
+                    label="Status"
+                    fullWidth
+                    size="small"
+                    name="status"
+                    onChange={handleChange}
+                    value={formData.status}
+                    required
+                    disabled={isEdit}
+                    // error={!!formErrors.collectionName}
+                    // helperText={formErrors.collectionName}
+                  />
+                </Grid> */}
+                <Grid item xs={12}>
+                  {/* <ReuseableDataGrid
                 initialRows={initialRows}
                 iColumns={columns}
                 disableDelete={true}
@@ -397,40 +433,45 @@ const ProductionBatch = () => {
                 onRowSelectionModelChange={handleRowSelectionModelChange}
                 rowSelectionModel={rowSelectionModel}
               /> */}
-              <div style={{ height: 400, width: '100%' }}>
-                <DataGrid
-                  rows={initialRows}
-                  columns={columns}
-                  apiRef={apiRef}
-                  checkboxSelection
-                  onRowSelectionModelChange={handleRowSelectionModelChange}
-                  rowSelectionModel={rowSelectionModel}
-                />
-              </div>
-            </Grid>
+                  <div style={{ height: 400, width: '100%' }}>
+                    <DataGrid
+                      rows={initialRows}
+                      columns={columns}
+                      apiRef={apiRef}
+                      checkboxSelection
+                      onRowSelectionModelChange={handleRowSelectionModelChange}
+                      rowSelectionModel={rowSelectionModel}
+                    />
+                  </div>
+                </Grid>
 
-            <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-              <Button variant="contained" size="small" onClick={handleSave}>
-                Save
-              </Button>
-            </Grid>
-          </Grid>{' '}
-        </Card>
-        <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
-        {/* <Card variant="outlined">
+                <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
+                  <Button variant="contained" size="small" onClick={handleSave}>
+                    Save
+                  </Button>
+                </Grid>
+              </Grid>{' '}
+            </Card>
+            <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
+            {/* <Card variant="outlined">
           <CardHeader
             className="css-4rfrnx-MuiCardHeader-root"
             avatar={<VisibilityOutlinedIcon />}
             title="View Categories"
             titleTypographyProps={{ style: { color: 'white' } }}
           ></CardHeader> */}
-        <Grid
-          container
-          spacing={2}
-          width="Inherit"
-          // sx={{ paddingY: 2, paddingX: 2 }}
-        ></Grid>
-        {/* </Card> */}
+            <Grid
+              container
+              spacing={2}
+              width="Inherit"
+              // sx={{ paddingY: 2, paddingX: 2 }}
+            ></Grid>
+            {/* </Card> */}
+          </TabPanel>
+          <TabPanel value="2">
+            <ViewProductionBatch />
+          </TabPanel>
+        </TabContext>
       </Box>
     </MainCard>
   );
