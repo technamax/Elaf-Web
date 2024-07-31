@@ -38,7 +38,11 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import AddTermsAndConditions from 'components/Production/TermsAndConditions/AddTermsAndConditions';
 import AssignTermsAndConditions from 'components/Production/TermsAndConditions/AssignTermsAndConditions';
 // import SubMenu from './SubMenu';
-import { useGetCollectionListFromPlanningHeaderQuery } from 'api/store/Apis/productionApi';
+import {
+  useGetCollectionListFromPlanningHeaderQuery,
+  useGetProductionProcessListQuery,
+  useGetProductionBatchForProcessingQuery
+} from 'api/store/Apis/productionApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { styled } from '@mui/material/styles';
 
@@ -67,6 +71,7 @@ const ProductionProcess = () => {
   const [formData, setFormData] = useState({
     productionId: 0,
     collectionId: '',
+    viewCollectionId: '',
     processType: '',
     AssignQty: '',
     status: '',
@@ -75,7 +80,8 @@ const ProductionProcess = () => {
     createdOn: new Date().toISOString(),
     createdBy: user.empId,
     lastUpdatedOn: new Date().toISOString(),
-    lastUpdatedBy: user.empId
+    lastUpdatedBy: user.empId,
+    ViewStatus: ''
   });
   console.log('Form Data:', formData); // Debugging line
 
@@ -129,55 +135,36 @@ const ProductionProcess = () => {
     useGetCollectionListFromPlanningHeaderQuery();
 
   const [collectionList, setCollectionList] = useState([]);
-  useEffect(() => {
-    const fetchCollectionData = async () => {
-      try {
-        const response = await axios.get(
-          'https://gecxc.com:449/api/Production/GetProductionBatchForProcessing?appId=1'
-        );
-        if (response.data.success) {
-          setCollectionList(
-            response.data.result.map((row, index) => ({
-              id: index + 1,
-              ...row
-            }))
-          );
-        } else {
-          console.error(response.data.message);
-        }
-      } catch (error) {
-        console.error('Failed to fetch collection data', error);
-      }
-    };
+  const { data: ProductionProceccBatchList } =
+    useGetProductionBatchForProcessingQuery();
 
-    fetchCollectionData();
-  }, []);
+  useEffect(() => {
+    if (ProductionProceccBatchList) {
+      const data = ProductionProceccBatchList.result[0];
+
+      setCollectionList(
+        ProductionProceccBatchList.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [ProductionProceccBatchList, refetch]);
   //For View Collection dropdown
+  const { data: ProductionProcessList } = useGetProductionProcessListQuery();
   const [productioncollectionList, setProductionCollectionList] = useState([]);
   useEffect(() => {
-    const fetchProductionProcess = async () => {
-      try {
-        const response = await axios.get(
-          `https://gecxc.com:449/api/Production/GetProductionProcessList?appId=1&status=${formData.status}`
-        );
-        if (response.data.success) {
-          setProductionCollectionList(
-            response.data.result.map((row, index) => ({
-              id: index + 1,
-              ...row
-            }))
-          );
-          console.log(response);
-        } else {
-          console.error(response.data.message);
-        }
-      } catch (error) {
-        console.error('Failed to fetch collection data', error);
-      }
-    };
+    if (ProductionProcessList) {
+      const data = ProductionProcessList.result[0];
 
-    fetchProductionProcess();
-  }, []);
+      setProductionCollectionList(
+        ProductionProcessList.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [ProductionProcessList, refetch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -188,11 +175,28 @@ const ProductionProcess = () => {
 
       setFormData({
         ...formData,
-        collectionId: value,
-        productionId: selectedCollection ? selectedCollection.productionId : '',
-        status: selectedCollection ? selectedCollection.status : ''
+        collectionId: value
+        // productionId: selectedCollection ? selectedCollection.productionId : ''
       });
       GetFabricForProductionByCollectionId(1, value);
+    } else if (name === 'viewCollectionId') {
+      const selectedViewCollection = productioncollectionList.find(
+        (collection) => collection.collectionId === parseInt(value)
+      );
+
+      setFormData({
+        ...formData,
+        viewCollectionId: value,
+        ViewStatus: selectedViewCollection ? selectedViewCollection.status : '',
+        productionId: selectedViewCollection
+          ? selectedViewCollection.productionId
+          : ''
+      });
+      GetProductionProcessByProductionId(
+        1,
+        selectedViewCollection ? selectedViewCollection.productionId : '',
+        selectedViewCollection ? selectedViewCollection.status : ''
+      );
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -222,7 +226,38 @@ const ProductionProcess = () => {
       setIsLoading(false);
     }
   };
-  console.log(initialRows);
+  //View Datagrid
+  const [initialRowsView, setInitialRowsView] = useState([]);
+
+  const GetProductionProcessByProductionId = async (
+    appId,
+    productionId,
+    ViewStatus
+  ) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        `https://gecxc.com:449/api/Production/GetProductionProcessByProductionId?appId=${appId}&productionId=${productionId}&status=${ViewStatus}`
+      );
+      //in 449 url this api doesnt exist
+      if (response.data.success) {
+        // Add id property to each row
+        const rowsWithId = response.data.result.map((row, index) => ({
+          ...row,
+          id: row.productionHeaderId,
+          sr: index + 1 // Add serial number
+        }));
+        setInitialRowsView(rowsWithId);
+      } else {
+        console.error(response.data.message);
+      }
+    } catch (error) {
+      console.error('View Datagrid error', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  console.log(initialRowsView);
 
   const handleCellEdit = (params) => {
     const { id, field, value } = params;
@@ -293,6 +328,49 @@ const ProductionProcess = () => {
     {
       field: 'uomName',
       headerName: 'UOM'
+    }
+  ];
+  const columnView = [
+    {
+      field: 'sr',
+      headerName: 'Sr#'
+    },
+    // {
+    //   field: 'productionId',
+    //   headerName: 'productionId'
+    // },
+    {
+      field: 'collectionName',
+      headerName: 'Collection Name'
+    },
+    {
+      field: 'orderNumber',
+      headerName: 'Order Number'
+    },
+    {
+      field: 'processTypeName',
+      headerName: 'Process Type'
+    },
+    {
+      field: 'startDate',
+      headerName: 'Start Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'status',
+      headerName: 'Status'
+    },
+
+    {
+      field: 'designCount',
+      headerName: 'Design Count'
     }
   ];
   console.log('Selected Rows:', selectedRows); // Debugging line
@@ -598,9 +676,9 @@ const ProductionProcess = () => {
                     fullWidth
                     select
                     size="small"
-                    // name="collectionId"
+                    name="viewCollectionId"
                     onChange={handleChange}
-                    // value={formData.collectionId}
+                    value={formData.viewCollectionId}
                     required
                     disabled={isEdit}
                     InputLabelProps={{
@@ -630,9 +708,9 @@ const ProductionProcess = () => {
                     fullWidth
                     select
                     size="small"
-                    name="status"
+                    name="ViewStatus"
                     onChange={handleChange}
-                    value={formData.status}
+                    value={formData.ViewStatus}
                     required
                     disabled={isEdit}
                     InputLabelProps={{
@@ -657,19 +735,18 @@ const ProductionProcess = () => {
                   </TextField>
                 </Grid>
                 <Grid item xs={12} mt={2}>
-                  {/* <DataGrid
-                    rows={initialRows}
-                    checkboxSelection
-                    columns={columns}
+                  <DataGrid
+                    rows={initialRowsView}
+                    columns={columnView}
                     disableDelete={true}
-                    getRowId={(row) => row.id}
+                    // getRowId={(row) => row.id}
                     disableRowSelectionOnClick
                     autosizeOnMount
                     apiRef={apiRef}
-                    onStateChange={handleStateChange}
-                    onRowSelectionModelChange={(newSelectionModel) =>
-                      handleRowSelection(newSelectionModel)
-                    }
+                    // onStateChange={handleStateChange}
+                    // onRowSelectionModelChange={(newSelectionModel) =>
+                    //   handleRowSelection(newSelectionModel)
+                    // }
                     sx={{
                       '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
                       '& .css-1kyxv1r-MuiDataGrid-root': {
@@ -696,7 +773,7 @@ const ProductionProcess = () => {
                         }
                       }
                     }}
-                  /> */}
+                  />
                 </Grid>
               </Grid>
             </Card>

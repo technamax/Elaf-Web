@@ -8,8 +8,18 @@ export const productionApi = createApi({
   endpoints: (builder) => ({
     getCollectionListFromPlanningHeader: builder.query({
       query: () => `GetCollectionListFromPlanningHeader?appId=1`
+    }),
+    getProductionBatchForProcessing: builder.query({
+      query: () => `GetProductionBatchForProcessing?appId=1`
+    }),
+    getProductionProcessList: builder.query({
+      query: () => `GetProductionProcessList?appId=1`
     })
   })
 });
 
-export const { useGetCollectionListFromPlanningHeaderQuery } = productionApi;
+export const {
+  useGetCollectionListFromPlanningHeaderQuery,
+  useGetProductionProcessListQuery,
+  useGetProductionBatchForProcessingQuery
+} = productionApi;
