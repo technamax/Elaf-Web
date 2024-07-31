@@ -38,7 +38,11 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import AddTermsAndConditions from 'components/Production/TermsAndConditions/AddTermsAndConditions';
 import AssignTermsAndConditions from 'components/Production/TermsAndConditions/AssignTermsAndConditions';
 // import SubMenu from './SubMenu';
-import { useGetCollectionListFromPlanningHeaderQuery } from 'api/store/Apis/productionApi';
+import {
+  useGetCollectionListFromPlanningHeaderQuery,
+  useGetProductionProcessListQuery,
+  useGetProductionBatchForProcessingQuery
+} from 'api/store/Apis/productionApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { styled } from '@mui/material/styles';
 
@@ -67,14 +71,17 @@ const ProductionProcess = () => {
   const [formData, setFormData] = useState({
     productionId: 0,
     collectionId: '',
+    viewCollectionId: '',
     processType: '',
     AssignQty: '',
+    status: '',
     startDate: new Date().toISOString(),
     appId: user.appId,
     createdOn: new Date().toISOString(),
     createdBy: user.empId,
     lastUpdatedOn: new Date().toISOString(),
-    lastUpdatedBy: user.empId
+    lastUpdatedBy: user.empId,
+    ViewStatus: ''
   });
   console.log('Form Data:', formData); // Debugging line
 
@@ -128,29 +135,36 @@ const ProductionProcess = () => {
     useGetCollectionListFromPlanningHeaderQuery();
 
   const [collectionList, setCollectionList] = useState([]);
-  useEffect(() => {
-    const fetchCollectionData = async () => {
-      try {
-        const response = await axios.get(
-          'https://gecxc.com:449/api/Production/GetProductionBatchForProcessing?appId=1'
-        );
-        if (response.data.success) {
-          setCollectionList(
-            response.data.result.map((row, index) => ({
-              id: index + 1,
-              ...row
-            }))
-          );
-        } else {
-          console.error(response.data.message);
-        }
-      } catch (error) {
-        console.error('Failed to fetch collection data', error);
-      }
-    };
+  const { data: ProductionProceccBatchList } =
+    useGetProductionBatchForProcessingQuery();
 
-    fetchCollectionData();
-  }, []);
+  useEffect(() => {
+    if (ProductionProceccBatchList) {
+      const data = ProductionProceccBatchList.result[0];
+
+      setCollectionList(
+        ProductionProceccBatchList.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [ProductionProceccBatchList, refetch]);
+  //For View Collection dropdown
+  const { data: ProductionProcessList } = useGetProductionProcessListQuery();
+  const [productioncollectionList, setProductionCollectionList] = useState([]);
+  useEffect(() => {
+    if (ProductionProcessList) {
+      const data = ProductionProcessList.result[0];
+
+      setProductionCollectionList(
+        ProductionProcessList.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [ProductionProcessList, refetch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -161,11 +175,28 @@ const ProductionProcess = () => {
 
       setFormData({
         ...formData,
-        collectionId: value,
-        productionId: selectedCollection ? selectedCollection.productionId : '',
-        status: selectedCollection ? selectedCollection.status : ''
+        collectionId: value
+        // productionId: selectedCollection ? selectedCollection.productionId : ''
       });
       GetFabricForProductionByCollectionId(1, value);
+    } else if (name === 'viewCollectionId') {
+      const selectedViewCollection = productioncollectionList.find(
+        (collection) => collection.collectionId === parseInt(value)
+      );
+
+      setFormData({
+        ...formData,
+        viewCollectionId: value,
+        ViewStatus: selectedViewCollection ? selectedViewCollection.status : '',
+        productionId: selectedViewCollection
+          ? selectedViewCollection.productionId
+          : ''
+      });
+      GetProductionProcessByProductionId(
+        1,
+        selectedViewCollection ? selectedViewCollection.productionId : '',
+        selectedViewCollection ? selectedViewCollection.status : ''
+      );
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -195,7 +226,38 @@ const ProductionProcess = () => {
       setIsLoading(false);
     }
   };
-  console.log(initialRows);
+  //View Datagrid
+  const [initialRowsView, setInitialRowsView] = useState([]);
+
+  const GetProductionProcessByProductionId = async (
+    appId,
+    productionId,
+    ViewStatus
+  ) => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        `https://gecxc.com:449/api/Production/GetProductionProcessByProductionId?appId=${appId}&productionId=${productionId}&status=${ViewStatus}`
+      );
+      //in 449 url this api doesnt exist
+      if (response.data.success) {
+        // Add id property to each row
+        const rowsWithId = response.data.result.map((row, index) => ({
+          ...row,
+          id: row.productionHeaderId,
+          sr: index + 1 // Add serial number
+        }));
+        setInitialRowsView(rowsWithId);
+      } else {
+        console.error(response.data.message);
+      }
+    } catch (error) {
+      console.error('View Datagrid error', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  console.log(initialRowsView);
 
   const handleCellEdit = (params) => {
     const { id, field, value } = params;
@@ -268,6 +330,49 @@ const ProductionProcess = () => {
       headerName: 'UOM'
     }
   ];
+  const columnView = [
+    {
+      field: 'sr',
+      headerName: 'Sr#'
+    },
+    // {
+    //   field: 'productionId',
+    //   headerName: 'productionId'
+    // },
+    {
+      field: 'collectionName',
+      headerName: 'Collection Name'
+    },
+    {
+      field: 'orderNumber',
+      headerName: 'Order Number'
+    },
+    {
+      field: 'processTypeName',
+      headerName: 'Process Type'
+    },
+    {
+      field: 'startDate',
+      headerName: 'Start Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'status',
+      headerName: 'Status'
+    },
+
+    {
+      field: 'designCount',
+      headerName: 'Design Count'
+    }
+  ];
   console.log('Selected Rows:', selectedRows); // Debugging line
 
   const handleRowSelection = (newSelection) => {
@@ -307,7 +412,7 @@ const ProductionProcess = () => {
         productionHeaderId: formData.productionId || 0,
         productionId: formData.productionId || 0,
         processTypeId: formData.processType || 0,
-        status: 'Ready',
+        status: formData.status,
         startDate: formData.startDate || new Date().toISOString(),
         createdOn: formData.createdOn || new Date().toISOString(),
         createdBy: formData.createdBy || 0,
@@ -507,23 +612,7 @@ const ProductionProcess = () => {
                     Start Process
                   </Button>
                 </Grid>
-              </Grid>{' '}
-            </Card>
-            <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
-            <Card variant="outlined">
-              <CardHeader
-                className="css-4rfrnx-MuiCardHeader-root"
-                avatar={<VisibilityOutlinedIcon />}
-                title="View Production Process"
-                titleTypographyProps={{ style: { color: 'white' } }}
-              ></CardHeader>
-              <Grid
-                container
-                spacing={2}
-                width="Inherit"
-                // sx={{ paddingY: 2, paddingX: 2 }}
-              >
-                <Grid item xs={12} mt={2}>
+                <Grid item xs={12} mt={1}>
                   <DataGrid
                     rows={initialRows}
                     checkboxSelection
@@ -537,6 +626,127 @@ const ProductionProcess = () => {
                     onRowSelectionModelChange={(newSelectionModel) =>
                       handleRowSelection(newSelectionModel)
                     }
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
+                  />
+                </Grid>
+              </Grid>
+            </Card>
+            <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
+            <Card variant="outlined">
+              <CardHeader
+                className="css-4rfrnx-MuiCardHeader-root"
+                avatar={<VisibilityOutlinedIcon />}
+                title="View Production Process"
+                titleTypographyProps={{ style: { color: 'white' } }}
+              ></CardHeader>
+              <Grid
+                container
+                spacing={2}
+                width="Inherit"
+                sx={{ paddingY: 2, paddingX: 2 }}
+              >
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Collection"
+                    fullWidth
+                    select
+                    size="small"
+                    name="viewCollectionId"
+                    onChange={handleChange}
+                    value={formData.viewCollectionId}
+                    required
+                    disabled={isEdit}
+                    InputLabelProps={{
+                      shrink: true,
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                        // fontWeight: 'bold' // Use fontWeight to set the font to bold
+                      }
+                    }}
+                    // error={!!formErrors.collectionName}
+                    // helperText={formErrors.collectionName}
+                  >
+                    {productioncollectionList.map((option) => (
+                      <MenuItem
+                        key={option.collectionId}
+                        value={option.collectionId}
+                      >
+                        {option.collectionName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    label="Status"
+                    fullWidth
+                    select
+                    size="small"
+                    name="ViewStatus"
+                    onChange={handleChange}
+                    value={formData.ViewStatus}
+                    required
+                    disabled={isEdit}
+                    InputLabelProps={{
+                      shrink: true,
+                      sx: {
+                        // set the color of the label when not shrinked
+                        color: 'black'
+                        // fontWeight: 'bold' // Use fontWeight to set the font to bold
+                      }
+                    }}
+                    // error={!!formErrors.collectionName}
+                    // helperText={formErrors.collectionName}
+                  >
+                    {productioncollectionList.map((option) => (
+                      <MenuItem
+                        key={option.productionHeaderId}
+                        value={option.status}
+                      >
+                        {option.status}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} mt={2}>
+                  <DataGrid
+                    rows={initialRowsView}
+                    columns={columnView}
+                    disableDelete={true}
+                    // getRowId={(row) => row.id}
+                    disableRowSelectionOnClick
+                    autosizeOnMount
+                    apiRef={apiRef}
+                    // onStateChange={handleStateChange}
+                    // onRowSelectionModelChange={(newSelectionModel) =>
+                    //   handleRowSelection(newSelectionModel)
+                    // }
                     sx={{
                       '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
                       '& .css-1kyxv1r-MuiDataGrid-root': {
