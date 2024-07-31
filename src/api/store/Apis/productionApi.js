@@ -12,6 +12,10 @@ export const productionApi = createApi({
     getDesignListFromCompletedCollectionId: builder.query({
       query: (collectionId) =>
         `GetDesignListFromCompletedCollectionId?appId=1&Collectionid=${collectionId}`
+    }),
+    getProductionBatchForProcessing: builder.query({
+      query: () => `GetProductionBatchForProcessing?appId=1`
+    }),
     getProductionProcessList: builder.query({
       query: () => `GetProductionProcessList?appId=1`
     })
@@ -20,5 +24,7 @@ export const productionApi = createApi({
 
 export const {
   useGetCollectionListFromPlanningHeaderQuery,
-  useGetDesignListFromCompletedCollectionIdQuery
+  useGetDesignListFromCompletedCollectionIdQuery,
+  useGetProductionProcessListQuery,
+  useGetProductionBatchForProcessingQuery
 } = productionApi;

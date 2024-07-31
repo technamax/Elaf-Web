@@ -9,17 +9,11 @@ export const productionApi = createApi({
     getCollectionListFromPlanningHeader: builder.query({
       query: () => `GetCollectionListFromPlanningHeader?appId=1`
     }),
-<<<<<<< HEAD
-    getDesignListFromCompletedCollectionId: builder.query({
-      query: (collectionId) =>
-        `GetDesignListFromCompletedCollectionId?appId=1&Collectionid=${collectionId}`
-=======
     getProductionBatchForProcessing: builder.query({
       query: () => `GetProductionBatchForProcessing?appId=1`
     }),
     getProductionProcessList: builder.query({
       query: () => `GetProductionProcessList?appId=1`
->>>>>>> ELAF-196-Create-Production-Process-Screen
     })
   })
 });
