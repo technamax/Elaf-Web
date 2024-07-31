@@ -4,6 +4,7 @@ import {
   Grid,
   TextField,
   Button,
+  ButtonGroup,
   Typography,
   MenuItem,
   Divider,
@@ -37,11 +38,13 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import AddTermsAndConditions from 'components/Production/TermsAndConditions/AddTermsAndConditions';
 import AssignTermsAndConditions from 'components/Production/TermsAndConditions/AssignTermsAndConditions';
+import Issuance from 'components/Production/Issuance/Issuance';
 // import SubMenu from './SubMenu';
 import {
   useGetCollectionListFromPlanningHeaderQuery,
   useGetProductionProcessListQuery,
-  useGetProductionBatchForProcessingQuery
+  useGetProductionBatchForProcessingQuery,
+  useGetProductionProcessByProductionIdQuery
 } from 'api/store/Apis/productionApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { styled } from '@mui/material/styles';
@@ -128,7 +131,11 @@ const ProductionProcess = () => {
     if (lookupData) {
       const data = lookupData.result[0];
 
-      setProcessType(data.productionProcessList);
+      const filteredProcessType = data.productionProcessList.filter(
+        (process) => process.lookUpName === 'Fabrication'
+      );
+
+      setProcessType(filteredProcessType);
     }
   }, [lookupData]);
   const { data: collectionData, refetch } =
@@ -192,11 +199,13 @@ const ProductionProcess = () => {
           ? selectedViewCollection.productionId
           : ''
       });
-      GetProductionProcessByProductionId(
-        1,
-        selectedViewCollection ? selectedViewCollection.productionId : '',
-        selectedViewCollection ? selectedViewCollection.status : ''
-      );
+      refetchViewData(); // Trigger refetch when viewCollectionId changes
+
+      // GetProductionProcessByProductionId(
+      //   1,
+      //   selectedViewCollection ? selectedViewCollection.productionId : '',
+      //   selectedViewCollection ? selectedViewCollection.status : ''
+      // );
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -229,34 +238,55 @@ const ProductionProcess = () => {
   //View Datagrid
   const [initialRowsView, setInitialRowsView] = useState([]);
 
-  const GetProductionProcessByProductionId = async (
-    appId,
-    productionId,
-    ViewStatus
-  ) => {
-    setIsLoading(true);
-    try {
-      const response = await axios.get(
-        `https://gecxc.com:449/api/Production/GetProductionProcessByProductionId?appId=${appId}&productionId=${productionId}&status=${ViewStatus}`
-      );
-      //in 449 url this api doesnt exist
-      if (response.data.success) {
-        // Add id property to each row
-        const rowsWithId = response.data.result.map((row, index) => ({
+  // const GetProductionProcessByProductionId = async (
+  //   appId,
+  //   productionId,
+  //   ViewStatus
+  // ) => {
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await axios.get(
+  //       `https://gecxc.com:449/api/Production/GetProductionProcessByProductionId?appId=${appId}&productionId=${productionId}&status=${ViewStatus}`
+  //     );
+  //     //in 449 url this api doesnt exist
+  //     if (response.data.success) {
+  //       // Add id property to each row
+  //       const rowsWithId = response.data.result.map((row, index) => ({
+  //         ...row,
+  //         id: row.productionHeaderId,
+  //         sr: index + 1 // Add serial number
+  //       }));
+  //       setInitialRowsView(rowsWithId);
+  //     } else {
+  //       console.error(response.data.message);
+  //     }
+  //   } catch (error) {
+  //     console.error('View Datagrid error', error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+  //useGetProductionProcessByProductionIdQuery
+  const { data: viewData, refetch: refetchViewData } =
+    useGetProductionProcessByProductionIdQuery(
+      { productionId: formData.productionId, ViewStatus: formData.ViewStatus },
+      {
+        skip: !formData.productionId,
+        skip: !formData.ViewStatus
+      }
+    );
+
+  useEffect(() => {
+    if (viewData) {
+      setInitialRowsView(
+        viewData.result.map((row, index) => ({
           ...row,
           id: row.productionHeaderId,
           sr: index + 1 // Add serial number
-        }));
-        setInitialRowsView(rowsWithId);
-      } else {
-        console.error(response.data.message);
-      }
-    } catch (error) {
-      console.error('View Datagrid error', error);
-    } finally {
-      setIsLoading(false);
+        }))
+      );
     }
-  };
+  }, [viewData, refetchViewData]);
   console.log(initialRowsView);
 
   const handleCellEdit = (params) => {
@@ -278,19 +308,23 @@ const ProductionProcess = () => {
     // },
     {
       field: 'sr',
-      headerName: 'Sr#'
+      headerName: 'Sr#',
+      flex: 1
     },
     {
       field: 'collectionName',
-      headerName: 'Collection Name'
+      headerName: 'Collection Name',
+      flex: 1
     },
     {
       field: 'fabricName',
-      headerName: 'Fabric Name'
+      headerName: 'Fabric Name',
+      flex: 1
     },
     {
       field: 'quantity',
       headerName: 'Quantity',
+      flex: 1,
       renderCell: (params) => (
         <Typography sx={{ fontWeight: 'bold', mt: 2 }}>
           {params.value}
@@ -300,6 +334,8 @@ const ProductionProcess = () => {
     {
       field: 'AssignQty',
       headerName: 'Assign Quantity',
+      flex: 1,
+
       renderCell: (params) => (
         <SmallTextField
           variant="outlined"
@@ -322,14 +358,19 @@ const ProductionProcess = () => {
     },
     {
       field: 'bxQuantity',
-      headerName: 'BX Quantity'
+      headerName: 'BX Quantity',
+      flex: 1
     },
 
     {
       field: 'uomName',
-      headerName: 'UOM'
+      headerName: 'UOM',
+      flex: 1
     }
   ];
+  const handleTabChange = (newValue) => {
+    setValue(newValue);
+  };
   const columnView = [
     {
       field: 'sr',
@@ -341,19 +382,24 @@ const ProductionProcess = () => {
     // },
     {
       field: 'collectionName',
-      headerName: 'Collection Name'
+      headerName: 'Collection Name',
+      flex: 1
     },
     {
       field: 'orderNumber',
-      headerName: 'Order Number'
+      headerName: 'Order Number',
+      flex: 1
     },
     {
       field: 'processTypeName',
-      headerName: 'Process Type'
+      headerName: 'Process Type',
+      flex: 1
     },
     {
       field: 'startDate',
       headerName: 'Start Date',
+      flex: 1,
+
       valueGetter: (params) => {
         const date = new Date(params);
         return date.toLocaleDateString('en-GB', {
@@ -365,12 +411,31 @@ const ProductionProcess = () => {
     },
     {
       field: 'status',
-      headerName: 'Status'
+      headerName: 'Status',
+      flex: 1
     },
 
     {
       field: 'designCount',
-      headerName: 'Design Count'
+      headerName: 'Design Count',
+      flex: 1
+    },
+    {
+      field: 'action',
+      headerName: 'Action',
+      flex: 1,
+      renderCell: (params) => (
+        <ButtonGroup
+          variant="outlined"
+          size="small"
+          aria-label="outlined primary button group"
+        >
+          <Button onClick={() => handleTabChange('2')}>Issuance</Button>
+          <Button onClick={() => handleTabChange('3')}>Recieving</Button>
+        </ButtonGroup>
+      ),
+      sortable: false,
+      filterable: false
     }
   ];
   console.log('Selected Rows:', selectedRows); // Debugging line
@@ -779,10 +844,10 @@ const ProductionProcess = () => {
             </Card>
           </TabPanel>
           <TabPanel value="2">
-            <AddTermsAndConditions />
+            <Issuance />
           </TabPanel>
           <TabPanel value="3">
-            <AssignTermsAndConditions />
+            <Issuance />
           </TabPanel>
         </TabContext>
       </Box>

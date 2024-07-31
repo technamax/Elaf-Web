@@ -18,6 +18,10 @@ export const productionApi = createApi({
     }),
     getProductionProcessList: builder.query({
       query: () => `GetProductionProcessList?appId=1`
+    }),
+    getProductionProcessByProductionId: builder.query({
+      query: ({ productionId, ViewStatus }) =>
+        `GetProductionProcessByProductionId?appId=1&productionId=${productionId}&status=${ViewStatus}`
     })
   })
 });
@@ -26,5 +30,6 @@ export const {
   useGetCollectionListFromPlanningHeaderQuery,
   useGetDesignListFromCompletedCollectionIdQuery,
   useGetProductionProcessListQuery,
-  useGetProductionBatchForProcessingQuery
+  useGetProductionBatchForProcessingQuery,
+  useGetProductionProcessByProductionIdQuery
 } = productionApi;
