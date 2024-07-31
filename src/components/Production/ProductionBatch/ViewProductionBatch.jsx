@@ -138,11 +138,41 @@ const ViewProductionBatch = () => {
       // flex: 1
     },
     {
-      field: 'termCondDesc',
-      headerName: 'Term and condition'
+      field: 'productionId',
+      headerName: 'Production Id'
       // flex: 1
     },
 
+    {
+      field: 'collectionName',
+      headerName: 'Collection Name'
+      // flex: 1
+    },
+    {
+      field: 'brandName',
+      headerName: 'Brand Name'
+      // flex: 1
+    },
+    {
+      field: 'seasonName',
+      headerName: 'Season Name'
+      // flex: 1
+    },
+    {
+      field: 'launchDate',
+      headerName: 'Launch Date'
+      // flex: 1
+    },
+    {
+      field: 'remarks',
+      headerName: 'Remarks'
+      // flex: 1
+    },
+    {
+      field: 'status',
+      headerName: 'Status'
+      // flex: 1
+    },
     {
       field: 'enabled',
       headerName: 'Enabled'
