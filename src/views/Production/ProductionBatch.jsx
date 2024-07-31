@@ -139,8 +139,8 @@ const ProductionBatch = () => {
       setFormData({
         ...formData,
         collectionId: value,
-        orderNumber: selectedCollection ? selectedCollection.orderNumber : '',
-        status: selectedCollection ? selectedCollection.batchStatus : ''
+        orderNumber: selectedCollection ? selectedCollection.orderNumber : ''
+        // status: selectedCollection ? selectedCollection.batchStatus : ''
       });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -297,7 +297,7 @@ const ProductionBatch = () => {
               />
               <Tab
                 icon={<PreviewOutlinedIcon />}
-                label="View Production Batch"
+                label="View Production Batches"
                 value="2"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
@@ -408,7 +408,7 @@ const ProductionBatch = () => {
                     }}
                   />
                 </Grid>
-                {/* <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={4}>
                   <TextField
                     label="Status"
                     fullWidth
@@ -421,7 +421,7 @@ const ProductionBatch = () => {
                     // error={!!formErrors.collectionName}
                     // helperText={formErrors.collectionName}
                   />
-                </Grid> */}
+                </Grid>
                 <Grid item xs={12}>
                   {/* <ReuseableDataGrid
                 initialRows={initialRows}

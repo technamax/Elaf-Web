@@ -10,6 +10,10 @@ import {
   useGetSubMenuListQuery,
   useGetMainMenuListQuery
 } from 'api/store/Apis/userManagementApi';
+import {
+  useGetCategoriesListQuery,
+  useGetTermsConditionsListQuery
+} from 'api/store/Apis/termsAndConditionsApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
@@ -64,30 +68,35 @@ const AddTermsAndConditions = () => {
     setAccordionExpanded(!accordionExpanded);
   };
 
-  const { data: subMenuData, refetch } = useGetSubMenuListQuery();
-  const { data: mainMenuData } = useGetMainMenuListQuery();
-  const [mainMenus, setMainMenus] = useState([]);
+  const { data: categoriesData, refetch: refetchCategoriesdata } =
+    useGetCategoriesListQuery();
+  const { data: termsConditionsData, refetch: refetchTermsConditionsData } =
+    useGetTermsConditionsListQuery(formData.categoryId, {
+      skip: !formData.categoryId // Skip the query if no collection is selected
+    });
+  // const { data: subMenuData, refetch } = useGetSubMenuListQuery();
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    if (subMenuData) {
+    if (termsConditionsData) {
       setInitialRows(
-        subMenuData.result.map((row, index) => ({
+        termsConditionsData.result.map((row, index) => ({
           id: index + 1,
           ...row
         }))
       );
     }
-  }, [subMenuData, refetch]);
+  }, [termsConditionsData, refetchTermsConditionsData]);
   useEffect(() => {
-    if (mainMenuData) {
-      setMainMenus(
-        mainMenuData.result.map((row, index) => ({
+    if (categoriesData) {
+      setCategories(
+        categoriesData.result.map((row, index) => ({
           id: index,
           ...row
         }))
       );
     }
-  }, [mainMenuData, refetch]);
+  }, [categoriesData, refetchCategoriesdata]);
 
   console.log('initialRows', initialRows);
 
@@ -110,7 +119,7 @@ const AddTermsAndConditions = () => {
 
       setFormData((prevFormData) => ({
         tcId: 0,
-        categoryId: '',
+        categoryId: prevFormData.categoryId,
         termCondDesc: '',
         enabled: '',
         appId: user.appId,
@@ -120,7 +129,7 @@ const AddTermsAndConditions = () => {
         LastUpdatedBy: user.empId
       }));
 
-      refetch();
+      refetchTermsConditionsData();
       setIsEdit(false);
       // setAccordionExpanded(false);
     } catch (error) {
@@ -132,19 +141,19 @@ const AddTermsAndConditions = () => {
   const columns = [
     {
       field: 'id',
-      headerName: 'Sr#',
-      flex: 1
+      headerName: 'Sr#'
+      // flex: 1
     },
     {
       field: 'termCondDesc',
-      headerName: 'Term and condition',
+      headerName: 'Term and Condition',
       flex: 1
     },
 
     {
       field: 'enabled',
-      headerName: 'Enabled',
-      flex: 1
+      headerName: 'Enabled'
+      // flex: 1
     }
   ];
 
@@ -177,9 +186,9 @@ const AddTermsAndConditions = () => {
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             >
-              {mainMenus.map((option) => (
-                <MenuItem key={option.mainMenuId} value={option.mainMenuId}>
-                  {option.mainMenuDesc}
+              {categories.map((option) => (
+                <MenuItem key={option.categoryId} value={option.categoryId}>
+                  {option.description}
                 </MenuItem>
               ))}
             </TextField>
