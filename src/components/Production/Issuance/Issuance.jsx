@@ -129,6 +129,129 @@ const Issuance = () => {
       setFormData({ ...formData, [name]: value });
     }
   };
+  const columns = [
+    // {
+    //   field: 'id',
+    //   headerName: 'FabricId'
+    // },
+    {
+      field: 'sr',
+      headerName: 'Sr#',
+      flex: 1
+    },
+    {
+      field: 'designName',
+      headerName: 'Design Name',
+      flex: 1
+    },
+    {
+      field: 'color',
+      headerName: 'Color',
+      flex: 1
+    },
+    // {
+    //   field: 'plannedQty',
+    //   headerName: 'Planned Quantity',
+    //   flex: 1
+    // },
+    {
+      field: 'quantity',
+      headerName: 'Planned Quantity',
+      flex: 1,
+      renderCell: (params) => (
+        <Typography sx={{ fontWeight: 'bold', mt: 2 }}>
+          {params.value}
+        </Typography>
+      )
+    },
+    {
+      field: 'AssignQty',
+      headerName: 'Assign Quantity',
+      flex: 1,
+
+      renderCell: (params) => (
+        <SmallTextField
+          variant="outlined"
+          size="small"
+          sx={{ mt: 1, width: 100 }} // Adjust width and height as needed
+          value={params.row.AssignQty || ''}
+          onChange={(event) =>
+            handleCellEdit({
+              id: params.id,
+              field: 'AssignQty',
+              value: event.target.value
+            })
+          }
+          type="number"
+          InputProps={{
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+          }}
+        />
+      )
+    },
+    {
+      field: 'rate',
+      headerName: 'Rate ',
+      flex: 1,
+
+      renderCell: (params) => (
+        <SmallTextField
+          variant="outlined"
+          size="small"
+          sx={{ mt: 1, width: 100 }} // Adjust width and height as needed
+          value={params.row.rate || ''}
+          onChange={(event) =>
+            handleCellEdit({
+              id: params.id,
+              field: 'rate',
+              value: event.target.value
+            })
+          }
+          type="number"
+          InputProps={{
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+          }}
+        />
+      )
+    },
+    {
+      field: 'AssignQty',
+      headerName: 'Assign Quantity',
+      flex: 1,
+
+      renderCell: (params) => (
+        <SmallTextField
+          variant="outlined"
+          size="small"
+          sx={{ mt: 1, width: 100 }} // Adjust width and height as needed
+          value={params.row.AssignQty || ''}
+          onChange={(event) =>
+            handleCellEdit({
+              id: params.id,
+              field: 'AssignQty',
+              value: event.target.value
+            })
+          }
+          type="number"
+          InputProps={{
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+          }}
+        />
+      )
+    },
+    {
+      field: 'bxQuantity',
+      headerName: 'BX Quantity',
+      flex: 1
+    },
+
+    {
+      field: 'uomName',
+      headerName: 'UOM',
+      flex: 1
+    }
+  ];
+
   return (
     <Card variant="outlined">
       <CardHeader
