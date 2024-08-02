@@ -38,7 +38,8 @@ const ReuseableDataGrid = ({
   isLoading,
   height,
   checkboxSelection,
-  onRowSelectionModelChange
+  onRowSelectionModelChange,
+  hideAction
   // Make sure to pass checkboxSelection
 }) => {
   const apiRef = useGridApiRef();
@@ -128,34 +129,36 @@ const ReuseableDataGrid = ({
 
   const columns = [
     ...iColumns,
-    {
-      field: 'Action',
-      headerName: 'Actions',
-      renderCell: (params) => (
-        <div style={{ display: 'flex' }}>
-          <ButtonGroup size="small" variant="text">
-            {disableEdit ? null : (
-              <IconButton
-                aria-label="Edit"
-                onClick={() => handleEdit(params.row)}
-              >
-                <EditIcon />
-              </IconButton>
-            )}
-            {disableDelete ? null : (
-              <IconButton
-                aria-label="delete"
-                color="primary"
-                onClick={() => handleClickOpen(params.row[deleteBy])}
-              >
-                <DeleteIcon />
-              </IconButton>
-            )}
-          </ButtonGroup>
-        </div>
-      )
-    }
-  ];
+    !hideAction
+      ? {
+          field: 'Action',
+          headerName: 'Actions',
+          renderCell: (params) => (
+            <div style={{ display: 'flex' }}>
+              <ButtonGroup size="small" variant="text">
+                {!disableEdit && (
+                  <IconButton
+                    aria-label="Edit"
+                    onClick={() => handleEdit(params.row)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                )}
+                {!disableDelete && (
+                  <IconButton
+                    aria-label="delete"
+                    color="primary"
+                    onClick={() => handleClickOpen(params.row[deleteBy])}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                )}
+              </ButtonGroup>
+            </div>
+          )
+        }
+      : null
+  ].filter(Boolean);
 
   const handleStateChange = (params) => {
     if (apiRef.current && apiRef.current.autosizeColumns) {

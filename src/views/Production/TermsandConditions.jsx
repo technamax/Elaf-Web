@@ -23,7 +23,8 @@ import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import {} from '@mui/material';
 import '../../assets/scss/style.scss';
 
-import { useGetMainMenuListQuery } from 'api/store/Apis/userManagementApi';
+// import { useGetMainMenuListQuery } from 'api/store/Apis/userManagementApi';
+import { useGetCategoriesListQuery } from 'api/store/Apis/termsAndConditionsApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import AddTermsAndConditions from 'components/Production/TermsAndConditions/AddTermsAndConditions';
@@ -82,18 +83,18 @@ const TermsandConditions = () => {
     setAccordionExpanded(!accordionExpanded);
   };
 
-  const { data: mainMenuData, refetch } = useGetMainMenuListQuery();
+  const { data: categoriesData, refetch } = useGetCategoriesListQuery();
 
   useEffect(() => {
-    if (mainMenuData) {
+    if (categoriesData) {
       setInitialRows(
-        mainMenuData.result.map((row, index) => ({
+        categoriesData.result.map((row, index) => ({
           id: index + 1,
           ...row
         }))
       );
     }
-  }, [mainMenuData, refetch]);
+  }, [categoriesData, refetch]);
 
   console.log('initialRows', initialRows);
 
@@ -138,8 +139,8 @@ const TermsandConditions = () => {
   const columns = [
     {
       field: 'id',
-      headerName: 'Sr#',
-      flex: 1
+      headerName: 'Sr#'
+      // flex: 1
     },
     {
       field: 'description',
@@ -149,8 +150,8 @@ const TermsandConditions = () => {
 
     {
       field: 'enabled',
-      headerName: 'Enabled',
-      flex: 1
+      headerName: 'Enabled'
+      // flex: 1
     }
   ];
 
@@ -230,7 +231,7 @@ const TermsandConditions = () => {
                     onChange={handleChange}
                     value={formData.description}
                     required
-                    disabled={isEdit}
+                    // disabled={isEdit}
                     // error={!!formErrors.collectionName}
                     // helperText={formErrors.collectionName}
                   />

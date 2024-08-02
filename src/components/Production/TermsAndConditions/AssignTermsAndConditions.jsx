@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Grid, TextField, Button, MenuItem, Divider, Box } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Button,
+  MenuItem,
+  Divider,
+  Box,
+  Typography
+} from '@mui/material';
+import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import MainCard from 'ui-component/cards/MainCard';
 
 import { Card, CardHeader, Avatar } from '@mui/material';
@@ -11,6 +20,10 @@ import {
   useGetMainMenuListQuery
 } from 'api/store/Apis/userManagementApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
+import {
+  useGetCategoriesListQuery,
+  useGetTermsConditionsListQuery
+} from 'api/store/Apis/termsAndConditionsApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
@@ -22,10 +35,13 @@ const AssignTermsAndConditions = () => {
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [selectedTerms, setSelectedTerms] = React.useState([]);
+
   const [formData, setFormData] = useState({
     assignId: 0,
     vedorId: '',
     categoryId: '',
+    assignTermsDetails: [selectedTerms],
 
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -64,9 +80,13 @@ const AssignTermsAndConditions = () => {
   };
 
   const { data: lookupData } = useGetLookUpListQuery();
-  const { data: subMenuData, refetch } = useGetSubMenuListQuery();
-  const { data: mainMenuData } = useGetMainMenuListQuery();
-  const [mainMenus, setMainMenus] = useState([]);
+  // const { data: termsConditionsData, refetch } = useGetSubMenuListQuery();
+  const { data: categoriesData } = useGetCategoriesListQuery();
+  const { data: termsConditionsData, refetch: refetchTermsConditionsData } =
+    useGetTermsConditionsListQuery(formData.categoryId, {
+      skip: !formData.categoryId // Skip the query if no collection is selected
+    });
+  const [categories, setCategories] = useState([]);
 
   const [vendors, setVendors] = useState([]);
 
@@ -80,25 +100,25 @@ const AssignTermsAndConditions = () => {
   }, [lookupData]);
 
   useEffect(() => {
-    if (subMenuData) {
+    if (termsConditionsData) {
       setInitialRows(
-        subMenuData.result.map((row, index) => ({
+        termsConditionsData.result.map((row, index) => ({
           id: index + 1,
           ...row
         }))
       );
     }
-  }, [subMenuData, refetch]);
+  }, [termsConditionsData]);
   useEffect(() => {
-    if (mainMenuData) {
-      setMainMenus(
-        mainMenuData.result.map((row, index) => ({
+    if (categoriesData) {
+      setCategories(
+        categoriesData.result.map((row, index) => ({
           id: index,
           ...row
         }))
       );
     }
-  }, [mainMenuData, refetch]);
+  }, [categoriesData]);
 
   console.log('initialRows', initialRows);
 
@@ -113,7 +133,7 @@ const AssignTermsAndConditions = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:449/api/TermsConditions/SaveTermsConditions',
+        'https://gecxc.com:449/api/TermsConditions/SaveAssignTerms',
         formData
       );
 
@@ -130,7 +150,7 @@ const AssignTermsAndConditions = () => {
         LastUpdatedBy: user.empId
       }));
 
-      refetch();
+      // refetch();
       setIsEdit(false);
       // setAccordionExpanded(false);
     } catch (error) {
@@ -145,13 +165,13 @@ const AssignTermsAndConditions = () => {
       headerName: 'Sr#'
     },
     {
-      field: 'LookUpDomain',
-      headerName: 'LookUpDomain',
+      field: 'termCondDesc',
+      headerName: 'Term and Condition Description',
       flex: 1
     },
     {
-      field: 'vendorName',
-      headerName: 'Vendor Name',
+      field: 'enabled',
+      headerName: 'Enabled',
       flex: 1
     },
     {
@@ -160,6 +180,46 @@ const AssignTermsAndConditions = () => {
       flex: 1
     }
   ];
+
+  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
+  const apiRef = useGridApiRef();
+
+  const handleRowSelectionModelChange = React.useCallback(
+    (newRowSelectionModel) => {
+      setRowSelectionModel(newRowSelectionModel);
+      const tcIds = newRowSelectionModel
+        .map((id) => {
+          const rowData = apiRef.current.getRow(id);
+          console.log('rowData', rowData);
+          return rowData ? rowData['tcId'] : null; // Adjust the field name to match your data
+        })
+        .filter((id) => id !== null); // Filter out any null values
+
+      const designs = tcIds.map((tcId) => ({
+        assignDetId: 0,
+        assignedId: 0,
+        tcId: tcId,
+        createdOn: new Date().toISOString(),
+        createdBy: user.empId,
+        lastUpdatedBy: user.empId,
+        lastUpdatedOn: new Date().toISOString()
+      }));
+
+      setSelectedTerms(designs);
+    },
+    [apiRef]
+  );
+
+  useEffect(() => {
+    setFormData({ ...formData, assignTermsDetails: selectedTerms });
+  }, [selectedTerms]);
+  React.useEffect(() => {
+    if (apiRef.current) {
+      console.log('API ref is ready:', apiRef.current);
+    }
+  }, [apiRef]);
+
+  console.log('selectedTerms:', selectedTerms);
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -183,9 +243,9 @@ const AssignTermsAndConditions = () => {
               fullWidth
               select
               label="Vendors"
-              defaultValue=""
+              // defaultValue=""
               size="small"
-              name="vendorId"
+              name="vedorId"
               value={formData.vedorId}
               onChange={handleChange}
               required
@@ -211,9 +271,9 @@ const AssignTermsAndConditions = () => {
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             >
-              {mainMenus.map((option) => (
-                <MenuItem key={option.mainMenuId} value={option.mainMenuId}>
-                  {option.mainMenuDesc}
+              {categories.map((option) => (
+                <MenuItem key={option.categoryId} value={option.categoryId}>
+                  {option.description}
                 </MenuItem>
               ))}
             </TextField>
@@ -222,7 +282,7 @@ const AssignTermsAndConditions = () => {
             <TextField
               fullWidth
               select
-              label="enabled"
+              label="Enabled ?"
               name="enabled"
               value={formData.enabled}
               onChange={handleChange}
@@ -236,6 +296,32 @@ const AssignTermsAndConditions = () => {
                 </MenuItem>
               ))}
             </TextField>
+          </Grid>
+
+          <Grid item xs={12} mt={2}>
+            <Typography variant="h4">Terms And Conditions:</Typography>{' '}
+          </Grid>
+          <Grid item xs={12}>
+            {/* <ReuseableDataGrid
+                initialRows={initialRows}
+                iColumns={columns}
+                disableDelete={true}
+                setInitialData={setInitialData}
+                setIsEdit={setIsEdit}
+                checkboxSelection={true}
+                onRowSelectionModelChange={handleRowSelectionModelChange}
+                rowSelectionModel={rowSelectionModel}
+              /> */}
+            <div style={{ width: '100%' }}>
+              <DataGrid
+                rows={initialRows}
+                columns={columns}
+                apiRef={apiRef}
+                checkboxSelection
+                onRowSelectionModelChange={handleRowSelectionModelChange}
+                rowSelectionModel={rowSelectionModel}
+              />
+            </div>
           </Grid>
 
           <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
