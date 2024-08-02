@@ -190,8 +190,8 @@ const ProductionProcess = () => {
 
       setFormData({
         ...formData,
-        collectionId: value
-        // productionId: selectedCollection ? selectedCollection.productionId : ''
+        collectionId: value,
+        productionId: selectedCollection ? selectedCollection.productionId : ''
       });
       GetFabricForProductionByCollectionId(1, value);
     } else if (name === 'viewCollectionId') {
@@ -465,7 +465,7 @@ const ProductionProcess = () => {
 
     {
       field: 'designCount',
-      headerName: 'Fabric Count'
+      headerName: 'Design Count'
     },
     {
       field: 'action',
@@ -533,7 +533,7 @@ const ProductionProcess = () => {
         productionHeaderId: formData.productionId || 0,
         productionId: formData.productionId || 0,
         processTypeId: formData.processType || 0,
-        status: formData.status,
+        status: 'InProcess',
         startDate: formData.startDate || new Date().toISOString(),
         createdOn: formData.createdOn || new Date().toISOString(),
         createdBy: formData.createdBy || 0,
