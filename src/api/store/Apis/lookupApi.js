@@ -6,8 +6,12 @@ export const lookupApi = createApi({
   endpoints: (builder) => ({
     getLookUpList: builder.query({
       query: () => `Common/GetLookUpList?appId=1`
+    }),
+    getShrinkageWastageList: builder.query({
+      query: () => `Configurations/GetShrinkageWastageList?appId=1`
     })
   })
 });
 
-export const { useGetLookUpListQuery } = lookupApi;
+export const { useGetLookUpListQuery, useGetShrinkageWastageListQuery } =
+  lookupApi;
