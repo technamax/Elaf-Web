@@ -16,7 +16,12 @@ import {
   FormControl,
   CircularProgress,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton
 } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
@@ -32,6 +37,7 @@ import {
   GridToolbarContainer,
   useGridApiRef
 } from '@mui/x-data-grid';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { useGetMainMenuListQuery } from 'api/store/Apis/userManagementApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -44,7 +50,8 @@ import {
   useGetCollectionListFromPlanningHeaderQuery,
   useGetProductionProcessListQuery,
   useGetProductionBatchForProcessingQuery,
-  useGetProductionProcessByProductionIdQuery
+  useGetProductionProcessByProductionIdQuery,
+  useGetProductionDetailListQuery
 } from 'api/store/Apis/productionApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { styled } from '@mui/material/styles';
@@ -70,6 +77,7 @@ const ProductionProcess = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [processType, setProcessType] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     productionId: 0,
@@ -289,6 +297,51 @@ const ProductionProcess = () => {
   }, [viewData, refetchViewData]);
   console.log(initialRowsView);
 
+  //ProductionProcess Detail View
+  const [initialRowsDetailView, setInitialRowsDetailView] = useState([]);
+  // const { data: viewDetailData, refetch: refetchViewDetailData } =
+  //   useGetProductionDetailListQuery(
+  //     { productionHeaderId: formData.productionId },
+  //     {
+  //       skip: !formData.productionId
+  //     }
+  //   );
+
+  // useEffect(() => {
+  //   if (viewDetailData) {
+  //     setInitialRowsDetailView(
+  //       viewDetailData.result.map((row, index) => ({
+  //         ...row,
+  //         id: row.productionHeaderId,
+  //         sr: index + 1 // Add serial number
+  //       }))
+  //     );
+  //     setOpen(true);
+  //   }
+  // }, [viewDetailData, refetchViewDetailData]);
+
+  const handleViewClick = async (row) => {
+    try {
+      const response = await axios.get(
+        `https://gecxc.com:449/api/Production/GetProductionDetailList?productionHeaderId=${row.productionHeaderId}`
+      );
+      setInitialRowsDetailView(
+        response.data.result.map((row, index) => ({
+          ...row,
+          id: row.productionHeaderDetId,
+          sr: index + 1 // Add serial number
+        }))
+      );
+      setOpen(true);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const handleCellEdit = (params) => {
     const { id, field, value } = params;
     console.log('Editing cell:', params); // Debugging line
@@ -325,6 +378,7 @@ const ProductionProcess = () => {
       field: 'quantity',
       headerName: 'Quantity',
       flex: 1,
+
       renderCell: (params) => (
         <Typography sx={{ fontWeight: 'bold', mt: 2 }}>
           {params.value}
@@ -335,7 +389,6 @@ const ProductionProcess = () => {
       field: 'AssignQty',
       headerName: 'Assign Quantity',
       flex: 1,
-
       renderCell: (params) => (
         <SmallTextField
           variant="outlined"
@@ -382,23 +435,19 @@ const ProductionProcess = () => {
     // },
     {
       field: 'collectionName',
-      headerName: 'Collection Name',
-      flex: 1
+      headerName: 'Collection Name'
     },
     {
       field: 'orderNumber',
-      headerName: 'Order Number',
-      flex: 1
+      headerName: 'Order Number'
     },
     {
       field: 'processTypeName',
-      headerName: 'Process Type',
-      flex: 1
+      headerName: 'Process Type'
     },
     {
       field: 'startDate',
       headerName: 'Start Date',
-      flex: 1,
 
       valueGetter: (params) => {
         const date = new Date(params);
@@ -411,19 +460,16 @@ const ProductionProcess = () => {
     },
     {
       field: 'status',
-      headerName: 'Status',
-      flex: 1
+      headerName: 'Status'
     },
 
     {
       field: 'designCount',
-      headerName: 'Design Count',
-      flex: 1
+      headerName: 'Fabric Count'
     },
     {
       field: 'action',
       headerName: 'Action',
-      flex: 1,
       renderCell: (params) => (
         <ButtonGroup
           variant="outlined"
@@ -432,12 +478,22 @@ const ProductionProcess = () => {
         >
           <Button onClick={() => handleTabChange('2')}>Issuance</Button>
           <Button onClick={() => handleTabChange('3')}>Recieving</Button>
+          <Button onClick={() => handleViewClick(params.row)}>View</Button>
         </ButtonGroup>
       ),
       sortable: false,
       filterable: false
     }
   ];
+  const DetailView = [
+    { field: 'processTypeName', headerName: 'Process', flex: 1 },
+    { field: 'fabricName', headerName: 'Fabric Name', flex: 1 },
+    { field: 'uomName', headerName: 'Uom', flex: 1 },
+    { field: 'assignQty', headerName: 'Assign Qty', flex: 1 },
+    { field: 'totalQuantity', headerName: 'Total Qty', flex: 1 },
+    { field: 'status', headerName: 'Status', flex: 1 }
+  ];
+
   console.log('Selected Rows:', selectedRows); // Debugging line
 
   const handleRowSelection = (newSelection) => {
@@ -687,6 +743,7 @@ const ProductionProcess = () => {
                     disableRowSelectionOnClick
                     autosizeOnMount
                     apiRef={apiRef}
+                    autoHeight
                     onStateChange={handleStateChange}
                     onRowSelectionModelChange={(newSelectionModel) =>
                       handleRowSelection(newSelectionModel)
@@ -800,45 +857,116 @@ const ProductionProcess = () => {
                   </TextField>
                 </Grid>
                 <Grid item xs={12} mt={2}>
-                  <DataGrid
-                    rows={initialRowsView}
-                    columns={columnView}
-                    disableDelete={true}
+                  <ReuseableDataGrid
+                    initialRows={initialRowsView}
+                    iColumns={columnView}
+                    hideAction={true}
+                    // disableDelete={true}
                     // getRowId={(row) => row.id}
-                    disableRowSelectionOnClick
-                    autosizeOnMount
-                    apiRef={apiRef}
+                    // disableRowSelectionOnClick
+                    // autosizeOnMount
+                    // apiRef={apiRef}
+                    // autoHeight
                     // onStateChange={handleStateChange}
                     // onRowSelectionModelChange={(newSelectionModel) =>
                     //   handleRowSelection(newSelectionModel)
                     // }
-                    sx={{
-                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-                      '& .css-1kyxv1r-MuiDataGrid-root': {
-                        color: 'white',
-                        backgroundColor: '#323232'
-                      },
-                      '& .MuiDataGrid-container--top [role=row]': {
-                        color: 'white',
-                        backgroundColor: '#323232'
-                      },
-                      '& .MuiDataGrid-columnSeparator': {
-                        color: 'white'
-                      },
-                      '& .MuiDataGrid-iconButtonContainer': {
-                        color: 'white'
-                      },
-                      '& .MuiDataGrid-sortIcon': {
-                        color: 'white'
-                      },
-                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
-                      '& .MuiDataGrid-row': {
-                        '&.total-summary-row': {
-                          backgroundColor: 'darkgray'
-                        }
-                      }
-                    }}
+                    //   sx={{
+                    //     '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                    //     '& .css-1kyxv1r-MuiDataGrid-root': {
+                    //       color: 'white',
+                    //       backgroundColor: '#323232'
+                    //     },
+                    //     '& .MuiDataGrid-container--top [role=row]': {
+                    //       color: 'white',
+                    //       backgroundColor: '#323232'
+                    //     },
+                    //     '& .MuiDataGrid-columnSeparator': {
+                    //       color: 'white'
+                    //     },
+                    //     '& .MuiDataGrid-iconButtonContainer': {
+                    //       color: 'white'
+                    //     },
+                    //     '& .MuiDataGrid-sortIcon': {
+                    //       color: 'white'
+                    //     },
+                    //     '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                    //     '& .MuiDataGrid-row': {
+                    //       '&.total-summary-row': {
+                    //         backgroundColor: 'darkgray'
+                    //       }
+                    //     }
+                    //   }}
                   />
+                </Grid>
+                <Grid>
+                  <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    maxWidth="lg"
+                    fullWidth
+                  >
+                    <CardHeader
+                      className="css-4rfrnx-MuiCardHeader-root"
+                      avatar={<VisibilityOutlinedIcon />}
+                      title="View Production Detail"
+                      titleTypographyProps={{ style: { color: 'white' } }}
+                      action={
+                        <IconButton
+                          onClick={handleClose}
+                          sx={{
+                            color: 'white',
+                            mt: '-11px',
+                            marginRight: '1px'
+                          }}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      }
+                    ></CardHeader>
+
+                    <DialogContent>
+                      <ReuseableDataGrid
+                        initialRows={initialRowsDetailView}
+                        iColumns={DetailView}
+                        hideAction={true}
+                        // autoHeight
+                        // autosizeOnMount
+                        // apiRef={apiRef}
+                        // sx={{
+                        //   '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                        //   '& .css-1kyxv1r-MuiDataGrid-root': {
+                        //     color: 'white',
+                        //     backgroundColor: '#323232'
+                        //   },
+                        //   '& .MuiDataGrid-container--top [role=row]': {
+                        //     color: 'white',
+                        //     backgroundColor: '#323232'
+                        //   },
+                        //   '& .MuiDataGrid-columnSeparator': {
+                        //     color: 'white'
+                        //   },
+                        //   '& .MuiDataGrid-iconButtonContainer': {
+                        //     color: 'white'
+                        //   },
+                        //   '& .MuiDataGrid-sortIcon': {
+                        //     color: 'white'
+                        //   },
+                        //   '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                        //   '& .MuiDataGrid-row': {
+                        //     '&.total-summary-row': {
+                        //       backgroundColor: 'darkgray'
+                        //     }
+                        //   }
+                        // }}
+                      />
+                    </DialogContent>
+                    {/* <DialogActions>
+                      <Button onClick={handleClose} color="primary">
+                        Close
+                      </Button>
+                    </DialogActions> */}
+                  </Dialog>
                 </Grid>
               </Grid>
             </Card>
