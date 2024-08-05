@@ -32,7 +32,7 @@ const PrePlanningCreation = Loadable(
   lazy(() => import('views/Planning/PrePlanningCreation'))
 );
 const TermsandConditions = Loadable(
-  lazy(() => import('views/Purchase/TermsandConditions'))
+  lazy(() => import('views/Configuration/TermsandConditions'))
 );
 const ProductionBatch = Loadable(
   lazy(() => import('views/Production/ProductionBatch'))
@@ -41,7 +41,7 @@ const ProductionProcess = Loadable(
   lazy(() => import('views/Production/ProductionProcess'))
 );
 const ShrinkageWastageConfiguration = Loadable(
-  lazy(() => import('views/Purchase/ShrinkageWastageConfiguration'))
+  lazy(() => import('views/Configuration/ShrinkageWastageConfiguration'))
 );
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 const WelcomePage = Loadable(lazy(() => import('views/welcome/WelcomePage')));
@@ -118,7 +118,7 @@ const MainRoutes = {
       ]
     },
     {
-      path: 'Purchase',
+      path: 'Configuration',
       children: [
         {
           path: 'ShrinkageWastageConfiguration',
