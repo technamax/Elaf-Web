@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Grid, TextField, Button, MenuItem, Divider, Box } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Button,
+  MenuItem,
+  Divider,
+  Box,
+  IconButton,
+  Typography
+} from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 
 import { Card, CardHeader, Avatar } from '@mui/material';
@@ -10,9 +19,20 @@ import {
   useGetSubMenuListQuery,
   useGetMainMenuListQuery
 } from 'api/store/Apis/userManagementApi';
+import {
+  useGetProductionBatchInProcessQuery,
+  useGetDesignListFromCompletedCollectionIdQuery
+} from 'api/store/Apis/productionApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 
+import Dialog from '@mui/material/Dialog';
+import CloseIcon from '@mui/icons-material/Close';
+import DyeingPrintingAssignVendor from 'components/DyeingPrintingAssignVendor';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
@@ -20,6 +40,8 @@ import { useUser } from 'context/User';
 const ViewProductionBatch = () => {
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
+  const [initialFormData, setInitialFormData] = useState({});
+
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({
     // tcId: 0,
@@ -27,7 +49,14 @@ const ViewProductionBatch = () => {
     // termCondDesc: '',
     // enabled: '',
     fromDate: '',
-    toDate: ''
+    toDate: '',
+    collectionId: '',
+    productionId: initialFormData?.productionId || 0,
+    collectionId: initialFormData?.collectionId || '',
+    orderNumber: initialFormData?.orderNumber || '',
+    launchDate: initialFormData?.launchDate || '',
+    status: initialFormData?.status || '',
+    remarks: initialFormData?.remarks || ''
 
     // appId: user.appId,
     // createdOn: new Date().toISOString(),
@@ -66,37 +95,52 @@ const ViewProductionBatch = () => {
   //   setAccordionExpanded(!accordionExpanded);
   // };
 
-  const { data: subMenuData, refetch } = useGetSubMenuListQuery();
-  const { data: mainMenuData } = useGetMainMenuListQuery();
-  const [mainMenus, setMainMenus] = useState([]);
+  const { data: collectionData, refetch } =
+    useGetProductionBatchInProcessQuery();
+  const { data: designData, refetch: refetchDesignData } =
+    useGetDesignListFromCompletedCollectionIdQuery(formData.collectionId, {
+      skip: !formData.collectionId // Skip the query if no collection is selected
+    });
 
+  const [collectionList, setCollectionList] = useState([]);
   useEffect(() => {
-    if (subMenuData) {
-      setInitialRows(
-        subMenuData.result.map((row, index) => ({
+    if (collectionData) {
+      setCollectionList(
+        collectionData.result.map((row, index) => ({
           id: index + 1,
           ...row
         }))
       );
     }
-  }, [subMenuData, refetch]);
+  }, [collectionData, refetch]);
   useEffect(() => {
-    if (mainMenuData) {
-      setMainMenus(
-        mainMenuData.result.map((row, index) => ({
-          id: index,
+    if (collectionData) {
+      setInitialRows(
+        collectionData.result.map((row, index) => ({
+          id: index + 1,
           ...row
         }))
       );
     }
-  }, [mainMenuData, refetch]);
-
+  }, [collectionData, refetchDesignData]);
   console.log('initialRows', initialRows);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'collectionId') {
+      const selectedCollection = collectionList.find(
+        (collection) => collection.collectionId === parseInt(value)
+      );
 
-    setFormData({ ...formData, [name]: value });
+      setFormData({
+        ...formData,
+        collectionId: value,
+        orderNumber: selectedCollection ? selectedCollection.orderNumber : ''
+        // status: selectedCollection ? selectedCollection.batchStatus : ''
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSave = async () => {
@@ -131,6 +175,20 @@ const ViewProductionBatch = () => {
   };
   console.log('formData', formData);
 
+  const [open, setOpen] = React.useState(false);
+  const handleClickOpen = (data) => {
+    setInitialFormData(data);
+    setOpen(true);
+  };
+  const handleClose = () => {
+    // setShowUpperDiv(true);
+    setOpen(false);
+    setInitialFormData({});
+    // refetchDyeingPrintingData();
+
+    // setDeleteId(null);
+  };
+
   const columns = [
     {
       field: 'id',
@@ -160,7 +218,15 @@ const ViewProductionBatch = () => {
     },
     {
       field: 'launchDate',
-      headerName: 'Launch Date'
+      headerName: 'Launch Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
       // flex: 1
     },
     {
@@ -174,9 +240,19 @@ const ViewProductionBatch = () => {
       // flex: 1
     },
     {
-      field: 'enabled',
-      headerName: 'Enabled'
-      // flex: 1
+      field: 'View',
+      headerName: 'View Details',
+
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <IconButton
+            color="primary"
+            onClick={() => handleClickOpen(params.row)}
+          >
+            <VisibilityOutlinedIcon />
+          </IconButton>
+        </div>
+      )
     }
   ];
 
@@ -197,52 +273,6 @@ const ViewProductionBatch = () => {
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
-          <Grid item xs={12} md={4}>
-            <TextField
-              size="small"
-              type="date"
-              label="From Date"
-              name="fromDate"
-              value={formData.fromDate}
-              onChange={handleChange}
-              fullWidth
-              // error={!!formErrors.launchDate}
-              // helperText={formErrors.launchDate}
-              InputLabelProps={{
-                shrink: true,
-                sx: {
-                  // set the color of the label when not shrinked
-                  color: 'black'
-                }
-              }}
-            />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              size="small"
-              type="date"
-              label="To Date"
-              name="toDate"
-              value={formData.toDate}
-              onChange={handleChange}
-              fullWidth
-              // error={!!formErrors.launchDate}
-              // helperText={formErrors.launchDate}
-              InputLabelProps={{
-                shrink: true,
-                sx: {
-                  // set the color of the label when not shrinked
-                  color: 'black'
-                }
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-            <Button variant="contained" size="small" onClick={handleSave}>
-              Search
-            </Button>
-          </Grid>
           <Grid item xs={12}>
             <ReuseableDataGrid
               initialRows={initialRows}
@@ -252,6 +282,165 @@ const ViewProductionBatch = () => {
               setIsEdit={setIsEdit}
               hideAction={true}
             />
+            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
+              <DialogTitle
+                sx={{
+                  backgroundColor: '#A11F23',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingX: '24px',
+                  paddingY: '4px'
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="div"
+                  color="#ffffff"
+                  gutterBottom
+                  fontSize={20}
+                  fontWeight={2}
+                  fontStyle={'normal'}
+                >
+                  {'View Details'}
+                </Typography>
+                <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                {/* <DyeingPrintingAssignVendor
+                  initialFormData={initialFormData}
+                  setInitialFormData={setInitialFormData}
+                  // refetchDyeingPrintingData={refetchDyeingPrintingData}
+                  handleClickOpen={handleClickOpen}
+                  // showUpperDiv={showUpperDiv}
+                /> */}
+                <Grid
+                  container
+                  spacing={1}
+                  width="Inherit"
+                  sx={{ paddingY: 2, paddingX: 2 }}
+                >
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="Collection"
+                      fullWidth
+                      select
+                      size="small"
+                      name="collectionId"
+                      onChange={handleChange}
+                      value={formData.collectionId}
+                      required
+                      disabled
+                      // error={!!formErrors.collectionName}
+                      // helperText={formErrors.collectionName}
+                    >
+                      {/* {collectionList.map((option) => (
+                      <MenuItem
+                        key={option.collectionId}
+                        value={option.collectionId}
+                      >
+                        {option.collectionName}
+                      </MenuItem>
+                    ))} */}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="Order Number"
+                      fullWidth
+                      size="small"
+                      name="orderNumber"
+                      onChange={handleChange}
+                      value={formData.orderNumber}
+                      required
+                      disabled
+                      // error={!!formErrors.collectionName}
+                      // helperText={formErrors.collectionName}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      size="small"
+                      type="date"
+                      label="Launch Date"
+                      name="launchDate"
+                      value={formData.launchDate}
+                      onChange={handleChange}
+                      fullWidth
+                      disabled
+                      // error={!!formErrors.launchDate}
+                      // helperText={formErrors.launchDate}
+                      InputLabelProps={{
+                        shrink: true,
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={8}>
+                    <TextField
+                      label="Remarks"
+                      fullWidth
+                      size="small"
+                      name="remarks"
+                      onChange={handleChange}
+                      value={formData.remarks}
+                      disabled
+                      // error={!!formErrors.collectionName}
+                      // helperText={formErrors.collectionName}
+                      InputLabelProps={{
+                        sx: {
+                          color: 'black'
+                        }
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="Status"
+                      fullWidth
+                      size="small"
+                      name="status"
+                      onChange={handleChange}
+                      value={formData.status}
+                      // defaultValue="InProcess"
+                      required
+                      disabled
+                      // error={!!formErrors.collectionName}
+                      // helperText={formErrors.collectionName}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <ReuseableDataGrid
+                      initialRows={initialRows}
+                      iColumns={columns}
+                      // disableDelete={true}
+                      // setInitialData={setInitialData}
+                      // setIsEdit={setIsEdit}
+                      // checkboxSelection={true}
+                      // onRowSelectionModelChange={handleRowSelectionModelChange}
+                      // rowSelectionModel={rowSelectionModel}
+                    />
+                    {/* <div style={{ height: 400, width: '100%' }}>
+                      <DataGrid
+                        rows={initialRows}
+                        columns={columns}
+                        // apiRef={apiRef}
+                        // checkboxSelection
+                        // onRowSelectionModelChange={handleRowSelectionModelChange}
+                        // rowSelectionModel={rowSelectionModel}
+                      />
+                    </div> */}
+                  </Grid>
+                </Grid>{' '}
+              </DialogContent>
+            </Dialog>
           </Grid>
         </Grid>{' '}
       </Card>

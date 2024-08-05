@@ -26,6 +26,13 @@ export const productionApi = createApi({
     getFabricForProductionByCollectionId: builder.query({
       query: (collectionId) =>
         `GetFabricForProductionByCollectionId?appId=1&collectionid=${collectionId}`
+    }),
+    getProductionBatchInProcess: builder.query({
+      query: (collectionId) => `GetProductionBatchInProcess?appId=1`
+    }),
+    getProductionBatchByProductionId: builder.query({
+      query: (ProductionId) =>
+        `GetProductionBatchByProductionId?ProductionId=${ProductionId}`
     })
   })
 });
@@ -36,5 +43,7 @@ export const {
   useGetProductionProcessListQuery,
   useGetProductionBatchForProcessingQuery,
   useGetProductionProcessByProductionIdQuery,
-  useGetFabricForProductionByCollectionIdQuery
+  useGetFabricForProductionByCollectionIdQuery,
+  useGetProductionBatchInProcessQuery,
+  useGetProductionBatchByProductionIdQuery
 } = productionApi;
