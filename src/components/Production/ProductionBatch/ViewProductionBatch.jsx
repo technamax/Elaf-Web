@@ -64,6 +64,16 @@ const ViewProductionBatch = () => {
     // lastUpdatedOn: new Date().toISOString(),
     // LastUpdatedBy: user.empId
   });
+  useEffect(() => {
+    setFormData({
+      productionId: initialFormData?.productionId || 0,
+      collectionId: initialFormData?.collectionId || '',
+      orderNumber: initialFormData?.orderNumber || '',
+      launchDate: initialFormData?.launchDate || '',
+      status: initialFormData?.status || '',
+      remarks: initialFormData?.remarks || ''
+    });
+  }, [initialFormData, setInitialFormData]);
   const options = [
     {
       value: 'Yes',
