@@ -48,7 +48,7 @@ export const {
   useGetProductionBatchForProcessingQuery,
   useGetProductionProcessByProductionIdQuery,
   useGetFabricForProductionByCollectionIdQuery,
-  useGetProductionDetailListQuery
+  useGetProductionDetailListQuery,
   useGetProductionBatchInProcessQuery,
   useGetProductionBatchByProductionIdQuery
 } = productionApi;
