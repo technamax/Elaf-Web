@@ -59,6 +59,7 @@ import { styled } from '@mui/material/styles';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
+import IssuanceView from 'components/Production/Issuance/IssuanceView';
 
 const SmallTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-input': {
@@ -975,7 +976,7 @@ const ProductionProcess = () => {
             <Issuance />
           </TabPanel>
           <TabPanel value="3">
-            <Issuance />
+            <IssuanceView />
           </TabPanel>
         </TabContext>
       </Box>

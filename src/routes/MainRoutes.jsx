@@ -32,13 +32,16 @@ const PrePlanningCreation = Loadable(
   lazy(() => import('views/Planning/PrePlanningCreation'))
 );
 const TermsandConditions = Loadable(
-  lazy(() => import('views/Production/TermsandConditions'))
+  lazy(() => import('views/Configuration/TermsandConditions'))
 );
 const ProductionBatch = Loadable(
   lazy(() => import('views/Production/ProductionBatch'))
 );
 const ProductionProcess = Loadable(
   lazy(() => import('views/Production/ProductionProcess'))
+);
+const ShrinkageWastageConfiguration = Loadable(
+  lazy(() => import('views/Configuration/ShrinkageWastageConfiguration'))
 );
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 const WelcomePage = Loadable(lazy(() => import('views/welcome/WelcomePage')));
@@ -101,10 +104,6 @@ const MainRoutes = {
       path: 'Production',
       children: [
         {
-          path: 'TermsandConditions',
-          element: <ProtectedRoute element={TermsandConditions} />
-        },
-        {
           path: 'ProductionBatch',
           element: <ProtectedRoute element={ProductionBatch} />
         },
@@ -116,6 +115,23 @@ const MainRoutes = {
         //   path: 'PrePlanningCreation',
         //   element: <ProtectedRoute element={PrePlanningCreation} />
         // }
+      ]
+    },
+    {
+      path: 'Configuration',
+      children: [
+        {
+          path: 'ShrinkageWastageConfiguration',
+          element: <ProtectedRoute element={ShrinkageWastageConfiguration} />
+        },
+        {
+          path: 'TermsandConditions',
+          element: <ProtectedRoute element={TermsandConditions} />
+        }
+        // {
+        //   path: 'ProductionBatch',
+        //   element: <ProtectedRoute element={ProductionBatch} />
+        // },
       ]
     },
     {

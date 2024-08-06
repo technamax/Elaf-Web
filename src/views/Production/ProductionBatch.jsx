@@ -32,6 +32,7 @@ import {
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import ViewProductionBatch from 'components/Production/ProductionBatch/ViewProductionBatch';
+import { useSnackbar } from 'notistack';
 // import SubMenu from './SubMenu';
 
 //////
@@ -43,13 +44,17 @@ const ProductionBatch = () => {
   const [initialData, setInitialData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [selectedDesigns, setSelectedDesigns] = React.useState([]);
+  const [formErrors, setFormErrors] = useState({});
+  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
+  const apiRef = useGridApiRef();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [formData, setFormData] = useState({
     productionId: 0,
     collectionId: '',
     orderNumber: '',
     launchDate: '',
-    status: '',
+    // status: 'InProcess',
     remarks: '',
     productionBatchDetails: [selectedDesigns],
 
@@ -81,7 +86,7 @@ const ProductionBatch = () => {
       collectionId: initialData?.collectionId || '',
       orderNumber: initialData?.orderNumber || '',
       launchDate: initialData?.launchDate || '',
-      status: initialData?.status || '',
+      // status: initialData?.status || 'InProcess',
       remarks: initialData?.remarks || '',
       // productionBatchDetails: initialData?.productionBatchDetails || [],
 
@@ -147,23 +152,67 @@ const ProductionBatch = () => {
     }
   };
 
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.launchDate) {
+      errors.launchDate = 'Launch Date is required';
+    }
+    // if (!formData.colorId) {
+    //   errors.colorId = 'colorId is required';
+    // }
+    // if (!formData.fabricId) {
+    //   errors.fabricId = 'fabricId is required';
+    // }
+    // if (!formData.cuttingSize) {
+    //   errors.cuttingSize = 'cuttingSize is required';
+    // }
+    // if (!formData.noOfHeads) {
+    //   errors.noOfHeads = 'noOfHeads is required';
+    // }
+    // if (!formData.repeats) {
+    //   errors.repeats = 'repeats is required';
+    // }
+    // if (!formData.repeatSize) {
+    //   errors.repeatSize = 'repeatSize is required';
+    // }
+    // if (!formData.uomId) {
+    //   errors.uomId = 'uomId is required';
+    // }
+    // if (!formData.shrinkage) {
+    //   errors.shrinkage = 'shrinkage is required';
+    // }
+    // if (!formData.wastage) {
+    //   errors.wastage = 'wastage is required';
+    // }
+    return errors;
+  };
+
   const handleSave = async () => {
-    console.log('formData', formData);
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
     try {
       // Make the API call
       const response = await axios.post(
         'https://gecxc.com:449/api/Production/SaveProductionBatchHeader',
         formData
       );
-
+      enqueueSnackbar('Production Header saved successfully!', {
+        variant: 'success',
+        autoHideDuration: 5000
+      });
       console.log('Save response:', response.data);
 
       setFormData((prevFormData) => ({
+        // ...prevFormData,
         productionId: 0,
         collectionId: '',
         orderNumber: '',
         launchDate: '',
-        status: '',
+        // status: 'InProcess',
         remarks: '',
         // productionBatchDetails: [],
 
@@ -173,11 +222,17 @@ const ProductionBatch = () => {
         lastUpdatedOn: new Date().toISOString(),
         lastUpdatedBy: user.empId
       }));
-
+      setRowSelectionModel([]);
+      setInitialRows([]);
+      refetchDesignData();
       // refetch();
       // setIsEdit(false);
     } catch (error) {
       console.error('Error saving data:', error);
+      enqueueSnackbar('Production Header not saved !', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
     }
   };
   console.log('formData', formData);
@@ -227,8 +282,6 @@ const ProductionBatch = () => {
       // flex: 1
     }
   ];
-  const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
-  const apiRef = useGridApiRef();
 
   const handleRowSelectionModelChange = React.useCallback(
     (newRowSelectionModel) => {
@@ -287,7 +340,7 @@ const ProductionBatch = () => {
             >
               <Tab
                 icon={<AddCircleOutlineOutlinedIcon />}
-                label="Add Production Batch"
+                label="Production Initialization"
                 value="1"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
@@ -380,8 +433,8 @@ const ProductionBatch = () => {
                     value={formData.launchDate}
                     onChange={handleChange}
                     fullWidth
-                    // error={!!formErrors.launchDate}
-                    // helperText={formErrors.launchDate}
+                    error={!!formErrors.launchDate}
+                    helperText={formErrors.launchDate}
                     InputLabelProps={{
                       shrink: true,
                       sx: {
@@ -408,7 +461,7 @@ const ProductionBatch = () => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} md={4}>
+                {/* <Grid item xs={12} md={4}>
                   <TextField
                     label="Status"
                     fullWidth
@@ -416,12 +469,13 @@ const ProductionBatch = () => {
                     name="status"
                     onChange={handleChange}
                     value={formData.status}
+                    defaultValue="InProcess"
                     required
-                    disabled={isEdit}
+                    disabled
                     // error={!!formErrors.collectionName}
                     // helperText={formErrors.collectionName}
                   />
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12}>
                   {/* <ReuseableDataGrid
                 initialRows={initialRows}
