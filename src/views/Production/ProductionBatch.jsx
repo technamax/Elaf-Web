@@ -438,7 +438,6 @@ const ProductionBatch = () => {
                     InputLabelProps={{
                       shrink: true,
                       sx: {
-                        // set the color of the label when not shrinked
                         color: 'black'
                       }
                     }}

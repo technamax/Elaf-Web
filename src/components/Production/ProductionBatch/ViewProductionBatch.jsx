@@ -21,6 +21,7 @@ import {
 } from 'api/store/Apis/userManagementApi';
 import {
   useGetProductionBatchInProcessQuery,
+  useGetProductionBatchDetailsByProductionidQuery,
   useGetDesignListFromCompletedCollectionIdQuery
 } from 'api/store/Apis/productionApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -41,7 +42,7 @@ const ViewProductionBatch = () => {
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
   const [initialFormData, setInitialFormData] = useState({});
-
+  console.log('initialFormData', initialFormData);
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({
     // tcId: 0,
@@ -50,12 +51,12 @@ const ViewProductionBatch = () => {
     // enabled: '',
     fromDate: '',
     toDate: '',
-    collectionId: '',
+    // collectionId: '',
     productionId: initialFormData?.productionId || 0,
-    collectionId: initialFormData?.collectionId || '',
+    collectionId: initialFormData?.collectionName || '',
     orderNumber: initialFormData?.orderNumber || '',
     launchDate: initialFormData?.launchDate || '',
-    status: initialFormData?.status || '',
+    status: initialFormData?.statusName || '',
     remarks: initialFormData?.remarks || ''
 
     // appId: user.appId,
@@ -67,10 +68,15 @@ const ViewProductionBatch = () => {
   useEffect(() => {
     setFormData({
       productionId: initialFormData?.productionId || 0,
-      collectionId: initialFormData?.collectionId || '',
+      collectionId: initialFormData?.collectionName || '',
       orderNumber: initialFormData?.orderNumber || '',
-      launchDate: initialFormData?.launchDate || '',
-      status: initialFormData?.status || '',
+      launchDate:
+        new Date(initialFormData?.launchDate).toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        }) || '',
+      status: initialFormData?.statusName || '',
       remarks: initialFormData?.remarks || ''
     });
   }, [initialFormData, setInitialFormData]);
@@ -84,22 +90,9 @@ const ViewProductionBatch = () => {
       label: 'No'
     }
   ];
-  // console.log('initialData', initialData);
-  // useEffect(() => {
-  //   setFormData({
-  //     tcId: initialData?.tcId || 0,
-  //     categoryId: initialData?.categoryId || '',
-  //     termCondDesc: initialData?.termCondDesc || '',
-  //     enabled: initialData?.enabled || '',
 
-  //     appId: initialData?.appId || user.appId,
-  //     createdOn: initialData?.createdOn || new Date().toISOString(),
-  //     createdBy: initialData?.createdBy || user.empId,
-  //     lastUpdatedOn: new Date().toISOString(),
-  //     LastUpdatedBy: user.empId
-  //   });
-  // }, [initialData]);
   const [initialRows, setInitialRows] = useState([]);
+  const [batchDetailsRows, setBatchDetailsRows] = useState([]);
   // const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
   // const handleAccordionToggle = (event, isExpanded) => {
   //   setAccordionExpanded(!accordionExpanded);
@@ -107,22 +100,24 @@ const ViewProductionBatch = () => {
 
   const { data: collectionData, refetch } =
     useGetProductionBatchInProcessQuery();
-  const { data: designData, refetch: refetchDesignData } =
-    useGetDesignListFromCompletedCollectionIdQuery(formData.collectionId, {
-      skip: !formData.collectionId // Skip the query if no collection is selected
-    });
+  const {
+    data: productionBatchDetailsData,
+    refetch: refetchProductionBatchDetailsData
+  } = useGetProductionBatchDetailsByProductionidQuery(formData.productionId, {
+    skip: !formData.productionId // Skip the query if no collection is selected
+  });
 
   const [collectionList, setCollectionList] = useState([]);
-  useEffect(() => {
-    if (collectionData) {
-      setCollectionList(
-        collectionData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [collectionData, refetch]);
+  // useEffect(() => {
+  //   if (collectionData) {
+  //     setCollectionList(
+  //       collectionData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [collectionData, refetch]);
   useEffect(() => {
     if (collectionData) {
       setInitialRows(
@@ -132,8 +127,19 @@ const ViewProductionBatch = () => {
         }))
       );
     }
-  }, [collectionData, refetchDesignData]);
+  }, [collectionData, refetch]);
+  useEffect(() => {
+    if (productionBatchDetailsData) {
+      setBatchDetailsRows(
+        productionBatchDetailsData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [productionBatchDetailsData, refetchProductionBatchDetailsData]);
   console.log('initialRows', initialRows);
+  console.log('batchDetailsRows', batchDetailsRows);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -245,7 +251,7 @@ const ViewProductionBatch = () => {
       // flex: 1
     },
     {
-      field: 'status',
+      field: 'statusName',
       headerName: 'Status'
       // flex: 1
     },
@@ -263,6 +269,91 @@ const ViewProductionBatch = () => {
           </IconButton>
         </div>
       )
+    }
+  ];
+  const detailsColumns = [
+    {
+      field: 'id',
+      headerName: 'Sr#'
+      // flex: 1
+    },
+    {
+      field: 'productionId',
+      headerName: 'Production Id'
+      // flex: 1
+    },
+
+    {
+      field: 'designNo',
+      headerName: 'Design'
+      // flex: 1
+    },
+    {
+      field: 'designerName',
+      headerName: 'Designer Name'
+      // flex: 1
+    },
+    {
+      field: 'poPcs',
+      headerName: 'POPcs'
+      // flex: 1
+    },
+    {
+      field: 'colorName',
+      headerName: 'Color'
+      // flex: 1
+    },
+    {
+      field: 'planningDate',
+      headerName: 'Planning Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+      // flex: 1
+    },
+    {
+      field: 'launchDate',
+      headerName: 'Launch Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+      // flex: 1
+    },
+    {
+      field: 'remarks',
+      headerName: 'Remarks'
+      // flex: 1
+    },
+    {
+      field: 'status',
+      headerName: 'statusName'
+      // flex: 1
+    },
+    {
+      field: 'designCount',
+      headerName: 'Design Count'
+    },
+    {
+      field: 'brandName',
+      headerName: 'Brand Name'
+    },
+    {
+      field: 'seasonName',
+      headerName: 'Season Name'
+    },
+    {
+      field: 'volume',
+      headerName: 'Volume'
     }
   ];
 
@@ -338,7 +429,6 @@ const ViewProductionBatch = () => {
                     <TextField
                       label="Collection"
                       fullWidth
-                      select
                       size="small"
                       name="collectionId"
                       onChange={handleChange}
@@ -375,7 +465,7 @@ const ViewProductionBatch = () => {
                   <Grid item xs={12} md={4}>
                     <TextField
                       size="small"
-                      type="date"
+                      // type="date"
                       label="Launch Date"
                       name="launchDate"
                       value={formData.launchDate}
@@ -428,8 +518,8 @@ const ViewProductionBatch = () => {
                   </Grid>
                   <Grid item xs={12}>
                     <ReuseableDataGrid
-                      initialRows={initialRows}
-                      iColumns={columns}
+                      initialRows={batchDetailsRows}
+                      iColumns={detailsColumns}
                       // disableDelete={true}
                       // setInitialData={setInitialData}
                       // setIsEdit={setIsEdit}

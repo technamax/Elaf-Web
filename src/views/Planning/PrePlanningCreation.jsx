@@ -22,9 +22,13 @@ import { SnackbarProvider, useSnackbar } from 'notistack';
 import '../../App.css';
 import MainCard from 'ui-component/cards/MainCard';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
+import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 
 import { useUser } from 'context/User';
+
 const PrePlanningCreation = () => {
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
+  const apiRef = useGridApiRef();
   const { data: collectionData, refetch: refetchCollection } =
     useGetCollectionListQuery();
   const { data: designData, refetch } = useGetDesignListByCollectionIdQuery();
