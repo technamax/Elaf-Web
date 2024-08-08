@@ -293,7 +293,7 @@ const ProductionBatch = () => {
           return rowData ? rowData['planningHeaderId'] : null; // Adjust the field name to match your data
         })
         .filter((id) => id !== null); // Filter out any null values
-
+      console.log('planningHeaderIds', planningHeaderIds);
       const designs = planningHeaderIds.map((planningHeaderId) => ({
         prodctionDetId: 0,
         productionId: 0,
