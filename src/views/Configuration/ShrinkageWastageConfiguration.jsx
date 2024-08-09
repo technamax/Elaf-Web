@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Grid, TextField, Button, MenuItem, Divider, Box } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
@@ -24,13 +24,28 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import * as React from 'react';
 import { useUser } from 'context/User';
 
+import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
+import { styled } from '@mui/material/styles';
+const SmallTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiInputBase-input': {
+    fontSize: '0.875rem', // Adjust font size
+    padding: '4px 6px' // Adjust padding
+  },
+  width: 'auto', // Let width adjust automatically
+  height: 'auto', // Let height adjust automatically
+  minWidth: '100px', // Set minimum width to ensure it's usable
+  minHeight: '30px' // Set minimum height to ensure it's usable
+}));
+
 const ShrinkageWastageConfiguration = () => {
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
+  const apiRef = useGridApiRef();
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({
     configurationId: 0,
-    entityId: '',
+    vendorId: '',
     startDate: '',
     endDate: null,
     shrinkage: '',
@@ -66,7 +81,7 @@ const ShrinkageWastageConfiguration = () => {
     };
     setFormData({
       configurationId: initialData?.configurationId || 0,
-      entityId: initialData?.entityId || '',
+      vendorId: initialData?.vendorId || '',
       startDate: initialData?.startDate
         ? formatDate(initialData.startDate)
         : '',
@@ -110,7 +125,12 @@ const ShrinkageWastageConfiguration = () => {
       const data = lookupData.result[0];
 
       setVendors(data.vendorList);
-      setFabrics(data.fabricList);
+      setFabrics(
+        data.fabricList.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
     }
   }, [lookupData]);
 
@@ -148,14 +168,14 @@ const ShrinkageWastageConfiguration = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'entityId') {
+    if (name === 'vendorId') {
       const selectedCollection = categories.find(
         (collection) => collection.lookUpId === parseInt(value)
       );
 
       setFormData({
         ...formData,
-        entityId: value,
+        vendorId: value,
         entityName: selectedCollection ? selectedCollection.lookUpName : ''
       });
     } else {
@@ -176,7 +196,7 @@ const ShrinkageWastageConfiguration = () => {
 
       setFormData((prevFormData) => ({
         configurationId: 0,
-        entityId: '',
+        vendorId: '',
         entityName: '',
         startDate: '',
         endDate: null,
@@ -266,6 +286,141 @@ const ShrinkageWastageConfiguration = () => {
       headerName: 'Remarks'
     }
   ];
+  console.log('fabrics', fabrics);
+
+  const handleCellEdit = (params) => {
+    const { id, field, value } = params;
+    console.log('Editing cell:', params); // Debugging line
+
+    if (field === 'wastage') {
+      setFabrics((prevRows) =>
+        prevRows.map((row) =>
+          row.id === id ? { ...row, wastage: value } : row
+        )
+      );
+    } else if (field === 'shrikage') {
+      setFabrics((prevRows) =>
+        prevRows.map((row) =>
+          row.id === id ? { ...row, shrikage: value } : row
+        )
+      );
+    }
+  };
+  const designsColumns = [
+    {
+      field: 'id',
+
+      headerName: 'Sr#'
+    },
+    {
+      field: 'lookUpName',
+      flex: 1,
+
+      headerName: 'Fabric'
+    },
+    {
+      field: 'wastage',
+      headerName: 'Wastage',
+      flex: 1,
+
+      renderCell: (params) => (
+        <SmallTextField
+          variant="outlined"
+          size="small"
+          // fullWidth
+          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          value={params.row.wastage || ''}
+          onChange={(event) =>
+            handleCellEdit({
+              id: params.id,
+              field: 'wastage',
+              value: Number(event.target.value)
+            })
+          }
+          type="number"
+          InputProps={{
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+          }}
+        />
+      )
+    },
+    {
+      field: 'shrikage',
+      headerName: 'Shrinkage',
+      flex: 1,
+
+      renderCell: (params) => (
+        <SmallTextField
+          variant="outlined"
+          size="small"
+          // fullWidth
+          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          value={params.row.shrikage || ''}
+          onChange={(event) =>
+            handleCellEdit({
+              id: params.id,
+              field: 'shrikage',
+              value: Number(event.target.value)
+            })
+          }
+          type="number"
+          InputProps={{
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+          }}
+        />
+      )
+    }
+  ];
+
+  const [shrinkages, setShrinkages] = useState([]);
+  const [wastages, setWastages] = useState([]);
+  const [fabricIds, setFabricIds] = useState([]);
+  const handleRowSelectionModelChange = useCallback(
+    (newRowSelectionModel) => {
+      setRowSelectionModel(newRowSelectionModel);
+      const designsIds = newRowSelectionModel
+        .map((id) => {
+          const rowData = apiRef.current.getRow(id);
+          console.log('rowData', rowData);
+          return rowData ? rowData['shrikage'] : null; // Adjust the field name to match your data
+        })
+        .filter((id) => id !== null); // Filter out any null values
+      const poPcsLists = newRowSelectionModel
+        .map((id) => {
+          const rowData = apiRef.current.getRow(id);
+          console.log('rowData', rowData);
+          return rowData ? rowData['wastage'] : null; // Adjust the field name to match your data
+        })
+        .filter((id) => id !== null); // Filter out any null values
+      const fabricsIds = newRowSelectionModel
+        .map((id) => {
+          const rowData = apiRef.current.getRow(id);
+          console.log('rowData', rowData);
+          return rowData ? rowData['lookUpId'] : null; // Adjust the field name to match your data
+        })
+        .filter((id) => id !== null);
+      console.log('poPcsLists', poPcsLists);
+      setShrinkages(designsIds);
+      setWastages(poPcsLists);
+      setFabricIds(fabricsIds);
+    },
+    [apiRef]
+  );
+
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      fabricId: fabricIds,
+      shrinkage: shrinkages,
+      wastage: wastages
+    });
+  }, [shrinkages, wastages]);
+  useEffect(() => {
+    if (apiRef.current) {
+      console.log('API ref is ready:', apiRef.current);
+    }
+  }, [apiRef]);
+
   const deleteApi = `https://gecxc.com:449/api/Configurations/DeleteShrinkageWastageConfigurationById?configurationId=`;
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -314,10 +469,11 @@ const ShrinkageWastageConfiguration = () => {
                     ? 'Fabric'
                     : 'Select'
               }
-              name="entityId"
-              value={formData.entityId}
+              name="vendorId"
+              value={formData.vendorId}
               onChange={handleChange}
               size="small"
+              disabled={formData.configurationType === 'Fabric'}
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             >
@@ -368,7 +524,7 @@ const ShrinkageWastageConfiguration = () => {
               }}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          {/* <Grid item xs={12} md={3}>
             <TextField
               label="Shrinkage"
               fullWidth
@@ -381,8 +537,8 @@ const ShrinkageWastageConfiguration = () => {
               // error={!!formErrors.collectionName}
               // helperText={formErrors.collectionName}
             />{' '}
-          </Grid>
-          <Grid item xs={12} md={3}>
+          </Grid> */}
+          {/* <Grid item xs={12} md={3}>
             <TextField
               label="Wastage"
               fullWidth
@@ -395,7 +551,7 @@ const ShrinkageWastageConfiguration = () => {
               // error={!!formErrors.collectionName}
               // helperText={formErrors.collectionName}
             />{' '}
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} md={6}>
             <TextField
               label="Remarks"
@@ -410,6 +566,19 @@ const ShrinkageWastageConfiguration = () => {
               // helperText={formErrors.collectionName}
             />
           </Grid>
+          <Grid item xs={12}>
+            <div style={{ height: 400, width: '100%' }}>
+              <DataGrid
+                rows={fabrics}
+                columns={designsColumns}
+                apiRef={apiRef}
+                disableRowSelectionOnClick
+                checkboxSelection
+                onRowSelectionModelChange={handleRowSelectionModelChange}
+                rowSelectionModel={rowSelectionModel}
+              />
+            </div>
+          </Grid>
           <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
             <Button variant="contained" size="small" onClick={handleSave}>
               Save
@@ -422,7 +591,7 @@ const ShrinkageWastageConfiguration = () => {
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
           avatar={<VisibilityOutlinedIcon />}
-          title="View Terms And Conditions "
+          title="View Shrinkage wastage"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid
