@@ -236,7 +236,9 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     // }
     // setLoading(false);
   }, [formData.designId, formData.planningHeaderId]);
-  const isDyeing = formData.planningProcessTypeId === 212;
+  const isDyeing =
+    formData.planningProcessTypeId === 212 ||
+    formData.planningProcessTypeId === 1219;
   console.log('initialValues', initialValues);
   console.log('selectedCollectionId', selectedCollectionId);
 
