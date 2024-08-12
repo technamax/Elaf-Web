@@ -189,8 +189,8 @@ const ProductionProcess = () => {
 
       setFormData({
         ...formData,
-        collectionId: value
-        // productionId: selectedCollection ? selectedCollection.productionId : ''
+        collectionId: value,
+        productionId: selectedCollection ? selectedCollection.productionId : ''
       });
       GetFabricForProductionByCollectionId(1, value);
     } else if (name === 'viewCollectionId') {
