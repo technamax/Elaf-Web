@@ -202,6 +202,7 @@ const ProductionProcess = () => {
         ...formData,
         viewCollectionId: value,
         ViewStatus: selectedViewCollection ? selectedViewCollection.status : '',
+
         productionId: selectedViewCollection
           ? selectedViewCollection.productionId
           : ''
@@ -468,7 +469,7 @@ const ProductionProcess = () => {
         fabricId: row.fabricId,
         totalQuantity: row.quantity || 0,
         assignQty: row.AssignQty || '0',
-        status: formData.status || 'Draft',
+        status: '',
         uomId: row.uomId || 0,
         createdBy: formData.createdBy || 0,
         createdOn: formData.createdOn || new Date().toISOString(),
