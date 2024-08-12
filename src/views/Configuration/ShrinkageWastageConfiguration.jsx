@@ -45,7 +45,7 @@ const ShrinkageWastageConfiguration = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({
     configurationId: 0,
-    vendorId: '',
+    vendorId: 0,
     startDate: '',
     endDate: null,
     shrinkage: '',
@@ -81,7 +81,7 @@ const ShrinkageWastageConfiguration = () => {
     };
     setFormData({
       configurationId: initialData?.configurationId || 0,
-      vendorId: initialData?.vendorId || '',
+      vendorId: initialData?.vendorId || 0,
       startDate: initialData?.startDate
         ? formatDate(initialData.startDate)
         : '',
@@ -196,7 +196,7 @@ const ShrinkageWastageConfiguration = () => {
 
       setFormData((prevFormData) => ({
         configurationId: 0,
-        vendorId: '',
+        vendorId: 0,
         entityName: '',
         startDate: '',
         endDate: null,
