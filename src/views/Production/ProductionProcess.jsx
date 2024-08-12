@@ -156,6 +156,12 @@ const ProductionProcess = () => {
           ...row
         }))
       );
+      if (data && data.productionId) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          productionId: data.productionId
+        }));
+      }
     }
   }, [ProductionProceccBatchList, refetch]);
   //For View Collection dropdown
@@ -541,7 +547,7 @@ const ProductionProcess = () => {
             >
               <Tab
                 icon={<CategoryOutlinedIcon />}
-                label="Production Process"
+                label="Production Process "
                 value="1"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
@@ -578,7 +584,7 @@ const ProductionProcess = () => {
                 // avatar={
                 // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
                 // }
-                title="Production Process "
+                title="Production Process > Fabtication"
                 titleTypographyProps={{ style: { color: 'white' } }}
               ></CardHeader>
               <Grid
