@@ -40,6 +40,9 @@ const ProductionBatch = Loadable(
 const ProductionProcess = Loadable(
   lazy(() => import('views/Production/ProductionProcess'))
 );
+const ReceivingFromBX = Loadable(
+  lazy(() => import('views/Production/ReceivingFromBX'))
+);
 const ShrinkageWastageConfiguration = Loadable(
   lazy(() => import('views/Configuration/ShrinkageWastageConfiguration'))
 );
@@ -106,6 +109,10 @@ const MainRoutes = {
         {
           path: 'ProductionBatch',
           element: <ProtectedRoute element={ProductionBatch} />
+        },
+        {
+          path: 'ReceivingFromBX',
+          element: <ProtectedRoute element={ReceivingFromBX} />
         },
         {
           path: 'ProductionProcess',
