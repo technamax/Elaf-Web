@@ -26,6 +26,7 @@ import { useUser } from 'context/User';
 
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
+import { style, width } from '@mui/system';
 const SmallTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-input': {
     fontSize: '0.875rem', // Adjust font size
@@ -314,14 +315,15 @@ const ShrinkageWastageConfiguration = () => {
     },
     {
       field: 'lookUpName',
-      flex: 1,
+      // flex: 1,
 
       headerName: 'Fabric'
     },
     {
       field: 'wastage',
       headerName: 'Wastage',
-      flex: 1,
+      // flex: 1,
+      width: 'auto',
 
       renderCell: (params) => (
         <SmallTextField
@@ -347,7 +349,9 @@ const ShrinkageWastageConfiguration = () => {
     {
       field: 'shrikage',
       headerName: 'Shrinkage',
-      flex: 1,
+      width: 'auto',
+
+      // flex: 1,
 
       renderCell: (params) => (
         <SmallTextField
@@ -371,6 +375,21 @@ const ShrinkageWastageConfiguration = () => {
       )
     }
   ];
+  // const fetchData = React.useCallback(() => {
+  //   apiRef.current.autosizeColumns({
+  //     includeHeaders: true,
+  //     includeOutliers: true
+  //   });
+  // }, [apiRef]);
+  const fetchData = () => {
+    apiRef.current.autosizeColumns({
+      includeHeaders: true,
+      includeOutliers: true
+    });
+  };
+  React.useEffect(() => {
+    fetchData();
+  });
 
   const [shrinkages, setShrinkages] = useState([]);
   const [wastages, setWastages] = useState([]);
@@ -406,6 +425,29 @@ const ShrinkageWastageConfiguration = () => {
     },
     [apiRef]
   );
+  useEffect(() => {
+    const updatedShrinkages = rowSelectionModel.map((id) => {
+      const rowData = apiRef.current.getRow(id);
+      return rowData && rowData['shrikage'] !== undefined
+        ? rowData['shrikage']
+        : 0;
+    });
+
+    const updatedWastages = rowSelectionModel.map((id) => {
+      const rowData = apiRef.current.getRow(id);
+      return rowData && rowData['wastage'] !== undefined
+        ? rowData['wastage']
+        : 0;
+    });
+
+    setShrinkages(updatedShrinkages);
+    setWastages(updatedWastages);
+    setFormData((prevData) => ({
+      ...prevData,
+      shrinkage: updatedShrinkages,
+      wastage: updatedWastages
+    }));
+  }, [fabrics, rowSelectionModel]);
 
   useEffect(() => {
     setFormData({
