@@ -11,7 +11,10 @@ import {
   Divider
 } from '@mui/material';
 import { useGetCollectionListQuery } from 'api/store/Apis/collectionApi';
-import { useGetDesignListByCollectionIdQuery } from 'api/store/Apis/designApi';
+import {
+  useGetDesignListByCollectionIdQuery,
+  useGetPlanningHeaderListByCollectionIdQuery
+} from 'api/store/Apis/designApi';
 import EditAbleDataGrid from 'components/EditAbleDataGrid';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -22,37 +25,36 @@ import { SnackbarProvider, useSnackbar } from 'notistack';
 import '../../App.css';
 import MainCard from 'ui-component/cards/MainCard';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
+import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
+import { styled } from '@mui/material/styles';
 
 import { useUser } from 'context/User';
+
+const SmallTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiInputBase-input': {
+    fontSize: '0.875rem', // Adjust font size
+    padding: '4px 6px' // Adjust padding
+  },
+  width: 'auto', // Let width adjust automatically
+  height: 'auto', // Let height adjust automatically
+  minWidth: '100px', // Set minimum width to ensure it's usable
+  minHeight: '30px' // Set minimum height to ensure it's usable
+}));
+
 const PrePlanningCreation = () => {
-  const { data: collectionData, refetch: refetchCollection } =
-    useGetCollectionListQuery();
-  const { data: designData, refetch } = useGetDesignListByCollectionIdQuery();
-  // selectedCollectionId,
-  // {
-  //   skip: !selectedCollectionId // Skip the query if no collection is selected
-  // }
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
+  const apiRef = useGridApiRef();
   const { user } = useUser();
 
-  const { enqueueSnackbar } = useSnackbar();
-  const [designList, setDesignList] = useState([]);
-  useEffect(() => {
-    if (designData) {
-      setDesignList(designData.result);
-      refetch();
-    }
-  }, [designData]);
-  const collectionList = collectionData?.result || [];
-  // const designList = designData || [];
   const [formData, setFormData] = useState({
-    collectionName: '',
+    // collectionName: '',
     planningHeaderId: 0,
     collectionId: '',
-    plannedCollectionId: '',
-    plannedDesignedId: '',
-    designId: '',
+    // plannedCollectionId: '',
+    // plannedDesignedId: '',
+    // designId: '',
     poPcs: '',
-    batchNo: '',
+    // batchNo: '',
     createdBy: user.empId,
     createdOn: new Date().toISOString()
   });
@@ -63,42 +65,88 @@ const PrePlanningCreation = () => {
       ...formData,
       collectionId: initialData?.collectionId || '',
       planningHeaderId: initialData?.planningHeaderId || 0,
-      plannedCollectionId: initialData?.plannedCollectionId || '',
-      plannedDesignedId: initialData?.plannedDesignedId || '',
-      designId: initialData?.designId || '',
-      poPcs: initialData?.poPcs || '',
-      batchNo: initialData?.batchNo || ''
+      // plannedCollectionId: initialData?.plannedCollectionId || '',
+      // plannedDesignedId: initialData?.plannedDesignedId || '',
+      // designId: initialData?.designId || '',
+      poPcs: initialData?.poPcs || ''
+      // batchNo: initialData?.batchNo || ''
     });
   }, [initialData]);
 
-  const [designOptions, setDesignOptions] = useState([]);
+  const { data: collectionData, refetch: refetchCollection } =
+    useGetCollectionListQuery();
+  // const { data: designData, refetch } = useGetDesignListByCollectionIdQuery();
+  const { data: designData, refetch: refetchDesignData } =
+    useGetDesignListByCollectionIdQuery(formData.collectionId, {
+      skip: !formData.collectionId // Skip the query if no collection is selected
+    });
+  const { data: batchData, refetch: refetchbatchData } =
+    useGetPlanningHeaderListByCollectionIdQuery(formData.collectionId, {
+      skip: !formData.collectionId // Skip the query if no collection is selected
+    });
+
+  // selectedCollectionId,
+  // {
+  //   skip: !selectedCollectionId // Skip the query if no collection is selected
+  // }
+
+  const { enqueueSnackbar } = useSnackbar();
+  const [designList, setDesignList] = useState([]);
+  const [initialRows, setInitialRows] = useState([]);
+  useEffect(() => {
+    if (designData) {
+      setDesignList(
+        designData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+      // refetchDesignData();
+    }
+  }, [designData, formData.collectionId]);
+  useEffect(() => {
+    if (batchData) {
+      setInitialRows(
+        batchData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+      // refetchDesignData();
+    }
+  }, [batchData]);
+  const collectionList = collectionData?.result || [];
+  // const designList = designData || [];
+
+  // const [designOptions, setDesignOptions] = useState([]);
   const [plannedCollection, setPlannedCollection] = useState([]);
   const [plannedDesign, setPlannedDesign] = useState([]);
-  const [gridData, setGridData] = useState([]);
+  // const [gridData, setGridData] = useState([]);
   const [value, setValue] = useState('1');
+  console.log('designOptions', designList);
 
-  const fetchData = useCallback(async () => {
-    try {
-      if (formData.plannedDesignedId) {
-        const response = await axios.get(
-          `http://100.42.177.77:83/api/PrePlanning/GetPlanningHeaderListByDesignId?designId=${formData.plannedDesignedId}`
-        );
-        const rowsWithId = response.data.result.map((row, index) => ({
-          ...row,
-          id: index + 1
-        }));
-        setGridData(rowsWithId);
-        refetch();
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setGridData([]);
-    }
-  }, [formData.plannedDesignedId]);
+  // const fetchData = useCallback(async () => {
+  //   try {
+  //     if (formData.plannedDesignedId) {
+  //       const response = await axios.get(
+  //         `https://gecxc.com:449/api/PrePlanning/GetPlanningHeaderListByDesignId?designId=${formData.plannedDesignedId}`
+  //       );
+  //       const rowsWithId = response.data.result.map((row, index) => ({
+  //         ...row,
+  //         id: index + 1
+  //       }));
+  //       setGridData(rowsWithId);
+  //       refetch();
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //     setGridData([]);
+  //   }
+  // }, [formData.plannedDesignedId]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  // useEffect(() => {
+  //   fetchData();
+  // }, [fetchData]);
 
   const columns = [
     {
@@ -132,6 +180,89 @@ const PrePlanningCreation = () => {
       editable: true
     }
   ];
+
+  const handleCellEdit = (params) => {
+    const { id, field, value } = params;
+    console.log('Editing cell:', params); // Debugging line
+
+    if (field === 'poPcs') {
+      setDesignList((prevRows) =>
+        prevRows.map((row) => (row.id === id ? { ...row, poPcs: value } : row))
+      );
+    }
+  };
+  const designsColumns = [
+    {
+      field: 'id',
+
+      headerName: 'Sr#'
+    },
+    {
+      field: 'orderNumber',
+      flex: 1,
+
+      headerName: 'Order Number'
+    },
+    {
+      field: 'designNo',
+      flex: 1,
+
+      headerName: 'Design'
+    },
+    {
+      field: 'designerName',
+      flex: 1,
+
+      headerName: 'Designer'
+    },
+    {
+      field: 'poPcs',
+      headerName: 'Po Pcs',
+      flex: 1,
+
+      renderCell: (params) => (
+        <SmallTextField
+          variant="outlined"
+          size="small"
+          // fullWidth
+          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          value={params.row.poPcs || ''}
+          onChange={(event) =>
+            handleCellEdit({
+              id: params.id,
+              field: 'poPcs',
+              value: Number(event.target.value)
+            })
+          }
+          type="number"
+          InputProps={{
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+          }}
+        />
+      )
+    },
+    {
+      field: 'dateOfPlanning',
+      flex: 1,
+
+      headerName: 'Date Of Planning',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'colorName',
+      flex: 1,
+
+      headerName: 'colorName'
+    }
+  ];
+
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
   };
@@ -167,7 +298,7 @@ const PrePlanningCreation = () => {
   const handleSave = async () => {
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/PrePlanning/SavePrePlanningHeader',
+        'https://gecxc.com:449/api/PrePlanning/SavePrePlanningHeader',
         formData
       );
       enqueueSnackbar('Planning Batch saved successfully!', {
@@ -183,8 +314,8 @@ const PrePlanningCreation = () => {
         poPcs: '',
         batchNo: ''
       });
-      await refetchCollection();
-      await fetchData();
+      // await refetchCollection();
+      // await fetchData();
     } catch (error) {
       console.error('Error saving data:', error);
       enqueueSnackbar('Planning Batch not saved successfully!', {
@@ -194,27 +325,27 @@ const PrePlanningCreation = () => {
     }
   };
 
-  useEffect(() => {
-    const getDesignListByCollectionId = async () => {
-      if (formData.collectionId) {
-        try {
-          const response = await axios.get(
-            `http://100.42.177.77:83/api/DesignRegistration/GetDesignListByCollectionId?CollectionId=${formData.collectionId}`
-          );
-          setDesignOptions(response.data.result);
-        } catch (error) {
-          console.error('Error fetching design options:', error);
-        }
-      }
-    };
-    getDesignListByCollectionId();
-  }, [formData.collectionId]);
+  // useEffect(() => {
+  //   const getDesignListByCollectionId = async () => {
+  //     if (formData.collectionId) {
+  //       try {
+  //         const response = await axios.get(
+  //           `https://gecxc.com:449/api/DesignRegistration/GetDesignListByCollectionId?CollectionId=${formData.collectionId}`
+  //         );
+  //         setDesignOptions(response.data.result);
+  //       } catch (error) {
+  //         console.error('Error fetching design options:', error);
+  //       }
+  //     }
+  //   };
+  //   getDesignListByCollectionId();
+  // }, [formData.collectionId]);
 
   useEffect(() => {
     const GetCollectionFromPlanningHeader = async () => {
       try {
         const response = await axios.get(
-          'http://100.42.177.77:83/api/PrePlanning/GetCollectionListFromPlanningHeader'
+          'https://gecxc.com:449/api/PrePlanning/GetCollectionListFromPlanningHeader'
         );
         setPlannedCollection(response.data.result);
       } catch (error) {
@@ -229,7 +360,7 @@ const PrePlanningCreation = () => {
       if (formData.plannedCollectionId) {
         try {
           const response = await axios.get(
-            `http://100.42.177.77:83/api/PrePlanning/GetDesignFromPlanningHeaderByCollectionId?collectionid=${formData.plannedCollectionId}`
+            `https://gecxc.com:449/api/PrePlanning/GetDesignFromPlanningHeaderByCollectionId?collectionid=${formData.plannedCollectionId}`
           );
           setPlannedDesign(response.data.result);
         } catch (error) {
@@ -242,8 +373,62 @@ const PrePlanningCreation = () => {
 
   console.log('formdata', formData);
   console.log('InitialData', initialData);
+  const [selectedDesigns, setSelectedDesigns] = useState([]);
+  const [pcsList, setPcsList] = useState([]);
+  const handleRowSelectionModelChange = useCallback(
+    (newRowSelectionModel) => {
+      setRowSelectionModel(newRowSelectionModel);
+      const designsIds = newRowSelectionModel
+        .map((id) => {
+          const rowData = apiRef.current.getRow(id);
+          console.log('rowData', rowData);
+          return rowData ? rowData['designId'] : null; // Adjust the field name to match your data
+        })
+        .filter((id) => id !== null); // Filter out any null values
+      const poPcsLists = newRowSelectionModel
+        .map((id) => {
+          const rowData = apiRef.current.getRow(id);
+          console.log('rowData', rowData);
+          return rowData ? rowData['poPcs'] : null; // Adjust the field name to match your data
+        })
+        .filter((id) => id !== null); // Filter out any null values
+      console.log('poPcsLists', poPcsLists);
+      // const designs = poPcsLists.map((planningHeaderId) => ({
+      //   prodctionDetId: 0,
+      //   productionId: 0,
+      //   planningHeaderId: planningHeaderId,
+      //   createdOn: new Date().toISOString(),
+      //   createdBy: user.empId,
+      //   lastUpdatedBy: user.empId,
+      //   lastUpdatedOn: new Date().toISOString()
+      // }));
+      // setFormData({
+      //   ...formData,
+      //   designIdList: designsIds,
+      //   poPcsList: poPcsLists
+      // });
+      setSelectedDesigns(designsIds);
+      setPcsList(poPcsLists);
+    },
+    [apiRef]
+  );
 
-  const deleteApi = `http://100.42.177.77:83/api/PrePlanning/DeletePlanningHeaderIdByPlanningId?planningHeaderId=`;
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      designIdList: selectedDesigns,
+      poPcsList: pcsList
+    });
+  }, [selectedDesigns]);
+  useEffect(() => {
+    if (apiRef.current) {
+      console.log('API ref is ready:', apiRef.current);
+    }
+  }, [apiRef]);
+
+  // console.log('selectedDesigns:', selectedDesigns);
+
+  const deleteApi = `https://gecxc.com:449/api/PrePlanning/DeletePlanningHeaderIdByPlanningId?planningHeaderId=`;
   return (
     <MainCard
       style={{
@@ -295,7 +480,7 @@ const PrePlanningCreation = () => {
 
               <Grid
                 container
-                spacing={2}
+                spacing={1}
                 width="Inherit"
                 sx={{ paddingY: 2, paddingX: 2 }}
               >
@@ -325,7 +510,7 @@ const PrePlanningCreation = () => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} md={4}>
+                {/* <Grid item xs={12} md={4}>
                   <TextField
                     fullWidth
                     select
@@ -341,13 +526,13 @@ const PrePlanningCreation = () => {
                       }
                     }}
                   >
-                    {designOptions.map((option) => (
+                    {designList.map((option) => (
                       <MenuItem key={option.designId} value={option.designId}>
                         {option.designNo}
                       </MenuItem>
                     ))}
                   </TextField>
-                </Grid>
+                </Grid> */}
                 <Grid item xs={12} md={4}>
                   <TextField
                     label="Po PCs"
@@ -385,6 +570,19 @@ const PrePlanningCreation = () => {
                     }}
                   />
                 </Grid>
+                <Grid item xs={12}>
+                  <div style={{ height: 400, width: '100%' }}>
+                    <DataGrid
+                      rows={designList}
+                      columns={designsColumns}
+                      apiRef={apiRef}
+                      disableRowSelectionOnClick
+                      checkboxSelection
+                      onRowSelectionModelChange={handleRowSelectionModelChange}
+                      rowSelectionModel={rowSelectionModel}
+                    />
+                  </div>
+                </Grid>
                 <Grid
                   item
                   xs={12}
@@ -402,13 +600,13 @@ const PrePlanningCreation = () => {
                 />
                 <Grid item xs={12} paddingTop={1}>
                   <ReuseableDataGrid
-                    initialRows={gridData}
+                    initialRows={initialRows}
                     iColumns={columns}
                     formData={formData}
                     deleteApi={deleteApi}
                     deleteBy="planningHeaderId"
-                    fetchData={fetchData}
-                    refetch={fetchData}
+                    // fetchData={fetchData}
+                    refetch={refetchbatchData}
                     setInitialData={setInitialData}
                   />
                 </Grid>
@@ -484,10 +682,10 @@ const PrePlanningCreation = () => {
                 />
                 <Grid item xs={12} paddingTop={1}>
                   <ReuseableDataGrid
-                    initialRows={gridData}
+                    initialRows={initialRows}
                     iColumns={columns}
                     formData={formData}
-                    fetchData={fetchData}
+                    // fetchData={fetchData}
                     refetch={refetchCollection}
                     setInitialData={setInitialData}
                   />

@@ -7,8 +7,15 @@ export const designApi = createApi({
     getDesignListByCollectionId: builder.query({
       query: (collectionId) =>
         `DesignRegistration/GetDesignListByCollectionId?Collectionid=${collectionId}`
+    }),
+    getPlanningHeaderListByCollectionId: builder.query({
+      query: (collectionId) =>
+        `PrePlanning/GetPlanningHeaderListByCollectionId?collectionId=${collectionId}`
     })
   })
 });
 
-export const { useGetDesignListByCollectionIdQuery } = designApi;
+export const {
+  useGetDesignListByCollectionIdQuery,
+  useGetPlanningHeaderListByCollectionIdQuery
+} = designApi;
