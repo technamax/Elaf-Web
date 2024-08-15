@@ -25,6 +25,8 @@ import {
   useGetProductionBatchDetailsByProductionidQuery,
   useGetBxStockHeaderListQuery,
   useGetBxStockHeaderDetailListQuery,
+  useGetProductionBatchForProcessingQuery,
+  useGetPrePlanningFabricFromCollectionIdQuery,
   useGetDesignListFromCompletedCollectionIdQuery
 } from 'api/store/Apis/productionApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -41,17 +43,20 @@ import DialogTitle from '@mui/material/DialogTitle';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
+import { useSnackbar } from 'notistack';
 
 const ReceivingFromBX = () => {
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
   const [initialFormData, setInitialFormData] = useState({});
   console.log('initialFormData', initialFormData);
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({
     issuanceNo: initialFormData?.issuanceNo || 0,
     issuanceName: initialFormData?.issuanceName || '',
-    issuanceDate: initialFormData?.issuanceDate || ''
+    issuanceDate: initialFormData?.issuanceDate || null,
+    collectionId: initialFormData?.collectionId || ''
     // appId: user.appId,
     // createdOn: new Date().toISOString(),
     // createdBy: user.empId,
@@ -60,9 +65,11 @@ const ReceivingFromBX = () => {
   });
   useEffect(() => {
     setFormData({
+      ...formData,
       issuanceNo: initialFormData?.issuanceNo || 0,
       issuanceName: initialFormData?.issuanceName || '',
-      issuanceDate: initialFormData?.issuanceDate || ''
+      issuanceDate: initialFormData?.issuanceDate || null,
+      collectionId: initialFormData?.collectionId || ''
     });
   }, [initialFormData, setInitialFormData]);
   const options = [
@@ -84,15 +91,42 @@ const ReceivingFromBX = () => {
   const { data: stockDetailsData, refetch: refetchStockDetailsData } =
     useGetBxStockHeaderDetailListQuery();
 
+  const { data: collectionData, refetch } =
+    useGetProductionBatchForProcessingQuery();
+
   const {
     data: productionBatchDetailsData,
     refetch: refetchProductionBatchDetailsData
   } = useGetProductionBatchDetailsByProductionidQuery(formData.productionId, {
     skip: !formData.productionId // Skip the query if no collection is selected
   });
+  const { data: fabricData, refetch: refetchFabricData } =
+    useGetPrePlanningFabricFromCollectionIdQuery(formData.collectionId, {
+      skip: !formData.collectionId // Skip the query if no collection is selected
+    });
 
   const [collectionList, setCollectionList] = useState([]);
-
+  const [fabricDetails, setfabricDetails] = useState([]);
+  useEffect(() => {
+    if (collectionData) {
+      setCollectionList(
+        collectionData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [collectionData, refetch]);
+  useEffect(() => {
+    if (fabricData) {
+      setfabricDetails(
+        fabricData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [fabricData, refetch]);
   useEffect(() => {
     if (stockData) {
       setInitialRows(
@@ -112,9 +146,19 @@ const ReceivingFromBX = () => {
         }))
       );
     }
-  }, [stockDetailsData, refetchStockDetailsData]);
+    const details = batchDetailsRows.map((det) => ({
+      stockDetId: 0,
+      stockId: 0,
+      barcode: det.barcode,
+      productName: det.productName,
+      quantity: det.quantity,
+      uom: det.uom,
+      remarks: det.remarks
+    }));
+    setFormData({ ...formData, bxStockReceivingDetails: details });
+  }, [stockDetailsData, refetchStockDetailsData, formData.collectionId]);
   console.log('initialRows', initialRows);
-  console.log('batchDetailsRows', batchDetailsRows);
+  console.log('fabricDetails', fabricDetails);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -125,8 +169,8 @@ const ReceivingFromBX = () => {
 
       setFormData({
         ...formData,
-        collectionId: value,
-        orderNumber: selectedCollection ? selectedCollection.orderNumber : ''
+        collectionId: value
+        // orderNumber: selectedCollection ? selectedCollection.orderNumber : ''
         // status: selectedCollection ? selectedCollection.batchStatus : ''
       });
     } else {
@@ -134,7 +178,7 @@ const ReceivingFromBX = () => {
     }
   };
 
-  const handleSave = async () => {
+  const handleFetch = async () => {
     console.log('stockData', stockData);
     refetchStockData();
 
@@ -145,6 +189,41 @@ const ReceivingFromBX = () => {
           ...row
         }))
       );
+    }
+  };
+  const handleSave = async () => {
+    console.log('stockData', stockData);
+    try {
+      const response = await axios.post(
+        'https://gecxc.com:449/api/BxStockReceiving/SaveBxStockReceiving',
+        formData
+      );
+      console.log('Save response:', response.data);
+
+      if (!response.data.success) {
+        enqueueSnackbar(`${response.data.message} !`, {
+          variant: 'error',
+          autoHideDuration: 5000
+        });
+        console.log('response.message', response.data.message);
+      } else {
+        enqueueSnackbar('Dyeing saved successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+      }
+
+      // refetchDyeingPrintingData();
+      // setAccordionExpanded(false);
+    } catch (error) {
+      // Handle error (e.g., show an error message)
+
+      console.error('Error saving data:', error);
+      enqueueSnackbar('Dyeing not saved successfully!', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+      // Handle error (e.g., show an error message)
     }
   };
 
@@ -280,6 +359,24 @@ const ReceivingFromBX = () => {
       // flex: 1
     }
   ];
+  const fabricColumns = [
+    {
+      field: 'id',
+      headerName: 'Sr#'
+      // flex: 1
+    },
+    {
+      field: 'fabric',
+      headerName: 'Fabric Name'
+      // flex: 1
+    },
+
+    {
+      field: 'total',
+      headerName: 'Quantity from Planning'
+      // flex: 1
+    }
+  ];
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -289,7 +386,7 @@ const ReceivingFromBX = () => {
           // avatar={
           // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
           // }
-          title="StockReceiving"
+          title="Stock Receiving"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid
@@ -299,7 +396,7 @@ const ReceivingFromBX = () => {
           sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-            <Button variant="contained" size="small" onClick={handleSave}>
+            <Button variant="contained" size="small" onClick={handleFetch}>
               Fetch
             </Button>
           </Grid>
@@ -366,16 +463,7 @@ const ReceivingFromBX = () => {
                       disabled
                       // error={!!formErrors.collectionName}
                       // helperText={formErrors.collectionName}
-                    >
-                      {/* {collectionList.map((option) => (
-                      <MenuItem
-                        key={option.collectionId}
-                        value={option.collectionId}
-                      >
-                        {option.collectionName}
-                      </MenuItem>
-                    ))} */}
-                    </TextField>
+                    ></TextField>
                   </Grid>
                   <Grid item xs={12} md={4}>
                     <TextField
@@ -420,6 +508,45 @@ const ReceivingFromBX = () => {
                       hideAction
                     />
                   </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      label="Collection"
+                      fullWidth
+                      size="small"
+                      name="collectionId"
+                      onChange={handleChange}
+                      value={formData.collectionId}
+                      required
+                      select
+                      // error={!!formErrors.collectionName}
+                      // helperText={formErrors.collectionName}
+                    >
+                      {collectionList.map((option) => (
+                        <MenuItem
+                          key={option.collectionId}
+                          value={option.collectionId}
+                        >
+                          {option.collectionName}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={9} textAlign="right" sx={{ mt: 2 }}>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={handleSave}
+                    >
+                      Save
+                    </Button>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <ReuseableDataGrid
+                      initialRows={fabricDetails}
+                      iColumns={fabricColumns}
+                      hideAction
+                    />
+                  </Grid>
                 </Grid>{' '}
               </DialogContent>
             </Dialog>
@@ -444,7 +571,7 @@ const ReceivingFromBX = () => {
                   fontWeight={2}
                   fontStyle={'normal'}
                 >
-                  {'2 > View det '}
+                  {'Receiving View'}
                 </Typography>
                 <IconButton onClick={handleClose2} sx={{ color: '#ffffff' }}>
                   <CloseIcon />
@@ -452,44 +579,85 @@ const ReceivingFromBX = () => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                {/* <DyeingPrintingAssignVendor
-                  initialFormData={initialFormData}
-                  setInitialFormData={setInitialFormData}
-                  refetchDyeingPrintingData={refetchDyeingPrintingData}
-                  handleClickOpen={handleClickOpen}
-                  showUpperDiv={showUpperDiv}
-                /> */}
-                <div>view 2</div>
+
+                <Grid
+                  container
+                  spacing={1}
+                  width="Inherit"
+                  sx={{ paddingY: 2, paddingX: 2 }}
+                >
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      label="Collection"
+                      fullWidth
+                      size="small"
+                      name="collectionId"
+                      onChange={handleChange}
+                      value={formData.collectionId}
+                      required
+                      select
+                      // error={!!formErrors.collectionName}
+                      // helperText={formErrors.collectionName}
+                    >
+                      {collectionList.map((option) => (
+                        <MenuItem
+                          key={option.collectionId}
+                          value={option.collectionId}
+                        >
+                          {option.collectionName}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      size="small"
+                      // type="date"
+                      label="Issuance Date"
+                      name="issuanceDate"
+                      value={formData.issuanceDate}
+                      onChange={handleChange}
+                      fullWidth
+                      disabled
+                      // error={!!formErrors.launchDate}
+                      // helperText={formErrors.launchDate}
+                      InputLabelProps={{
+                        shrink: true,
+                        sx: {
+                          // set the color of the label when not shrinked
+                          color: 'black'
+                        }
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
+                      label="Issuance Name"
+                      fullWidth
+                      size="small"
+                      name="issuanceName"
+                      onChange={handleChange}
+                      value={formData.issuanceName}
+                      required
+                      disabled
+                      // error={!!formErrors.collectionName}
+                      // helperText={formErrors.collectionName}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <ReuseableDataGrid
+                      initialRows={fabricDetails}
+                      iColumns={fabricColumns}
+                      hideAction
+                    />
+                  </Grid>
+                </Grid>
               </DialogContent>
             </Dialog>
           </Grid>
         </Grid>{' '}
       </Card>
       <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
-      {/* <Card variant="outlined">
-        <CardHeader
-          className="css-4rfrnx-MuiCardHeader-root"
-          avatar={<VisibilityOutlinedIcon />}
-          title="View Terms And Conditions "
-          titleTypographyProps={{ style: { color: 'white' } }}
-        ></CardHeader>
-        <Grid
-          container
-          spacing={2}
-          width="Inherit"
-          // sx={{ paddingY: 2, paddingX: 2 }}
-        >
-          <Grid item xs={12}>
-            <ReuseableDataGrid
-              initialRows={initialRows}
-              iColumns={columns}
-              disableDelete={true}
-              setInitialData={setInitialData}
-              setIsEdit={setIsEdit}
-            />
-          </Grid>
-        </Grid>{' '}
-      </Card> */}
     </Box>
   );
 };
