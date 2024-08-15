@@ -111,7 +111,7 @@ const AddTermsAndConditions = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:449/api/TermsConditions/SaveTermsConditions',
+        'http://100.42.177.77:83/api/TermsConditions/SaveTermsConditions',
         formData
       );
 

@@ -8,7 +8,7 @@
 //   const fetchData = useCallback(async () => {
 //     try {
 //       const response = await axios.get(
-//         `https://gecxc.com:449/api/ApplicationConfig/GetApplicationList`
+//         `http://100.42.177.77:83/api/ApplicationConfig/GetApplicationList`
 //       );
 
 //       const dataWithId = response.data.result.map((row, index) => ({

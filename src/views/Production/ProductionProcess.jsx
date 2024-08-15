@@ -223,7 +223,7 @@ const ProductionProcess = () => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `https://gecxc.com:449/api/Production/GetFabricForProductionByCollectionId?appId=${appId}&collectionid=${collectionId}`
+        `http://100.42.177.77:83/api/Production/GetFabricForProductionByCollectionId?appId=${appId}&collectionid=${collectionId}`
       );
       //in 449 url this api doesnt exist
       if (response.data.success) {
@@ -254,7 +254,7 @@ const ProductionProcess = () => {
   //   setIsLoading(true);
   //   try {
   //     const response = await axios.get(
-  //       `https://gecxc.com:449/api/Production/GetProductionProcessByProductionId?appId=${appId}&productionId=${productionId}&status=${ViewStatus}`
+  //       `http://100.42.177.77:83/api/Production/GetProductionProcessByProductionId?appId=${appId}&productionId=${productionId}&status=${ViewStatus}`
   //     );
   //     //in 449 url this api doesnt exist
   //     if (response.data.success) {
@@ -497,7 +497,7 @@ const ProductionProcess = () => {
       console.log('Payload:', payload); // Debugging line
 
       const response = await axios.post(
-        'https://gecxc.com:449/api/Production/StartProductionProcess',
+        'http://100.42.177.77:83/api/Production/StartProductionProcess',
         payload
       );
 

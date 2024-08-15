@@ -43,7 +43,7 @@ const AuthLogin = ({ ...others }) => {
 
     try {
       const response = await axios.post(
-        'https://gecxc.com:449/api/Users/authenticate',
+        'http://100.42.177.77:83/api/Users/authenticate',
         {
           username: formValues.username,
           password: formValues.password

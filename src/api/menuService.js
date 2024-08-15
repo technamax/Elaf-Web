@@ -1,7 +1,7 @@
 const fetchMenuItems = async (empId, token) => {
   try {
     const response = await fetch(
-      `https://gecxc.com:449/api/Menu/GetUserMenuByEmpId?empId=${empId}`,
+      `http://100.42.177.77:83/api/Menu/GetUserMenuByEmpId?empId=${empId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`

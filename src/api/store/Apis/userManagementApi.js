@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const userManagementApi = createApi({
   reducerPath: 'userManagementApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://gecxc.com:449/api/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://100.42.177.77:83/api/' }),
   endpoints: (builder) => ({
     getRoleList: builder.query({
       query: () => `Role/GetRoleList?appId=1`

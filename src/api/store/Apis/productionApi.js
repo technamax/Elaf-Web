@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const productionApi = createApi({
   reducerPath: 'productionApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://gecxc.com:449/api/Production/'
+    baseUrl: 'http://100.42.177.77:83/api/Production/'
   }),
   endpoints: (builder) => ({
     getCollectionListFromPlanningHeader: builder.query({

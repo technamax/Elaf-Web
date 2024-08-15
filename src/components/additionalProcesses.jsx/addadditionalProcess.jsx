@@ -120,7 +120,7 @@ export default function AddAdditionalProcess(onSaveSuccess) {
     console.log(formData);
     try {
       const response = await axios.post(
-        'https://gecxc.com:449/api/AdditionalProcess/SaveAdditionalProcess',
+        'http://100.42.177.77:83/api/AdditionalProcess/SaveAdditionalProcess',
         formData
       );
       console.log('Form data saved:', response.data);
