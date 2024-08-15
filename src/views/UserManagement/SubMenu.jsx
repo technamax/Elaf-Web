@@ -106,7 +106,7 @@ export default function SubMenu() {
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:4041/api/Menu/SaveSubMenu',
+        'http://100.42.177.77:81/api/Menu/SaveSubMenu',
         formData
       );
 

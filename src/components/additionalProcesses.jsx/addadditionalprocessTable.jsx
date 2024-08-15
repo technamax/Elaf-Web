@@ -7,7 +7,7 @@ export default function AdditionalProcessTable() {
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(
-        `https://gecxc.com:4041/api/AdditionalProcess/GetAdditionalProcessListByBatchNo?batchNo=1`
+        `http://100.42.177.77:81/api/AdditionalProcess/GetAdditionalProcessListByBatchNo?batchNo=1`
       );
 
       const dataWithId = response.data.result.map((row, index) => ({

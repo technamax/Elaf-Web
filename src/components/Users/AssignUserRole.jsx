@@ -122,7 +122,7 @@ const AssignVendorFormTable = ({
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:4041/api/Users/AssignUserRole',
+        'http://100.42.177.77:81/api/Users/AssignUserRole',
         formData
       );
 

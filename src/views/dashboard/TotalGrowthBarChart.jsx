@@ -37,7 +37,7 @@ const TotalGrowthBarChart = ({ isLoading }) => {
     const fetchFabricData = async () => {
       try {
         const response = await fetch(
-          'https://gecxc.com:4041/api/Dashboard/GetFabricUsedByYear?year=2024'
+          'http://100.42.177.77:81/api/Dashboard/GetFabricUsedByYear?year=2024'
         );
         const data = await response.json();
         setFabricData(data.result);

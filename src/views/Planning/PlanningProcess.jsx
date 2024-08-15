@@ -121,7 +121,7 @@ export default function PlanningProcess() {
 
     try {
       const response = await axios.get(
-        `https://gecxc.com:4041/api/Common/SaveLookUp?lookupDomain=${formData.lookUpDomain}&LookUpName=${formData.lookUpName}&appId=1`
+        `http://100.42.177.77:81/api/Common/SaveLookUp?lookupDomain=${formData.lookUpDomain}&LookUpName=${formData.lookUpName}&appId=1`
       );
       console.log('Form data saved:', response.data);
       enqueueSnackbar('Lookup saved successfully!', {
@@ -161,7 +161,7 @@ export default function PlanningProcess() {
     const GetLookUpDomains = async () => {
       try {
         const response = await axios.get(
-          `https://gecxc.com:4041/api/Common/GetLookUpDomains?appId=${1}`
+          `http://100.42.177.77:81/api/Common/GetLookUpDomains?appId=${1}`
         );
         console.log('LookupData', response);
         setLookupDomains(response.data.result);

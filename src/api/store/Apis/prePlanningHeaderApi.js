@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const prePlanningHeaderApi = createApi({
   reducerPath: 'prePlanningHeaderApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://gecxc.com:4041/api/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://100.42.177.77:81/api/' }),
   endpoints: (builder) => ({
     getCollectionFromPlanningHeader: builder.query({
       query: () => `PrePlanning/GetCollectionListFromPlanningHeader`

@@ -604,7 +604,7 @@ const EmbroideryAssignVendor = ({
     try {
       // Make the API call
       const response = await axios.post(
-        'https://gecxc.com:4041/api/Embroidery/SaveEmbroideryDetails',
+        'http://100.42.177.77:81/api/Embroidery/SaveEmbroideryDetails',
         {
           ...formData,
           additional: formData.additional.join(', ')
@@ -734,7 +734,7 @@ const EmbroideryAssignVendor = ({
   ];
   // const [showUpperDiv, setShowUpperDiv] = useState(true); // State variable to control visibility
 
-  const deleteApi = `https://gecxc.com:4041/api/Embroidery/DeleteEmbroideryDetailsByDetId?embroideryDetId=`;
+  const deleteApi = `http://100.42.177.77:81/api/Embroidery/DeleteEmbroideryDetailsByDetId?embroideryDetId=`;
   return (
     <Box
       noValidate
