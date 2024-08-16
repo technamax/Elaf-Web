@@ -36,7 +36,8 @@ import {
 } from 'api/store/Apis/lookupApi';
 import {
   useGetProductionProcessListQuery,
-  useGetProductionProcessByProductionIdQuery
+  useGetProductionProcessByProductionIdQuery,
+  useGetProductionFabricDetailListQuery
 } from 'api/store/Apis/productionApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
@@ -63,7 +64,8 @@ const IssuanceView = () => {
         month: 'short',
         year: '2-digit'
       }) || null,
-    statusName: initialFormData?.statusName || ''
+    statusName: initialFormData?.statusName || '',
+    productionHeaderId: initialFormData?.productionHeaderId || ''
     // appId: user.appId,
     // createdOn: new Date().toISOString(),
     // createdBy: user.empId,
@@ -81,7 +83,8 @@ const IssuanceView = () => {
           month: 'short',
           year: '2-digit'
         }) || null,
-      statusName: initialFormData?.statusName || ''
+      statusName: initialFormData?.statusName || '',
+      productionHeaderId: initialFormData?.productionHeaderId || ''
     });
   }, [initialFormData, setInitialFormData]);
   const options = [
@@ -113,15 +116,16 @@ const IssuanceView = () => {
     useGetCategoriesListQuery();
   const { data: lookUpData } = useGetLookUpListQuery();
   const { data: lookUpStatusData } = useGetStatusLookUpQuery();
-  const { data: termsConditionsData, refetch: refetchTermsConditionsData } =
-    useGetTermsConditionsListQuery(formData.categoryId, {
-      skip: !formData.categoryId // Skip the query if no collection is selected
+  const { data: fabricDetailData, refetch: refetchFabricDetailData } =
+    useGetProductionFabricDetailListQuery(formData.productionHeaderId, {
+      skip: !formData.productionHeaderId // Skip the query if no collection is selected
     });
   const { data: productionData, refetch: refetchProductionData } =
     useGetProductionProcessListQuery();
 
   // const { data: subMenuData, refetch } = useGetSubMenuListQuery();
   const [categories, setCategories] = useState([]);
+  const [viewRows, setViewRows] = useState([]);
   const [processesList, setProcessesList] = useState([]);
   const [productionList, setProductionList] = useState([]);
 
@@ -131,6 +135,16 @@ const IssuanceView = () => {
       setProcessesList(lookUpStatusData.result);
     }
   }, [lookUpStatusData]);
+  useEffect(() => {
+    if (fabricDetailData) {
+      setViewRows(
+        fabricDetailData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [fabricDetailData, refetchFabricDetailData]);
   useEffect(() => {
     if (productionData) {
       setProductionList(
@@ -437,7 +451,7 @@ const IssuanceView = () => {
 
                   <Grid item xs={12}>
                     <ReuseableDataGrid
-                      initialRows={initialRows}
+                      initialRows={viewRows}
                       iColumns={viewColumns}
                       hideAction
                     />
