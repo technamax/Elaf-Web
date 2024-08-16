@@ -501,7 +501,7 @@ const Schiffli = ({ initialValues }) => {
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:81/api/Schiffli/SaveSchiffili',
+        'http://100.42.177.77:83/api/Schiffli/SaveSchiffili',
         formData
       );
 
@@ -797,7 +797,7 @@ const Schiffli = ({ initialValues }) => {
       headerName: 'Laser Cut Pcs.'
     }
   ];
-  const deleteApi = `http://100.42.177.77:81/api/Schiffli/DeleteSchiffiById?schiffiId=`;
+  const deleteApi = `http://100.42.177.77:83/api/Schiffli/DeleteSchiffiById?schiffiId=`;
 
   return (
     <>

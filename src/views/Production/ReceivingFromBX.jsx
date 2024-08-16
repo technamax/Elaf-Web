@@ -195,7 +195,7 @@ const ReceivingFromBX = () => {
     console.log('stockData', stockData);
     try {
       const response = await axios.post(
-        'http://100.42.177.77:81/api/BxStockReceiving/SaveBxStockReceiving',
+        'http://100.42.177.77:83/api/BxStockReceiving/SaveBxStockReceiving',
         formData
       );
       console.log('Save response:', response.data);
