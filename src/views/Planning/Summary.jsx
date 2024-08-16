@@ -121,7 +121,7 @@ const Summary = ({
   const [summaryHeaderList, setSummaryHeaderList] = useState([]);
   const [distinctCollectionList, setDistinctCollectionList] = useState([]);
   const [collectionList, setCollectionList] = useState([]);
-
+  console.log('distinctData', distinctData);
   useEffect(() => {
     if (collectionData) {
       setCollectionList(collectionData.result);
@@ -131,7 +131,7 @@ const Summary = ({
   useEffect(() => {
     if (distinctData) {
       console.log('Distinct Data:', distinctData.result); // Debugging
-      setDistinctCollectionList(distinctData.result || []); // Ensure it's always an array
+      setDistinctCollectionList(distinctData || []); // Ensure it's always an array
     }
   }, [distinctData]);
 
@@ -162,16 +162,16 @@ const Summary = ({
       });
       refetchDistinctData(collectionId);
 
-      if (selectedBatch) {
-        fetchSummaryData(selectedBatch.planningHeaderId);
-      }
+      // if (selectedBatch) {
+      //   fetchSummaryData(selectedBatch.planningHeaderId);
+      // }
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
   console.log('Selected collection ID:', selectedCollectionId);
-  console.log('Form data:', formData);
+  console.log('distinctCollectionList data:', distinctCollectionList);
 
   const fetchSummaryData = async (planningHeaderId) => {
     setIsLoading(true);
