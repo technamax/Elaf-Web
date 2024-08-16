@@ -74,7 +74,7 @@ export const prePlanningHeaderApi = createApi({
         `PrePlanning/GetDistinctCollections?collectionId=${collectionId}`
     }),
     getSummaryByCollection: builder.query({
-      query: (collectionId, collectionBatchId) =>
+      query: ({ collectionId, collectionBatchId }) =>
         `PrePlanning/SummaryByCollection?collectionId=${collectionId}&collectionBatchId=${collectionBatchId}`
     })
   })

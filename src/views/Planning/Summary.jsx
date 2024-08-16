@@ -7,7 +7,14 @@ import {
   CardHeader,
   Divider,
   Typography,
-  CircularProgress
+  CircularProgress,
+  Button,
+  ButtonGroup,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  CardActions
 } from '@mui/material';
 import {
   useGetCollectionFromPlanningHeaderQuery,
@@ -91,12 +98,14 @@ const Summary = ({
   const [summaryData, setSummaryData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
+  const [open, setOpen] = useState(false); // State for modal open/close
+
   const [selectedCollectionId, setSelectedCollectionId] = useState(
     collectionId || ''
   );
   const [formData, setFormData] = useState({
     designId: '',
-    planningHeaderId: 0,
+    planningHeaderId: '',
     batchNo: '',
     distinctId: '',
     collectionBatchId: '',
@@ -112,6 +121,13 @@ const Summary = ({
       });
     }
   };
+  const [selectedRows, setSelectedRows] = useState([]);
+
+  const handleRowSelection = (newSelection) => {
+    setSelectedRows(newSelection);
+    console.log('New Selection:', newSelection); // Debugging line
+  };
+
   const { data: distinctData, refetch: refetchDistinctData } =
     useGetDistinctCollectionsQuery(selectedCollectionId, {
       skip: !selectedCollectionId // Skip fetching if no collectionId
@@ -134,13 +150,6 @@ const Summary = ({
     }
   }, [distinctData]);
 
-  useEffect(() => {
-    setInitialValues({
-      collectionId: formData?.collectionId || '',
-      planningHeaderId: formData?.planningHeaderId || ''
-    });
-  }, [formData.collectionId]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -154,16 +163,15 @@ const Summary = ({
         collectionBatchId: '' // Reset batch ID when collection changes
       });
       refetchDistinctData(collectionId);
+    } else if (name === 'collectionBatchId') {
+      setFormData({
+        ...formData,
+        collectionBatchId: value,
+        planningHeaderId: formData.planningHeaderId
+      });
     } else {
       const updatedFormData = { ...formData, [name]: value };
       setFormData(updatedFormData);
-
-      if (name === 'collectionBatchId') {
-        refetchSummaryHeader({
-          collectionId: updatedFormData.collectionId,
-          collectionBatchId: value
-        });
-      }
     }
   };
   const { data: summaryHeader, refetch: refetchSummaryHeader } =
@@ -187,6 +195,8 @@ const Summary = ({
   const fetchSummaryData = async (planningHeaderId) => {
     setIsLoading(true);
     try {
+      console.log('Fetching Summary Data for ID:', planningHeaderId); // Log to verify the ID
+
       const response = await axios.get(
         `http://100.42.177.77:81/api/PrePlanning/GetPrePlanningSummaryByBatchId?planningHeaderId=${planningHeaderId}`
       );
@@ -201,8 +211,18 @@ const Summary = ({
       setIsLoading(false);
     }
   };
-  console.log(summaryData);
+  console.log('formData', formData);
 
+  const handleOpen = (planningHeaderId) => {
+    console.log('Selected PlanningHeaderId:', planningHeaderId);
+    fetchSummaryData(planningHeaderId);
+    setOpen(true);
+    // You can call fetchSummaryData(planningHeaderId) if needed
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   const prePlanningColumns = [
     { field: 'designNo', headerName: 'Design No' },
     { field: 'batchNo', headerName: 'Batch No' },
@@ -258,23 +278,51 @@ const Summary = ({
   ];
 
   const summaryHeaderColumn = [
-    { field: 'planningHeaderId', headerName: 'ID', width: 70 },
-    { field: 'orderNumber', headerName: 'Order Number', width: 150 },
-    { field: 'collectionName', headerName: 'Collection Name', width: 200 },
-    { field: 'batchNo', headerName: 'Batch No', width: 180 },
-    { field: 'designNo', headerName: 'Design No', width: 150 },
-    { field: 'designerName', headerName: 'Designer Name', width: 150 },
-    { field: 'colorName', headerName: 'Color Name', width: 150 },
-    { field: 'poPcs', headerName: 'PO Pieces', width: 100 },
-    { field: 'batchStatus', headerName: 'Batch Status', width: 120 },
-    { field: 'planningDate', headerName: 'Planning Date', width: 180 }
-  ];
+    { field: 'planningHeaderId', headerName: 'ID' },
+    { field: 'orderNumber', headerName: 'Order Number' },
+    { field: 'collectionName', headerName: 'Collection Name' },
+    { field: 'batchNo', headerName: 'Batch No' },
+    { field: 'designNo', headerName: 'Design No' },
+    { field: 'designerName', headerName: 'Designer Name' },
+    { field: 'colorName', headerName: 'Color Name' },
+    { field: 'poPcs', headerName: 'PO Pieces' },
+    { field: 'batchStatus', headerName: 'Batch Status' },
+    { field: 'planningDate', headerName: 'Planning Date' },
+    {
+      field: 'action',
+      headerName: 'Action',
 
-  const summaryHeaderRows =
-    summaryHeader?.summaryHeaderList?.map((item, index) => ({
-      id: index,
-      ...item
-    })) || [];
+      renderCell: (params) => (
+        <ButtonGroup
+          variant="outlined"
+          size="small"
+          aria-label="outlined primary button group"
+        >
+          <Button onClick={() => handleOpen(params.row.planningHeaderId)}>
+            View
+          </Button>
+        </ButtonGroup>
+      ),
+      sortable: false,
+      filterable: false
+    }
+  ];
+  const [summaryHeaderRows, setSummaryHeaderRows] = useState([]);
+  useEffect(() => {
+    // Assuming summaryHeaderList is updated from an API or some data source
+    const updatedRows =
+      summaryHeaderList?.map((item, index) => ({
+        id: item.planningHeaderId || index, // Ensure each row has a unique ID
+        ...item
+      })) || [];
+    setSummaryHeaderRows(updatedRows);
+  }, [summaryHeaderList]);
+
+  // const summaryHeaderRows =
+  //   summaryHeaderList?.map((item, index) => ({
+  //     id: item.planningHeaderId || index, // Use a unique identifier if available
+  //     ...item
+  //   })) || [];
 
   const prePlanningRows =
     summaryData?.prePlanningList?.map((item, index) => ({
@@ -312,6 +360,39 @@ const Summary = ({
     })) || [];
   const CustomFooter = () => <div />;
   const apiRef = useGridApiRef();
+
+  const handleSave = async () => {
+    if (selectedRows.length === 0) {
+      enqueueSnackbar('No rows selected', { variant: 'warning' });
+      return;
+    }
+
+    const planningHeaderIds = selectedRows;
+    const requestBody = {
+      planningHeaderId: planningHeaderIds,
+      collectionBatchId: formData.collectionBatchId,
+      createdBy: user.empId,
+      batchStatus: 3
+    };
+
+    try {
+      const response = await axios.get(
+        'http://100.42.177.77:81/api/PrePlanning/FinalizePrePlanningBatch',
+        requestBody
+      );
+      if (response.data.success) {
+        enqueueSnackbar('Data saved successfully', { variant: 'success' });
+        console.log('requestbody', requestBody);
+      } else {
+        enqueueSnackbar(response.data.message, { variant: 'error' });
+      }
+    } catch (error) {
+      console.error('Failed to save data', error);
+      console.log('requestbody', requestBody);
+
+      enqueueSnackbar('Failed to save data', { variant: 'error' });
+    }
+  };
 
   return (
     <>
@@ -378,6 +459,16 @@ const Summary = ({
               )}
             </TextField>
           </Grid>
+          <Grid item xs={4} textAlign="right" sx={{ mt: 1 }}>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              color="success"
+            >
+              Finalize
+            </Button>
+          </Grid>
         </Grid>
       </Card>
 
@@ -399,355 +490,372 @@ const Summary = ({
             <DataGrid
               rows={summaryHeaderRows}
               columns={summaryHeaderColumn}
-              pageSize={5}
-              rowsPerPageOptions={[5, 10, 25]}
               checkboxSelection
+              getRowId={(row) => row.id} // Ensure each row has a unique ID
+              disableRowSelectionOnClick
+              autosizeOnMount
+              apiRef={apiRef}
+              onStateChange={handleStateChange}
+              onRowSelectionModelChange={(newSelectionModel) =>
+                handleRowSelection(newSelectionModel)
+              }
             />
           </Grid>
 
-          {/* <Grid item xs={12} md={12} paddingTop={1}>
-            {isLoading ? (
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                height="100%"
-              >
+          <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
+            {/* <DialogTitle>Details</DialogTitle> */}
+            <CardHeader
+              className="css-4rfrnx-MuiCardHeader-root"
+              title="Summary Details"
+              titleTypographyProps={{ style: { color: 'white' } }}
+            />
+            <DialogContent>
+              {isLoading ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="100%"
+                >
+                  <CircularProgress />
+                </Box>
+              ) : summaryData ? (
+                <>
+                  <Typography
+                    variant="h3"
+                    gutterBottom
+                    sx={{
+                      color: '#9f1d22',
+                      // textAlign: 'center',
+                      cursor: 'pointer', // To indicate it's clickable
+                      '&:hover': {
+                        textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                      }
+                    }}
+                    onClick={() => setActiveStep(0)} // Navigate to the corresponding step
+                  >
+                    Pre Planning
+                  </Typography>
+
+                  <DataGrid
+                    // classes={{ columnHeaders: 'custom-header' }}
+                    rows={prePlanningRows}
+                    columns={prePlanningColumns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    autoHeight
+                    hideFooter
+                    onStateChange={handleStateChange}
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
+                  />
+
+                  <Divider
+                    color="#921e22"
+                    sx={{ height: 3, width: '100%', mb: 1 }}
+                  />
+                  <Typography
+                    variant="h3"
+                    gutterBottom
+                    sx={{
+                      color: '#9f1d22',
+                      // textAlign: 'center',
+                      cursor: 'pointer', // To indicate it's clickable
+                      '&:hover': {
+                        textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                      }
+                    }}
+                    onClick={() => setActiveStep(1)} // Navigate to the corresponding step
+                  >
+                    Fabrication
+                  </Typography>
+
+                  <DataGrid
+                    rows={fabricationRows}
+                    columns={fabricationColumns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    autoHeight
+                    hideFooter
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
+                  />
+
+                  <Divider
+                    color="#921e22"
+                    sx={{ height: 2, width: '100%', mt: 1, mb: 1 }}
+                  />
+                  <Typography
+                    variant="h3"
+                    gutterBottom
+                    sx={{
+                      color: '#9f1d22',
+                      // textAlign: 'center',
+                      cursor: 'pointer', // To indicate it's clickable
+                      '&:hover': {
+                        textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                      }
+                    }}
+                    onClick={() => setActiveStep(2)} // Navigate to the corresponding step
+                  >
+                    Dyeing
+                  </Typography>
+
+                  <DataGrid
+                    rows={dyeingPrintingRows}
+                    columns={dyeingPrintingColumns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    autoHeight
+                    hideFooter
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
+                  />
+
+                  <Divider
+                    color="#921e22"
+                    sx={{ height: 2, width: '100%', mb: 1 }}
+                  />
+                  <Typography
+                    variant="h3"
+                    gutterBottom
+                    sx={{
+                      color: '#9f1d22',
+                      // textAlign: 'center',
+                      cursor: 'pointer', // To indicate it's clickable
+                      '&:hover': {
+                        textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                      }
+                    }}
+                    onClick={() => setActiveStep(3)} // Navigate to the corresponding step
+                  >
+                    Embroidery
+                  </Typography>
+
+                  <DataGrid
+                    rows={embroideryRows}
+                    columns={embroideryColumns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    autoHeight
+                    hideFooter
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
+                  />
+
+                  <Divider
+                    color="#921e22"
+                    sx={{ height: 2, width: '100%', mb: 1 }}
+                  />
+
+                  <Typography
+                    variant="h3"
+                    gutterBottom
+                    sx={{
+                      color: '#9f1d22',
+                      // textAlign: 'center',
+                      cursor: 'pointer', // To indicate it's clickable
+                      '&:hover': {
+                        textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                      }
+                    }}
+                    onClick={() => setActiveStep(4)} // Navigate to the corresponding step
+                  >
+                    Schiffli
+                  </Typography>
+                  <DataGrid
+                    rows={schiffiliRows}
+                    columns={schiffiliColumns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    autoHeight
+                    hideFooter
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
+                  />
+                  <Divider
+                    color="#921e22"
+                    sx={{ height: 2, width: '100%', mb: 1 }}
+                  />
+                  <Typography
+                    variant="h3"
+                    gutterBottom
+                    sx={{
+                      color: '#9f1d22',
+                      // textAlign: 'center',
+                      cursor: 'pointer', // To indicate it's clickable
+                      '&:hover': {
+                        textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                      }
+                    }}
+                    onClick={() => setActiveStep(5)} // Navigate to the corresponding step
+                  >
+                    Additional Process
+                  </Typography>
+
+                  <DataGrid
+                    rows={additionalProcessRows}
+                    columns={additionalProcessColumns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    autoHeight
+                    hideFooter
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
+                  />
+                </>
+              ) : (
                 <CircularProgress />
-              </Box>
-            ) : summaryData ? (
-              <>
-                <Typography
-                  variant="h3"
-                  gutterBottom
-                  sx={{
-                    color: '#9f1d22',
-                    // textAlign: 'center',
-                    cursor: 'pointer', // To indicate it's clickable
-                    '&:hover': {
-                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
-                    }
-                  }}
-                  onClick={() => setActiveStep(0)} // Navigate to the corresponding step
-                >
-                  Pre Planning
-                </Typography>
-
-                <DataGrid
-                  // classes={{ columnHeaders: 'custom-header' }}
-                  rows={prePlanningRows}
-                  columns={prePlanningColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  autoHeight
-                  hideFooter
-                  onStateChange={handleStateChange}
-                  sx={{
-                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-                    '& .css-1kyxv1r-MuiDataGrid-root': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-container--top [role=row]': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-iconButtonContainer': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-sortIcon': {
-                      color: 'white'
-                    },
-                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
-                    '& .MuiDataGrid-row': {
-                      '&.total-summary-row': {
-                        backgroundColor: 'darkgray'
-                      }
-                    }
-                  }}
-                />
-
-                <Divider
-                  color="#921e22"
-                  sx={{ height: 3, width: '100%', mb: 1 }}
-                />
-                <Typography
-                  variant="h3"
-                  gutterBottom
-                  sx={{
-                    color: '#9f1d22',
-                    // textAlign: 'center',
-                    cursor: 'pointer', // To indicate it's clickable
-                    '&:hover': {
-                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
-                    }
-                  }}
-                  onClick={() => setActiveStep(1)} // Navigate to the corresponding step
-                >
-                  Fabrication
-                </Typography>
-
-                <DataGrid
-                  rows={fabricationRows}
-                  columns={fabricationColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  autoHeight
-                  hideFooter
-                  sx={{
-                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-                    '& .css-1kyxv1r-MuiDataGrid-root': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-container--top [role=row]': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-iconButtonContainer': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-sortIcon': {
-                      color: 'white'
-                    },
-                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
-                    '& .MuiDataGrid-row': {
-                      '&.total-summary-row': {
-                        backgroundColor: 'darkgray'
-                      }
-                    }
-                  }}
-                />
-
-                <Divider
-                  color="#921e22"
-                  sx={{ height: 2, width: '100%', mt: 1, mb: 1 }}
-                />
-                <Typography
-                  variant="h3"
-                  gutterBottom
-                  sx={{
-                    color: '#9f1d22',
-                    // textAlign: 'center',
-                    cursor: 'pointer', // To indicate it's clickable
-                    '&:hover': {
-                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
-                    }
-                  }}
-                  onClick={() => setActiveStep(2)} // Navigate to the corresponding step
-                >
-                  Dyeing
-                </Typography>
-
-                <DataGrid
-                  rows={dyeingPrintingRows}
-                  columns={dyeingPrintingColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  autoHeight
-                  hideFooter
-                  sx={{
-                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-                    '& .css-1kyxv1r-MuiDataGrid-root': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-container--top [role=row]': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-iconButtonContainer': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-sortIcon': {
-                      color: 'white'
-                    },
-                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
-                    '& .MuiDataGrid-row': {
-                      '&.total-summary-row': {
-                        backgroundColor: 'darkgray'
-                      }
-                    }
-                  }}
-                />
-
-                <Divider
-                  color="#921e22"
-                  sx={{ height: 2, width: '100%', mb: 1 }}
-                />
-                <Typography
-                  variant="h3"
-                  gutterBottom
-                  sx={{
-                    color: '#9f1d22',
-                    // textAlign: 'center',
-                    cursor: 'pointer', // To indicate it's clickable
-                    '&:hover': {
-                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
-                    }
-                  }}
-                  onClick={() => setActiveStep(3)} // Navigate to the corresponding step
-                >
-                  Embroidery
-                </Typography>
-
-                <DataGrid
-                  rows={embroideryRows}
-                  columns={embroideryColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  autoHeight
-                  hideFooter
-                  sx={{
-                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-                    '& .css-1kyxv1r-MuiDataGrid-root': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-container--top [role=row]': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-iconButtonContainer': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-sortIcon': {
-                      color: 'white'
-                    },
-                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
-                    '& .MuiDataGrid-row': {
-                      '&.total-summary-row': {
-                        backgroundColor: 'darkgray'
-                      }
-                    }
-                  }}
-                />
-
-                <Divider
-                  color="#921e22"
-                  sx={{ height: 2, width: '100%', mb: 1 }}
-                />
-
-                <Typography
-                  variant="h3"
-                  gutterBottom
-                  sx={{
-                    color: '#9f1d22',
-                    // textAlign: 'center',
-                    cursor: 'pointer', // To indicate it's clickable
-                    '&:hover': {
-                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
-                    }
-                  }}
-                  onClick={() => setActiveStep(4)} // Navigate to the corresponding step
-                >
-                  Schiffli
-                </Typography>
-                <DataGrid
-                  rows={schiffiliRows}
-                  columns={schiffiliColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  autoHeight
-                  hideFooter
-                  sx={{
-                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-                    '& .css-1kyxv1r-MuiDataGrid-root': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-container--top [role=row]': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-iconButtonContainer': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-sortIcon': {
-                      color: 'white'
-                    },
-                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
-                    '& .MuiDataGrid-row': {
-                      '&.total-summary-row': {
-                        backgroundColor: 'darkgray'
-                      }
-                    }
-                  }}
-                />
-                <Divider
-                  color="#921e22"
-                  sx={{ height: 2, width: '100%', mb: 1 }}
-                />
-                <Typography
-                  variant="h3"
-                  gutterBottom
-                  sx={{
-                    color: '#9f1d22',
-                    // textAlign: 'center',
-                    cursor: 'pointer', // To indicate it's clickable
-                    '&:hover': {
-                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
-                    }
-                  }}
-                  onClick={() => setActiveStep(5)} // Navigate to the corresponding step
-                >
-                  Additional Process
-                </Typography>
-
-                <DataGrid
-                  rows={additionalProcessRows}
-                  columns={additionalProcessColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  autoHeight
-                  hideFooter
-                  sx={{
-                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-                    '& .css-1kyxv1r-MuiDataGrid-root': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-container--top [role=row]': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-iconButtonContainer': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-sortIcon': {
-                      color: 'white'
-                    },
-                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
-                    '& .MuiDataGrid-row': {
-                      '&.total-summary-row': {
-                        backgroundColor: 'darkgray'
-                      }
-                    }
-                  }}
-                />
-              </>
-            ) : (
-              <CircularProgress></CircularProgress>
-            )}
-          </Grid> */}
+              )}
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Close</Button>
+            </DialogActions>
+          </Dialog>
         </Grid>
       </Card>
     </>
