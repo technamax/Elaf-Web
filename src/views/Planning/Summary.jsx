@@ -195,6 +195,7 @@ const Summary = ({
       const response = await axios.get(
         `http://100.42.177.77:81/api/PrePlanning/GetPrePlanningSummaryByBatchId?planningHeaderId=${planningHeaderId}`
       );
+      //in 449 url this api doesnt exist
       if (response.data.success) {
         setSummaryData(response.data.result);
       } else {

@@ -6,6 +6,8 @@ import { lookupApi } from './Apis/lookupApi';
 import { prePlanningHeaderApi } from './Apis/prePlanningHeaderApi';
 import { userManagementApi } from './Apis/userManagementApi';
 import { dashboardApi } from './Apis/dashboardApi';
+import { productionApi } from './Apis/productionApi';
+import { termsAndConditionsApi } from './Apis/termsAndConditionsApi';
 import rootReducer from '../../store/reducer';
 
 const store = configureStore({
@@ -18,6 +20,8 @@ const store = configureStore({
       .concat(prePlanningHeaderApi.middleware)
       .concat(userManagementApi.middleware)
       .concat(dashboardApi.middleware) // Include the API middleware
+      .concat(productionApi.middleware)
+      .concat(termsAndConditionsApi.middleware)
 });
 
 export default store;

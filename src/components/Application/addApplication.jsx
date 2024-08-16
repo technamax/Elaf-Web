@@ -36,7 +36,7 @@
 //     console.log(formData);
 //     try {
 //       const response = await axios.post(
-//         'http://100.42.177.77:81/api/ApplicationConfig/SaveApplication',
+//         'http://100.42.177.77:83/api/ApplicationConfig/SaveApplication',
 //         formData
 //       );
 //       console.log('Form data saved:', response.data);

@@ -107,7 +107,7 @@ export default function Application() {
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:81/api/Menu/SaveMainMenu',
+        'http://100.42.177.77:83/api/Menu/SaveMainMenu',
         formData
       );
 

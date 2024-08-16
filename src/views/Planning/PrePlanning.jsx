@@ -67,8 +67,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     noOfHeads: 0,
     operatingMachineId: 0,
     planningProcessTypeName: '',
-    repeats: 0,
-    repeatSize: 0,
+    repeats: '',
+    repeatSize: '',
     uomId: '',
     totalFabric: '',
     shrinkage: '',
@@ -108,8 +108,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       fabricId: initialData?.fabricId || '',
       noOfHeads: initialData?.noOfHeads || 0,
       operatingMachineId: initialData?.operatingMachineId || 0,
-      repeats: initialData?.repeats || 0,
-      repeatSize: initialData?.repeatSize || 0,
+      repeats: initialData?.repeats || '',
+      repeatSize: initialData?.repeatSize || '',
       uomId: initialData?.uomId || '',
       totalFabric: initialData?.totalFabric || '',
       shrinkage: initialData?.shrinkage || '',
@@ -205,7 +205,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     const GetPrePlanningHeaderByDesignId = async (id) => {
       try {
         const response = await axios.get(
-          `http://100.42.177.77:81/api/PrePlanning/GetPrePlanningHeaderByDesignId?designId=${id}`
+          `http://100.42.177.77:83/api/PrePlanning/GetPrePlanningHeaderByDesignId?designId=${id}`
         );
         console.log(response.data);
         setBatchList(response.data.result);
@@ -218,7 +218,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     //   // setLoading(true);
     //   try {
     //     const response = await axios.get(
-    //       `http://100.42.177.77:81/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
+    //       `http://100.42.177.77:83/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
     //     );
     //     console.log('GetPrePlanningByPlanningHeaderI', response.data.result);
     //     setInitialRows(
@@ -236,9 +236,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     // }
     // setLoading(false);
   }, [formData.designId, formData.planningHeaderId]);
-  const isDyeing =
-    formData.planningProcessTypeId === 212 ||
-    formData.planningProcessTypeId === 1219;
+  const isDyeing = formData.planningProcessTypeId === 212;
   console.log('initialValues', initialValues);
   console.log('selectedCollectionId', selectedCollectionId);
 
@@ -363,8 +361,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         noOfHeads: 0,
         operatingMachineId: 0,
 
-        repeats: 0,
-        repeatSize: 0,
+        repeats: '',
+        repeatSize: '',
         uomId: '',
         totalFabric: '',
         shrinkage: '',
@@ -391,8 +389,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         noOfHeads: 0,
         operatingMachineId: 0,
 
-        repeats: 0,
-        repeatSize: 0,
+        repeats: '',
+        repeatSize: '',
         uomId: '',
         totalFabric: '',
         shrinkage: '',
@@ -416,8 +414,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         noOfHeads: 0,
         operatingMachineId: 0,
 
-        repeats: 0,
-        repeatSize: 0,
+        repeats: '',
+        repeatSize: '',
         uomId: '',
         totalFabric: '',
         shrinkage: '',
@@ -430,9 +428,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       setLoading(false);
     } else if (name === 'planningProcessTypeId') {
       const selectedProcess = processType.find(
-        (batch) => batch.lookUpId === value
+        (batch) => batch.planningProcessTypeId === value
       );
-      console.log('selectedProcess', selectedProcess);
       setFormData({
         ...formData,
         planningProcessTypeId: value,
@@ -470,7 +467,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         total: parseFloat(formData.total.replace(/,/g, ''))
       };
       const response = await axios.post(
-        'http://100.42.177.77:81/api/PrePlanning/SavePrePlanning',
+        'http://100.42.177.77:83/api/PrePlanning/SavePrePlanning',
         cleanedFormData
       );
       console.log('Data saved successfully:', response.data);
@@ -517,8 +514,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         colorId: '',
         noOfHeads: 0,
         operatingMachineId: 0,
-        repeats: 0,
-        repeatSize: 0,
+        repeats: '',
+        repeatSize: '',
         uomId: '',
         totalFabric: '',
         total: '',
@@ -672,7 +669,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
           params.value === 'MultiHead'
             ? 'primary.dark'
             : params.value === 'Schiffili'
-              ? theme.palette.grey[900]
+              ? 'primary'
               : params.value === 'Dyeing'
                 ? 'success.dark'
                 : 'default';
@@ -869,7 +866,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
   };
   console.log('batchList:', batchList);
 
-  const deleteApi = `http://100.42.177.77:81/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
+  const deleteApi = `http://100.42.177.77:83/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded); // Toggle accordion state based on the icon click
   };

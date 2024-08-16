@@ -65,6 +65,9 @@ const MenuList = ({ empId, token }) => {
 
     getMenuItems();
   }, [empId, token, navigate]);
+  // useEffect(() => {
+  //   console.log('Menu Items:', menuItems); // Log menu items to console for inspection
+  // }, [menuItems]);
 
   if (loading) {
     return (
@@ -86,7 +89,6 @@ const MenuList = ({ empId, token }) => {
     const subMenuItems = mainMenu.subMenus.map((subMenu) => ({
       id: subMenu.subMenuId,
       title: subMenu.subMenuDesc,
-      // title: mainMenu.mainMenuDesc,
       type: 'item',
       url: subMenu.link,
       icon: subMenu.icon

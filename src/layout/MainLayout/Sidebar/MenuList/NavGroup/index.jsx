@@ -23,7 +23,6 @@ const NavGroup = ({ item }) => {
     setOpen(!open);
   };
 
-  // menu list collapse & items
   const items = item.children?.map((menu) => {
     switch (menu.type) {
       case 'collapse':
@@ -42,7 +41,18 @@ const NavGroup = ({ item }) => {
         );
     }
   });
-
+  // const items = item.children?.map((menu) => {
+  //   switch (menu.type) {
+  //     case 'item':
+  //       return <NavItem key={menu.id} item={menu} level={1} />;
+  //     default:
+  //       return (
+  //         <Typography key={menu.id} variant="h6" color="error" align="center">
+  //           Menu Items Error
+  //         </Typography>
+  //       );
+  //   }
+  // });
   return (
     <>
       <List
@@ -69,7 +79,7 @@ const NavGroup = ({ item }) => {
       //   )
       // }
       >
-        {item.children?.length > 1 && ( // Check if there are sub-menus
+        {item.children?.length > 0 && ( // Check if there are sub-menus
           <ListItemButton onClick={handleClick}>
             <Typography
               variant="body1"
@@ -84,7 +94,7 @@ const NavGroup = ({ item }) => {
             )}
           </ListItemButton>
         )}
-        {item.children?.length === 1 && items}{' '}
+        {item.children?.length === 0 && items}{' '}
         {/* Render single item if no sub-menus */}
         {open && (
           <Collapse in={open} timeout="auto" unmountOnExit>
@@ -92,9 +102,6 @@ const NavGroup = ({ item }) => {
           </Collapse>
         )}
       </List>
-
-      {/* group divider */}
-      {/* <Divider sx={{ mt: 0.25, mb: 1.25 }} /> */}
     </>
   );
 };

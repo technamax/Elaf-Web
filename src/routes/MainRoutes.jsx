@@ -31,6 +31,21 @@ const UserManagementUsers = Loadable(
 const PrePlanningCreation = Loadable(
   lazy(() => import('views/Planning/PrePlanningCreation'))
 );
+const TermsandConditions = Loadable(
+  lazy(() => import('views/Configuration/TermsandConditions'))
+);
+const ProductionBatch = Loadable(
+  lazy(() => import('views/Production/ProductionBatch'))
+);
+const ProductionProcess = Loadable(
+  lazy(() => import('views/Production/ProductionProcess'))
+);
+const ReceivingFromBX = Loadable(
+  lazy(() => import('views/Production/ReceivingFromBX'))
+);
+const ShrinkageWastageConfiguration = Loadable(
+  lazy(() => import('views/Configuration/ShrinkageWastageConfiguration'))
+);
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 const WelcomePage = Loadable(lazy(() => import('views/welcome/WelcomePage')));
 
@@ -86,6 +101,44 @@ const MainRoutes = {
           path: 'PrePlanningCreation',
           element: <ProtectedRoute element={PrePlanningCreation} />
         }
+      ]
+    },
+    {
+      path: 'Production',
+      children: [
+        {
+          path: 'ProductionBatch',
+          element: <ProtectedRoute element={ProductionBatch} />
+        },
+        {
+          path: 'ReceivingFromBX',
+          element: <ProtectedRoute element={ReceivingFromBX} />
+        },
+        {
+          path: 'ProductionProcess',
+          element: <ProtectedRoute element={ProductionProcess} />
+        }
+        // {
+        //   path: 'PrePlanningCreation',
+        //   element: <ProtectedRoute element={PrePlanningCreation} />
+        // }
+      ]
+    },
+    {
+      path: 'Configuration',
+      children: [
+        {
+          path: 'ShrinkageWastageConfiguration',
+          element: <ProtectedRoute element={ShrinkageWastageConfiguration} />
+        },
+        {
+          path: 'TermsandConditions',
+          element: <ProtectedRoute element={TermsandConditions} />
+        }
+        // {
+        //   path: 'ProductionBatch',
+        //   element: <ProtectedRoute element={ProductionBatch} />
+        // },
       ]
     },
     {
