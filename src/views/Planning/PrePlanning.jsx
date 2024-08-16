@@ -67,8 +67,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     noOfHeads: 0,
     operatingMachineId: 0,
     planningProcessTypeName: '',
-    repeats: 0,
-    repeatSize: 0,
+    repeats: '',
+    repeatSize: '',
     uomId: '',
     totalFabric: '',
     shrinkage: '',
@@ -108,8 +108,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       fabricId: initialData?.fabricId || '',
       noOfHeads: initialData?.noOfHeads || 0,
       operatingMachineId: initialData?.operatingMachineId || 0,
-      repeats: initialData?.repeats || 0,
-      repeatSize: initialData?.repeatSize || 0,
+      repeats: initialData?.repeats || '',
+      repeatSize: initialData?.repeatSize || '',
       uomId: initialData?.uomId || '',
       totalFabric: initialData?.totalFabric || '',
       shrinkage: initialData?.shrinkage || '',
@@ -363,8 +363,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         noOfHeads: 0,
         operatingMachineId: 0,
 
-        repeats: 0,
-        repeatSize: 0,
+        repeats: '',
+        repeatSize: '',
         uomId: '',
         totalFabric: '',
         shrinkage: '',
@@ -391,8 +391,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         noOfHeads: 0,
         operatingMachineId: 0,
 
-        repeats: 0,
-        repeatSize: 0,
+        repeats: '',
+        repeatSize: '',
         uomId: '',
         totalFabric: '',
         shrinkage: '',
@@ -416,8 +416,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         noOfHeads: 0,
         operatingMachineId: 0,
 
-        repeats: 0,
-        repeatSize: 0,
+        repeats: '',
+        repeatSize: '',
         uomId: '',
         totalFabric: '',
         shrinkage: '',
@@ -430,9 +430,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       setLoading(false);
     } else if (name === 'planningProcessTypeId') {
       const selectedProcess = processType.find(
-        (batch) => batch.lookUpId === value
+        (batch) => batch.planningProcessTypeId === value
       );
-      console.log('selectedProcess', selectedProcess);
       setFormData({
         ...formData,
         planningProcessTypeId: value,
@@ -517,8 +516,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         colorId: '',
         noOfHeads: 0,
         operatingMachineId: 0,
-        repeats: 0,
-        repeatSize: 0,
+        repeats: '',
+        repeatSize: '',
         uomId: '',
         totalFabric: '',
         total: '',
@@ -672,7 +671,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
           params.value === 'MultiHead'
             ? 'primary.dark'
             : params.value === 'Schiffili'
-              ? theme.palette.grey[900]
+              ? 'primary'
               : params.value === 'Dyeing'
                 ? 'success.dark'
                 : 'default';
