@@ -238,7 +238,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
   }, [formData.designId, formData.planningHeaderId]);
   const isDyeing =
     formData.planningProcessTypeId === 212 ||
-    formData.planningProcessTypeId === 1219;
+    formData.planningProcessTypeId === 1210;
+  //1219 in uat, 1210 in develop
   console.log('initialValues', initialValues);
   console.log('selectedCollectionId', selectedCollectionId);
 
