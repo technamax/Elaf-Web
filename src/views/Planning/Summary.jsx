@@ -17,7 +17,11 @@ import {
   useGetAdditionalProcessListByBatchNoQuery,
   useGetFabricColorByComponentsBatchNoAndFabricIdQuery
 } from 'api/store/Apis/prePlanningHeaderApi';
-import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
+import {
+  useGetDesignFromPlanningHeaderByCollectionIdQuery,
+  useGetDistinctCollectionsQuery,
+  useGetSummaryByCollectionQuery
+} from 'api/store/Apis/prePlanningHeaderApi';
 import { useSnackbar } from 'notistack';
 import { useUser } from 'context/User';
 import axios from 'axios';
@@ -90,6 +94,7 @@ const Summary = ({
   const [selectedCollectionId, setSelectedCollectionId] = useState(
     collectionId || ''
   );
+
   const handleStateChange = (params) => {
     if (apiRef.current && apiRef.current.autosizeColumns) {
       apiRef.current.autosizeColumns({
@@ -99,35 +104,22 @@ const Summary = ({
       });
     }
   };
+  const { data: distinctData, refetch: refetchDistinctData } =
+    useGetDistinctCollectionsQuery(selectedCollectionId, {
+      skip: !selectedCollectionId // Skip fetching if no collectionId
+    });
+  const { data: summaryHeader } = useGetSummaryByCollectionQuery();
+
   const [formData, setFormData] = useState({
     designId: '',
     planningHeaderId: 0,
-    batchNo: ''
+    batchNo: '',
+    distinctId: '',
+    collectionBatchId: ''
   });
 
-  // useEffect(() => {
-  //   setSelectedCollectionId(initialValues.collectionId);
-  // }, [initialValues]);
-  useEffect(() => {
-    setInitialValues({
-      collectionId: formData?.collectionId || '',
-      designId: formData?.designId || '',
-      planningHeaderId: formData?.planningHeaderId || '',
-      batchNo: formData?.batchNo || ''
-    });
-  }, [formData.collectionId, formData.designId, formData?.batchNo]);
-  const { data: designData, refetch } =
-    useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
-      skip: !selectedCollectionId // Skip the query if no collection is selected
-    });
-
-  const { data: batchData, refetch: refetchBatches } =
-    useGetPrePlanningHeaderByDesignIdQuery(formData.designId, {
-      skip: !formData.designId // Skip the query if no design is selected
-    });
-
-  const [designList, setDesignList] = useState([]);
-  const [batchList, setBatchList] = useState([]);
+  const [summaryHeaderList, setSummaryHeaderList] = useState([]);
+  const [distinctCollectionList, setDistinctCollectionList] = useState([]);
   const [collectionList, setCollectionList] = useState([]);
 
   useEffect(() => {
@@ -137,16 +129,24 @@ const Summary = ({
   }, [collectionData]);
 
   useEffect(() => {
-    if (designData) {
-      setDesignList(designData.result);
+    if (distinctData) {
+      console.log('Distinct Data:', distinctData.result); // Debugging
+      setDistinctCollectionList(distinctData.result || []); // Ensure it's always an array
     }
-  }, [designData]);
+  }, [distinctData]);
 
   useEffect(() => {
-    if (batchData) {
-      setBatchList(batchData.result);
+    if (summaryHeader) {
+      setSummaryHeaderList(summaryHeader.result || []); // Ensure it's always an array
     }
-  }, [batchData]);
+  }, [summaryHeader]);
+
+  useEffect(() => {
+    setInitialValues({
+      collectionId: formData?.collectionId || '',
+      planningHeaderId: formData?.planningHeaderId || ''
+    });
+  }, [formData.collectionId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -158,23 +158,9 @@ const Summary = ({
       setFormData({
         ...formData,
         collectionId: value,
-        designId: '',
-        planningHeaderId: 0,
-        batchNo: ''
+        collectionBatchId: '' // Reset batch ID when collection changes
       });
-    } else if (name === 'designId') {
-      setFormData({
-        ...formData,
-        designId: value,
-        planningHeaderId: 0
-      });
-    } else if (name === 'batchNo') {
-      const selectedBatch = batchList.find((batch) => batch.batchNo === value);
-      setFormData({
-        ...formData,
-        batchNo: value,
-        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
-      });
+      refetchDistinctData(collectionId);
 
       if (selectedBatch) {
         fetchSummaryData(selectedBatch.planningHeaderId);
@@ -186,8 +172,6 @@ const Summary = ({
 
   console.log('Selected collection ID:', selectedCollectionId);
   console.log('Form data:', formData);
-  console.log('Design list:', designList);
-  console.log('Batch list:', batchList);
 
   const fetchSummaryData = async (planningHeaderId) => {
     setIsLoading(true);
@@ -319,7 +303,7 @@ const Summary = ({
               select
               label="Select Collection"
               name="collectionId"
-              value={selectedCollectionId}
+              value={formData.collectionId}
               onChange={handleChange}
               size="small"
               InputLabelProps={{
@@ -339,9 +323,9 @@ const Summary = ({
             <TextField
               fullWidth
               select
-              label="Select Design"
-              name="designId"
-              value={formData.designId}
+              label="Select Collection Batch"
+              name="collectionBatchId"
+              value={formData.collectionBatchId}
               onChange={handleChange}
               size="small"
               InputLabelProps={{
@@ -350,33 +334,18 @@ const Summary = ({
                 }
               }}
             >
-              {designList.map((option) => (
-                <MenuItem key={option.designId} value={option.designId}>
-                  {option.designNo}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              select
-              label="Batch No."
-              name="batchNo"
-              value={formData.batchNo}
-              onChange={handleChange}
-              size="small"
-              InputLabelProps={{
-                sx: {
-                  color: 'black'
-                }
-              }}
-            >
-              {batchList.map((option) => (
-                <MenuItem key={option.batchNo} value={option.batchNo}>
-                  {option.batchNo}
-                </MenuItem>
-              ))}
+              {distinctCollectionList.length > 0 ? (
+                distinctCollectionList.map((option) => (
+                  <MenuItem
+                    key={option.collectionId}
+                    value={option.collectionBatchId}
+                  >
+                    {option.distinctId}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled>No batches available</MenuItem>
+              )}
             </TextField>
           </Grid>
         </Grid>
