@@ -24,6 +24,8 @@ export default function AdditionalServices({ initialValues }) {
   const [vendors, setVendors] = useState([]);
   const [plannedCollection, setPlannedCollection] = useState([]);
   const [uoms, setUoms] = useState([]);
+  const [initialData, setInitialData] = useState([]);
+
   const { user } = useUser();
   useEffect(() => {
     if (lookupData) {
@@ -41,7 +43,7 @@ export default function AdditionalServices({ initialValues }) {
     vendorId: '',
     poPcs: '',
     qty: '',
-    uomId: 'string',
+    uomId: '',
     rate: '',
     totalAmount: '',
     costperPiece: '',
@@ -49,6 +51,28 @@ export default function AdditionalServices({ initialValues }) {
     createdBy: 0,
     createdOn: new Date().toISOString()
   });
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      additionalServiceId: initialData.additionalServiceId || 0,
+      collectionId: initialData?.collectionId || '',
+      serviceTypeId: initialData?.serviceTypeId || '', //from dying screen coming from fabricAPi
+      serviceListId: initialData?.serviceListId || '', //from dying screen coming from fabricAPi
+      vendorId: initialData?.vendorId || '',
+      // poPcs: initialData?.poPcs || '',
+      qty: initialData?.qty || '',
+      uomId: initialData?.uomId || '',
+      rate: initialData?.rate || '',
+      totalAmount: initialData?.totalAmount || 0,
+      UOM: initialData?.uom || 0,
+      uom: initialData?.uom || '',
+
+      createdOn: initialData?.createdOn || new Date().toISOString(),
+      createdBy: initialData?.createdBy || user.empId,
+      lastUpdatedOn: new Date().toISOString(),
+      lastUpdatedBy: user.empId
+    });
+  }, [initialData]);
   useEffect(() => {
     // setSelectedCollectionId(initialValues.collectionId);
     setFormData({
@@ -296,6 +320,7 @@ export default function AdditionalServices({ initialValues }) {
     {
       field: 'totalAmount',
       headerName: 'Total Amount',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 3 : undefined),
       renderCell: (params) =>
         params.row.id === 'TOTAL_SUMMARY' ? (
           <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
@@ -311,7 +336,7 @@ export default function AdditionalServices({ initialValues }) {
     // { field: 'lastUpdatedBy', headerName: 'Last Updated By' },
     // { field: 'lastUpdatedOn', headerName: 'Last Updated On' },
   ];
-
+  const deleteApi = `http://100.42.177.77:81/api/AdditionalServices/DeleteAdditionalProcess?servicesId=`;
   return (
     <>
       {/* <div className="CardHeader"> */}
@@ -620,10 +645,10 @@ export default function AdditionalServices({ initialValues }) {
           iColumns={columns}
           initialRows={rows}
           isLoading={isLoading}
-
-          // setInitialData={setInitialData}
-          // deleteApi={deleteApi}
-          // deleteBy="additionalProcessId"
+          setInitialData={setInitialData}
+          deleteApi={deleteApi}
+          refetch={fetchDataInternal}
+          deleteBy="additionalServiceId"
         />
       </Card>
       {/* </div> */}
