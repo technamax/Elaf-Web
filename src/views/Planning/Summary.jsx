@@ -94,6 +94,14 @@ const Summary = ({
   const [selectedCollectionId, setSelectedCollectionId] = useState(
     collectionId || ''
   );
+  const [formData, setFormData] = useState({
+    designId: '',
+    planningHeaderId: 0,
+    batchNo: '',
+    distinctId: '',
+    collectionBatchId: '',
+    collectionId: selectedCollectionId || ''
+  });
 
   const handleStateChange = (params) => {
     if (apiRef.current && apiRef.current.autosizeColumns) {
@@ -108,15 +116,6 @@ const Summary = ({
     useGetDistinctCollectionsQuery(selectedCollectionId, {
       skip: !selectedCollectionId // Skip fetching if no collectionId
     });
-  const { data: summaryHeader } = useGetSummaryByCollectionQuery();
-
-  const [formData, setFormData] = useState({
-    designId: '',
-    planningHeaderId: 0,
-    batchNo: '',
-    distinctId: '',
-    collectionBatchId: ''
-  });
 
   const [summaryHeaderList, setSummaryHeaderList] = useState([]);
   const [distinctCollectionList, setDistinctCollectionList] = useState([]);
@@ -134,12 +133,6 @@ const Summary = ({
       setDistinctCollectionList(distinctData || []); // Ensure it's always an array
     }
   }, [distinctData]);
-
-  useEffect(() => {
-    if (summaryHeader) {
-      setSummaryHeaderList(summaryHeader.result || []); // Ensure it's always an array
-    }
-  }, [summaryHeader]);
 
   useEffect(() => {
     setInitialValues({
@@ -161,15 +154,33 @@ const Summary = ({
         collectionBatchId: '' // Reset batch ID when collection changes
       });
       refetchDistinctData(collectionId);
-
-      // if (selectedBatch) {
-      //   fetchSummaryData(selectedBatch.planningHeaderId);
-      // }
     } else {
-      setFormData({ ...formData, [name]: value });
+      const updatedFormData = { ...formData, [name]: value };
+      setFormData(updatedFormData);
+
+      if (name === 'collectionBatchId') {
+        refetchSummaryHeader({
+          collectionId: updatedFormData.collectionId,
+          collectionBatchId: value
+        });
+      }
     }
   };
-
+  const { data: summaryHeader, refetch: refetchSummaryHeader } =
+    useGetSummaryByCollectionQuery(
+      {
+        collectionId: formData.collectionId,
+        collectionBatchId: formData.collectionBatchId
+      },
+      {
+        skip: !formData.collectionId || !formData.collectionBatchId // Skip query if either ID is missing
+      }
+    );
+  useEffect(() => {
+    if (summaryHeader && summaryHeader.length > 0) {
+      setSummaryHeaderList(summaryHeader);
+    }
+  }, [summaryHeader]);
   console.log('Selected collection ID:', selectedCollectionId);
   console.log('distinctCollectionList data:', distinctCollectionList);
 
@@ -245,6 +256,25 @@ const Summary = ({
     { field: 'pcsPerComponent', headerName: 'Pcs Per Component', width: 150 },
     { field: 'assignedQtySum', headerName: 'Assigned Qty Sum', width: 150 }
   ];
+
+  const summaryHeaderColumn = [
+    { field: 'planningHeaderId', headerName: 'ID', width: 70 },
+    { field: 'orderNumber', headerName: 'Order Number', width: 150 },
+    { field: 'collectionName', headerName: 'Collection Name', width: 200 },
+    { field: 'batchNo', headerName: 'Batch No', width: 180 },
+    { field: 'designNo', headerName: 'Design No', width: 150 },
+    { field: 'designerName', headerName: 'Designer Name', width: 150 },
+    { field: 'colorName', headerName: 'Color Name', width: 150 },
+    { field: 'poPcs', headerName: 'PO Pieces', width: 100 },
+    { field: 'batchStatus', headerName: 'Batch Status', width: 120 },
+    { field: 'planningDate', headerName: 'Planning Date', width: 180 }
+  ];
+
+  const summaryHeaderRows =
+    summaryHeader?.summaryHeaderList?.map((item, index) => ({
+      id: index,
+      ...item
+    })) || [];
 
   const prePlanningRows =
     summaryData?.prePlanningList?.map((item, index) => ({
@@ -337,7 +367,7 @@ const Summary = ({
               {distinctCollectionList.length > 0 ? (
                 distinctCollectionList.map((option) => (
                   <MenuItem
-                    key={option.collectionId}
+                    key={option.collectionBatchId}
                     value={option.collectionBatchId}
                   >
                     {option.distinctId}
@@ -366,6 +396,16 @@ const Summary = ({
           sx={{ paddingY: 1, paddingX: 1 }}
         >
           <Grid item xs={12} md={12} paddingTop={1}>
+            <DataGrid
+              rows={summaryHeaderRows}
+              columns={summaryHeaderColumn}
+              pageSize={5}
+              rowsPerPageOptions={[5, 10, 25]}
+              checkboxSelection
+            />
+          </Grid>
+
+          {/* <Grid item xs={12} md={12} paddingTop={1}>
             {isLoading ? (
               <Box
                 display="flex"
@@ -707,7 +747,7 @@ const Summary = ({
             ) : (
               <CircularProgress></CircularProgress>
             )}
-          </Grid>
+          </Grid> */}
         </Grid>
       </Card>
     </>
