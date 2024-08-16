@@ -50,7 +50,7 @@ const NewDesign = () => {
   const [value, setValue] = useState('1');
   const [duplicateError, setDuplicateError] = useState(false); // State to track duplicate design number error
   const { data: lookupData } = useGetLookUpListQuery();
-  console.log('designers', designers);
+
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
   };
@@ -63,7 +63,7 @@ const NewDesign = () => {
     }
   }, [lookupData]);
 
-  console.log('lookupData', lookupData.result[0]);
+  console.log('designers', designers);
 
   useEffect(() => {
     if (designData) {
