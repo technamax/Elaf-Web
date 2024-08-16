@@ -189,7 +189,7 @@ const ShrinkageWastageConfiguration = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:83/api/Configurations/SaveShrinkageWastageConfiguration',
+        'http://100.42.177.77:81/api/Configurations/SaveShrinkageWastageConfiguration',
         formData
       );
 
@@ -463,7 +463,7 @@ const ShrinkageWastageConfiguration = () => {
     }
   }, [apiRef]);
 
-  const deleteApi = `http://100.42.177.77:83/api/Configurations/DeleteShrinkageWastageConfigurationById?configurationId=`;
+  const deleteApi = `http://100.42.177.77:81/api/Configurations/DeleteShrinkageWastageConfigurationById?configurationId=`;
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
       <Card variant="outlined">
