@@ -205,7 +205,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     const GetPrePlanningHeaderByDesignId = async (id) => {
       try {
         const response = await axios.get(
-          `http://100.42.177.77:81/api/PrePlanning/GetPrePlanningHeaderByDesignId?designId=${id}`
+          `http://100.42.177.77:83/api/PrePlanning/GetPrePlanningHeaderByDesignId?designId=${id}`
         );
         console.log(response.data);
         setBatchList(response.data.result);
@@ -218,7 +218,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     //   // setLoading(true);
     //   try {
     //     const response = await axios.get(
-    //       `http://100.42.177.77:81/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
+    //       `http://100.42.177.77:83/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
     //     );
     //     console.log('GetPrePlanningByPlanningHeaderI', response.data.result);
     //     setInitialRows(
@@ -237,9 +237,11 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     // setLoading(false);
   }, [formData.designId, formData.planningHeaderId]);
   const isDyeing =
-    formData.planningProcessTypeId === 212 ||
+    formData.planningProcessTypeId === 204 ||
     formData.planningProcessTypeId === 1210;
-  //1219 in uat, 1210 in develop
+
+  //212 in uat and 1219
+  // 205 and 1210 in develop
   console.log('initialValues', initialValues);
   console.log('selectedCollectionId', selectedCollectionId);
 
@@ -471,7 +473,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         total: parseFloat(formData.total.replace(/,/g, ''))
       };
       const response = await axios.post(
-        'http://100.42.177.77:81/api/PrePlanning/SavePrePlanning',
+        'http://100.42.177.77:83/api/PrePlanning/SavePrePlanning',
         cleanedFormData
       );
       console.log('Data saved successfully:', response.data);
@@ -673,10 +675,12 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
           params.value === 'MultiHead'
             ? 'primary.dark'
             : params.value === 'Schiffili'
-              ? theme.palette.grey[900]
+              ? 'primary'
               : params.value === 'Dyeing'
                 ? 'success.dark'
-                : 'default';
+                : params.value === 'Printing'
+                  ? 'warning.dark'
+                  : 'default';
 
         return (
           <Chip
@@ -870,7 +874,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
   };
   console.log('batchList:', batchList);
 
-  const deleteApi = `http://100.42.177.77:81/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
+  const deleteApi = `http://100.42.177.77:83/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded); // Toggle accordion state based on the icon click
   };
