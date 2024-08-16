@@ -17,11 +17,12 @@ export const productionApi = createApi({
       query: () => `Production/GetProductionBatchForProcessing?appId=1`
     }),
     getProductionProcessList: builder.query({
-      query: () => `Production/GetProductionProcessList?appId=1`
+      query: (status) =>
+        `Production/GetProductionProcessList?appId=1&status=${status}`
     }),
     getProductionProcessByProductionId: builder.query({
-      query: ({ productionId, ViewStatus }) =>
-        `Production/GetProductionProcessByProductionId?appId=1&productionId=${productionId}&status=${ViewStatus}`
+      query: ({ productionId, status }) =>
+        `Production/GetProductionProcessByProductionId?appId=1&productionId=${productionId}&status=${status}`
     }),
     getFabricForProductionByCollectionId: builder.query({
       query: (collectionId) =>

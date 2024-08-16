@@ -7,11 +7,17 @@ export const lookupApi = createApi({
     getLookUpList: builder.query({
       query: () => `Common/GetLookUpList?appId=1`
     }),
+    GetStatusLookUp: builder.query({
+      query: () => `Common/GetStatusLookUp?appId=1`
+    }),
     getShrinkageWastageList: builder.query({
       query: () => `Configurations/GetShrinkageWastageList?appId=1`
     })
   })
 });
 
-export const { useGetLookUpListQuery, useGetShrinkageWastageListQuery } =
-  lookupApi;
+export const {
+  useGetLookUpListQuery,
+  useGetShrinkageWastageListQuery,
+  useGetStatusLookUpQuery
+} = lookupApi;
