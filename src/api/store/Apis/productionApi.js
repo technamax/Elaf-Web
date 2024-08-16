@@ -43,6 +43,10 @@ export const productionApi = createApi({
     getPrePlanningFabricFromCollectionId: builder.query({
       query: (collectionId) =>
         `Production/GetPrePlanningFabricFromCollectionId?appId=1&collectionId=${collectionId}`
+    }),
+    GetVBxStockReceivingList: builder.query({
+      query: (productionId) =>
+        `BxStockReceiving/GetVBxStockReceivingList?productionId=${productionId}`
     })
   })
 });
@@ -58,5 +62,6 @@ export const {
   useGetProductionBatchDetailsByProductionidQuery,
   useGetBxStockHeaderListQuery,
   useGetBxStockHeaderDetailListQuery,
-  useGetPrePlanningFabricFromCollectionIdQuery
+  useGetPrePlanningFabricFromCollectionIdQuery,
+  useGetVBxStockReceivingListQuery
 } = productionApi;
