@@ -193,7 +193,7 @@ const Summary = ({
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/PrePlanning/GetPrePlanningSummaryByBatchId?planningHeaderId=${planningHeaderId}`
+        `http://100.42.177.77:81/api/PrePlanning/GetPrePlanningSummaryByBatchId?planningHeaderId=${planningHeaderId}`
       );
       if (response.data.success) {
         setSummaryData(response.data.result);
