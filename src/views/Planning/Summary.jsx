@@ -123,8 +123,9 @@ const Summary = ({
   };
   const [selectedRows, setSelectedRows] = useState([]);
 
-  const handleRowSelection = (newSelection) => {
+  const handleRowSelection = (newSelection, row) => {
     setSelectedRows(newSelection);
+
     console.log('New Selection:', newSelection); // Debugging line
   };
 
@@ -191,6 +192,7 @@ const Summary = ({
   }, [summaryHeader]);
   console.log('Selected collection ID:', selectedCollectionId);
   console.log('distinctCollectionList data:', distinctCollectionList);
+  console.log('summaryData', summaryHeader);
 
   const fetchSummaryData = async (planningHeaderId) => {
     setIsLoading(true);
@@ -278,15 +280,16 @@ const Summary = ({
   ];
 
   const summaryHeaderColumn = [
-    { field: 'planningHeaderId', headerName: 'ID' },
-    { field: 'orderNumber', headerName: 'Order Number' },
+    // { field: 'planningHeaderId', headerName: 'ID' },
     { field: 'collectionName', headerName: 'Collection Name' },
     { field: 'batchNo', headerName: 'Batch No' },
     { field: 'designNo', headerName: 'Design No' },
+    { field: 'orderNumber', headerName: 'Order Number' },
     { field: 'designerName', headerName: 'Designer Name' },
     { field: 'colorName', headerName: 'Color Name' },
     { field: 'poPcs', headerName: 'PO Pieces' },
-    { field: 'batchStatus', headerName: 'Batch Status' },
+    // { field: 'batchStatus', headerName: 'Batch Status' },
+    { field: 'batchStatusName', headerName: 'Batch Status' },
     { field: 'planningDate', headerName: 'Planning Date' },
     {
       field: 'action',
@@ -394,6 +397,7 @@ const Summary = ({
       enqueueSnackbar('Failed to save data', { variant: 'error' });
     }
   };
+
   return (
     <>
       <Card variant="outlined">
