@@ -7,7 +7,14 @@ import {
   CardHeader,
   Divider,
   Typography,
-  CircularProgress
+  CircularProgress,
+  Button,
+  ButtonGroup,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  CardActions
 } from '@mui/material';
 import {
   useGetCollectionFromPlanningHeaderQuery,
@@ -17,7 +24,11 @@ import {
   useGetAdditionalProcessListByBatchNoQuery,
   useGetFabricColorByComponentsBatchNoAndFabricIdQuery
 } from 'api/store/Apis/prePlanningHeaderApi';
-import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
+import {
+  useGetDesignFromPlanningHeaderByCollectionIdQuery,
+  useGetDistinctCollectionsQuery,
+  useGetSummaryByCollectionQuery
+} from 'api/store/Apis/prePlanningHeaderApi';
 import { useSnackbar } from 'notistack';
 import { useUser } from 'context/User';
 import axios from 'axios';
@@ -87,9 +98,20 @@ const Summary = ({
   const [summaryData, setSummaryData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const theme = useTheme();
+  const [open, setOpen] = useState(false); // State for modal open/close
+
   const [selectedCollectionId, setSelectedCollectionId] = useState(
     collectionId || ''
   );
+  const [formData, setFormData] = useState({
+    designId: '',
+    planningHeaderId: '',
+    batchNo: '',
+    distinctId: '',
+    collectionBatchId: '',
+    collectionId: selectedCollectionId || ''
+  });
+
   const handleStateChange = (params) => {
     if (apiRef.current && apiRef.current.autosizeColumns) {
       apiRef.current.autosizeColumns({
@@ -99,37 +121,22 @@ const Summary = ({
       });
     }
   };
-  const [formData, setFormData] = useState({
-    designId: '',
-    planningHeaderId: 0,
-    batchNo: ''
-  });
+  const [selectedRows, setSelectedRows] = useState([]);
 
-  // useEffect(() => {
-  //   setSelectedCollectionId(initialValues.collectionId);
-  // }, [initialValues]);
-  useEffect(() => {
-    setInitialValues({
-      collectionId: formData?.collectionId || '',
-      designId: formData?.designId || '',
-      planningHeaderId: formData?.planningHeaderId || '',
-      batchNo: formData?.batchNo || ''
-    });
-  }, [formData.collectionId, formData.designId, formData?.batchNo]);
-  const { data: designData, refetch } =
-    useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
-      skip: !selectedCollectionId // Skip the query if no collection is selected
+  const handleRowSelection = (newSelection) => {
+    setSelectedRows(newSelection);
+    console.log('New Selection:', newSelection); // Debugging line
+  };
+
+  const { data: distinctData, refetch: refetchDistinctData } =
+    useGetDistinctCollectionsQuery(selectedCollectionId, {
+      skip: !selectedCollectionId // Skip fetching if no collectionId
     });
 
-  const { data: batchData, refetch: refetchBatches } =
-    useGetPrePlanningHeaderByDesignIdQuery(formData.designId, {
-      skip: !formData.designId // Skip the query if no design is selected
-    });
-
-  const [designList, setDesignList] = useState([]);
-  const [batchList, setBatchList] = useState([]);
+  const [summaryHeaderList, setSummaryHeaderList] = useState([]);
+  const [distinctCollectionList, setDistinctCollectionList] = useState([]);
   const [collectionList, setCollectionList] = useState([]);
-
+  console.log('distinctData', distinctData);
   useEffect(() => {
     if (collectionData) {
       setCollectionList(collectionData.result);
@@ -137,16 +144,11 @@ const Summary = ({
   }, [collectionData]);
 
   useEffect(() => {
-    if (designData) {
-      setDesignList(designData.result);
+    if (distinctData) {
+      console.log('Distinct Data:', distinctData.result); // Debugging
+      setDistinctCollectionList(distinctData || []); // Ensure it's always an array
     }
-  }, [designData]);
-
-  useEffect(() => {
-    if (batchData) {
-      setBatchList(batchData.result);
-    }
-  }, [batchData]);
+  }, [distinctData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -158,44 +160,46 @@ const Summary = ({
       setFormData({
         ...formData,
         collectionId: value,
-        designId: '',
-        planningHeaderId: 0,
-        batchNo: ''
+        collectionBatchId: '' // Reset batch ID when collection changes
       });
-    } else if (name === 'designId') {
+      refetchDistinctData(collectionId);
+    } else if (name === 'collectionBatchId') {
       setFormData({
         ...formData,
-        designId: value,
-        planningHeaderId: 0
+        collectionBatchId: value,
+        planningHeaderId: formData.planningHeaderId
       });
-    } else if (name === 'batchNo') {
-      const selectedBatch = batchList.find((batch) => batch.batchNo === value);
-      setFormData({
-        ...formData,
-        batchNo: value,
-        planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
-      });
-
-      if (selectedBatch) {
-        fetchSummaryData(selectedBatch.planningHeaderId);
-      }
     } else {
-      setFormData({ ...formData, [name]: value });
+      const updatedFormData = { ...formData, [name]: value };
+      setFormData(updatedFormData);
     }
   };
-
+  const { data: summaryHeader, refetch: refetchSummaryHeader } =
+    useGetSummaryByCollectionQuery(
+      {
+        collectionId: formData.collectionId,
+        collectionBatchId: formData.collectionBatchId
+      },
+      {
+        skip: !formData.collectionId || !formData.collectionBatchId // Skip query if either ID is missing
+      }
+    );
+  useEffect(() => {
+    if (summaryHeader && summaryHeader.length > 0) {
+      setSummaryHeaderList(summaryHeader);
+    }
+  }, [summaryHeader]);
   console.log('Selected collection ID:', selectedCollectionId);
-  console.log('Form data:', formData);
-  console.log('Design list:', designList);
-  console.log('Batch list:', batchList);
+  console.log('distinctCollectionList data:', distinctCollectionList);
 
   const fetchSummaryData = async (planningHeaderId) => {
     setIsLoading(true);
     try {
+      console.log('Fetching Summary Data for ID:', planningHeaderId); // Log to verify the ID
+
       const response = await axios.get(
-        `https://gecxc.com:4041/api/PrePlanning/GetPrePlanningSummaryByBatchId?planningHeaderId=${planningHeaderId}`
+        `http://100.42.177.77:81/api/PrePlanning/GetPrePlanningSummaryByBatchId?planningHeaderId=${planningHeaderId}`
       );
-      //in 449 url this api doesnt exist
       if (response.data.success) {
         setSummaryData(response.data.result);
       } else {
@@ -207,8 +211,18 @@ const Summary = ({
       setIsLoading(false);
     }
   };
-  console.log(summaryData);
+  console.log('formData', formData);
 
+  const handleOpen = (planningHeaderId) => {
+    console.log('Selected PlanningHeaderId:', planningHeaderId);
+    fetchSummaryData(planningHeaderId);
+    setOpen(true);
+    // You can call fetchSummaryData(planningHeaderId) if needed
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   const prePlanningColumns = [
     { field: 'designNo', headerName: 'Design No' },
     { field: 'batchNo', headerName: 'Batch No' },
@@ -263,6 +277,53 @@ const Summary = ({
     { field: 'assignedQtySum', headerName: 'Assigned Qty Sum', width: 150 }
   ];
 
+  const summaryHeaderColumn = [
+    { field: 'planningHeaderId', headerName: 'ID' },
+    { field: 'orderNumber', headerName: 'Order Number' },
+    { field: 'collectionName', headerName: 'Collection Name' },
+    { field: 'batchNo', headerName: 'Batch No' },
+    { field: 'designNo', headerName: 'Design No' },
+    { field: 'designerName', headerName: 'Designer Name' },
+    { field: 'colorName', headerName: 'Color Name' },
+    { field: 'poPcs', headerName: 'PO Pieces' },
+    { field: 'batchStatus', headerName: 'Batch Status' },
+    { field: 'planningDate', headerName: 'Planning Date' },
+    {
+      field: 'action',
+      headerName: 'Action',
+
+      renderCell: (params) => (
+        <ButtonGroup
+          variant="outlined"
+          size="small"
+          aria-label="outlined primary button group"
+        >
+          <Button onClick={() => handleOpen(params.row.planningHeaderId)}>
+            View
+          </Button>
+        </ButtonGroup>
+      ),
+      sortable: false,
+      filterable: false
+    }
+  ];
+  const [summaryHeaderRows, setSummaryHeaderRows] = useState([]);
+  useEffect(() => {
+    // Assuming summaryHeaderList is updated from an API or some data source
+    const updatedRows =
+      summaryHeaderList?.map((item, index) => ({
+        id: item.planningHeaderId || index, // Ensure each row has a unique ID
+        ...item
+      })) || [];
+    setSummaryHeaderRows(updatedRows);
+  }, [summaryHeaderList]);
+
+  // const summaryHeaderRows =
+  //   summaryHeaderList?.map((item, index) => ({
+  //     id: item.planningHeaderId || index, // Use a unique identifier if available
+  //     ...item
+  //   })) || [];
+
   const prePlanningRows =
     summaryData?.prePlanningList?.map((item, index) => ({
       id: index,
@@ -300,6 +361,39 @@ const Summary = ({
   const CustomFooter = () => <div />;
   const apiRef = useGridApiRef();
 
+  const handleSave = async () => {
+    if (selectedRows.length === 0) {
+      enqueueSnackbar('No rows selected', { variant: 'warning' });
+      return;
+    }
+
+    const planningHeaderIds = selectedRows;
+    const requestBody = {
+      planningHeaderId: planningHeaderIds,
+      collectionBatchId: formData.collectionBatchId,
+      createdBy: user.empId,
+      batchStatus: 3
+    };
+
+    try {
+      const response = await axios.get(
+        'http://100.42.177.77:81/api/PrePlanning/FinalizePrePlanningBatch',
+        requestBody
+      );
+      if (response.data.success) {
+        enqueueSnackbar('Data saved successfully', { variant: 'success' });
+        console.log('requestbody', requestBody);
+      } else {
+        enqueueSnackbar(response.data.message, { variant: 'error' });
+      }
+    } catch (error) {
+      console.error('Failed to save data', error);
+      console.log('requestbody', requestBody);
+
+      enqueueSnackbar('Failed to save data', { variant: 'error' });
+    }
+  };
+
   return (
     <>
       <Card variant="outlined">
@@ -320,7 +414,7 @@ const Summary = ({
               select
               label="Select Collection"
               name="collectionId"
-              value={selectedCollectionId}
+              value={formData.collectionId}
               onChange={handleChange}
               size="small"
               InputLabelProps={{
@@ -340,9 +434,9 @@ const Summary = ({
             <TextField
               fullWidth
               select
-              label="Select Design"
-              name="designId"
-              value={formData.designId}
+              label="Select Collection Batch"
+              name="collectionBatchId"
+              value={formData.collectionBatchId}
               onChange={handleChange}
               size="small"
               InputLabelProps={{
@@ -351,34 +445,29 @@ const Summary = ({
                 }
               }}
             >
-              {designList.map((option) => (
-                <MenuItem key={option.designId} value={option.designId}>
-                  {option.designNo}
-                </MenuItem>
-              ))}
+              {distinctCollectionList.length > 0 ? (
+                distinctCollectionList.map((option) => (
+                  <MenuItem
+                    key={option.collectionBatchId}
+                    value={option.collectionBatchId}
+                  >
+                    {option.distinctId}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled>No batches available</MenuItem>
+              )}
             </TextField>
           </Grid>
-          <Grid item xs={12} md={4}>
-            <TextField
-              fullWidth
-              select
-              label="Batch No."
-              name="batchNo"
-              value={formData.batchNo}
-              onChange={handleChange}
+          <Grid item xs={4} textAlign="right" sx={{ mt: 1 }}>
+            <Button
+              variant="contained"
               size="small"
-              InputLabelProps={{
-                sx: {
-                  color: 'black'
-                }
-              }}
+              onClick={handleSave}
+              color="success"
             >
-              {batchList.map((option) => (
-                <MenuItem key={option.batchNo} value={option.batchNo}>
-                  {option.batchNo}
-                </MenuItem>
-              ))}
-            </TextField>
+              Finalize
+            </Button>
           </Grid>
         </Grid>
       </Card>
@@ -398,348 +487,375 @@ const Summary = ({
           sx={{ paddingY: 1, paddingX: 1 }}
         >
           <Grid item xs={12} md={12} paddingTop={1}>
-            {isLoading ? (
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                height="100%"
-              >
-                <CircularProgress />
-              </Box>
-            ) : summaryData ? (
-              <>
-                <Typography
-                  variant="h3"
-                  gutterBottom
-                  sx={{
-                    color: '#9f1d22',
-                    // textAlign: 'center',
-                    cursor: 'pointer', // To indicate it's clickable
-                    '&:hover': {
-                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
-                    }
-                  }}
-                  onClick={() => setActiveStep(0)} // Navigate to the corresponding step
-                >
-                  Pre Planning
-                </Typography>
-
-                <DataGrid
-                  // classes={{ columnHeaders: 'custom-header' }}
-                  rows={prePlanningRows}
-                  columns={prePlanningColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  autoHeight
-                  hideFooter
-                  onStateChange={handleStateChange}
-                  sx={{
-                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-                    '& .css-1kyxv1r-MuiDataGrid-root': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-container--top [role=row]': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-iconButtonContainer': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-sortIcon': {
-                      color: 'white'
-                    },
-                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
-                    '& .MuiDataGrid-row': {
-                      '&.total-summary-row': {
-                        backgroundColor: 'darkgray'
-                      }
-                    }
-                  }}
-                />
-
-                <Divider
-                  color="#921e22"
-                  sx={{ height: 3, width: '100%', mb: 1 }}
-                />
-                <Typography
-                  variant="h3"
-                  gutterBottom
-                  sx={{
-                    color: '#9f1d22',
-                    // textAlign: 'center',
-                    cursor: 'pointer', // To indicate it's clickable
-                    '&:hover': {
-                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
-                    }
-                  }}
-                  onClick={() => setActiveStep(1)} // Navigate to the corresponding step
-                >
-                  Fabrication
-                </Typography>
-
-                <DataGrid
-                  rows={fabricationRows}
-                  columns={fabricationColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  autoHeight
-                  hideFooter
-                  sx={{
-                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-                    '& .css-1kyxv1r-MuiDataGrid-root': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-container--top [role=row]': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-iconButtonContainer': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-sortIcon': {
-                      color: 'white'
-                    },
-                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
-                    '& .MuiDataGrid-row': {
-                      '&.total-summary-row': {
-                        backgroundColor: 'darkgray'
-                      }
-                    }
-                  }}
-                />
-
-                <Divider
-                  color="#921e22"
-                  sx={{ height: 2, width: '100%', mt: 1, mb: 1 }}
-                />
-                <Typography
-                  variant="h3"
-                  gutterBottom
-                  sx={{
-                    color: '#9f1d22',
-                    // textAlign: 'center',
-                    cursor: 'pointer', // To indicate it's clickable
-                    '&:hover': {
-                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
-                    }
-                  }}
-                  onClick={() => setActiveStep(2)} // Navigate to the corresponding step
-                >
-                  Dyeing
-                </Typography>
-
-                <DataGrid
-                  rows={dyeingPrintingRows}
-                  columns={dyeingPrintingColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  autoHeight
-                  hideFooter
-                  sx={{
-                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-                    '& .css-1kyxv1r-MuiDataGrid-root': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-container--top [role=row]': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-iconButtonContainer': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-sortIcon': {
-                      color: 'white'
-                    },
-                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
-                    '& .MuiDataGrid-row': {
-                      '&.total-summary-row': {
-                        backgroundColor: 'darkgray'
-                      }
-                    }
-                  }}
-                />
-
-                <Divider
-                  color="#921e22"
-                  sx={{ height: 2, width: '100%', mb: 1 }}
-                />
-                <Typography
-                  variant="h3"
-                  gutterBottom
-                  sx={{
-                    color: '#9f1d22',
-                    // textAlign: 'center',
-                    cursor: 'pointer', // To indicate it's clickable
-                    '&:hover': {
-                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
-                    }
-                  }}
-                  onClick={() => setActiveStep(3)} // Navigate to the corresponding step
-                >
-                  Embroidery
-                </Typography>
-
-                <DataGrid
-                  rows={embroideryRows}
-                  columns={embroideryColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  autoHeight
-                  hideFooter
-                  sx={{
-                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-                    '& .css-1kyxv1r-MuiDataGrid-root': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-container--top [role=row]': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-iconButtonContainer': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-sortIcon': {
-                      color: 'white'
-                    },
-                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
-                    '& .MuiDataGrid-row': {
-                      '&.total-summary-row': {
-                        backgroundColor: 'darkgray'
-                      }
-                    }
-                  }}
-                />
-
-                <Divider
-                  color="#921e22"
-                  sx={{ height: 2, width: '100%', mb: 1 }}
-                />
-
-                <Typography
-                  variant="h3"
-                  gutterBottom
-                  sx={{
-                    color: '#9f1d22',
-                    // textAlign: 'center',
-                    cursor: 'pointer', // To indicate it's clickable
-                    '&:hover': {
-                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
-                    }
-                  }}
-                  onClick={() => setActiveStep(4)} // Navigate to the corresponding step
-                >
-                  Schiffli
-                </Typography>
-                <DataGrid
-                  rows={schiffiliRows}
-                  columns={schiffiliColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  autoHeight
-                  hideFooter
-                  sx={{
-                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-                    '& .css-1kyxv1r-MuiDataGrid-root': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-container--top [role=row]': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-iconButtonContainer': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-sortIcon': {
-                      color: 'white'
-                    },
-                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
-                    '& .MuiDataGrid-row': {
-                      '&.total-summary-row': {
-                        backgroundColor: 'darkgray'
-                      }
-                    }
-                  }}
-                />
-                <Divider
-                  color="#921e22"
-                  sx={{ height: 2, width: '100%', mb: 1 }}
-                />
-                <Typography
-                  variant="h3"
-                  gutterBottom
-                  sx={{
-                    color: '#9f1d22',
-                    // textAlign: 'center',
-                    cursor: 'pointer', // To indicate it's clickable
-                    '&:hover': {
-                      textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
-                    }
-                  }}
-                  onClick={() => setActiveStep(5)} // Navigate to the corresponding step
-                >
-                  Additional Process
-                </Typography>
-
-                <DataGrid
-                  rows={additionalProcessRows}
-                  columns={additionalProcessColumns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  autoHeight
-                  hideFooter
-                  sx={{
-                    '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-                    '& .css-1kyxv1r-MuiDataGrid-root': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-container--top [role=row]': {
-                      color: 'white',
-                      backgroundColor: '#323232'
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-iconButtonContainer': {
-                      color: 'white'
-                    },
-                    '& .MuiDataGrid-sortIcon': {
-                      color: 'white'
-                    },
-                    '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
-                    '& .MuiDataGrid-row': {
-                      '&.total-summary-row': {
-                        backgroundColor: 'darkgray'
-                      }
-                    }
-                  }}
-                />
-              </>
-            ) : (
-              <CircularProgress></CircularProgress>
-            )}
+            <DataGrid
+              rows={summaryHeaderRows}
+              columns={summaryHeaderColumn}
+              checkboxSelection
+              getRowId={(row) => row.id} // Ensure each row has a unique ID
+              disableRowSelectionOnClick
+              autosizeOnMount
+              apiRef={apiRef}
+              onStateChange={handleStateChange}
+              onRowSelectionModelChange={(newSelectionModel) =>
+                handleRowSelection(newSelectionModel)
+              }
+            />
           </Grid>
+
+          <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
+            {/* <DialogTitle>Details</DialogTitle> */}
+            <CardHeader
+              className="css-4rfrnx-MuiCardHeader-root"
+              title="Summary Details"
+              titleTypographyProps={{ style: { color: 'white' } }}
+            />
+            <DialogContent>
+              {isLoading ? (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  height="100%"
+                >
+                  <CircularProgress />
+                </Box>
+              ) : summaryData ? (
+                <>
+                  <Typography
+                    variant="h3"
+                    gutterBottom
+                    sx={{
+                      color: '#9f1d22',
+                      // textAlign: 'center',
+                      cursor: 'pointer', // To indicate it's clickable
+                      '&:hover': {
+                        textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                      }
+                    }}
+                    onClick={() => setActiveStep(0)} // Navigate to the corresponding step
+                  >
+                    Pre Planning
+                  </Typography>
+
+                  <DataGrid
+                    // classes={{ columnHeaders: 'custom-header' }}
+                    rows={prePlanningRows}
+                    columns={prePlanningColumns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    autoHeight
+                    hideFooter
+                    onStateChange={handleStateChange}
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
+                  />
+
+                  <Divider
+                    color="#921e22"
+                    sx={{ height: 3, width: '100%', mb: 1 }}
+                  />
+                  <Typography
+                    variant="h3"
+                    gutterBottom
+                    sx={{
+                      color: '#9f1d22',
+                      // textAlign: 'center',
+                      cursor: 'pointer', // To indicate it's clickable
+                      '&:hover': {
+                        textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                      }
+                    }}
+                    onClick={() => setActiveStep(1)} // Navigate to the corresponding step
+                  >
+                    Fabrication
+                  </Typography>
+
+                  <DataGrid
+                    rows={fabricationRows}
+                    columns={fabricationColumns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    autoHeight
+                    hideFooter
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
+                  />
+
+                  <Divider
+                    color="#921e22"
+                    sx={{ height: 2, width: '100%', mt: 1, mb: 1 }}
+                  />
+                  <Typography
+                    variant="h3"
+                    gutterBottom
+                    sx={{
+                      color: '#9f1d22',
+                      // textAlign: 'center',
+                      cursor: 'pointer', // To indicate it's clickable
+                      '&:hover': {
+                        textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                      }
+                    }}
+                    onClick={() => setActiveStep(2)} // Navigate to the corresponding step
+                  >
+                    Dyeing
+                  </Typography>
+
+                  <DataGrid
+                    rows={dyeingPrintingRows}
+                    columns={dyeingPrintingColumns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    autoHeight
+                    hideFooter
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
+                  />
+
+                  <Divider
+                    color="#921e22"
+                    sx={{ height: 2, width: '100%', mb: 1 }}
+                  />
+                  <Typography
+                    variant="h3"
+                    gutterBottom
+                    sx={{
+                      color: '#9f1d22',
+                      // textAlign: 'center',
+                      cursor: 'pointer', // To indicate it's clickable
+                      '&:hover': {
+                        textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                      }
+                    }}
+                    onClick={() => setActiveStep(3)} // Navigate to the corresponding step
+                  >
+                    Embroidery
+                  </Typography>
+
+                  <DataGrid
+                    rows={embroideryRows}
+                    columns={embroideryColumns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    autoHeight
+                    hideFooter
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
+                  />
+
+                  <Divider
+                    color="#921e22"
+                    sx={{ height: 2, width: '100%', mb: 1 }}
+                  />
+
+                  <Typography
+                    variant="h3"
+                    gutterBottom
+                    sx={{
+                      color: '#9f1d22',
+                      // textAlign: 'center',
+                      cursor: 'pointer', // To indicate it's clickable
+                      '&:hover': {
+                        textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                      }
+                    }}
+                    onClick={() => setActiveStep(4)} // Navigate to the corresponding step
+                  >
+                    Schiffli
+                  </Typography>
+                  <DataGrid
+                    rows={schiffiliRows}
+                    columns={schiffiliColumns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    autoHeight
+                    hideFooter
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
+                  />
+                  <Divider
+                    color="#921e22"
+                    sx={{ height: 2, width: '100%', mb: 1 }}
+                  />
+                  <Typography
+                    variant="h3"
+                    gutterBottom
+                    sx={{
+                      color: '#9f1d22',
+                      // textAlign: 'center',
+                      cursor: 'pointer', // To indicate it's clickable
+                      '&:hover': {
+                        textDecoration: 'underline' // Optional: Add an underline on hover to indicate it's clickable
+                      }
+                    }}
+                    onClick={() => setActiveStep(5)} // Navigate to the corresponding step
+                  >
+                    Additional Process
+                  </Typography>
+
+                  <DataGrid
+                    rows={additionalProcessRows}
+                    columns={additionalProcessColumns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    autoHeight
+                    hideFooter
+                    sx={{
+                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                      '& .css-1kyxv1r-MuiDataGrid-root': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-container--top [role=row]': {
+                        color: 'white',
+                        backgroundColor: '#323232'
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-iconButtonContainer': {
+                        color: 'white'
+                      },
+                      '& .MuiDataGrid-sortIcon': {
+                        color: 'white'
+                      },
+                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                      '& .MuiDataGrid-row': {
+                        '&.total-summary-row': {
+                          backgroundColor: 'darkgray'
+                        }
+                      }
+                    }}
+                  />
+                </>
+              ) : (
+                <CircularProgress />
+              )}
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Close</Button>
+            </DialogActions>
+          </Dialog>
         </Grid>
       </Card>
     </>
