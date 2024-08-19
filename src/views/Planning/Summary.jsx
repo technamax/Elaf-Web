@@ -377,22 +377,23 @@ const Summary = ({
 
     try {
       const response = await axios.post(
-        `http://100.42.177.77:83/api/PrePlanning/FinalizePrePlanningBatch?${requestBody}`
+        'http://100.42.177.77:83/api/PrePlanning/FinalizePrePlanningBatch',
+        requestBody
       );
-      if (response.data.success) {
-        enqueueSnackbar('Data saved successfully', { variant: 'success' });
+
+      if (response.data === true) {
+        enqueueSnackbar('Pre Planning Finalized successfully', {
+          variant: 'success'
+        });
         console.log('requestbody', requestBody);
       } else {
-        enqueueSnackbar(response.data.message, { variant: 'error' });
+        enqueueSnackbar('Failed to save data', { variant: 'error' });
       }
     } catch (error) {
       console.error('Failed to save data', error);
-      console.log('requestbody', requestBody);
-
       enqueueSnackbar('Failed to save data', { variant: 'error' });
     }
   };
-
   return (
     <>
       <Card variant="outlined">
