@@ -376,7 +376,7 @@ const Summary = ({
     };
 
     try {
-      const response = await axios.get(
+      const response = await axios.post(
         'http://100.42.177.77:81/api/PrePlanning/FinalizePrePlanningBatch',
         requestBody
       );
