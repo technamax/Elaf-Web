@@ -17,11 +17,12 @@ export const productionApi = createApi({
       query: () => `Production/GetProductionBatchForProcessing?appId=1`
     }),
     getProductionProcessList: builder.query({
-      query: () => `Production/GetProductionProcessList?appId=1`
+      query: (status) =>
+        `Production/GetProductionProcessList?appId=1&status=${status}`
     }),
     getProductionProcessByProductionId: builder.query({
-      query: ({ productionId, ViewStatus }) =>
-        `Production/GetProductionProcessByProductionId?appId=1&productionId=${productionId}&status=${ViewStatus}`
+      query: ({ productionId, status }) =>
+        `Production/GetProductionProcessByProductionId?appId=1&productionId=${productionId}&status=${status}`
     }),
     getFabricForProductionByCollectionId: builder.query({
       query: (collectionId) =>
@@ -43,6 +44,14 @@ export const productionApi = createApi({
     getPrePlanningFabricFromCollectionId: builder.query({
       query: (collectionId) =>
         `Production/GetPrePlanningFabricFromCollectionId?appId=1&collectionId=${collectionId}`
+    }),
+    GetVBxStockReceivingList: builder.query({
+      query: (productionId) =>
+        `BxStockReceiving/GetVBxStockReceivingList?productionId=${productionId}`
+    }),
+    GetProductionFabricDetailList: builder.query({
+      query: (productionHeaderId) =>
+        `Production/GetProductionFabricDetailList?productionHeaderId=${productionHeaderId}`
     })
   })
 });
@@ -58,5 +67,7 @@ export const {
   useGetProductionBatchDetailsByProductionidQuery,
   useGetBxStockHeaderListQuery,
   useGetBxStockHeaderDetailListQuery,
-  useGetPrePlanningFabricFromCollectionIdQuery
+  useGetPrePlanningFabricFromCollectionIdQuery,
+  useGetVBxStockReceivingListQuery,
+  useGetProductionFabricDetailListQuery
 } = productionApi;

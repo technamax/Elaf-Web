@@ -65,7 +65,7 @@ const SmallTextField = styled(TextField)(({ theme }) => ({
   minHeight: '30px' // Set minimum height to ensure it's usable
 }));
 
-const ProductionProcess = () => {
+const FabricationSelectionIssuance = () => {
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
@@ -585,7 +585,7 @@ const ProductionProcess = () => {
                 // avatar={
                 // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
                 // }
-                title="Production Process > Fabtication"
+                title="Production Process > Fabrication"
                 titleTypographyProps={{ style: { color: 'white' } }}
               ></CardHeader>
               <Grid
@@ -863,4 +863,4 @@ const ProductionProcess = () => {
   );
 };
 
-export default ProductionProcess;
+export default FabricationSelectionIssuance;

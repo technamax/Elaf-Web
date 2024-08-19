@@ -37,11 +37,26 @@ const TermsandConditions = Loadable(
 const ProductionBatch = Loadable(
   lazy(() => import('views/Production/ProductionBatch'))
 );
-const ProductionProcess = Loadable(
-  lazy(() => import('views/Production/ProductionProcess'))
+const FabricationSelectionIssuance = Loadable(
+  lazy(() => import('views/Production/FabricationSelectionIssuance'))
 );
 const ReceivingFromBX = Loadable(
   lazy(() => import('views/Production/ReceivingFromBX'))
+);
+const DyeingIssuance = Loadable(
+  lazy(() => import('views/Production/DyeingIssuance'))
+);
+const EmbroideryIssuance = Loadable(
+  lazy(() => import('views/Production/EmbroideryIssuance'))
+);
+const SchiffiliIssuance = Loadable(
+  lazy(() => import('views/Production/SchiffiliIssuance'))
+);
+const AdditionalProcessIssuance = Loadable(
+  lazy(() => import('views/Production/AdditionalProcessIssuance'))
+);
+const ProductionReceiving = Loadable(
+  lazy(() => import('views/Production/ProductionReceiving'))
 );
 const ShrinkageWastageConfiguration = Loadable(
   lazy(() => import('views/Configuration/ShrinkageWastageConfiguration'))
@@ -115,13 +130,29 @@ const MainRoutes = {
           element: <ProtectedRoute element={ReceivingFromBX} />
         },
         {
-          path: 'ProductionProcess',
-          element: <ProtectedRoute element={ProductionProcess} />
+          path: 'FabricationSelectionIssuance',
+          element: <ProtectedRoute element={FabricationSelectionIssuance} />
+        },
+        {
+          path: 'DyeingIssuance',
+          element: <ProtectedRoute element={DyeingIssuance} />
+        },
+        {
+          path: 'EmbroideryIssuance',
+          element: <ProtectedRoute element={EmbroideryIssuance} />
+        },
+        {
+          path: 'SchiffiliIssuance',
+          element: <ProtectedRoute element={SchiffiliIssuance} />
+        },
+        {
+          path: 'AdditionalProcessIssuance',
+          element: <ProtectedRoute element={AdditionalProcessIssuance} />
+        },
+        {
+          path: 'ProductionReceiving',
+          element: <ProtectedRoute element={ProductionReceiving} />
         }
-        // {
-        //   path: 'PrePlanningCreation',
-        //   element: <ProtectedRoute element={PrePlanningCreation} />
-        // }
       ]
     },
     {

@@ -27,6 +27,8 @@ import {
   useGetBxStockHeaderDetailListQuery,
   useGetProductionBatchForProcessingQuery,
   useGetPrePlanningFabricFromCollectionIdQuery,
+  useGetProductionProcessListQuery,
+  useGetVBxStockReceivingListQuery,
   useGetDesignListFromCompletedCollectionIdQuery
 } from 'api/store/Apis/productionApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -56,7 +58,8 @@ const ReceivingFromBX = () => {
     issuanceNo: initialFormData?.issuanceNo || 0,
     issuanceName: initialFormData?.issuanceName || '',
     issuanceDate: initialFormData?.issuanceDate || null,
-    collectionId: initialFormData?.collectionId || ''
+    collectionId: initialFormData?.collectionId || '',
+    productionId: initialFormData?.productionId || ''
     // appId: user.appId,
     // createdOn: new Date().toISOString(),
     // createdBy: user.empId,
@@ -69,7 +72,8 @@ const ReceivingFromBX = () => {
       issuanceNo: initialFormData?.issuanceNo || 0,
       issuanceName: initialFormData?.issuanceName || '',
       issuanceDate: initialFormData?.issuanceDate || null,
-      collectionId: initialFormData?.collectionId || ''
+      collectionId: initialFormData?.collectionId || '',
+      productionId: initialFormData?.productionId || ''
     });
   }, [initialFormData, setInitialFormData]);
   const options = [
@@ -93,19 +97,21 @@ const ReceivingFromBX = () => {
 
   const { data: collectionData, refetch } =
     useGetProductionBatchForProcessingQuery();
+  const { data: productionData, refetch: refetchProductionData } =
+    useGetProductionProcessListQuery();
 
-  const {
-    data: productionBatchDetailsData,
-    refetch: refetchProductionBatchDetailsData
-  } = useGetProductionBatchDetailsByProductionidQuery(formData.productionId, {
-    skip: !formData.productionId // Skip the query if no collection is selected
-  });
+  const { data: bxStockData, refetch: refetchBxStockData } =
+    useGetVBxStockReceivingListQuery(formData.productionId, {
+      skip: !formData.productionId // Skip the query if no collection is selected
+    });
   const { data: fabricData, refetch: refetchFabricData } =
     useGetPrePlanningFabricFromCollectionIdQuery(formData.collectionId, {
-      skip: !formData.collectionId // Skip the query if no collection is selected
+      skip: !formData.collectionId
     });
 
   const [collectionList, setCollectionList] = useState([]);
+  const [productionList, setProductionList] = useState([]);
+  const [bxStockList, setBxStockList] = useState([]);
   const [fabricDetails, setfabricDetails] = useState([]);
   useEffect(() => {
     if (collectionData) {
@@ -117,6 +123,27 @@ const ReceivingFromBX = () => {
       );
     }
   }, [collectionData, refetch]);
+  useEffect(() => {
+    if (productionData) {
+      setProductionList(
+        productionData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [productionData, refetchProductionData]);
+  useEffect(() => {
+    if (bxStockData) {
+      // refetchBxStockData();
+      setBxStockList(
+        bxStockData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [bxStockData, formData.productionId]);
   useEffect(() => {
     if (fabricData) {
       setfabricDetails(
@@ -169,7 +196,8 @@ const ReceivingFromBX = () => {
 
       setFormData({
         ...formData,
-        collectionId: value
+        collectionId: value,
+        productionId: selectedCollection ? selectedCollection.productionId : ''
         // orderNumber: selectedCollection ? selectedCollection.orderNumber : ''
         // status: selectedCollection ? selectedCollection.batchStatus : ''
       });
@@ -238,6 +266,7 @@ const ReceivingFromBX = () => {
   const handleClickOpen2 = (data) => {
     setInitialFormData(data);
     setOpen2(true);
+    // setFormData({ ...formData, productionId: '' });
   };
   const handleClose = () => {
     // setShowUpperDiv(true);
@@ -374,6 +403,39 @@ const ReceivingFromBX = () => {
     {
       field: 'total',
       headerName: 'Quantity from Planning'
+      // flex: 1
+    }
+  ];
+  const bxStockColumns = [
+    {
+      field: 'id',
+      headerName: 'Sr#'
+      // flex: 1
+    },
+    {
+      field: 'barcode',
+      headerName: 'Barcode'
+      // flex: 1
+    },
+
+    {
+      field: 'productName',
+      headerName: 'Product Name'
+      // flex: 1
+    },
+    {
+      field: 'quantity',
+      headerName: 'Quantity'
+      // flex: 1
+    },
+    {
+      field: 'uom',
+      headerName: 'UOM'
+      // flex: 1
+    },
+    {
+      field: 'remarks',
+      headerName: 'Remarks'
       // flex: 1
     }
   ];
@@ -588,21 +650,21 @@ const ReceivingFromBX = () => {
                 >
                   <Grid item xs={12} md={3}>
                     <TextField
-                      label="Collection"
+                      label="Production"
                       fullWidth
                       size="small"
-                      name="collectionId"
+                      name="productionId"
                       onChange={handleChange}
-                      value={formData.collectionId}
+                      value={formData.productionId}
                       required
                       select
                       // error={!!formErrors.collectionName}
                       // helperText={formErrors.collectionName}
                     >
-                      {collectionList.map((option) => (
+                      {productionList.map((option) => (
                         <MenuItem
-                          key={option.collectionId}
-                          value={option.collectionId}
+                          key={option.productionId}
+                          value={option.productionId}
                         >
                           {option.collectionName}
                         </MenuItem>
@@ -632,7 +694,7 @@ const ReceivingFromBX = () => {
                   </Grid>
                   <Grid item xs={12} md={4}>
                     <TextField
-                      label="Issuance Name"
+                      label="Receiving Date"
                       fullWidth
                       size="small"
                       name="issuanceName"
@@ -646,8 +708,8 @@ const ReceivingFromBX = () => {
                   </Grid>
                   <Grid item xs={12}>
                     <ReuseableDataGrid
-                      initialRows={fabricDetails}
-                      iColumns={fabricColumns}
+                      initialRows={bxStockList}
+                      iColumns={bxStockColumns}
                       hideAction
                     />
                   </Grid>
