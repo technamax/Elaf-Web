@@ -130,7 +130,7 @@ export default function AdditionalServices({ initialValues }) {
       console.error('Error saving data:', error);
     }
   };
-
+http://100.42.177.77:83
   useEffect(() => {
     const getCollectionFromPlanningHeader = async () => {
       try {
@@ -159,7 +159,7 @@ export default function AdditionalServices({ initialValues }) {
         setInitialRows(
           response.data.result.map((row, index) => ({
             id: index + 1,
-            ...row
+           http://100.42.177.77:83
           }))
         );
       } else {
@@ -174,7 +174,7 @@ export default function AdditionalServices({ initialValues }) {
     } catch (error) {
       console.error('Error fetching data:', error);
       // Handle error state if needed
-      setInitialRows([]);
+      sethttp://100.42.177.77:83
     }
   }, [formData.collectionId]);
 
@@ -336,7 +336,7 @@ export default function AdditionalServices({ initialValues }) {
               fullWidth
               select
               label="Select Collection"
-              name="collectionId"
+              name="chttp://100.42.177.77:83
               value={formData.collectionId}
               onChange={handleChange}
               size="small"
