@@ -289,7 +289,18 @@ const Summary = ({
     // { field: 'batchStatus', headerName: 'Batch Status' },
     { field: 'batchStatusName', headerName: 'Batch Status' },
 
-    { field: 'planningDate', headerName: 'Planning Date' },
+    {
+      field: 'planningDate',
+      headerName: 'Planning Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
     {
       field: 'action',
       headerName: 'Action',
