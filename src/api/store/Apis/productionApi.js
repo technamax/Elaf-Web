@@ -52,6 +52,9 @@ export const productionApi = createApi({
     GetProductionFabricDetailList: builder.query({
       query: (productionHeaderId) =>
         `Production/GetProductionFabricDetailList?productionHeaderId=${productionHeaderId}`
+    }),
+    GetLookUpStatus: builder.query({
+      query: () => `Common/GetStatusLookUp?appId=1`
     })
   })
 });
@@ -69,5 +72,6 @@ export const {
   useGetBxStockHeaderDetailListQuery,
   useGetPrePlanningFabricFromCollectionIdQuery,
   useGetVBxStockReceivingListQuery,
-  useGetProductionFabricDetailListQuery
+  useGetProductionFabricDetailListQuery,
+  useGetLookUpStatusQuery
 } = productionApi;

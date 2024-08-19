@@ -44,7 +44,8 @@ import {
   useGetCollectionListFromPlanningHeaderQuery,
   useGetProductionProcessListQuery,
   useGetProductionBatchForProcessingQuery,
-  useGetProductionProcessByProductionIdQuery
+  useGetProductionProcessByProductionIdQuery,
+  useGetLookUpStatusQuery
 } from 'api/store/Apis/productionApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { styled } from '@mui/material/styles';
@@ -126,6 +127,18 @@ const FabricationSelectionIssuance = () => {
   //     );
   //   }
   // }, [mainMenuData, refetch]);
+  const { data: statusData } = useGetLookUpStatusQuery();
+  const [statusLookup, setStatusLookup] = useState([]);
+  useEffect(() => {
+    if (statusData) {
+      // Ensure statusData.result[0] is an array
+      const data = Array.isArray(statusData.result[0])
+        ? statusData.result[0]
+        : statusData.result; // Assuming statusData.result itself is an array
+
+      setStatusLookup(data);
+    }
+  }, [statusData]);
 
   const { data: lookupData } = useGetLookUpListQuery();
   useEffect(() => {
@@ -198,22 +211,17 @@ const FabricationSelectionIssuance = () => {
         (collection) => collection.collectionId === parseInt(value)
       );
 
-      setFormData({
-        ...formData,
+      setFormData((prevFormData) => ({
+        ...prevFormData,
         viewCollectionId: value,
         ViewStatus: selectedViewCollection ? selectedViewCollection.status : '',
-
         productionId: selectedViewCollection
           ? selectedViewCollection.productionId
           : ''
-      });
-      refetchViewData(); // Trigger refetch when viewCollectionId changes
+      }));
 
-      // GetProductionProcessByProductionId(
-      //   1,
-      //   selectedViewCollection ? selectedViewCollection.productionId : '',
-      //   selectedViewCollection ? selectedViewCollection.status : ''
-      // );
+      // Trigger refetch after setting the form data, ensuring it has the latest values
+      refetchViewData();
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -246,38 +254,13 @@ const FabricationSelectionIssuance = () => {
   //View Datagrid
   const [initialRowsView, setInitialRowsView] = useState([]);
 
-  // const GetProductionProcessByProductionId = async (
-  //   appId,
-  //   productionId,
-  //   ViewStatus
-  // ) => {
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await axios.get(
-  //       `http://100.42.177.77:83/api/Production/GetProductionProcessByProductionId?appId=${appId}&productionId=${productionId}&status=${ViewStatus}`
-  //     );
-  //     //in 449 url this api doesnt exist
-  //     if (response.data.success) {
-  //       // Add id property to each row
-  //       const rowsWithId = response.data.result.map((row, index) => ({
-  //         ...row,
-  //         id: row.productionHeaderId,
-  //         sr: index + 1 // Add serial number
-  //       }));
-  //       setInitialRowsView(rowsWithId);
-  //     } else {
-  //       console.error(response.data.message);
-  //     }
-  //   } catch (error) {
-  //     console.error('View Datagrid error', error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-  //useGetProductionProcessByProductionIdQuery
   const { data: viewData, refetch: refetchViewData } =
     useGetProductionProcessByProductionIdQuery(
-      { productionId: formData.productionId, ViewStatus: formData.ViewStatus },
+      {
+        productionId: formData.productionId,
+        // ViewStatus: formData.ViewStatus,
+        status: formData.ViewStatus // Ensure the correct key is used here
+      },
       {
         skip: !formData.productionId,
         skip: !formData.ViewStatus
@@ -797,12 +780,9 @@ const FabricationSelectionIssuance = () => {
                     // error={!!formErrors.collectionName}
                     // helperText={formErrors.collectionName}
                   >
-                    {productioncollectionList.map((option) => (
-                      <MenuItem
-                        key={option.productionHeaderId}
-                        value={option.status}
-                      >
-                        {option.status}
+                    {statusLookup.map((option) => (
+                      <MenuItem key={option.statusId} value={option.statusId}>
+                        {option.statusDesc}
                       </MenuItem>
                     ))}
                   </TextField>
