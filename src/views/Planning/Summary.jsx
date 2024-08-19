@@ -279,14 +279,16 @@ const Summary = ({
 
   const summaryHeaderColumn = [
     // { field: 'planningHeaderId', headerName: 'ID' },
-    { field: 'orderNumber', headerName: 'Order Number' },
     { field: 'collectionName', headerName: 'Collection Name' },
     { field: 'batchNo', headerName: 'Batch No' },
     { field: 'designNo', headerName: 'Design No' },
+    { field: 'orderNumber', headerName: 'Order Number' },
     { field: 'designerName', headerName: 'Designer Name' },
     { field: 'colorName', headerName: 'Color Name' },
     { field: 'poPcs', headerName: 'PO Pieces' },
+    // { field: 'batchStatus', headerName: 'Batch Status' },
     { field: 'batchStatusName', headerName: 'Batch Status' },
+
     { field: 'planningDate', headerName: 'Planning Date' },
     {
       field: 'action',
