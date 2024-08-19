@@ -585,7 +585,7 @@ const FabricationSelectionIssuance = () => {
                 // avatar={
                 // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
                 // }
-                title="Production Process > Fabtication"
+                title="Production Process > Fabrication"
                 titleTypographyProps={{ style: { color: 'white' } }}
               ></CardHeader>
               <Grid

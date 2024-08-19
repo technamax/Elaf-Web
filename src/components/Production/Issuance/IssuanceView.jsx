@@ -290,7 +290,7 @@ const IssuanceView = () => {
           // avatar={
           // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
           // }
-          title="Add Terms and Conditions "
+          title="View Production Process "
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid

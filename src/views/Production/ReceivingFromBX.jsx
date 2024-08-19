@@ -135,6 +135,7 @@ const ReceivingFromBX = () => {
   }, [productionData, refetchProductionData]);
   useEffect(() => {
     if (bxStockData) {
+      // refetchBxStockData();
       setBxStockList(
         bxStockData.result.map((row, index) => ({
           id: index + 1,
@@ -142,7 +143,7 @@ const ReceivingFromBX = () => {
         }))
       );
     }
-  }, [bxStockData, refetchBxStockData]);
+  }, [bxStockData, formData.productionId]);
   useEffect(() => {
     if (fabricData) {
       setfabricDetails(
@@ -195,7 +196,8 @@ const ReceivingFromBX = () => {
 
       setFormData({
         ...formData,
-        collectionId: value
+        collectionId: value,
+        productionId: selectedCollection ? selectedCollection.productionId : ''
         // orderNumber: selectedCollection ? selectedCollection.orderNumber : ''
         // status: selectedCollection ? selectedCollection.batchStatus : ''
       });
@@ -264,6 +266,7 @@ const ReceivingFromBX = () => {
   const handleClickOpen2 = (data) => {
     setInitialFormData(data);
     setOpen2(true);
+    // setFormData({ ...formData, productionId: '' });
   };
   const handleClose = () => {
     // setShowUpperDiv(true);
