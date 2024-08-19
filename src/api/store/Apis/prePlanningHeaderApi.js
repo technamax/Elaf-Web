@@ -68,6 +68,14 @@ export const prePlanningHeaderApi = createApi({
     getEmbroideryDetailsListByEmbroideryId: builder.query({
       query: (embroideryId) =>
         `Embroidery/GetEmbroideryDetailsListByEmbroideryId?embroideryId=${embroideryId}`
+    }),
+    getDistinctCollections: builder.query({
+      query: (collectionId) =>
+        `PrePlanning/GetDistinctCollections?collectionId=${collectionId}`
+    }),
+    getSummaryByCollection: builder.query({
+      query: ({ collectionId, collectionBatchId }) =>
+        `PrePlanning/SummaryByCollection?collectionId=${collectionId}&collectionBatchId=${collectionBatchId}`
     })
   })
 });
@@ -89,5 +97,7 @@ export const {
   useGetAdditionalProcessListByBatchNoQuery,
   useGetAdditionalProcessDetailsByAdditionalProcessIdQuery,
   useGetDyeingPrintingDetailsByDpIdQuery,
-  useGetEmbroideryDetailsListByEmbroideryIdQuery
+  useGetEmbroideryDetailsListByEmbroideryIdQuery,
+  useGetDistinctCollectionsQuery,
+  useGetSummaryByCollectionQuery
 } = prePlanningHeaderApi;
