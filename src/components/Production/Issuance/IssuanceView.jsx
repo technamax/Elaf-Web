@@ -108,8 +108,8 @@ const IssuanceView = () => {
     useGetProductionProcessByProductionIdQuery(
       { productionId: formData.productionId, status: formData.status },
       {
-        skip: !formData.productionId,
-        skip: !formData.status
+        skip: !formData.productionId || !formData.status
+        // skip: !formData.status
       }
     );
   const { data: categoriesData, refetch: refetchCategoriesdata } =

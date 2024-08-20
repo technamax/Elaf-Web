@@ -730,7 +730,8 @@ const FabricationSelectionIssuance = () => {
               </Grid>
             </Card>
             <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
-            <Card variant="outlined">
+            <IssuanceView />
+            {/* <Card variant="outlined">
               <CardHeader
                 className="css-4rfrnx-MuiCardHeader-root"
                 avatar={<VisibilityOutlinedIcon />}
@@ -745,7 +746,7 @@ const FabricationSelectionIssuance = () => {
               >
                 <Grid item xs={12} md={3}>
                   <TextField
-                    label="Collection"
+                    label="Collection1221"
                     fullWidth
                     select
                     size="small"
@@ -849,7 +850,7 @@ const FabricationSelectionIssuance = () => {
                   />
                 </Grid>
               </Grid>
-            </Card>
+            </Card> */}
           </TabPanel>
           <TabPanel value="2">
             <Issuance />

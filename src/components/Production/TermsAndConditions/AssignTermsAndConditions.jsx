@@ -63,7 +63,7 @@ const AssignTermsAndConditions = () => {
   useEffect(() => {
     setFormData({
       assignId: initialData?.assignId || 0,
-      categoryId: initialData?.categoryId || '',
+      // categoryId: initialData?.categoryId || '',
       categoryId: initialData?.categoryId || '',
 
       appId: initialData?.appId || user.appId,
