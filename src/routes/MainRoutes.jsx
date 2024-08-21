@@ -61,6 +61,9 @@ const ProductionReceiving = Loadable(
 const ShrinkageWastageConfiguration = Loadable(
   lazy(() => import('views/Configuration/ShrinkageWastageConfiguration'))
 );
+const POGeneration = Loadable(
+  lazy(() => import('views/Production/POGeneration'))
+);
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 const WelcomePage = Loadable(lazy(() => import('views/welcome/WelcomePage')));
 
@@ -152,6 +155,10 @@ const MainRoutes = {
         {
           path: 'ProductionReceiving',
           element: <ProtectedRoute element={ProductionReceiving} />
+        },
+        {
+          path: 'POGeneration',
+          element: <ProtectedRoute element={POGeneration} />
         }
       ]
     },
