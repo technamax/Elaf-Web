@@ -56,11 +56,10 @@ export const productionApi = createApi({
     getStockReceivingByProductionHeaderId: builder.query({
       query: (productionHeaderId) =>
         `StockReceiving/GetStockReceivingByProductionHeaderId?productionHeaderId=${productionHeaderId}&Status=7`
+    }),
+    GetITPListByStatus: builder.query({
+      query: (status) => `ITP/GetITPListByStatus?status=${status}`
     })
-    // getStockReceivingByProductionHeaderId: builder.query({
-    //   query: ({itpId, barcode}) =>
-    //     `http://100.42.177.77:83/api/ITP/GetITPDetailsByITPIdAndBarcode?itpId=1&barcode=12345`
-    // })
   })
 });
 
@@ -78,5 +77,6 @@ export const {
   useGetPrePlanningFabricFromCollectionIdQuery,
   useGetVBxStockReceivingListQuery,
   useGetStockReceivingByProductionHeaderIdQuery,
-  useGetProductionFabricDetailListQuery
+  useGetProductionFabricDetailListQuery,
+  useGetITPListByStatusQuery
 } = productionApi;

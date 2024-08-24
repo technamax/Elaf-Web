@@ -43,9 +43,7 @@ const FabricationSelectionIssuance = Loadable(
 const ReceivingFromBX = Loadable(
   lazy(() => import('views/Production/ReceivingFromBX'))
 );
-const DyeingIssuance = Loadable(
-  lazy(() => import('views/Production/DyeingIssuance'))
-);
+const Issuance = Loadable(lazy(() => import('views/Production/Issuance')));
 const EmbroideryIssuance = Loadable(
   lazy(() => import('views/Production/EmbroideryIssuance'))
 );
@@ -137,8 +135,8 @@ const MainRoutes = {
           element: <ProtectedRoute element={FabricationSelectionIssuance} />
         },
         {
-          path: 'DyeingIssuance',
-          element: <ProtectedRoute element={DyeingIssuance} />
+          path: 'Issuance',
+          element: <ProtectedRoute element={Issuance} />
         },
         {
           path: 'EmbroideryIssuance',

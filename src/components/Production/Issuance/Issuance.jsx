@@ -102,14 +102,19 @@ const Issuance = () => {
   });
   useEffect(() => {
     setAddForm({
+      // stockDetId: 0,
+      stockId: initialFormData.stockId || 0,
+      itpDetId: responseData.itpDetId,
       issuanceNo: initialFormData.issuanceNo || 0,
       issuanceName: initialFormData.issuanceName || '',
       barcode: initialFormData.barcode || '',
-      itpQuantity: responseData.itpQuantity || '',
+      quantity: responseData.itpQuantity || '',
       requiredQuantity: initialFormData.quantity || '',
       uom: responseData.uomName || '',
+      uomId: responseData.uomId || '',
       issuanceDate: initialFormData.issuanceDate || '',
-      fabricName: initialFormData.fabricName || '',
+      productName: initialFormData.fabricName || '',
+      fabricId: initialFormData.fabricId || '',
       rate: responseData.rate || '',
       tax: responseData.tax || '',
       amount: responseData.amount || '',
@@ -212,7 +217,7 @@ const Issuance = () => {
   useEffect(() => {
     const calculateAmount = () => {
       const rate = parseFloat(addForm.rate) || 0;
-      const itpQuantity = parseFloat(addForm.itpQuantity) || 0;
+      const itpQuantity = parseFloat(addForm.quantity) || 0;
 
       return (rate * itpQuantity).toFixed(2);
     };
@@ -301,7 +306,7 @@ const Issuance = () => {
     setInitialFormData(data);
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/ITP/GetITPDetailsByITPIdAndBarcode?itpId=${data.itpId}&barcode=${data.barcode}`
+        `http://100.42.177.77:83/api/ITP/GetITPDetailsByITPId?itpId=${data.itpId}`
       );
 
       setResponseData(
@@ -667,9 +672,9 @@ const Issuance = () => {
                     label="Fabric Name"
                     fullWidth
                     size="small"
-                    name="fabricName"
+                    name="productName"
                     onChange={handleChange}
-                    value={addForm.fabricName}
+                    value={addForm.productName}
                     required
                     // error={!!formErrors.collectionName}
                     // helperText={formErrors.collectionName}
@@ -706,9 +711,9 @@ const Issuance = () => {
                     label="ITP Quantity"
                     fullWidth
                     size="small"
-                    name="itpQuantity"
+                    name="quantity"
                     onChange={handleChange}
-                    value={addForm.itpQuantity}
+                    value={addForm.quantity}
                     required
                     // error={!!formErrors.collectionName}
                     // helperText={formErrors.collectionName}

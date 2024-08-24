@@ -29,8 +29,13 @@ import {
   useGetPrePlanningFabricFromCollectionIdQuery,
   useGetProductionProcessListQuery,
   useGetVBxStockReceivingListQuery,
+  useGetITPListByStatusQuery,
   useGetDesignListFromCompletedCollectionIdQuery
 } from 'api/store/Apis/productionApi';
+import {
+  useGetLookUpListQuery,
+  useGetStatusLookUpQuery
+} from 'api/store/Apis/lookupApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import MoveToInboxIcon from '@mui/icons-material/MoveToInbox';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
@@ -56,8 +61,14 @@ const ReceivingFromBX = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({
     issuanceNo: initialFormData?.issuanceNo || 0,
+    status: '',
     issuanceName: initialFormData?.issuanceName || '',
-    issuanceDate: initialFormData?.issuanceDate || null,
+    issuanceDate:
+      new Date(initialFormData?.issuanceDate).toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: '2-digit'
+      }) || null,
     collectionId: initialFormData?.collectionId || '',
     productionId: initialFormData?.productionId || ''
     // appId: user.appId,
@@ -71,7 +82,12 @@ const ReceivingFromBX = () => {
       ...formData,
       issuanceNo: initialFormData?.issuanceNo || 0,
       issuanceName: initialFormData?.issuanceName || '',
-      issuanceDate: initialFormData?.issuanceDate || null,
+      issuanceDate:
+        new Date(initialFormData?.issuanceDate).toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        }) || null,
       collectionId: initialFormData?.collectionId || '',
       productionId: initialFormData?.productionId || ''
     });
@@ -108,10 +124,18 @@ const ReceivingFromBX = () => {
     useGetPrePlanningFabricFromCollectionIdQuery(formData.collectionId, {
       skip: !formData.collectionId
     });
+  const { data: itpData, refetch: refetchITPData } = useGetITPListByStatusQuery(
+    formData.status,
+    {
+      skip: !formData.status
+    }
+  );
+  const { data: statusData } = useGetStatusLookUpQuery();
 
   const [collectionList, setCollectionList] = useState([]);
   const [productionList, setProductionList] = useState([]);
   const [bxStockList, setBxStockList] = useState([]);
+  const [statusList, setStatusList] = useState([]);
   const [fabricDetails, setfabricDetails] = useState([]);
   useEffect(() => {
     if (collectionData) {
@@ -123,6 +147,26 @@ const ReceivingFromBX = () => {
       );
     }
   }, [collectionData, refetch]);
+  useEffect(() => {
+    if (itpData) {
+      setInitialRows(
+        itpData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [itpData, refetch]);
+  useEffect(() => {
+    if (statusData) {
+      setStatusList(
+        statusData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [statusData]);
   useEffect(() => {
     if (productionData) {
       setProductionList(
@@ -263,8 +307,22 @@ const ReceivingFromBX = () => {
     setInitialFormData(data);
     setOpen(true);
   };
-  const handleClickOpen2 = (data) => {
+  const handleClickOpen2 = async (data) => {
     setInitialFormData(data);
+    try {
+      const response = await axios.get(
+        `http://100.42.177.77:83/api/ITP/GetITPDetailsByITPId?itpId=${data.itpId}`
+      );
+
+      setBxStockList(
+        response.data.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    } catch (error) {
+      console.error('Error fetching ITP:', error);
+    }
     setOpen2(true);
     // setFormData({ ...formData, productionId: '' });
   };
@@ -332,20 +390,20 @@ const ReceivingFromBX = () => {
 
       renderCell: (params) => (
         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <ButtonGroup variant="text" size="small">
-            <IconButton
+          {/* <ButtonGroup variant="text" size="small"> */}
+          {/* <IconButton
               color="primary"
               onClick={() => handleClickOpen(params.row)}
             >
               <MoveToInboxIcon />
-            </IconButton>
-            <IconButton
-              color="primary"
-              onClick={() => handleClickOpen2(params.row)}
-            >
-              <VisibilityOutlinedIcon />
-            </IconButton>
-          </ButtonGroup>
+            </IconButton> */}
+          <IconButton
+            color="primary"
+            onClick={() => handleClickOpen2(params.row)}
+          >
+            <VisibilityOutlinedIcon />
+          </IconButton>
+          {/* </ButtonGroup> */}
         </div>
       )
     }
@@ -424,12 +482,12 @@ const ReceivingFromBX = () => {
       // flex: 1
     },
     {
-      field: 'quantity',
+      field: 'itpQuantity',
       headerName: 'Quantity'
       // flex: 1
     },
     {
-      field: 'uom',
+      field: 'uomName',
       headerName: 'UOM'
       // flex: 1
     },
@@ -461,6 +519,26 @@ const ReceivingFromBX = () => {
             <Button variant="contained" size="small" onClick={handleFetch}>
               Fetch
             </Button>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Status"
+              fullWidth
+              size="small"
+              name="status"
+              onChange={handleChange}
+              value={formData.status}
+              required
+              select
+              // error={!!formErrors.collectionName}
+              // helperText={formErrors.collectionName}
+            >
+              {statusList.map((option) => (
+                <MenuItem key={option.statusId} value={option.statusId}>
+                  {option.statusDesc}
+                </MenuItem>
+              ))}
+            </TextField>
           </Grid>
           <Grid item xs={12}>
             <ReuseableDataGrid
