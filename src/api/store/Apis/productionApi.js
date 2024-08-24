@@ -50,8 +50,8 @@ export const productionApi = createApi({
         `BxStockReceiving/GetVBxStockReceivingList?productionId=${productionId}`
     }),
     GetProductionFabricDetailList: builder.query({
-      query: (productionHeaderId) =>
-        `Production/GetProductionFabricDetailList?productionHeaderId=${productionHeaderId}`
+      query: ({ productionHeaderId, status }) =>
+        `Production/GetProductionFabricDetailList?productionHeaderId=${productionHeaderId}&Status=${status}`
     }),
     getStockReceivingByProductionHeaderId: builder.query({
       query: (productionHeaderId) =>

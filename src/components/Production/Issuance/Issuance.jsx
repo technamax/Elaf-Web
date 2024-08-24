@@ -73,7 +73,7 @@ const Issuance = () => {
     ITPId: '',
     status: 7,
     startDate: new Date().toISOString(),
-    // appId: user.appId,
+    appId: user.appId,
     createdOn: new Date().toISOString(),
     createdBy: user.empId,
     lastUpdatedOn: new Date().toISOString(),
@@ -205,6 +205,18 @@ const Issuance = () => {
         productionHeaderId: selectedCollection
           ? selectedCollection.productionHeaderId
           : ''
+      });
+    } else if (name === 'ITPId') {
+      const selectedItp = itps.find(
+        (collection) => collection.itpId === parseInt(value)
+      );
+      setFormData({
+        ...formData,
+        ITPId: value,
+        noOfItems: selectedItp ? selectedItp.noOfItems : '',
+        issuanceDate: selectedItp ? selectedItp.issuanceDate : '',
+        issuanceName: selectedItp ? selectedItp.issuanceName : '',
+        status: selectedItp ? selectedItp.status : ''
       });
     } else {
       setFormData({ ...formData, [name]: value });
