@@ -69,7 +69,7 @@ const FabricReceiving = () => {
     productionId: 0,
     productionHeaderId: 0,
     // collectionId: '',
-    processTypeId: '',
+    processTypeId: 1222,
     itpId: '',
     status: 2,
     startDate: new Date().toISOString(),
@@ -192,7 +192,7 @@ const FabricReceiving = () => {
         }))
       );
     }
-  }, [stockData]);
+  }, [stockData, formData.productionHeaderId]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'productionId') {
@@ -502,7 +502,7 @@ const FabricReceiving = () => {
             ))}
           </TextField>
         </Grid>
-        <Grid item xs={12} md={3}>
+        {/* <Grid item xs={12} md={3}>
           <TextField
             fullWidth
             select
@@ -527,7 +527,7 @@ const FabricReceiving = () => {
               </MenuItem>
             ))}
           </TextField>
-        </Grid>
+        </Grid> */}
         <Grid item xs={12} md={3}>
           <TextField
             size="small"

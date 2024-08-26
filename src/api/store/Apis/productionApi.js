@@ -55,7 +55,8 @@ export const productionApi = createApi({
     }),
     getStockReceivingByProductionHeaderId: builder.query({
       query: (productionHeaderId) =>
-        `StockReceiving/GetStockReceivingByProductionHeaderId?productionHeaderId=${productionHeaderId}&Status=7`
+        // `StockReceiving/GetStockReceivingByProductionHeaderId?productionHeaderId=${productionHeaderId}&Status=7`
+        `Production/GetStockReceivingHeader?productionHeaderId=${productionHeaderId}`
     }),
     GetITPListByStatus: builder.query({
       query: (status) => `ITP/GetITPListByStatus?status=${status}`
