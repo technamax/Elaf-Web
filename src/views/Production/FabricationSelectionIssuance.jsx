@@ -143,8 +143,10 @@ const FabricationSelectionIssuance = () => {
     useGetCollectionListFromPlanningHeaderQuery();
 
   const [collectionList, setCollectionList] = useState([]);
-  const { data: ProductionProceccBatchList } =
-    useGetProductionBatchForProcessingQuery();
+  const {
+    data: ProductionProceccBatchList,
+    refetch: refetchProductionProceccBatchList
+  } = useGetProductionBatchForProcessingQuery();
 
   useEffect(() => {
     if (ProductionProceccBatchList) {
@@ -163,9 +165,10 @@ const FabricationSelectionIssuance = () => {
         }));
       }
     }
-  }, [ProductionProceccBatchList, refetch]);
+  }, [ProductionProceccBatchList, refetchProductionProceccBatchList]);
   //For View Collection dropdown
-  const { data: ProductionProcessList } = useGetProductionProcessListQuery();
+  const { data: ProductionProcessList, refetch: refetchProductionProcessList } =
+    useGetProductionProcessListQuery();
   const [productioncollectionList, setProductionCollectionList] = useState([]);
   useEffect(() => {
     if (ProductionProcessList) {
@@ -178,7 +181,7 @@ const FabricationSelectionIssuance = () => {
         }))
       );
     }
-  }, [ProductionProcessList, refetch]);
+  }, [ProductionProcessList, refetchProductionProcessList]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -279,8 +282,7 @@ const FabricationSelectionIssuance = () => {
     useGetProductionProcessByProductionIdQuery(
       { productionId: formData.productionId, ViewStatus: formData.ViewStatus },
       {
-        skip: !formData.productionId,
-        skip: !formData.ViewStatus
+        skip: !formData.productionId || !formData.ViewStatus
       }
     );
 
@@ -505,6 +507,7 @@ const FabricationSelectionIssuance = () => {
         alert('Production process started successfully!');
         console.log('API saved successfully');
         console.log('Response:', response);
+        refetchProductionProcessList();
         // Optionally, reset form and state here
       } else {
         console.error(response.data.message);
