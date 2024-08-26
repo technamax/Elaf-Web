@@ -50,11 +50,15 @@ export const productionApi = createApi({
         `BxStockReceiving/GetVBxStockReceivingList?productionId=${productionId}`
     }),
     GetProductionFabricDetailList: builder.query({
-      query: (productionHeaderId) =>
-        `Production/GetProductionFabricDetailList?productionHeaderId=${productionHeaderId}`
+      query: ({ productionHeaderId, status }) =>
+        `Production/GetProductionFabricDetailList?productionHeaderId=${productionHeaderId}&Status=${status}`
     }),
-    GetLookUpStatus: builder.query({
-      query: () => `Common/GetStatusLookUp?appId=1`
+    getStockReceivingByProductionHeaderId: builder.query({
+      query: (productionHeaderId) =>
+        `StockReceiving/GetStockReceivingByProductionHeaderId?productionHeaderId=${productionHeaderId}&Status=7`
+    }),
+    GetITPListByStatus: builder.query({
+      query: (status) => `ITP/GetITPListByStatus?status=${status}`
     })
   })
 });
@@ -72,6 +76,7 @@ export const {
   useGetBxStockHeaderDetailListQuery,
   useGetPrePlanningFabricFromCollectionIdQuery,
   useGetVBxStockReceivingListQuery,
+  useGetStockReceivingByProductionHeaderIdQuery,
   useGetProductionFabricDetailListQuery,
-  useGetLookUpStatusQuery
+  useGetITPListByStatusQuery
 } = productionApi;

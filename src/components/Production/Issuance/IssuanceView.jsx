@@ -55,7 +55,7 @@ const IssuanceView = () => {
   const [formData, setFormData] = useState({
     productionId: 0,
     processType: '',
-    status: '',
+    status: initialFormData?.statusId,
     collectionName: initialFormData?.collectionName || 0,
     processTypeName: initialFormData?.processTypeName || '',
     startDate:
@@ -117,9 +117,15 @@ const IssuanceView = () => {
   const { data: lookUpData } = useGetLookUpListQuery();
   const { data: lookUpStatusData } = useGetStatusLookUpQuery();
   const { data: fabricDetailData, refetch: refetchFabricDetailData } =
-    useGetProductionFabricDetailListQuery(formData.productionHeaderId, {
-      skip: !formData.productionHeaderId // Skip the query if no collection is selected
-    });
+    useGetProductionFabricDetailListQuery(
+      {
+        productionHeaderId: formData.productionHeaderId,
+        status: formData.status
+      },
+      {
+        skip: !formData.productionHeaderId || !formData.status // Skip the query if no collection is selected
+      }
+    );
   const { data: productionData, refetch: refetchProductionData } =
     useGetProductionProcessListQuery();
 

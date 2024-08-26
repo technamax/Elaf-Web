@@ -44,10 +44,14 @@ import {
   useGetCollectionListFromPlanningHeaderQuery,
   useGetProductionProcessListQuery,
   useGetProductionBatchForProcessingQuery,
-  useGetProductionProcessByProductionIdQuery,
-  useGetLookUpStatusQuery
+  useGetProductionProcessByProductionIdQuery
+  // useGetStatusLookUpQuery
 } from 'api/store/Apis/productionApi';
-import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
+// import {useGetLookUpStatusQuery}
+import {
+  useGetLookUpListQuery,
+  useGetStatusLookUpQuery
+} from 'api/store/Apis/lookupApi';
 import { styled } from '@mui/material/styles';
 
 //////
@@ -127,7 +131,7 @@ const FabricationSelectionIssuance = () => {
   //     );
   //   }
   // }, [mainMenuData, refetch]);
-  const { data: statusData } = useGetLookUpStatusQuery();
+  const { data: statusData } = useGetStatusLookUpQuery();
   const [statusLookup, setStatusLookup] = useState([]);
   useEffect(() => {
     if (statusData) {
@@ -156,8 +160,10 @@ const FabricationSelectionIssuance = () => {
     useGetCollectionListFromPlanningHeaderQuery();
 
   const [collectionList, setCollectionList] = useState([]);
-  const { data: ProductionProceccBatchList } =
-    useGetProductionBatchForProcessingQuery();
+  const {
+    data: ProductionProceccBatchList,
+    refetch: refetchProductionProceccBatchList
+  } = useGetProductionBatchForProcessingQuery();
 
   useEffect(() => {
     if (ProductionProceccBatchList) {
@@ -176,9 +182,10 @@ const FabricationSelectionIssuance = () => {
         }));
       }
     }
-  }, [ProductionProceccBatchList, refetch]);
+  }, [ProductionProceccBatchList, refetchProductionProceccBatchList]);
   //For View Collection dropdown
-  const { data: ProductionProcessList } = useGetProductionProcessListQuery();
+  const { data: ProductionProcessList, refetch: refetchProductionProcessList } =
+    useGetProductionProcessListQuery();
   const [productioncollectionList, setProductionCollectionList] = useState([]);
   useEffect(() => {
     if (ProductionProcessList) {
@@ -191,7 +198,7 @@ const FabricationSelectionIssuance = () => {
         }))
       );
     }
-  }, [ProductionProcessList, refetch]);
+  }, [ProductionProcessList, refetchProductionProcessList]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -262,8 +269,7 @@ const FabricationSelectionIssuance = () => {
         status: formData.ViewStatus // Ensure the correct key is used here
       },
       {
-        skip: !formData.productionId,
-        skip: !formData.ViewStatus
+        skip: !formData.productionId || !formData.ViewStatus
       }
     );
 
@@ -488,6 +494,7 @@ const FabricationSelectionIssuance = () => {
         alert('Production process started successfully!');
         console.log('API saved successfully');
         console.log('Response:', response);
+        refetchProductionProcessList();
         // Optionally, reset form and state here
       } else {
         console.error(response.data.message);
