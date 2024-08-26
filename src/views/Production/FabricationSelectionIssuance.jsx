@@ -38,7 +38,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import AddTermsAndConditions from 'components/Production/TermsAndConditions/AddTermsAndConditions';
 import AssignTermsAndConditions from 'components/Production/TermsAndConditions/AssignTermsAndConditions';
-import Issuance from 'components/Production/Issuance/Issuance';
+import FabricReceiving from 'components/Production/Issuance/FabricReceiving';
 // import SubMenu from './SubMenu';
 import {
   useGetCollectionListFromPlanningHeaderQuery,
@@ -538,7 +538,7 @@ const FabricationSelectionIssuance = () => {
             >
               <Tab
                 icon={<CategoryOutlinedIcon />}
-                label="Production Process "
+                label="Production Process Fabrication"
                 value="1"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
@@ -548,7 +548,7 @@ const FabricationSelectionIssuance = () => {
               />
               <Tab
                 icon={<AddCircleOutlineOutlinedIcon />}
-                label="Issuance/Po"
+                label="Fabric Receving"
                 value="2"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
@@ -840,7 +840,7 @@ const FabricationSelectionIssuance = () => {
             </Card> */}
           </TabPanel>
           <TabPanel value="2">
-            <Issuance />
+            <FabricReceiving />
           </TabPanel>
           <TabPanel value="3">
             <IssuanceView />

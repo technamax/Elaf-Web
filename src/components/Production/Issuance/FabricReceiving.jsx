@@ -52,7 +52,7 @@ import * as React from 'react';
 import { useUser } from 'context/User';
 import { useSnackbar } from 'notistack';
 
-const Issuance = () => {
+const FabricReceiving = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const { user } = useUser();
@@ -70,8 +70,8 @@ const Issuance = () => {
     productionHeaderId: 0,
     // collectionId: '',
     processTypeId: '',
-    ITPId: '',
-    status: 7,
+    itpId: '',
+    status: 2,
     startDate: new Date().toISOString(),
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -206,17 +206,17 @@ const Issuance = () => {
           ? selectedCollection.productionHeaderId
           : ''
       });
-    } else if (name === 'ITPId') {
+    } else if (name === 'itpId') {
       const selectedItp = itps.find(
         (collection) => collection.itpId === parseInt(value)
       );
       setFormData({
         ...formData,
-        ITPId: value,
+        itpId: value,
         noOfItems: selectedItp ? selectedItp.noOfItems : '',
         issuanceDate: selectedItp ? selectedItp.issuanceDate : '',
-        issuanceName: selectedItp ? selectedItp.issuanceName : '',
-        status: selectedItp ? selectedItp.status : ''
+        issuanceName: selectedItp ? selectedItp.issuanceName : ''
+        // status: selectedItp ? selectedItp.status : ''
       });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -454,7 +454,7 @@ const Issuance = () => {
       <CardHeader
         className="css-4rfrnx-MuiCardHeader-root"
         avatar={<VisibilityOutlinedIcon />}
-        title="Issuance"
+        title="Fabric Receiving from ITP"
         titleTypographyProps={{ style: { color: 'white' } }}
       ></CardHeader>
       <Grid
@@ -553,8 +553,8 @@ const Issuance = () => {
             fullWidth
             select
             label="Select ITP"
-            name="ITPId"
-            value={formData.ITPId}
+            name="itpId"
+            value={formData.itpId}
             onChange={handleChange}
             size="small"
             InputLabelProps={{
@@ -830,4 +830,4 @@ const Issuance = () => {
   );
 };
 
-export default Issuance;
+export default FabricReceiving;
