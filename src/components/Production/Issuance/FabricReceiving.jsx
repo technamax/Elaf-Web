@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import {
   Grid,
@@ -31,12 +31,11 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
-import {} from '@mui/material';
-import {
-  DataGrid,
-  GridToolbarContainer,
-  useGridApiRef
-} from '@mui/x-data-grid';
+// import {
+//   DataGrid,
+//   GridToolbarContainer,
+//   useGridApiRef
+// } from '@mui/x-data-grid';
 import MoveToInboxIcon from '@mui/icons-material/MoveToInbox';
 
 import {
@@ -47,16 +46,33 @@ import {
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
-import { styled } from '@mui/material/styles';
-import * as React from 'react';
 import { useUser } from 'context/User';
 import { useSnackbar } from 'notistack';
+
+import Receive from './Receive';
+import * as React from 'react';
+import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
+import { styled } from '@mui/material/styles';
+import { style, width } from '@mui/system';
+const SmallTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiInputBase-input': {
+    fontSize: '0.875rem', // Adjust font size
+    padding: '4px 6px' // Adjust padding
+  },
+  width: 'auto', // Let width adjust automatically
+  height: 'auto', // Let height adjust automatically
+  minWidth: '100px', // Set minimum width to ensure it's usable
+  minHeight: '30px' // Set minimum height to ensure it's usable
+}));
 
 const FabricReceiving = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const { user } = useUser();
   const [initialFormData, setInitialFormData] = useState([]);
+  const [fabrics, setFabrics] = useState([]);
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
+  const apiRef = useGridApiRef();
   const [isEdit, setIsEdit] = useState(false);
   const [processType, setProcessType] = useState([]);
   const [vendor, setVendor] = useState([]);
@@ -314,19 +330,20 @@ const FabricReceiving = () => {
   };
   console.log('itps', itps);
   const [open, setOpen] = React.useState(false);
+  const [stockId, setStockId] = React.useState(null);
   const handleClickOpen = async (data) => {
     setInitialFormData(data);
+    setStockId(data.stockId);
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/ITP/GetITPDetailsByITPId?itpId=${data.itpId}`
+        `http://100.42.177.77:83/api/Production/GetProductionFabricDetailByProductionHeaderId?productionHeaderId=${data.productionHeaderId}&status=2`
       );
 
-      setResponseData(
-        response.data.result[0]
-        // .map((row, index) => ({
-        //   id: index + 1,
-        //   ...row
-        // }))
+      setFabrics(
+        response.data.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
       );
     } catch (error) {
       console.error('Error fetching ITP:', error);
@@ -350,40 +367,33 @@ const FabricReceiving = () => {
       // flex: 1
     },
     {
-      field: 'fabricName',
-      headerName: 'Fabric Name'
-      // flex: 1
-    },
-
-    {
-      field: 'barcode',
-      headerName: 'Barcode'
+      field: 'collectionName',
+      headerName: 'Production'
       // flex: 1
     },
     {
-      field: 'uomName',
-      headerName: 'UOM'
+      field: 'issuanceDate',
+      headerName: 'Issuance Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
       // flex: 1
     },
     {
-      field: 'quantity',
-      headerName: 'Required Quantity'
+      field: 'issuanceName',
+      headerName: 'ITP'
       // flex: 1
     },
-    // {
-    //   field: 'issuanceDate',
-    //   headerName: 'Issuance Date',
-    //   valueGetter: (params) => {
-    //     const date = new Date(params);
-    //     return date.toLocaleDateString('en-GB', {
-    //       day: 'numeric',
-    //       month: 'short',
-    //       year: '2-digit'
-    //     });
-    //   }
-    //   // flex: 1
-    // },
-
+    {
+      field: 'statusDesc',
+      headerName: 'Status'
+      // flex: 1
+    },
     {
       field: 'View',
       headerName: 'View Details',
@@ -448,6 +458,203 @@ const FabricReceiving = () => {
       // Handle error (e.g., show an error message)
     }
   };
+
+  // const handleCellEdit = (params) => {
+  //   const { id, field, value } = params;
+  //   console.log('Editing cell:', params); // Debugging line
+
+  //   if (field === 'wastage') {
+  //     setFabrics((prevRows) =>
+  //       prevRows.map((row) =>
+  //         row.id === id ? { ...row, wastage: value } : row
+  //       )
+  //     );
+  //   } else if (field === 'shrikage') {
+  //     setFabrics((prevRows) =>
+  //       prevRows.map((row) =>
+  //         row.id === id ? { ...row, shrikage: value } : row
+  //       )
+  //     );
+  //   }
+  // };
+  // const designsColumns = [
+  //   {
+  //     field: 'id',
+
+  //     headerName: 'Sr#'
+  //   },
+  //   {
+  //     field: 'fabricName',
+  //     headerName: 'Fabric'
+  //   },
+  //   {
+  //     field: 'barcode',
+  //     headerName: 'Barcode'
+  //   },
+  //   {
+  //     field: 'uomName',
+  //     headerName: 'UOM'
+  //   },
+  //   {
+  //     field: 'totalQuantity',
+  //     headerName: 'Required Qty'
+  //   },
+  //   {
+  //     field: 'assignQty',
+  //     headerName: 'Assigned Qty'
+  //   },
+  //   {
+  //     field: 'itpQuantity',
+  //     headerName: 'Qty Received'
+  //   },
+  //   {
+  //     field: 'wastage',
+  //     headerName: 'Wastage',
+  //     // flex: 1,
+  //     // width: 'auto',
+
+  //     renderCell: (params) => (
+  //       <SmallTextField
+  //         variant="outlined"
+  //         size="small"
+  //         // fullWidth
+  //         sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+  //         value={params.row.wastage || ''}
+  //         onChange={(event) =>
+  //           handleCellEdit({
+  //             id: params.id,
+  //             field: 'wastage',
+  //             value: Number(event.target.value)
+  //           })
+  //         }
+  //         type="number"
+  //         InputProps={{
+  //           style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+  //         }}
+  //       />
+  //     )
+  //   },
+  //   {
+  //     field: 'shrikage',
+  //     headerName: 'Shrinkage',
+  //     // width: 'auto',
+
+  //     // flex: 1,
+
+  //     renderCell: (params) => (
+  //       <SmallTextField
+  //         variant="outlined"
+  //         size="small"
+  //         // fullWidth
+  //         sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+  //         value={params.row.shrikage || ''}
+  //         onChange={(event) =>
+  //           handleCellEdit({
+  //             id: params.id,
+  //             field: 'shrikage',
+  //             value: Number(event.target.value)
+  //           })
+  //         }
+  //         type="number"
+  //         InputProps={{
+  //           style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+  //         }}
+  //       />
+  //     )
+  //   }
+  // ];
+  // const fetchData = React.useCallback(() => {
+  //   apiRef.current.autosizeColumns({
+  //     includeHeaders: true,
+  //     includeOutliers: true
+  //   });
+  // }, [apiRef]);
+
+  //////////////////////////////////////
+  // const fetchData = () => {
+  //   apiRef.current.autosizeColumns({
+  //     includeHeaders: true,
+  //     includeOutliers: true
+  //   });
+  // };
+  // React.useEffect(() => {
+  //   if (!open) {
+  //     return;
+  //   }
+  //   fetchData();
+  // }, [handleClickOpen]);
+
+  // const [shrinkages, setShrinkages] = useState([]);
+  // const [wastages, setWastages] = useState([]);
+  // const [fabricIds, setFabricIds] = useState([]);
+  // const handleRowSelectionModelChange = useCallback(
+  //   (newRowSelectionModel) => {
+  //     setRowSelectionModel(newRowSelectionModel);
+  //     const designsIds = newRowSelectionModel
+  //       .map((id) => {
+  //         const rowData = apiRef.current.getRow(id);
+  //         console.log('rowData', rowData);
+  //         return rowData ? rowData['shrikage'] : null; // Adjust the field name to match your data
+  //       })
+  //       .filter((id) => id !== null); // Filter out any null values
+  //     const poPcsLists = newRowSelectionModel
+  //       .map((id) => {
+  //         const rowData = apiRef.current.getRow(id);
+  //         console.log('rowData', rowData);
+  //         return rowData ? rowData['wastage'] : null; // Adjust the field name to match your data
+  //       })
+  //       .filter((id) => id !== null); // Filter out any null values
+  //     const fabricsIds = newRowSelectionModel
+  //       .map((id) => {
+  //         const rowData = apiRef.current.getRow(id);
+  //         console.log('rowData', rowData);
+  //         return rowData ? rowData['lookUpId'] : null; // Adjust the field name to match your data
+  //       })
+  //       .filter((id) => id !== null);
+  //     console.log('poPcsLists', poPcsLists);
+  //     setShrinkages(designsIds);
+  //     setWastages(poPcsLists);
+  //     setFabricIds(fabricsIds);
+  //   },
+  //   [apiRef]
+  // );
+  // useEffect(() => {
+  //   const updatedShrinkages = rowSelectionModel.map((id) => {
+  //     const rowData = apiRef.current.getRow(id);
+  //     return rowData && rowData['shrikage'] !== undefined
+  //       ? rowData['shrikage']
+  //       : 0;
+  //   });
+
+  //   const updatedWastages = rowSelectionModel.map((id) => {
+  //     const rowData = apiRef.current.getRow(id);
+  //     return rowData && rowData['wastage'] !== undefined
+  //       ? rowData['wastage']
+  //       : 0;
+  //   });
+
+  //   setShrinkages(updatedShrinkages);
+  //   setWastages(updatedWastages);
+  //   setFormData((prevData) => ({
+  //     ...prevData,
+  //     shrinkage: updatedShrinkages,
+  //     wastage: updatedWastages
+  //   }));
+  // }, [fabrics, rowSelectionModel]);
+
+  // useEffect(() => {
+  //   setFormData({
+  //     ...formData,
+  //     fabricId: fabricIds,
+  //     shrinkage: shrinkages,
+  //     wastage: wastages
+  //   });
+  // }, [shrinkages, wastages]);
+  // useEffect(() => {
+  //   if (apiRef.current) {
+  //     console.log('API ref is ready:', apiRef.current);
+  //   }
+  // }, [apiRef]);
 
   return (
     <Card variant="outlined">
@@ -630,7 +837,7 @@ const FabricReceiving = () => {
                 width="Inherit"
                 sx={{ paddingY: 2, paddingX: 2 }}
               >
-                <Grid item xs={12} md={4}>
+                {/* <Grid item xs={12} md={4}>
                   <TextField
                     label="Issuance No"
                     fullWidth
@@ -808,12 +1015,30 @@ const FabricReceiving = () => {
                     // error={!!formErrors.collectionName}
                     // helperText={formErrors.collectionName}
                   />
+                </Grid> */}
+                <Grid item xs={12}>
+                  <Receive
+                    fabrics={fabrics}
+                    setFabrics={setFabrics}
+                    stockId={stockId}
+                  />
+                  {/* <div style={{ height: 400, width: '100%' }}>
+                    <DataGrid
+                      rows={fabrics}
+                      columns={designsColumns}
+                      apiRef={apiRef}
+                      disableRowSelectionOnClick
+                      checkboxSelection
+                      onRowSelectionModelChange={handleRowSelectionModelChange}
+                      rowSelectionModel={rowSelectionModel}
+                    />
+                  </div> */}
                 </Grid>
-                <Grid item xs={9} textAlign="right" sx={{ mt: 2 }}>
+                {/* <Grid item xs={9} textAlign="right" sx={{ mt: 2 }}>
                   <Button variant="contained" size="small" onClick={handleSave}>
                     Save
                   </Button>
-                </Grid>
+                </Grid> */}
                 {/* <Grid item xs={12}>
                   <ReuseableDataGrid
                     initialRows={fabricDetails}
