@@ -34,6 +34,7 @@ import AssignTermsAndConditions from 'components/Production/TermsAndConditions/A
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
+import DyeingProductionOrder from 'components/Production/DyeingPo/DyeingProductionOrder';
 
 const POGeneration = () => {
   const { user } = useUser();
@@ -175,19 +176,9 @@ const POGeneration = () => {
               aria-label="lab API tabs example"
             >
               <Tab
-                icon={<CategoryOutlinedIcon />}
-                label="Fabrication PO"
-                value="1"
-                sx={(theme) => ({
-                  '& .MuiTouchRipple-child': {
-                    backgroundColor: `${theme.palette.primary.main} !important`
-                  }
-                })}
-              />
-              <Tab
                 icon={<AddCircleOutlineOutlinedIcon />}
                 label="Dyeing PO"
-                value="2"
+                value="1"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
                     backgroundColor: `${theme.palette.primary.main} !important`
@@ -197,7 +188,7 @@ const POGeneration = () => {
               <Tab
                 icon={<AssignmentOutlinedIcon />}
                 label="Embroidery PO"
-                value="3"
+                value="2"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
                     backgroundColor: `${theme.palette.primary.main} !important`
@@ -207,7 +198,7 @@ const POGeneration = () => {
               <Tab
                 icon={<AssignmentOutlinedIcon />}
                 label="Schiffili PO"
-                value="4"
+                value="3"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
                     backgroundColor: `${theme.palette.primary.main} !important`
@@ -217,7 +208,7 @@ const POGeneration = () => {
               <Tab
                 icon={<AssignmentOutlinedIcon />}
                 label="Additional Process PO"
-                value="5"
+                value="4"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
                     backgroundColor: `${theme.palette.primary.main} !important`
@@ -227,7 +218,7 @@ const POGeneration = () => {
               <Tab
                 icon={<AssignmentOutlinedIcon />}
                 label="Additional Services PO"
-                value="6"
+                value="5"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
                     backgroundColor: `${theme.palette.primary.main} !important`
@@ -236,7 +227,7 @@ const POGeneration = () => {
               />
             </TabList>
           </Box>
-          <TabPanel value="1">
+          {/* <TabPanel value="1">
             <Card variant="outlined">
               <CardHeader
                 className="css-4rfrnx-MuiCardHeader-root"
@@ -319,12 +310,12 @@ const POGeneration = () => {
                 </Grid>
               </Grid>
             </Card>
-          </TabPanel>
-          <TabPanel value="2">{/* <AddTermsAndConditions /> */}</TabPanel>
+          </TabPanel> */}
+          <TabPanel value="1">{<DyeingProductionOrder />}</TabPanel>
+          <TabPanel value="2">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="3">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="4">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="5">{/* <AssignTermsAndConditions /> */}</TabPanel>
-          <TabPanel value="6">{/* <AssignTermsAndConditions /> */}</TabPanel>
         </TabContext>
       </Box>
     </MainCard>

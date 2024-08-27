@@ -59,6 +59,10 @@ export const productionApi = createApi({
     }),
     GetITPListByStatus: builder.query({
       query: (status) => `ITP/GetITPListByStatus?status=${status}`
+    }),
+    GetProductionFabricDetailByProductionHeaderId: builder.query({
+      query: (productionHeaderId, status) =>
+        `Production/GetProductionFabricDetailByProductionHeaderId?productionHeaderId=${productionHeaderId}&status=${status}`
     })
   })
 });
@@ -78,5 +82,6 @@ export const {
   useGetVBxStockReceivingListQuery,
   useGetStockReceivingByProductionHeaderIdQuery,
   useGetProductionFabricDetailListQuery,
-  useGetITPListByStatusQuery
+  useGetITPListByStatusQuery,
+  useGetProductionFabricDetailByProductionHeaderIdQuery
 } = productionApi;
