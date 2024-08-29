@@ -30,6 +30,7 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import AddTermsAndConditions from 'components/Production/TermsAndConditions/AddTermsAndConditions';
 import AssignTermsAndConditions from 'components/Production/TermsAndConditions/AssignTermsAndConditions';
 // import SubMenu from './SubMenu';
+import DyeingPO from 'components/Production/ProductionOrders/DyeingPO';
 
 //////
 import * as React from 'react';
@@ -320,7 +321,9 @@ const POGeneration = () => {
               </Grid>
             </Card>
           </TabPanel>
-          <TabPanel value="2">{/* <AddTermsAndConditions /> */}</TabPanel>
+          <TabPanel value="2">
+            <DyeingPO />
+          </TabPanel>
           <TabPanel value="3">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="4">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="5">{/* <AssignTermsAndConditions /> */}</TabPanel>

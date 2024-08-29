@@ -10,11 +10,16 @@ export const termsAndConditionsApi = createApi({
       query: () => `GetCategoriesList?appid=1`
     }),
     getTermsConditionsList: builder.query({
-      query: (categoryId) =>
-        `http://100.42.177.77:83/api/TermsConditions/GetTermsConditionsList?categoryId=${categoryId}`
+      query: (categoryId) => `GetTermsConditionsList?categoryId=${categoryId}`
+    }),
+    getTermsByVendorId: builder.query({
+      query: (vendorId) => `GetTermsByVendorId?vendorId=${vendorId}`
     })
   })
 });
 
-export const { useGetCategoriesListQuery, useGetTermsConditionsListQuery } =
-  termsAndConditionsApi;
+export const {
+  useGetCategoriesListQuery,
+  useGetTermsConditionsListQuery,
+  useGetTermsByVendorIdQuery
+} = termsAndConditionsApi;

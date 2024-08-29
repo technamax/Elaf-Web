@@ -60,6 +60,18 @@ export const productionApi = createApi({
     }),
     GetITPListByStatus: builder.query({
       query: (status) => `ITP/GetITPListByStatus?status=${status}`
+    }),
+    getFabricForProductionByProductionId: builder.query({
+      query: (productionId) =>
+        `Production/GetFabricForProductionByProductionId?productionId=${productionId}&appId=1`
+    }),
+    getVendorsByFabricID: builder.query({
+      query: (fabricId) =>
+        `Configurations/GetVendorsByFabricID?fabricId=${fabricId}`
+    }),
+    getProductionPODesignByFabricAndProductionId: builder.query({
+      query: ({ fabricId, productionId }) =>
+        `Production/GetProductionPODesignByFabricAndProductionId?fabricId=${fabricId}&productionId=${productionId}`
     })
   })
 });
@@ -79,5 +91,8 @@ export const {
   useGetVBxStockReceivingListQuery,
   useGetStockReceivingByProductionHeaderIdQuery,
   useGetProductionFabricDetailListQuery,
-  useGetITPListByStatusQuery
+  useGetITPListByStatusQuery,
+  useGetFabricForProductionByProductionIdQuery,
+  useGetVendorsByFabricIDQuery,
+  useGetProductionPODesignByFabricAndProductionIdQuery
 } = productionApi;

@@ -22,7 +22,8 @@ import {
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import {
   useGetCategoriesListQuery,
-  useGetTermsConditionsListQuery
+  useGetTermsConditionsListQuery,
+  useGetTermsByVendorIdQuery
 } from 'api/store/Apis/termsAndConditionsApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
@@ -39,7 +40,7 @@ const AssignTermsAndConditions = () => {
 
   const [formData, setFormData] = useState({
     assignId: 0,
-    vedorId: '',
+    vendorId: '',
     categoryId: '',
     assignTermsDetails: [selectedTerms],
 
@@ -74,6 +75,7 @@ const AssignTermsAndConditions = () => {
     });
   }, [initialData]);
   const [initialRows, setInitialRows] = useState([]);
+  const [tcList, setTcList] = useState([]);
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded);
@@ -85,6 +87,10 @@ const AssignTermsAndConditions = () => {
   const { data: termsConditionsData, refetch: refetchTermsConditionsData } =
     useGetTermsConditionsListQuery(formData.categoryId, {
       skip: !formData.categoryId // Skip the query if no collection is selected
+    });
+  const { data: termsData, refetch: refetchTermsData } =
+    useGetTermsByVendorIdQuery(formData.vendorId, {
+      skip: !formData.vendorId // Skip the query if no collection is selected
     });
   const [categories, setCategories] = useState([]);
 
@@ -109,6 +115,16 @@ const AssignTermsAndConditions = () => {
       );
     }
   }, [termsConditionsData]);
+  useEffect(() => {
+    if (termsData) {
+      setTcList(
+        termsData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [termsData, refetchTermsData]);
   useEffect(() => {
     if (categoriesData) {
       setCategories(
@@ -141,7 +157,7 @@ const AssignTermsAndConditions = () => {
 
       setFormData((prevFormData) => ({
         assignId: 0,
-        vedorId: '',
+        vendorId: '',
         categoryId: '',
         appId: user.appId,
         createdOn: new Date().toISOString(),
@@ -179,6 +195,27 @@ const AssignTermsAndConditions = () => {
       headerName: 'Description',
       flex: 1
     }
+  ];
+  const tcColumns = [
+    {
+      field: 'id',
+      headerName: 'Sr#'
+    },
+    {
+      field: 'termCondDesc',
+      headerName: 'Term and Condition Description',
+      flex: 1
+    }
+    // {
+    //   field: 'enabled',
+    //   headerName: 'Enabled',
+    //   flex: 1
+    // },
+    // {
+    //   field: 'description',
+    //   headerName: 'Description',
+    //   flex: 1
+    // }
   ];
 
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
@@ -245,8 +282,8 @@ const AssignTermsAndConditions = () => {
               label="Vendors"
               // defaultValue=""
               size="small"
-              name="vedorId"
-              value={formData.vedorId}
+              name="vendorId"
+              value={formData.vendorId}
               onChange={handleChange}
               required
               // error={!!formErrors.vendorId}
@@ -347,11 +384,12 @@ const AssignTermsAndConditions = () => {
         >
           <Grid item xs={12}>
             <ReuseableDataGrid
-              initialRows={initialRows}
-              iColumns={columns}
-              disableDelete={true}
-              setInitialData={setInitialData}
-              setIsEdit={setIsEdit}
+              initialRows={tcList}
+              iColumns={tcColumns}
+              //   disableDelete={true}
+              //   setInitialData={setInitialData}
+              //   setIsEdit={setIsEdit}
+              hideAction
             />
           </Grid>
         </Grid>{' '}
