@@ -39,7 +39,7 @@ const AssignTermsAndConditions = () => {
 
   const [formData, setFormData] = useState({
     assignId: 0,
-    vedorId: '',
+    vendorId: '',
     categoryId: '',
     assignTermsDetails: [selectedTerms],
 
@@ -141,7 +141,7 @@ const AssignTermsAndConditions = () => {
 
       setFormData((prevFormData) => ({
         assignId: 0,
-        vedorId: '',
+        vendorId: '',
         categoryId: '',
         appId: user.appId,
         createdOn: new Date().toISOString(),
@@ -245,8 +245,8 @@ const AssignTermsAndConditions = () => {
               label="Vendors"
               // defaultValue=""
               size="small"
-              name="vedorId"
-              value={formData.vedorId}
+              name="vendorId"
+              value={formData.vendorId}
               onChange={handleChange}
               required
               // error={!!formErrors.vendorId}
