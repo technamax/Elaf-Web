@@ -72,6 +72,10 @@ export const productionApi = createApi({
     getProductionPODesignByFabricAndProductionId: builder.query({
       query: ({ fabricId, productionId }) =>
         `Production/GetProductionPODesignByFabricAndProductionId?fabricId=${fabricId}&productionId=${productionId}`
+    }),
+    getDyeingPoHeaderList: builder.query({
+      query: () =>
+        `http://100.42.177.77:83/api/PO/GetDyeingPoHeaderList?appId=1`
     })
   })
 });
@@ -94,5 +98,6 @@ export const {
   useGetITPListByStatusQuery,
   useGetFabricForProductionByProductionIdQuery,
   useGetVendorsByFabricIDQuery,
-  useGetProductionPODesignByFabricAndProductionIdQuery
+  useGetProductionPODesignByFabricAndProductionIdQuery,
+  useGetDyeingPoHeaderListQuery
 } = productionApi;

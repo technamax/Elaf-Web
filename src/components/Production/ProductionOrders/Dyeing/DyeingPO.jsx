@@ -1,29 +1,42 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Grid, TextField, Button, MenuItem, Divider, Box } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Button,
+  MenuItem,
+  Divider,
+  Box,
+  ButtonGroup,
+  Typography,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+
 import MainCard from 'ui-component/cards/MainCard';
 
 import { Card, CardHeader, Avatar } from '@mui/material';
-import '../../../assets/scss/style.scss';
+import '../../../../assets/scss/style.scss';
 
-import {
-  useGetSubMenuListQuery,
-  useGetMainMenuListQuery
-} from 'api/store/Apis/userManagementApi';
-import {
-  useGetCategoriesListQuery,
-  useGetTermsConditionsListQuery
-} from 'api/store/Apis/termsAndConditionsApi';
 import {
   useGetProductionBatchForProcessingQuery,
   useGetFabricForProductionByProductionIdQuery,
   useGetVendorsByFabricIDQuery,
-  useGetProductionPODesignByFabricAndProductionIdQuery
+  useGetProductionPODesignByFabricAndProductionIdQuery,
+  useGetDyeingPoHeaderListQuery
 } from 'api/store/Apis/productionApi';
-import { useGetWareHouseLocationsQuery } from 'api/store/Apis/lookupApi';
+import {
+  useGetWareHouseLocationsQuery,
+  useGetLookUpListQuery
+} from 'api/store/Apis/lookupApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
-
+import { useSnackbar } from 'notistack';
+import AssignTerms from './AssignTerms';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
@@ -44,6 +57,8 @@ const SmallTextField = styled(TextField)(({ theme }) => ({
 const DyeingPO = () => {
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
   const apiRef = useGridApiRef();
+  const { enqueueSnackbar } = useSnackbar();
+
   const [fabrics, setFabrics] = useState([]);
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
@@ -53,6 +68,7 @@ const DyeingPO = () => {
     productionId: '',
     issuanceDate: '',
     expectedReturnDate: '',
+    processTypeId: 1223,
     fabricId: '',
     vendorId: '',
     shrinkage: '',
@@ -75,27 +91,7 @@ const DyeingPO = () => {
       label: 'No'
     }
   ];
-  // console.log('initialData', initialData);
-  // useEffect(() => {
-  //   setFormData({
-  //     poId: initialData?.poId || 0,
-  //     productionId: initialData?.productionId || '',
-  //     issuanceDate: initialData?.issuanceDate || '',
-  //     expectedReturnDate: initialData?.expectedReturnDate || '',
-  //     fabricId: initialData?.fabricId || '',
-  //     vendorId: initialData?.vendorId || '',
-  //     shrinkage: initialData?.shrinkage || '',
-  //     wastage: initialData?.wastage || '',
-  //     locationId: initialData?.locationId || '',
-  //
 
-  //     appId: initialData?.appId || user.appId,
-  //     createdOn: initialData?.createdOn || new Date().toISOString(),
-  //     createdBy: initialData?.createdBy || user.empId,
-  //     lastUpdatedOn: new Date().toISOString(),
-  //     LastUpdatedBy: user.empId
-  //   });
-  // }, [initialData]);
   const [initialRows, setInitialRows] = useState([]);
   const [fabricsList, setFabricsList] = useState([]);
   const [vendorsList, setVendorsList] = useState([]);
@@ -107,6 +103,8 @@ const DyeingPO = () => {
 
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
     useGetProductionBatchForProcessingQuery();
+  const { data: dyeingPoData, refetch: refetchDyeingPoData } =
+    useGetDyeingPoHeaderListQuery();
   const { data: locationsData, refetch: refetchLocationsData } =
     useGetWareHouseLocationsQuery();
   const { data: fabricsData, refetch: refetchFabricsData } =
@@ -127,6 +125,16 @@ const DyeingPO = () => {
   // const { data: subMenuData, refetch } = useGetSubMenuListQuery();
   const [productions, setProductions] = useState([]);
 
+  useEffect(() => {
+    if (dyeingPoData) {
+      setInitialRows(
+        dyeingPoData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [dyeingPoData, refetchDyeingPoData]);
   useEffect(() => {
     if (fabricsData) {
       setFabricsList(
@@ -215,6 +223,7 @@ const DyeingPO = () => {
         issuanceDate: '',
         expectedReturnDate: '',
         fabricId: '',
+        processTypeId: 1223,
         vendorId: '',
         shrinkage: '',
         wastage: '',
@@ -226,6 +235,7 @@ const DyeingPO = () => {
         lastUpdatedOn: new Date().toISOString(),
         LastUpdatedBy: user.empId
       }));
+      setFabrics([]);
       setRowSelectionModel([]);
       // refetchFabricsData();
       setIsEdit(false);
@@ -235,7 +245,70 @@ const DyeingPO = () => {
     }
   };
   console.log('formData', formData);
+  const [open, setOpen] = React.useState(false);
+  const [open2, setOpen2] = React.useState(false);
+  const [vId, setVId] = React.useState(false);
 
+  const handleClickOpen = async (data) => {
+    // setInitialFormData(data);
+    // try {
+    //   const response = await axios.get(
+    //     `http://100.42.177.77:83/api/TermsConditions/GetTermsByVendorId?vendorId=${data.vendorId}`
+    //   );
+    //   if (!response.data.success) {
+    //     enqueueSnackbar(`${response.data.message} !`, {
+    //       variant: 'error',
+    //       autoHideDuration: 5000
+    //     });
+    //     console.log('response.message', response.data.message);
+    //     return;
+    //   }
+    setVId(data);
+    //     response.data.result.map((row, index) => ({
+    //       id: index + 1,
+    //       ...row
+    //     }))
+    //   );
+    // } catch (error) {
+    //   console.error('Error fetching ITP:', error);
+    // }
+    setOpen(true);
+  };
+  const handleClickOpen2 = async (data) => {
+    // setInitialFormData(data);
+    // try {
+    //   const response = await axios.get(
+    //     `http://100.42.177.77:83/api/ITP/GetITPDetailsByITPId?itpId=${data.itpId}`
+    //   );
+
+    //   setBxStockList(
+    //     response.data.result.map((row, index) => ({
+    //       id: index + 1,
+    //       ...row
+    //     }))
+    //   );
+    // } catch (error) {
+    //   console.error('Error fetching ITP:', error);
+    // }
+    setOpen2(true);
+  };
+  console.log('terms condition', vId);
+  const handleClose = () => {
+    // setShowUpperDiv(true);
+    setOpen(false);
+    // setInitialFormData({});
+    // refetchDyeingPrintingData();
+
+    // setDeleteId(null);
+  };
+  const handleClose2 = () => {
+    // setShowUpperDiv(true);
+    setOpen2(false);
+    // setInitialFormData({});
+    // refetchDyeingPrintingData();
+
+    // setDeleteId(null);
+  };
   const columns = [
     {
       field: 'id',
@@ -243,88 +316,125 @@ const DyeingPO = () => {
       // flex: 1
     },
     {
-      field: 'termCondDesc',
-      headerName: 'Term and Condition',
-      flex: 1
-    },
-
-    {
-      field: 'enabled',
-      headerName: 'Enabled'
+      field: 'poId',
+      headerName: 'PO ID'
       // flex: 1
+    },
+    {
+      field: 'vendorName',
+      headerName: 'Vendor'
+    },
+    {
+      field: 'createdOn',
+      headerName: 'PO Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'issuanceDate',
+      headerName: 'Issuance Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'expectedReturnDate',
+      headerName: 'Expected Return Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'fabricCount',
+      headerName: 'Fabrics'
+    },
+    {
+      field: 'statusName',
+      headerName: 'Status'
+    },
+    {
+      field: 'Actions',
+      headerName: 'Actions',
+
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup variant="text" size="small">
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => handleClickOpen(params.row)}
+            >
+              Assign Terms
+            </Button>
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => handleClickOpen2(params.row)}
+            >
+              View
+            </Button>
+          </ButtonGroup>
+        </div>
+      )
     }
   ];
 
-  // const handleCellEdit = (params) => {
-  //   const { id, field, value } = params;
-  //   console.log('Editing cell:', params); // Debugging line
+  const handleCellEdit = React.useCallback(
+    (params) => {
+      const { id, field, value } = params;
+      console.log('Editing cell:', params); // Debugging line
 
-  //   if (field === 'assignedQty') {
-  //     setFabrics((prevRows) =>
-  //       prevRows.map((row) =>
-  //         row.id === id ? { ...row, assignedQty: value } : row
-  //       )
-  //     );
-  //   } else if (field === 'rate') {
-  //     setFabrics((prevRows) =>
-  //       prevRows.map((row) => (row.id === id ? { ...row, rate: value } : row))
-  //     );
-  //   } else if (field === 'tax') {
-  //     setFabrics((prevRows) =>
-  //       prevRows.map((row) => (row.id === id ? { ...row, tax: value } : row))
-  //     );
-  //   } else if (field === 'amount') {
-  //     setFabrics((prevRows) =>
-  //       prevRows.map((row) =>
-  //         row.id === id ? { ...row, amount: row.assignedQty * row.rate } : row
-  //       )
-  //     );
-  //   } else if (field === 'totalAfterTax') {
-  //     setFabrics((prevRows) =>
-  //       prevRows.map((row) =>
-  //         row.id === id ? { ...row, totalAfterTax: value } : row
-  //       )
-  //     );
-  //   }
-  // };
+      setFabrics((prevRows) =>
+        prevRows.map((row) => {
+          if (row.id === id) {
+            const updatedRow = {
+              ...row,
+              [field]: value,
+              poId: 0,
+              poDetId: 0,
+              appId: user.appId,
+              createdOn: new Date().toISOString(),
+              createdBy: user.empId,
+              lastUpdatedOn: new Date().toISOString(),
+              lastUpdatedBy: user.empId
+            };
 
-  const handleCellEdit = (params) => {
-    const { id, field, value } = params;
-    console.log('Editing cell:', params); // Debugging line
+            // Recalculate the totalBeforeTax when rate or quantity is updated
+            if (field === 'rate' || field === 'quantity') {
+              updatedRow.totalBeforeTax = updatedRow.rate * updatedRow.quantity;
+            }
 
-    setFabrics((prevRows) =>
-      prevRows.map((row) => {
-        if (row.id === id) {
-          const updatedRow = {
-            ...row,
-            [field]: value,
-            poId: 0,
-            poDetId: 0,
-            appId: user.appId,
-            createdOn: new Date().toISOString(),
-            createdBy: user.empId,
-            lastUpdatedOn: new Date().toISOString(),
-            lastUpdatedBy: user.empId
-          };
+            // Optionally, update totalAfterTax if it's a function of totalBeforeTax and tax
+            if (field === 'tax' || field === 'rate' || field === 'quantity') {
+              updatedRow.totalAfterTax =
+                updatedRow.totalBeforeTax +
+                updatedRow.totalBeforeTax * (updatedRow.tax / 100);
+            }
 
-          // Recalculate the amount when rate or itpQuantity is updated
-          if (field === 'rate' || field === 'assignedQty') {
-            updatedRow.amount = updatedRow.rate * updatedRow.assignedQty;
+            return updatedRow;
           }
-
-          // Optionally, update amountAfterTax if it's a function of amount and tax
-          if (field === 'tax' || field === 'rate' || field === 'assignedQty') {
-            updatedRow.totalAfterTax =
-              updatedRow.amount + updatedRow.amount * (updatedRow.tax / 100);
-          }
-
-          return updatedRow;
-        }
-        return row;
-      })
-    );
-  };
-  console.log('fabrics', fabrics);
+          return row;
+        })
+      );
+    },
+    [setFabrics, user.appId, user.empId]
+  );
 
   const designsColumns = [
     {
@@ -345,7 +455,7 @@ const DyeingPO = () => {
       headerName: 'Planned Qty'
     },
     {
-      field: 'assignedQty',
+      field: 'quantity',
       headerName: 'Assigned Qty',
       // flex: 1,
       // width: 'auto',
@@ -356,11 +466,11 @@ const DyeingPO = () => {
           size="small"
           // fullWidth
           sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.assignedQty || ''}
+          value={params.row.quantity || ''}
           onChange={(event) =>
             handleCellEdit({
               id: params.id,
-              field: 'assignedQty',
+              field: 'quantity',
               value: Number(event.target.value)
             })
           }
@@ -428,7 +538,7 @@ const DyeingPO = () => {
       )
     },
     {
-      field: 'amount',
+      field: 'totalBeforeTax',
       headerName: 'Total',
       // width: 'auto',
 
@@ -440,11 +550,11 @@ const DyeingPO = () => {
           size="small"
           // fullWidth
           sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.amount || ''}
+          value={params.row.totalBeforeTax || ''}
           onChange={(event) =>
             handleCellEdit({
               id: params.id,
-              field: 'amount',
+              field: 'totalBeforeTax',
               value: Number(event.target.value)
             })
           }
@@ -502,31 +612,7 @@ const DyeingPO = () => {
   });
 
   const [selectedDesigns, setSelectedDesigns] = useState([]);
-  // const handleRowSelectionModelChange = React.useCallback(
-  //   (newRowSelectionModel) => {
-  //     setRowSelectionModel(newRowSelectionModel);
-  //     const designIds = newRowSelectionModel
-  //       .map((id) => {
-  //         const rowData = apiRef.current.getRow(id);
-  //         console.log('rowData', rowData);
-  //         return rowData ? rowData['rate'] : null; // Adjust the field name to match your data
-  //       })
-  //       .filter((id) => id !== null); // Filter out any null values
-  //     console.log('newRowSelectionModel', newRowSelectionModel);
-  //     const designs = designIds.map((rate) => ({
-  //       poId: 0,
-  //       poDetId: 0,
-  //       rate: rate,
-  //       createdOn: new Date().toISOString(),
-  //       createdBy: user.empId,
-  //       lastUpdatedBy: user.empId,
-  //       lastUpdatedOn: new Date().toISOString()
-  //     }));
 
-  //     setSelectedDesigns(designs);
-  //   },
-  //   [apiRef]
-  // );
   const handleRowSelectionModelChange = React.useCallback(
     (newRowSelectionModel) => {
       setRowSelectionModel(newRowSelectionModel);
@@ -538,10 +624,6 @@ const DyeingPO = () => {
           return rowData
             ? {
                 ...rowData
-                // createdOn: new Date().toISOString(),
-                // createdBy: user.empId,
-                // lastUpdatedBy: user.empId,
-                // lastUpdatedOn: new Date().toISOString()
               }
             : null;
         })
@@ -554,8 +636,18 @@ const DyeingPO = () => {
   );
 
   useEffect(() => {
-    setFormData({ ...formData, dyeingPoDetailsList: selectedDesigns });
-  }, [selectedDesigns]);
+    // Filter the fabrics to include only the selected rows
+    const selectedFabrics = fabrics.filter((fabric) =>
+      rowSelectionModel.includes(fabric.id)
+    );
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      dyeingPoDetailsList: selectedFabrics
+    }));
+  }, [fabrics, rowSelectionModel]);
+
+  console.log('fabrics', fabrics);
   React.useEffect(() => {
     if (apiRef.current) {
       console.log('API ref is ready:', apiRef.current);
@@ -757,7 +849,7 @@ const DyeingPO = () => {
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
           avatar={<VisibilityOutlinedIcon />}
-          title="View Terms And Conditions "
+          title="Assign TCs & Issuance"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid
@@ -770,10 +862,87 @@ const DyeingPO = () => {
             <ReuseableDataGrid
               initialRows={initialRows}
               iColumns={columns}
-              disableDelete={true}
               setInitialData={setInitialData}
-              setIsEdit={setIsEdit}
+              hideAction
             />
+            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
+              <DialogTitle
+                sx={{
+                  backgroundColor: '#A11F23',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingX: '24px',
+                  paddingY: '4px'
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="div"
+                  color="#ffffff"
+                  gutterBottom
+                  fontSize={20}
+                  fontWeight={2}
+                  fontStyle={'normal'}
+                >
+                  {'Assign Terms  And Conditions'}
+                </Typography>
+                <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                {/* <Grid
+                  container
+                  spacing={2}
+                  width="Inherit"
+                  // sx={{ paddingY: 2, paddingX: 2 }}
+                >
+                  <Grid item xs={12}>
+                    <ReuseableDataGrid
+                      initialRows={vId}
+                      iColumns={tcColumns}
+                      // setInitialData={setInitialData}
+                      hideAction
+                    />
+                  </Grid>
+                </Grid> */}
+                <AssignTerms vId={vId} />
+              </DialogContent>
+            </Dialog>
+            <Dialog open={open2} onClose={handleClose2} fullWidth maxWidth="xl">
+              <DialogTitle
+                sx={{
+                  backgroundColor: '#A11F23',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingX: '24px',
+                  paddingY: '4px'
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="div"
+                  color="#ffffff"
+                  gutterBottom
+                  fontSize={20}
+                  fontWeight={2}
+                  fontStyle={'normal'}
+                >
+                  {'View Production Order'}
+                </Typography>
+                <IconButton onClick={handleClose2} sx={{ color: '#ffffff' }}>
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+              </DialogContent>
+            </Dialog>
           </Grid>
         </Grid>{' '}
       </Card>

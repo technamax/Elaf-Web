@@ -12,8 +12,12 @@ export const termsAndConditionsApi = createApi({
     getTermsConditionsList: builder.query({
       query: (categoryId) => `GetTermsConditionsList?categoryId=${categoryId}`
     }),
+    // getTermsByVendorId: builder.query({
+    //   query: (vendorId) => `GetTermsByVendorId?vendorId=${vendorId}`
+    // }),
     getTermsByVendorId: builder.query({
-      query: (vendorId) => `GetTermsByVendorId?vendorId=${vendorId}`
+      query: ({ vId, categoryId }) =>
+        `GetTermsByVendorId?vendorId=${vId}&categoryId=${categoryId}`
     })
   })
 });

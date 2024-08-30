@@ -382,17 +382,14 @@ const FabricReceiving = () => {
           year: '2-digit'
         });
       }
-      // flex: 1
     },
     {
       field: 'issuanceName',
       headerName: 'ITP'
-      // flex: 1
     },
     {
       field: 'statusDesc',
       headerName: 'Status'
-      // flex: 1
     },
     {
       field: 'View',

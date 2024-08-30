@@ -116,7 +116,12 @@ const AssignTermsAndConditions = () => {
     }
   }, [termsConditionsData]);
   useEffect(() => {
-    if (termsData) {
+    if (termsData?.result === null) {
+      setTcList([]);
+      return;
+    }
+
+    if (termsData?.result) {
       setTcList(
         termsData.result.map((row, index) => ({
           id: index + 1,
@@ -125,6 +130,7 @@ const AssignTermsAndConditions = () => {
       );
     }
   }, [termsData, refetchTermsData]);
+  console.log('termsData', termsData);
   useEffect(() => {
     if (categoriesData) {
       setCategories(
@@ -167,6 +173,7 @@ const AssignTermsAndConditions = () => {
       }));
 
       // refetch();
+      refetchTermsData();
       setIsEdit(false);
       // setAccordionExpanded(false);
     } catch (error) {

@@ -30,7 +30,7 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import AddTermsAndConditions from 'components/Production/TermsAndConditions/AddTermsAndConditions';
 import AssignTermsAndConditions from 'components/Production/TermsAndConditions/AssignTermsAndConditions';
 // import SubMenu from './SubMenu';
-import DyeingPO from 'components/Production/ProductionOrders/DyeingPO';
+import DyeingPO from 'components/Production/ProductionOrders/Dyeing/DyeingPO';
 
 //////
 import * as React from 'react';
