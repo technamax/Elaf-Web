@@ -175,7 +175,7 @@ const POGeneration = () => {
               onChange={handleChangeTabs}
               aria-label="lab API tabs example"
             >
-              <Tab
+              {/* <Tab
                 icon={<CategoryOutlinedIcon />}
                 label="Fabrication PO"
                 value="1"
@@ -184,11 +184,11 @@ const POGeneration = () => {
                     backgroundColor: `${theme.palette.primary.main} !important`
                   }
                 })}
-              />
+              /> */}
               <Tab
                 icon={<AddCircleOutlineOutlinedIcon />}
                 label="Dyeing PO"
-                value="2"
+                value="1"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
                     backgroundColor: `${theme.palette.primary.main} !important`
@@ -198,7 +198,7 @@ const POGeneration = () => {
               <Tab
                 icon={<AssignmentOutlinedIcon />}
                 label="Embroidery PO"
-                value="3"
+                value="2"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
                     backgroundColor: `${theme.palette.primary.main} !important`
@@ -208,7 +208,7 @@ const POGeneration = () => {
               <Tab
                 icon={<AssignmentOutlinedIcon />}
                 label="Schiffili PO"
-                value="4"
+                value="3"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
                     backgroundColor: `${theme.palette.primary.main} !important`
@@ -218,7 +218,7 @@ const POGeneration = () => {
               <Tab
                 icon={<AssignmentOutlinedIcon />}
                 label="Additional Process PO"
-                value="5"
+                value="4"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
                     backgroundColor: `${theme.palette.primary.main} !important`
@@ -228,7 +228,7 @@ const POGeneration = () => {
               <Tab
                 icon={<AssignmentOutlinedIcon />}
                 label="Additional Services PO"
-                value="6"
+                value="5"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
                     backgroundColor: `${theme.palette.primary.main} !important`
@@ -237,97 +237,14 @@ const POGeneration = () => {
               />
             </TabList>
           </Box>
+
           <TabPanel value="1">
-            <Card variant="outlined">
-              <CardHeader
-                className="css-4rfrnx-MuiCardHeader-root"
-                // avatar={
-                // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
-                // }
-                title="Create Fabrication PO"
-                titleTypographyProps={{ style: { color: 'white' } }}
-              ></CardHeader>
-              <Grid
-                container
-                spacing={1}
-                width="Inherit"
-                sx={{ paddingY: 2, paddingX: 2 }}
-              >
-                <Grid item xs={12} md={9}>
-                  <TextField
-                    label="Description"
-                    fullWidth
-                    size="small"
-                    name="description"
-                    onChange={handleChange}
-                    value={formData.description}
-                    required
-                    // disabled={isEdit}
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  />
-                </Grid>
-
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    fullWidth
-                    select
-                    label="enabled"
-                    name="enabled"
-                    value={formData.enabled}
-                    onChange={handleChange}
-                    size="small"
-                    // error={!!formErrors.brandId}
-                    // helperText={formErrors.brandId}
-                  >
-                    {options.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-
-                <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-                  <Button variant="contained" size="small" onClick={handleSave}>
-                    Save
-                  </Button>
-                </Grid>
-              </Grid>{' '}
-            </Card>
-            <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
-            <Card variant="outlined">
-              <CardHeader
-                className="css-4rfrnx-MuiCardHeader-root"
-                avatar={<VisibilityOutlinedIcon />}
-                title="View Categories"
-                titleTypographyProps={{ style: { color: 'white' } }}
-              ></CardHeader>
-              <Grid
-                container
-                spacing={2}
-                width="Inherit"
-                // sx={{ paddingY: 2, paddingX: 2 }}
-              >
-                <Grid item xs={12}>
-                  <ReuseableDataGrid
-                    initialRows={initialRows}
-                    iColumns={columns}
-                    disableDelete={true}
-                    setInitialData={setInitialData}
-                    setIsEdit={setIsEdit}
-                  />
-                </Grid>
-              </Grid>
-            </Card>
-          </TabPanel>
-          <TabPanel value="2">
             <DyeingPO />
           </TabPanel>
+          <TabPanel value="2">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="3">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="4">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="5">{/* <AssignTermsAndConditions /> */}</TabPanel>
-          <TabPanel value="6">{/* <AssignTermsAndConditions /> */}</TabPanel>
         </TabContext>
       </Box>
     </MainCard>

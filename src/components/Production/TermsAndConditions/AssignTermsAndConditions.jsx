@@ -64,7 +64,7 @@ const AssignTermsAndConditions = () => {
   useEffect(() => {
     setFormData({
       assignId: initialData?.assignId || 0,
-      // categoryId: initialData?.categoryId || '',
+      vendorId: initialData?.vendorId || '',
       categoryId: initialData?.categoryId || '',
 
       appId: initialData?.appId || user.appId,
@@ -89,9 +89,12 @@ const AssignTermsAndConditions = () => {
       skip: !formData.categoryId // Skip the query if no collection is selected
     });
   const { data: termsData, refetch: refetchTermsData } =
-    useGetTermsByVendorIdQuery(formData.vendorId, {
-      skip: !formData.vendorId // Skip the query if no collection is selected
-    });
+    useGetTermsByVendorIdQuery(
+      { vId: formData.vendorId, categoryId: formData.categoryId },
+      {
+        skip: !formData.vendorId || !formData.categoryId // Skip the query if no collection is selected
+      }
+    );
   const [categories, setCategories] = useState([]);
 
   const [vendors, setVendors] = useState([]);

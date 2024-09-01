@@ -37,6 +37,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
 import AssignTerms from './AssignTerms';
+import POView from './POView';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
@@ -96,10 +97,6 @@ const DyeingPO = () => {
   const [fabricsList, setFabricsList] = useState([]);
   const [vendorsList, setVendorsList] = useState([]);
   const [locationsList, setLocationsList] = useState([]);
-  const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
-  const handleAccordionToggle = (event, isExpanded) => {
-    setAccordionExpanded(!accordionExpanded);
-  };
 
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
     useGetProductionBatchForProcessingQuery();
@@ -275,39 +272,17 @@ const DyeingPO = () => {
     setOpen(true);
   };
   const handleClickOpen2 = async (data) => {
-    // setInitialFormData(data);
-    // try {
-    //   const response = await axios.get(
-    //     `http://100.42.177.77:83/api/ITP/GetITPDetailsByITPId?itpId=${data.itpId}`
-    //   );
-
-    //   setBxStockList(
-    //     response.data.result.map((row, index) => ({
-    //       id: index + 1,
-    //       ...row
-    //     }))
-    //   );
-    // } catch (error) {
-    //   console.error('Error fetching ITP:', error);
-    // }
     setOpen2(true);
+    setVId(data);
   };
   console.log('terms condition', vId);
   const handleClose = () => {
     // setShowUpperDiv(true);
     setOpen(false);
-    // setInitialFormData({});
-    // refetchDyeingPrintingData();
-
-    // setDeleteId(null);
   };
   const handleClose2 = () => {
     // setShowUpperDiv(true);
     setOpen2(false);
-    // setInitialFormData({});
-    // refetchDyeingPrintingData();
-
-    // setDeleteId(null);
   };
   const columns = [
     {
@@ -568,9 +543,6 @@ const DyeingPO = () => {
     {
       field: 'totalAfterTax',
       headerName: 'Total After Tax',
-      // width: 'auto',
-
-      // flex: 1,
 
       renderCell: (params) => (
         <SmallTextField
@@ -941,6 +913,7 @@ const DyeingPO = () => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                <POView vId={vId} />
               </DialogContent>
             </Dialog>
           </Grid>
