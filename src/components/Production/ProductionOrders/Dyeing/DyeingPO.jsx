@@ -21,6 +21,7 @@ import MainCard from 'ui-component/cards/MainCard';
 
 import { Card, CardHeader, Avatar } from '@mui/material';
 import '../../../../assets/scss/style.scss';
+import { useNavigate } from 'react-router-dom';
 
 import {
   useGetProductionBatchForProcessingQuery,
@@ -59,6 +60,7 @@ const DyeingPO = () => {
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
   const apiRef = useGridApiRef();
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const [fabrics, setFabrics] = useState([]);
   const { user } = useUser();
@@ -284,6 +286,9 @@ const DyeingPO = () => {
     // setShowUpperDiv(true);
     setOpen2(false);
   };
+  const handleIssuanceClick = (rowData) => {
+    navigate('/Production/Issuance', { state: { data: rowData, tab: 1 } });
+  };
   const columns = [
     {
       field: 'id',
@@ -363,6 +368,13 @@ const DyeingPO = () => {
               onClick={() => handleClickOpen2(params.row)}
             >
               View
+            </Button>
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => handleIssuanceClick(params.row)}
+            >
+              Issuance
             </Button>
           </ButtonGroup>
         </div>

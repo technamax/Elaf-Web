@@ -81,6 +81,9 @@ export const productionApi = createApi({
     }),
     dyeingPoAssignTermDetailsByPoId: builder.query({
       query: (PoId) => `PO/DyeingPoAssignTermDetailsByPoId?PoId=${PoId}`
+    }),
+    getDyeingPoHeaderListbyPoId: builder.query({
+      query: (PoId) => `PO/GetDyeingPoHeaderListbyPoId?PoId=${PoId}`
     })
   })
 });
@@ -106,5 +109,6 @@ export const {
   useGetProductionPODesignByFabricAndProductionIdQuery,
   useGetDyeingPoHeaderListQuery,
   useGetDyeingPODetailsPoIdQuery,
-  useDyeingPoAssignTermDetailsByPoIdQuery
+  useDyeingPoAssignTermDetailsByPoIdQuery,
+  useGetDyeingPoHeaderListbyPoIdQuery
 } = productionApi;

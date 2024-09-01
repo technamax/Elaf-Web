@@ -19,8 +19,8 @@ import {
   useGetDyeingPoHeaderListQuery,
   useGetFabricForProductionByProductionIdQuery,
   useGetVendorsByFabricIDQuery,
-  useGetProductionPODesignByFabricAndProductionIdQuery
-  // useGetDyeingPoHeaderListQuery
+  useGetProductionPODesignByFabricAndProductionIdQuery,
+  useGetDyeingPoHeaderListbyPoIdQuery
 } from 'api/store/Apis/productionApi';
 import {
   useGetWareHouseLocationsQuery,
@@ -33,10 +33,10 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import * as React from 'react';
 import { useUser } from 'context/User';
 
-const DyeingIssuance = () => {
+const DyeingIssuance = ({ rowData }) => {
   const { user } = useUser();
   const [formData, setFormData] = useState({
-    poId: 0,
+    poId: rowData?.poId || 0,
     productionId: '',
     issuanceDate: '',
     expectedReturnDate: '',
@@ -53,6 +53,9 @@ const DyeingIssuance = () => {
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: user.empId
   });
+  useEffect(() => {
+    setFormData({ ...formData, poId: rowData?.poId || 0 });
+  }, [rowData]);
   const [initialRows, setInitialRows] = useState([]);
   const [fabricsList, setFabricsList] = useState([]);
   const [vendorsList, setVendorsList] = useState([]);
@@ -60,7 +63,9 @@ const DyeingIssuance = () => {
   const [dyeingDetails, setDyeingDetails] = useState([]);
 
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
-    useGetDyeingPoHeaderListQuery();
+    useGetDyeingPoHeaderListbyPoIdQuery(formData.poId, {
+      skip: !formData.poId // Skip the query if no collection is selected
+    });
   const { data: dyeingPoData, refetch: refetchDyeingPoData } =
     useGetDyeingPoHeaderListQuery();
   const { data: locationsData, refetch: refetchLocationsData } =
