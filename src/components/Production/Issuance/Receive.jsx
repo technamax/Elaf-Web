@@ -5,6 +5,7 @@ import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
 import { style, width } from '@mui/system';
 import { useUser } from 'context/User';
+import { useSnackbar } from 'notistack';
 
 const SmallTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-input': {
@@ -19,6 +20,7 @@ const SmallTextField = styled(TextField)(({ theme }) => ({
 
 const Receive = ({ fabrics, setFabrics, stockId }) => {
   const { user } = useUser();
+  const { enqueueSnackbar } = useSnackbar();
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const [formData, setFormData] = React.useState({ stockId: stockId });
   console.log('receiveFormData', formData);
@@ -80,13 +82,13 @@ const Receive = ({ fabrics, setFabrics, stockId }) => {
             lastUpdatedBy: user.empId
           };
 
-          // Recalculate the amount when rate or itpQuantity is updated
-          if (field === 'rate' || field === 'itpQuantity') {
-            updatedRow.amount = updatedRow.rate * updatedRow.itpQuantity;
+          // Recalculate the amount when rate or quantity is updated
+          if (field === 'rate' || field === 'quantity') {
+            updatedRow.amount = updatedRow.rate * updatedRow.quantity;
           }
 
           // Optionally, update amountAfterTax if it's a function of amount and tax
-          if (field === 'tax' || field === 'rate' || field === 'itpQuantity') {
+          if (field === 'tax' || field === 'rate' || field === 'quantity') {
             updatedRow.amountAfterTax =
               updatedRow.amount + updatedRow.amount * (updatedRow.tax / 100);
           }
@@ -126,7 +128,7 @@ const Receive = ({ fabrics, setFabrics, stockId }) => {
     },
     {
       field: 'totalQuantity',
-      headerName: 'Required Qty'
+      headerName: 'totalQuantityAKArequiredQty'
     },
     {
       field: 'assignQty',
@@ -134,15 +136,19 @@ const Receive = ({ fabrics, setFabrics, stockId }) => {
     },
     {
       field: 'stockReceived',
-      headerName: 'Received Qty'
+      headerName: 'stock Received Qty'
+    },
+    {
+      field: 'itpQuantity',
+      headerName: 'itp Qty Received'
     },
     // {
     //   field: 'itpQuantity',
     //   headerName: 'Qty Received'
     // },
     {
-      field: 'itpQuantity',
-      headerName: 'Qty Received',
+      field: 'quantity',
+      headerName: 'add qty',
       // flex: 1,
       // width: 'auto',
 
@@ -152,11 +158,11 @@ const Receive = ({ fabrics, setFabrics, stockId }) => {
           size="small"
           // fullWidth
           sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.itpQuantity || ''}
+          value={params.row.quantity || ''}
           onChange={(event) =>
             handleCellEdit({
               id: params.id,
-              field: 'itpQuantity',
+              field: 'quantity',
               value: Number(event.target.value)
             })
           }
@@ -224,7 +230,7 @@ const Receive = ({ fabrics, setFabrics, stockId }) => {
           size="small"
           // fullWidth
           sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.rate * params.row.itpQuantity || ''}
+          value={params.row.rate * params.row.quantity || ''}
           // onChange={(event) =>
           //   handleCellEdit({
           //     id: params.id,
@@ -416,7 +422,7 @@ const Receive = ({ fabrics, setFabrics, stockId }) => {
       </Grid>
       <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
         <Button variant="contained" size="small" onClick={handleSave}>
-          Save
+          Receive
         </Button>
       </Grid>{' '}
     </Grid>

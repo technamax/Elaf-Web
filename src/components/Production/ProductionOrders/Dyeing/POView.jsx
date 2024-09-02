@@ -19,7 +19,7 @@ const POView = ({ vId }) => {
     });
 
   useEffect(() => {
-    if (poDetailsData?.success === false) {
+    if (poDetailsData?.result === null) {
       setPoDetails([]);
       return;
     }
@@ -33,11 +33,11 @@ const POView = ({ vId }) => {
     }
   }, [poDetailsData, refetchPoDetailsData]);
   useEffect(() => {
-    if (poDetailsData?.success === false) {
+    if (assignedTermsData?.result === null) {
       setAssignedTerms([]);
       return;
     }
-    if (poDetailsData) {
+    if (assignedTermsData) {
       setAssignedTerms(
         assignedTermsData.result.map((row, index) => ({
           id: index + 1,
@@ -102,6 +102,8 @@ const POView = ({ vId }) => {
       headerName: 'Process Type'
     }
   ];
+
+  console.log('assignedTerms', assignedTerms);
   return (
     <div>
       <Grid

@@ -296,7 +296,7 @@ const DyeingPO = () => {
       // flex: 1
     },
     {
-      field: 'poId',
+      field: 'poIdName',
       headerName: 'PO ID'
       // flex: 1
     },

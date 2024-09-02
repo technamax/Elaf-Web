@@ -171,12 +171,10 @@ const FabricReceiving = () => {
       skip: !formData.collectionId // Skip the query if no collection is selected
     }
   );
-  const { data: stockData } = useGetStockReceivingByProductionHeaderIdQuery(
-    formData.productionHeaderId,
-    {
+  const { data: stockData, refetch: refetchStockData } =
+    useGetStockReceivingByProductionHeaderIdQuery(formData.productionHeaderId, {
       skip: !formData.productionHeaderId // Skip the query if no collection is selected
-    }
-  );
+    });
   useEffect(() => {
     if (fabricData) {
       const data = fabricData.result;
@@ -292,10 +290,11 @@ const FabricReceiving = () => {
     // console.log('stockData', stockData);
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/Production/StartFabricReceivingProcess',
+        'http://100.42.177.77:83/api/StockReceiving/SaveStockReceivingHeader',
         formData
       );
       console.log('Save response:', response.data);
+      refetchStockData();
       setInitialRows(
         response.data.result.map((row, index) => ({
           id: index + 1,
@@ -401,6 +400,7 @@ const FabricReceiving = () => {
           <IconButton
             color="primary"
             onClick={() => handleClickOpen(params.row)}
+            disabled={params.row.statusId === 8}
           >
             <MoveToInboxIcon />
           </IconButton>

@@ -20,7 +20,7 @@ import {
   useGetFabricForProductionByProductionIdQuery,
   useGetVendorsByFabricIDQuery,
   useGetProductionPODesignByFabricAndProductionIdQuery,
-  useGetDyeingPoHeaderListbyPoIdQuery
+  useGetDyeingPODetailsPoIdQuery
 } from 'api/store/Apis/productionApi';
 import {
   useGetWareHouseLocationsQuery,
@@ -32,20 +32,40 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
+import { useSnackbar } from 'notistack';
+import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
+import { styled } from '@mui/material/styles';
+
+const SmallTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiInputBase-input': {
+    fontSize: '0.875rem', // Adjust font size
+    padding: '4px 6px' // Adjust padding
+  },
+  width: 'auto', // Let width adjust automatically
+  height: 'auto', // Let height adjust automatically
+  minWidth: '100px', // Set minimum width to ensure it's usable
+  minHeight: '30px' // Set minimum height to ensure it's usable
+}));
 
 const DyeingIssuance = ({ rowData }) => {
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
+  const apiRef = useGridApiRef();
+  const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
   const [formData, setFormData] = useState({
     poId: rowData?.poId || 0,
     productionId: '',
-    issuanceDate: '',
+    issuanceDate: null,
     expectedReturnDate: '',
     processTypeId: 1223,
     fabricId: '',
+    fabricName: '',
     vendorId: '',
+    vendorName: '',
     shrinkage: '',
     wastage: '',
     locationId: '',
+    fullLocation: '',
 
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -57,13 +77,16 @@ const DyeingIssuance = ({ rowData }) => {
     setFormData({ ...formData, poId: rowData?.poId || 0 });
   }, [rowData]);
   const [initialRows, setInitialRows] = useState([]);
+  const [poDetails, setPoDetails] = useState([]);
   const [fabricsList, setFabricsList] = useState([]);
   const [vendorsList, setVendorsList] = useState([]);
   const [locationsList, setLocationsList] = useState([]);
   const [dyeingDetails, setDyeingDetails] = useState([]);
 
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
-    useGetDyeingPoHeaderListbyPoIdQuery(formData.poId, {
+    useGetDyeingPoHeaderListQuery();
+  const { data: poDetailsData, refetch: refetchPoDetailsData } =
+    useGetDyeingPODetailsPoIdQuery(formData.poId, {
       skip: !formData.poId // Skip the query if no collection is selected
     });
   const { data: dyeingPoData, refetch: refetchDyeingPoData } =
@@ -87,7 +110,20 @@ const DyeingIssuance = ({ rowData }) => {
     );
   // const { data: subMenuData, refetch } = useGetSubMenuListQuery();
   const [productions, setProductions] = useState([]);
-
+  useEffect(() => {
+    if (poDetailsData?.result === null) {
+      setPoDetails([]);
+      return;
+    }
+    if (poDetailsData) {
+      setPoDetails(
+        poDetailsData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [poDetailsData, refetchPoDetailsData]);
   useEffect(() => {
     if (dyeingPoData) {
       setInitialRows(
@@ -153,16 +189,23 @@ const DyeingIssuance = ({ rowData }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'vendorId') {
-      const selectedvendor = vendorsList.find(
-        (collection) => collection.vendorId === parseInt(value)
-      );
+    if (name === 'poId') {
+      const selectedPO = productions.find((po) => po.poId === parseInt(value));
 
       setFormData({
         ...formData,
-        vendorId: value,
-        shrinkage: selectedvendor ? selectedvendor.shrinkage : '',
-        wastage: selectedvendor ? selectedvendor.wastage : ''
+        poId: value,
+        shrinkage: selectedPO ? selectedPO.shrinkage : '',
+        productionId: selectedPO ? selectedPO.productionId : '',
+        issuanceDate: selectedPO ? selectedPO.issuanceDate : null,
+        expectedReturnDate: selectedPO ? selectedPO.expectedReturnDate : '',
+        fabricId: selectedPO ? selectedPO.fabricId : '',
+        vendorId: selectedPO ? selectedPO.vendorId : '',
+        locationId: selectedPO ? selectedPO.locationId : '',
+        fullLocation: selectedPO ? selectedPO.fullLocation : '',
+        fabricName: selectedPO ? selectedPO.fabricName : '',
+        vendorName: selectedPO ? selectedPO.vendorName : '',
+        wastage: selectedPO ? selectedPO.wastage : ''
       });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -218,6 +261,153 @@ const DyeingIssuance = ({ rowData }) => {
       // flex: 1
     }
   ];
+  console.log('productions', productions);
+
+  const handleCellEdit = React.useCallback(
+    (params) => {
+      const { id, field, value } = params;
+      console.log('Editing cell:', params); // Debugging line
+
+      setPoDetails((prevRows) =>
+        prevRows.map((row) => {
+          if (row.id === id) {
+            const updatedRow = {
+              ...row,
+              [field]: value,
+              poId: 0,
+              poDetId: 0,
+              appId: user.appId,
+              createdOn: new Date().toISOString(),
+              createdBy: user.empId,
+              lastUpdatedOn: new Date().toISOString(),
+              lastUpdatedBy: user.empId
+            };
+
+            // Recalculate the totalBeforeTax when rate or quantity is updated
+            // if (field === 'rate' || field === 'quantity') {
+            //   updatedRow.totalBeforeTax = updatedRow.rate * updatedRow.quantity;
+            // }
+
+            // // Optionally, update totalAfterTax if it's a function of totalBeforeTax and tax
+            // if (field === 'tax' || field === 'rate' || field === 'quantity') {
+            //   updatedRow.totalAfterTax =
+            //     updatedRow.totalBeforeTax +
+            //     updatedRow.totalBeforeTax * (updatedRow.tax / 100);
+            // }
+
+            return updatedRow;
+          }
+          return row;
+        })
+      );
+    },
+    [setPoDetails, user.appId, user.empId]
+  );
+
+  const designsColumns = [
+    {
+      field: 'id',
+
+      headerName: 'Sr#'
+    },
+    {
+      field: 'designNo',
+      headerName: 'Design'
+    },
+    {
+      field: 'baseColor',
+      headerName: 'Color'
+    },
+    {
+      field: 'total',
+      headerName: 'Planned Qty'
+    },
+    {
+      field: 'quantity',
+      headerName: 'Assigned Qty'
+    },
+    {
+      field: 'issuance',
+      headerName: 'Issuance Qty',
+      // flex: 1,
+      // width: 'auto',
+
+      renderCell: (params) => (
+        <SmallTextField
+          variant="outlined"
+          size="small"
+          // fullWidth
+          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          value={params.row.issuance || ''}
+          onChange={(event) =>
+            handleCellEdit({
+              id: params.id,
+              field: 'issuance',
+              value: Number(event.target.value)
+            })
+          }
+          type="number"
+          InputProps={{
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+          }}
+        />
+      )
+    }
+  ];
+
+  const fetchData = () => {
+    apiRef.current.autosizeColumns({
+      includeHeaders: true,
+      includeOutliers: true
+    });
+  };
+  React.useEffect(() => {
+    fetchData();
+  });
+
+  const [selectedDesigns, setSelectedDesigns] = useState([]);
+
+  const handleRowSelectionModelChange = React.useCallback(
+    (newRowSelectionModel) => {
+      setRowSelectionModel(newRowSelectionModel);
+
+      const selectedDesigns = newRowSelectionModel
+        .map((id) => {
+          const rowData = apiRef.current.getRow(id);
+          console.log('rowData', rowData);
+          return rowData
+            ? {
+                ...rowData
+              }
+            : null;
+        })
+        .filter((row) => row !== null); // Filter out any null values
+
+      console.log('selectedDesigns', selectedDesigns);
+      setSelectedDesigns(selectedDesigns);
+    },
+    [apiRef]
+  );
+
+  useEffect(() => {
+    // Filter the fabrics to include only the selected rows
+    const selectedFabrics = poDetails.filter((fabric) =>
+      rowSelectionModel.includes(fabric.id)
+    );
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      dyeingPoDetailsList: selectedFabrics
+    }));
+  }, [poDetails, rowSelectionModel]);
+
+  console.log('poDetails', poDetails);
+  React.useEffect(() => {
+    if (apiRef.current) {
+      console.log('API ref is ready:', apiRef.current);
+    }
+  }, [apiRef]);
+
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
       <Card variant="outlined">
@@ -240,16 +430,16 @@ const DyeingIssuance = ({ rowData }) => {
               fullWidth
               select
               label="Production"
-              name="productionId"
-              value={formData.productionId}
+              name="poId"
+              value={formData.poId}
               onChange={handleChange}
               size="small"
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             >
               {productions.map((option) => (
-                <MenuItem key={option.productionId} value={option.productionId}>
-                  {option.collectionName}
+                <MenuItem key={option.poId} value={option.poId}>
+                  {option.poIdName}
                 </MenuItem>
               ))}
             </TextField>
@@ -257,10 +447,21 @@ const DyeingIssuance = ({ rowData }) => {
           <Grid item xs={12} md={3}>
             <TextField
               size="small"
-              type="date"
+              // type="date"
               label="Issuance Date"
               name="issuanceDate"
-              value={formData.issuanceDate}
+              value={
+                !formData.issuanceDate
+                  ? null
+                  : new Date(formData.issuanceDate).toLocaleDateString(
+                      'en-GB',
+                      {
+                        day: 'numeric',
+                        month: 'short',
+                        year: '2-digit'
+                      }
+                    )
+              }
               onChange={handleChange}
               fullWidth
               // error={!!formErrors.launchDate}
@@ -277,10 +478,21 @@ const DyeingIssuance = ({ rowData }) => {
           <Grid item xs={12} md={3}>
             <TextField
               size="small"
-              type="date"
+              // type="date"
               label="Planning Date"
               name="expectedReturnDate"
-              value={formData.expectedReturnDate}
+              value={
+                !formData.issuanceDate
+                  ? null
+                  : new Date(formData.expectedReturnDate).toLocaleDateString(
+                      'en-GB',
+                      {
+                        day: 'numeric',
+                        month: 'short',
+                        year: '2-digit'
+                      }
+                    )
+              }
               onChange={handleChange}
               fullWidth
               // error={!!formErrors.expectedReturnDate}
@@ -297,40 +509,35 @@ const DyeingIssuance = ({ rowData }) => {
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
-              select
+              // select
               label="Select Fabric"
-              name="fabricId"
-              value={formData.fabricId}
+              name="fabricName"
+              value={formData.fabricName}
               onChange={handleChange}
               size="small"
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             >
-              {fabricsList.map((option) => (
+              {/* {fabricsList.map((option) => (
                 <MenuItem key={option.fabricId} value={option.fabricId}>
                   {option.fabricName}
                 </MenuItem>
-              ))}
+              ))} */}
             </TextField>
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
+              label="Vendor"
               fullWidth
-              select
-              label="Select Vendor"
-              name="vendorId"
-              value={formData.vendorId}
-              onChange={handleChange}
               size="small"
-              // error={!!formErrors.brandId}
-              // helperText={formErrors.brandId}
-            >
-              {vendorsList.map((option) => (
-                <MenuItem key={option.vendorId} value={option.vendorId}>
-                  {option.vendorName}
-                </MenuItem>
-              ))}
-            </TextField>
+              name="vendorName"
+              onChange={handleChange}
+              value={formData.vendorName}
+              required
+              // disabled={isEdit}
+              // error={!!formErrors.collectionName}
+              // helperText={formErrors.collectionName}
+            />
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
@@ -363,16 +570,16 @@ const DyeingIssuance = ({ rowData }) => {
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
-              select
+              // select
               label="Select Location"
-              name="locationId"
-              value={formData.locationId}
+              name="fullLocation"
+              value={formData.fullLocation}
               onChange={handleChange}
               size="small"
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             >
-              {locationsList.map((option) => (
+              {/* {locationsList.map((option) => (
                 <MenuItem key={option.locationId} value={option.locationId}>
                   {option.section +
                     '.' +
@@ -382,21 +589,19 @@ const DyeingIssuance = ({ rowData }) => {
                     '.' +
                     option.bin}
                 </MenuItem>
-              ))}
+              ))} */}
             </TextField>
           </Grid>
           <Grid item xs={12}>
-            <div style={{ height: 400, width: '100%' }}>
-              {/* <DataGrid
-                rows={dyeingDetails}
-                columns={designsColumns}
-                apiRef={apiRef}
-                disableRowSelectionOnClick
-                checkboxSelection
-                onRowSelectionModelChange={handleRowSelectionModelChange}
-                rowSelectionModel={rowSelectionModel}
-              /> */}
-            </div>
+            <DataGrid
+              rows={poDetails}
+              columns={designsColumns}
+              apiRef={apiRef}
+              disableRowSelectionOnClick
+              checkboxSelection
+              onRowSelectionModelChange={handleRowSelectionModelChange}
+              rowSelectionModel={rowSelectionModel}
+            />
           </Grid>
 
           <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
