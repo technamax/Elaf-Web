@@ -12,6 +12,9 @@ export const lookupApi = createApi({
     }),
     getShrinkageWastageList: builder.query({
       query: () => `Configurations/GetShrinkageWastageList?appId=1`
+    }),
+    getWareHouseLocations: builder.query({
+      query: () => `Common/GetLocationsbyAppId?appId=1`
     })
   })
 });
@@ -19,5 +22,6 @@ export const lookupApi = createApi({
 export const {
   useGetLookUpListQuery,
   useGetShrinkageWastageListQuery,
-  useGetStatusLookUpQuery
+  useGetStatusLookUpQuery,
+  useGetWareHouseLocationsQuery
 } = lookupApi;

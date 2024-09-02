@@ -1,160 +1,38 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import {
-  Grid,
-  TextField,
-  Button,
-  MenuItem,
-  Divider,
-  Box,
-  Tab,
-  Card,
-  CardHeader,
-  Avatar,
-  FormControl
-} from '@mui/material';
+import { Box, Tab } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
-import MenuIcon from '@mui/icons-material/Menu';
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
-import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import {} from '@mui/material';
 import '../../assets/scss/style.scss';
-
-// import { useGetMainMenuListQuery } from 'api/store/Apis/userManagementApi';
-import { useGetCategoriesListQuery } from 'api/store/Apis/termsAndConditionsApi';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import ReuseableDataGrid from 'components/ReuseableDataGrid';
-import AddTermsAndConditions from 'components/Production/TermsAndConditions/AddTermsAndConditions';
-import AssignTermsAndConditions from 'components/Production/TermsAndConditions/AssignTermsAndConditions';
-// import SubMenu from './SubMenu';
-
-//////
+import DyeingIssuance from 'components/Production/Issuance/Dyeing/DyeingIssuance';
+import EmbroideryIssuance from 'components/Production/Issuance/Embroidery/EmbroideryIssuance';
 import * as React from 'react';
+import { useLocation } from 'react-router-dom';
 import { useUser } from 'context/User';
 
 const Issuance = () => {
-  const { user } = useUser();
-  const [initialData, setInitialData] = useState([]);
-  const [isEdit, setIsEdit] = useState(false);
-  const [formData, setFormData] = useState({
-    categoryId: 0,
-    description: '',
-    enabled: '',
+  const location = useLocation();
+  const rowData = location.state?.data;
+  const tab = location.state?.tab?.toString(); // Convert tab to string
 
-    appId: user.appId,
-    createdOn: new Date().toISOString(),
-    createdBy: user.empId,
-    lastUpdatedOn: new Date().toISOString(),
-    lastUpdatedBy: user.empId
-  });
-  const options = [
-    {
-      value: 'Yes',
-      label: 'Yes'
-    },
-    {
-      value: 'No',
-      label: 'No'
-    }
-  ];
+  console.log('rowData', rowData);
+  console.log('tab', tab);
+
   const [value, setValue] = useState('1');
+
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
+    console.log('value', value);
   };
-  // console.log('initialData', initialData);
-  useEffect(() => {
-    setFormData({
-      categoryId: initialData?.categoryId || 0,
-      description: initialData?.description || '',
-      enabled: initialData?.enabled || '',
-      appId: initialData?.appId || user.appId,
-      createdOn: initialData?.createdOn || new Date().toISOString(),
-      createdBy: initialData?.createdBy || user.empId,
-      lastUpdatedOn: new Date().toISOString(),
-      lastUpdatedBy: user.empId
-    });
-  }, [initialData]);
-  const [initialRows, setInitialRows] = useState([]);
-  const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
-  const handleAccordionToggle = (event, isExpanded) => {
-    setAccordionExpanded(!accordionExpanded);
-  };
-
-  const { data: categoriesData, refetch } = useGetCategoriesListQuery();
 
   useEffect(() => {
-    if (categoriesData) {
-      setInitialRows(
-        categoriesData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
+    if (tab) {
+      setValue(tab);
     }
-  }, [categoriesData, refetch]);
-
-  console.log('initialRows', initialRows);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSave = async () => {
-    console.log('formData', formData);
-    try {
-      // Make the API call
-      const response = await axios.post(
-        'http://100.42.177.77:83/api/TermsConditions/SaveCategory',
-        formData
-      );
-
-      console.log('Save response:', response.data);
-
-      setFormData((prevFormData) => ({
-        categoryId: 0,
-        description: '',
-        enabled: '',
-
-        appId: user.appId,
-        createdOn: new Date().toISOString(),
-        createdBy: user.empId,
-        lastUpdatedOn: new Date().toISOString(),
-        lastUpdatedBy: user.empId
-      }));
-
-      refetch();
-      setIsEdit(false);
-      // setAccordionExpanded(false);
-    } catch (error) {
-      console.error('Error saving data:', error);
-    }
-  };
-  console.log('formData', formData);
-
-  const columns = [
-    {
-      field: 'id',
-      headerName: 'Sr#'
-      // flex: 1
-    },
-    {
-      field: 'description',
-      headerName: 'Description',
-      flex: 1
-    },
-
-    {
-      field: 'enabled',
-      headerName: 'Enabled'
-      // flex: 1
-    }
-  ];
-
+  }, [tab]);
   return (
     <MainCard
       style={{
@@ -181,16 +59,6 @@ const Issuance = () => {
                   }
                 })}
               />
-              {/* <Tab
-                icon={<AddCircleOutlineOutlinedIcon />}
-                label="Dyeing PO"
-                value="2"
-                sx={(theme) => ({
-                  '& .MuiTouchRipple-child': {
-                    backgroundColor: `${theme.palette.primary.main} !important`
-                  }
-                })}
-              /> */}
               <Tab
                 icon={<AssignmentOutlinedIcon />}
                 label="Embroidery Issuance"
@@ -234,90 +102,11 @@ const Issuance = () => {
             </TabList>
           </Box>
           <TabPanel value="1">
-            <Card variant="outlined">
-              <CardHeader
-                className="css-4rfrnx-MuiCardHeader-root"
-                // avatar={
-                // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
-                // }
-                title="Dyeing Issuance"
-                titleTypographyProps={{ style: { color: 'white' } }}
-              ></CardHeader>
-              <Grid
-                container
-                spacing={1}
-                width="Inherit"
-                sx={{ paddingY: 2, paddingX: 2 }}
-              >
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    fullWidth
-                    select
-                    label="enabled"
-                    name="enabled"
-                    value={formData.enabled}
-                    onChange={handleChange}
-                    size="small"
-                    // error={!!formErrors.brandId}
-                    // helperText={formErrors.brandId}
-                  >
-                    {options.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-
-                <Grid item xs={12} md={9}>
-                  <TextField
-                    label="Description"
-                    fullWidth
-                    size="small"
-                    name="description"
-                    onChange={handleChange}
-                    value={formData.description}
-                    required
-                    // disabled={isEdit}
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  />
-                </Grid>
-
-                <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-                  <Button variant="contained" size="small" onClick={handleSave}>
-                    Save
-                  </Button>
-                </Grid>
-              </Grid>{' '}
-            </Card>
-            <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
-            <Card variant="outlined">
-              <CardHeader
-                className="css-4rfrnx-MuiCardHeader-root"
-                avatar={<VisibilityOutlinedIcon />}
-                title="View Issuance Details"
-                titleTypographyProps={{ style: { color: 'white' } }}
-              ></CardHeader>
-              <Grid
-                container
-                spacing={2}
-                width="Inherit"
-                // sx={{ paddingY: 2, paddingX: 2 }}
-              >
-                <Grid item xs={12}>
-                  <ReuseableDataGrid
-                    initialRows={initialRows}
-                    iColumns={columns}
-                    disableDelete={true}
-                    setInitialData={setInitialData}
-                    setIsEdit={setIsEdit}
-                  />
-                </Grid>
-              </Grid>
-            </Card>
+            <DyeingIssuance rowData={rowData} />
           </TabPanel>
-          <TabPanel value="2">{/* <AddTermsAndConditions /> */}</TabPanel>
+          <TabPanel value="2">
+            <EmbroideryIssuance />
+          </TabPanel>
           <TabPanel value="3">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="4">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="5">{/* <AssignTermsAndConditions /> */}</TabPanel>

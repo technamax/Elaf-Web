@@ -55,14 +55,35 @@ export const productionApi = createApi({
     }),
     getStockReceivingByProductionHeaderId: builder.query({
       query: (productionHeaderId) =>
-        `StockReceiving/GetStockReceivingByProductionHeaderId?productionHeaderId=${productionHeaderId}&Status=7`
+        // `StockReceiving/GetStockReceivingByProductionHeaderId?productionHeaderId=${productionHeaderId}&Status=7`
+        `StockReceiving/GetStockReceivingHeader?productionHeaderId=${productionHeaderId}`
     }),
     GetITPListByStatus: builder.query({
       query: (status) => `ITP/GetITPListByStatus?status=${status}`
     }),
-    GetProductionFabricDetailByProductionHeaderId: builder.query({
-      query: (productionHeaderId, status) =>
-        `Production/GetProductionFabricDetailByProductionHeaderId?productionHeaderId=${productionHeaderId}&status=${status}`
+    getFabricForProductionByProductionId: builder.query({
+      query: (productionId) =>
+        `Production/GetFabricForProductionByProductionId?productionId=${productionId}&appId=1`
+    }),
+    getVendorsByFabricID: builder.query({
+      query: (fabricId) =>
+        `Configurations/GetVendorsByFabricID?fabricId=${fabricId}`
+    }),
+    getProductionPODesignByFabricAndProductionId: builder.query({
+      query: ({ fabricId, productionId }) =>
+        `Production/GetProductionPODesignByFabricAndProductionId?fabricId=${fabricId}&productionId=${productionId}`
+    }),
+    getDyeingPoHeaderList: builder.query({
+      query: () => `PO/GetDyeingPoHeaderList?appId=1`
+    }),
+    getDyeingPODetailsPoId: builder.query({
+      query: (PoId) => `PO/GetDyeingPODetailsPoId?PoId=${PoId}`
+    }),
+    dyeingPoAssignTermDetailsByPoId: builder.query({
+      query: (PoId) => `PO/DyeingPoAssignTermDetailsByPoId?PoId=${PoId}`
+    }),
+    getDyeingPoHeaderListbyPoId: builder.query({
+      query: (PoId) => `PO/GetDyeingPoHeaderListbyPoId?PoId=${PoId}`
     })
   })
 });
@@ -83,5 +104,11 @@ export const {
   useGetStockReceivingByProductionHeaderIdQuery,
   useGetProductionFabricDetailListQuery,
   useGetITPListByStatusQuery,
-  useGetProductionFabricDetailByProductionHeaderIdQuery
+  useGetFabricForProductionByProductionIdQuery,
+  useGetVendorsByFabricIDQuery,
+  useGetProductionPODesignByFabricAndProductionIdQuery,
+  useGetDyeingPoHeaderListQuery,
+  useGetDyeingPODetailsPoIdQuery,
+  useDyeingPoAssignTermDetailsByPoIdQuery,
+  useGetDyeingPoHeaderListbyPoIdQuery
 } = productionApi;

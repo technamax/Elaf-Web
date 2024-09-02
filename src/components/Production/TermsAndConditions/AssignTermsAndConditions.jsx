@@ -22,7 +22,8 @@ import {
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import {
   useGetCategoriesListQuery,
-  useGetTermsConditionsListQuery
+  useGetTermsConditionsListQuery,
+  useGetTermsByVendorIdQuery
 } from 'api/store/Apis/termsAndConditionsApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
@@ -63,7 +64,7 @@ const AssignTermsAndConditions = () => {
   useEffect(() => {
     setFormData({
       assignId: initialData?.assignId || 0,
-      // categoryId: initialData?.categoryId || '',
+      vendorId: initialData?.vendorId || '',
       categoryId: initialData?.categoryId || '',
 
       appId: initialData?.appId || user.appId,
@@ -74,6 +75,7 @@ const AssignTermsAndConditions = () => {
     });
   }, [initialData]);
   const [initialRows, setInitialRows] = useState([]);
+  const [tcList, setTcList] = useState([]);
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded);
@@ -86,6 +88,13 @@ const AssignTermsAndConditions = () => {
     useGetTermsConditionsListQuery(formData.categoryId, {
       skip: !formData.categoryId // Skip the query if no collection is selected
     });
+  const { data: termsData, refetch: refetchTermsData } =
+    useGetTermsByVendorIdQuery(
+      { vId: formData.vendorId, categoryId: formData.categoryId },
+      {
+        skip: !formData.vendorId || !formData.categoryId // Skip the query if no collection is selected
+      }
+    );
   const [categories, setCategories] = useState([]);
 
   const [vendors, setVendors] = useState([]);
@@ -109,6 +118,22 @@ const AssignTermsAndConditions = () => {
       );
     }
   }, [termsConditionsData]);
+  useEffect(() => {
+    if (termsData?.result === null) {
+      setTcList([]);
+      return;
+    }
+
+    if (termsData?.result) {
+      setTcList(
+        termsData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [termsData, refetchTermsData]);
+  console.log('termsData', termsData);
   useEffect(() => {
     if (categoriesData) {
       setCategories(
@@ -151,6 +176,7 @@ const AssignTermsAndConditions = () => {
       }));
 
       // refetch();
+      refetchTermsData();
       setIsEdit(false);
       // setAccordionExpanded(false);
     } catch (error) {
@@ -179,6 +205,27 @@ const AssignTermsAndConditions = () => {
       headerName: 'Description',
       flex: 1
     }
+  ];
+  const tcColumns = [
+    {
+      field: 'id',
+      headerName: 'Sr#'
+    },
+    {
+      field: 'termCondDesc',
+      headerName: 'Term and Condition Description',
+      flex: 1
+    }
+    // {
+    //   field: 'enabled',
+    //   headerName: 'Enabled',
+    //   flex: 1
+    // },
+    // {
+    //   field: 'description',
+    //   headerName: 'Description',
+    //   flex: 1
+    // }
   ];
 
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
@@ -347,11 +394,12 @@ const AssignTermsAndConditions = () => {
         >
           <Grid item xs={12}>
             <ReuseableDataGrid
-              initialRows={initialRows}
-              iColumns={columns}
-              disableDelete={true}
-              setInitialData={setInitialData}
-              setIsEdit={setIsEdit}
+              initialRows={tcList}
+              iColumns={tcColumns}
+              //   disableDelete={true}
+              //   setInitialData={setInitialData}
+              //   setIsEdit={setIsEdit}
+              hideAction
             />
           </Grid>
         </Grid>{' '}
