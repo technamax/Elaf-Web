@@ -28,7 +28,8 @@ import {
   useGetFabricForProductionByProductionIdQuery,
   useGetVendorsByFabricIDQuery,
   useGetProductionPODesignByFabricAndProductionIdQuery,
-  useGetDyeingPoHeaderListQuery
+  useGetDyeingPoHeaderListQuery,
+  useDyeingPoAssignTermDetailsByPoIdQuery
 } from 'api/store/Apis/productionApi';
 import {
   useGetWareHouseLocationsQuery,
@@ -235,6 +236,7 @@ const DyeingPO = () => {
         LastUpdatedBy: user.empId
       }));
       setFabrics([]);
+      refetchDyeingPoData();
       setRowSelectionModel([]);
       // refetchFabricsData();
       setIsEdit(false);
@@ -276,6 +278,11 @@ const DyeingPO = () => {
   const handleClickOpen2 = async (data) => {
     setOpen2(true);
     setVId(data);
+    // const { data: assignedTermsData, refetch: refetchAssignedTermsData } =
+    //   useDyeingPoAssignTermDetailsByPoIdQuery(data.poId, {
+    //     skip: !data.poId // Skip the query if no collection is selected
+    //   });
+    // refetchAssignedTermsData();
   };
   console.log('terms condition', vId);
   const handleClose = () => {
@@ -893,7 +900,7 @@ const DyeingPO = () => {
                     />
                   </Grid>
                 </Grid> */}
-                <AssignTerms vId={vId} />
+                <AssignTerms vId={vId} handleClose={handleClose} />
               </DialogContent>
             </Dialog>
             <Dialog open={open2} onClose={handleClose2} fullWidth maxWidth="xl">

@@ -60,7 +60,19 @@ const POView = ({ vId }) => {
     },
     {
       field: 'baseColor',
+      headerName: 'Base Color'
+    },
+    {
+      field: 'colorName',
       headerName: 'Color'
+    },
+    {
+      field: 'vendorName',
+      headerName: 'Vendor'
+    },
+    {
+      field: 'uomName',
+      headerName: 'UOM'
     },
     {
       field: 'total',

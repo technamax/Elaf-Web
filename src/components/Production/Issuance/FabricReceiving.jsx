@@ -20,7 +20,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogContentText
+  DialogContentText,
+  ButtonGroup
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -206,7 +207,7 @@ const FabricReceiving = () => {
         }))
       );
     }
-  }, [stockData, formData.productionHeaderId]);
+  }, [stockData, refetchStockData, formData.productionHeaderId]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'productionId') {
@@ -329,7 +330,10 @@ const FabricReceiving = () => {
   };
   console.log('itps', itps);
   const [open, setOpen] = React.useState(false);
+  const [open2, setOpen2] = React.useState(false);
   const [stockId, setStockId] = React.useState(null);
+  const [stockView, setStockView] = React.useState(null);
+
   const handleClickOpen = async (data) => {
     setInitialFormData(data);
     setStockId(data.stockId);
@@ -349,14 +353,31 @@ const FabricReceiving = () => {
     }
     setOpen(true);
   };
-
+  const handleClickOpen2 = async (data) => {
+    console.log('rowdata', data);
+    try {
+      const response = await axios.get(
+        `http://100.42.177.77:83/api/StockReceiving/GetStockByStatusList?productionId=${data.productionId}&status=8`
+      );
+      console.log('response', response);
+      setStockView(
+        response.data.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    } catch (error) {
+      console.error('Error fetching ITP:', error);
+    }
+    setOpen2(true);
+  };
+  console.log('stockView', stockView);
   const handleClose = () => {
-    // setShowUpperDiv(true);
     setOpen(false);
     setInitialFormData({});
-    // refetchDyeingPrintingData();
-
-    // setDeleteId(null);
+  };
+  const handleClose2 = () => {
+    setOpen2(false);
   };
 
   const columns = [
@@ -396,262 +417,126 @@ const FabricReceiving = () => {
 
       renderCell: (params) => (
         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          {/*  <ButtonGroup variant="text" size="small"> */}
-          <IconButton
-            color="primary"
-            onClick={() => handleClickOpen(params.row)}
-            disabled={params.row.statusId === 8}
-          >
-            <MoveToInboxIcon />
-          </IconButton>
-          {/* <IconButton
-            color="primary"
-            onClick={() => handleClickOpen2(params.row)}
-          >
-            <VisibilityOutlinedIcon />
-          </IconButton> */}
-          {/* </ButtonGroup> */}
+          <ButtonGroup variant="text" size="small">
+            <IconButton
+              color="primary"
+              onClick={() => handleClickOpen(params.row)}
+              disabled={params.row.statusId === 8}
+            >
+              <MoveToInboxIcon />
+            </IconButton>
+            <IconButton
+              color="primary"
+              onClick={() => handleClickOpen2(params.row)}
+            >
+              <VisibilityOutlinedIcon />
+            </IconButton>
+          </ButtonGroup>
         </div>
       )
     }
   ];
-  const handleSave = async () => {
-    console.log('addForm', addForm);
-    try {
-      const response = await axios.post(
-        'http://100.42.177.77:83/api/ITP/SaveStockReceiving',
-        addForm
-      );
-      console.log('Save response:', response.data);
-      // setInitialRows(
-      //   response.data.result.map((row, index) => ({
-      //     id: index + 1,
-      //     ...row
-      //   }))
-      // );
-      if (!response.data.success) {
-        enqueueSnackbar(`${response.data.message} !`, {
-          variant: 'error',
-          autoHideDuration: 5000
-        });
-        console.log('response.message', response.data.message);
-      } else {
-        enqueueSnackbar(`${response.data.message} !`, {
-          variant: 'success',
-          autoHideDuration: 5000
-        });
-      }
 
-      // refetchDyeingPrintingData();
-      // setAccordionExpanded(false);
-    } catch (error) {
-      // Handle error (e.g., show an error message)
+  const viewColumns = [
+    {
+      field: 'id',
 
-      console.error('Error saving data:', error);
-      enqueueSnackbar('FAILED: Unable to save', {
-        variant: 'error',
-        autoHideDuration: 5000
-      });
-      // Handle error (e.g., show an error message)
+      headerName: 'Sr#'
+    },
+    {
+      field: 'fabricName',
+      headerName: 'Fabric'
+    },
+    {
+      field: 'barcode',
+      headerName: 'Barcode'
+    },
+    {
+      field: 'uomName',
+      headerName: 'UOM'
+    },
+    // {
+    //   field: 'totalQuantity',
+    //   headerName: 'totalQuantityAKArequiredQty'
+    // },
+    // {
+    //   field: 'assignQty',
+    //   headerName: 'Assigned Qty'
+    // },
+    // {
+    //   field: 'stockReceived',
+    //   headerName: 'stock Received Qty'
+    // },
+    // {
+    //   field: 'itpQuantity',
+    //   headerName: 'itp Qty Received'
+    // },
+    // {
+    //   field: 'itpQuantity',
+    //   headerName: 'Qty Received'
+    // },
+    {
+      field: 'quantity',
+      headerName: 'Quantity Received'
+    },
+    {
+      field: 'rate',
+      headerName: 'Rate'
+    },
+    {
+      field: 'tax',
+      headerName: 'Tax'
+    },
+    {
+      field: 'amount',
+      headerName: 'Amount'
+    },
+    {
+      field: 'amountAfterTax',
+      headerName: 'Amount After Tax'
     }
-  };
+  ];
 
-  // const handleCellEdit = (params) => {
-  //   const { id, field, value } = params;
-  //   console.log('Editing cell:', params); // Debugging line
+  // const handleSave = async () => {
+  //   console.log('addForm', addForm);
+  //   try {
+  //     const response = await axios.post(
+  //       'http://100.42.177.77:83/api/ITP/SaveStockReceiving',
+  //       addForm
+  //     );
+  //     console.log('Save response:', response.data);
+  //     // setInitialRows(
+  //     //   response.data.result.map((row, index) => ({
+  //     //     id: index + 1,
+  //     //     ...row
+  //     //   }))
+  //     // );
+  //     if (!response.data.success) {
+  //       enqueueSnackbar(`${response.data.message} !`, {
+  //         variant: 'error',
+  //         autoHideDuration: 5000
+  //       });
+  //       console.log('response.message', response.data.message);
+  //     } else {
+  //       enqueueSnackbar(`${response.data.message} !`, {
+  //         variant: 'success',
+  //         autoHideDuration: 5000
+  //       });
+  //     }
 
-  //   if (field === 'wastage') {
-  //     setFabrics((prevRows) =>
-  //       prevRows.map((row) =>
-  //         row.id === id ? { ...row, wastage: value } : row
-  //       )
-  //     );
-  //   } else if (field === 'shrikage') {
-  //     setFabrics((prevRows) =>
-  //       prevRows.map((row) =>
-  //         row.id === id ? { ...row, shrikage: value } : row
-  //       )
-  //     );
+  //     // refetchDyeingPrintingData();
+  //     // setAccordionExpanded(false);
+  //   } catch (error) {
+  //     // Handle error (e.g., show an error message)
+
+  //     console.error('Error saving data:', error);
+  //     enqueueSnackbar('FAILED: Unable to save', {
+  //       variant: 'error',
+  //       autoHideDuration: 5000
+  //     });
+  //     // Handle error (e.g., show an error message)
   //   }
   // };
-  // const designsColumns = [
-  //   {
-  //     field: 'id',
-
-  //     headerName: 'Sr#'
-  //   },
-  //   {
-  //     field: 'fabricName',
-  //     headerName: 'Fabric'
-  //   },
-  //   {
-  //     field: 'barcode',
-  //     headerName: 'Barcode'
-  //   },
-  //   {
-  //     field: 'uomName',
-  //     headerName: 'UOM'
-  //   },
-  //   {
-  //     field: 'totalQuantity',
-  //     headerName: 'Required Qty'
-  //   },
-  //   {
-  //     field: 'assignQty',
-  //     headerName: 'Assigned Qty'
-  //   },
-  //   {
-  //     field: 'itpQuantity',
-  //     headerName: 'Qty Received'
-  //   },
-  //   {
-  //     field: 'wastage',
-  //     headerName: 'Wastage',
-  //     // flex: 1,
-  //     // width: 'auto',
-
-  //     renderCell: (params) => (
-  //       <SmallTextField
-  //         variant="outlined"
-  //         size="small"
-  //         // fullWidth
-  //         sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-  //         value={params.row.wastage || ''}
-  //         onChange={(event) =>
-  //           handleCellEdit({
-  //             id: params.id,
-  //             field: 'wastage',
-  //             value: Number(event.target.value)
-  //           })
-  //         }
-  //         type="number"
-  //         InputProps={{
-  //           style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-  //         }}
-  //       />
-  //     )
-  //   },
-  //   {
-  //     field: 'shrikage',
-  //     headerName: 'Shrinkage',
-  //     // width: 'auto',
-
-  //     // flex: 1,
-
-  //     renderCell: (params) => (
-  //       <SmallTextField
-  //         variant="outlined"
-  //         size="small"
-  //         // fullWidth
-  //         sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-  //         value={params.row.shrikage || ''}
-  //         onChange={(event) =>
-  //           handleCellEdit({
-  //             id: params.id,
-  //             field: 'shrikage',
-  //             value: Number(event.target.value)
-  //           })
-  //         }
-  //         type="number"
-  //         InputProps={{
-  //           style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-  //         }}
-  //       />
-  //     )
-  //   }
-  // ];
-  // const fetchData = React.useCallback(() => {
-  //   apiRef.current.autosizeColumns({
-  //     includeHeaders: true,
-  //     includeOutliers: true
-  //   });
-  // }, [apiRef]);
-
-  //////////////////////////////////////
-  // const fetchData = () => {
-  //   apiRef.current.autosizeColumns({
-  //     includeHeaders: true,
-  //     includeOutliers: true
-  //   });
-  // };
-  // React.useEffect(() => {
-  //   if (!open) {
-  //     return;
-  //   }
-  //   fetchData();
-  // }, [handleClickOpen]);
-
-  // const [shrinkages, setShrinkages] = useState([]);
-  // const [wastages, setWastages] = useState([]);
-  // const [fabricIds, setFabricIds] = useState([]);
-  // const handleRowSelectionModelChange = useCallback(
-  //   (newRowSelectionModel) => {
-  //     setRowSelectionModel(newRowSelectionModel);
-  //     const designsIds = newRowSelectionModel
-  //       .map((id) => {
-  //         const rowData = apiRef.current.getRow(id);
-  //         console.log('rowData', rowData);
-  //         return rowData ? rowData['shrikage'] : null; // Adjust the field name to match your data
-  //       })
-  //       .filter((id) => id !== null); // Filter out any null values
-  //     const poPcsLists = newRowSelectionModel
-  //       .map((id) => {
-  //         const rowData = apiRef.current.getRow(id);
-  //         console.log('rowData', rowData);
-  //         return rowData ? rowData['wastage'] : null; // Adjust the field name to match your data
-  //       })
-  //       .filter((id) => id !== null); // Filter out any null values
-  //     const fabricsIds = newRowSelectionModel
-  //       .map((id) => {
-  //         const rowData = apiRef.current.getRow(id);
-  //         console.log('rowData', rowData);
-  //         return rowData ? rowData['lookUpId'] : null; // Adjust the field name to match your data
-  //       })
-  //       .filter((id) => id !== null);
-  //     console.log('poPcsLists', poPcsLists);
-  //     setShrinkages(designsIds);
-  //     setWastages(poPcsLists);
-  //     setFabricIds(fabricsIds);
-  //   },
-  //   [apiRef]
-  // );
-  // useEffect(() => {
-  //   const updatedShrinkages = rowSelectionModel.map((id) => {
-  //     const rowData = apiRef.current.getRow(id);
-  //     return rowData && rowData['shrikage'] !== undefined
-  //       ? rowData['shrikage']
-  //       : 0;
-  //   });
-
-  //   const updatedWastages = rowSelectionModel.map((id) => {
-  //     const rowData = apiRef.current.getRow(id);
-  //     return rowData && rowData['wastage'] !== undefined
-  //       ? rowData['wastage']
-  //       : 0;
-  //   });
-
-  //   setShrinkages(updatedShrinkages);
-  //   setWastages(updatedWastages);
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     shrinkage: updatedShrinkages,
-  //     wastage: updatedWastages
-  //   }));
-  // }, [fabrics, rowSelectionModel]);
-
-  // useEffect(() => {
-  //   setFormData({
-  //     ...formData,
-  //     fabricId: fabricIds,
-  //     shrinkage: shrinkages,
-  //     wastage: wastages
-  //   });
-  // }, [shrinkages, wastages]);
-  // useEffect(() => {
-  //   if (apiRef.current) {
-  //     console.log('API ref is ready:', apiRef.current);
-  //   }
-  // }, [apiRef]);
 
   return (
     <Card variant="outlined">
@@ -821,228 +706,66 @@ const FabricReceiving = () => {
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-              {/* <DyeingPrintingAssignVendor
-                  initialFormData={initialFormData}
-                  setInitialFormData={setInitialFormData}
-                  // refetchDyeingPrintingData={refetchDyeingPrintingData}
-                  handleClickOpen={handleClickOpen}
-                  // showUpperDiv={showUpperDiv}
-                /> */}
               <Grid
                 container
                 spacing={1}
                 width="Inherit"
                 sx={{ paddingY: 2, paddingX: 2 }}
               >
-                {/* <Grid item xs={12} md={4}>
-                  <TextField
-                    label="Issuance No"
-                    fullWidth
-                    size="small"
-                    name="issuanceNo"
-                    onChange={handleChange}
-                    value={addForm.issuanceNo}
-                    required
-                    disabled
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  ></TextField>
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    label="Issuance Name"
-                    fullWidth
-                    size="small"
-                    name="issuanceName"
-                    onChange={handleChange}
-                    value={addForm.issuanceName}
-                    required
-                    disabled
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  />
-                </Grid>
-                <Grid item xs={12} md={4}>
-                  <TextField
-                    size="small"
-                    // type="date"
-                    label="Issuance Date"
-                    name="issuanceDate"
-                    value={addForm.issuanceDate}
-                    onChange={handleChange}
-                    fullWidth
-                    disabled
-                    // error={!!formErrors.launchDate}
-                    // helperText={formErrors.launchDate}
-                    InputLabelProps={{
-                      shrink: true,
-                      sx: {
-                        // set the color of the label when not shrinked
-                        color: 'black'
-                      }
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Fabric Name"
-                    fullWidth
-                    size="small"
-                    name="productName"
-                    onChange={handleChange}
-                    value={addForm.productName}
-                    required
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Barcode"
-                    fullWidth
-                    size="small"
-                    name="barcode"
-                    onChange={handleChange}
-                    value={addForm.barcode}
-                    required
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Required Quantity"
-                    fullWidth
-                    size="small"
-                    name="requiredQuantity"
-                    onChange={handleChange}
-                    value={addForm.requiredQuantity}
-                    required
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="ITP Quantity"
-                    fullWidth
-                    size="small"
-                    name="quantity"
-                    onChange={handleChange}
-                    value={addForm.quantity}
-                    required
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="UOM"
-                    fullWidth
-                    size="small"
-                    name="uom"
-                    onChange={handleChange}
-                    value={addForm.uom}
-                    required
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Rate"
-                    fullWidth
-                    size="small"
-                    name="rate"
-                    onChange={handleChange}
-                    value={addForm.rate}
-                    required
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="TAX"
-                    fullWidth
-                    size="small"
-                    name="tax"
-                    onChange={handleChange}
-                    value={addForm.tax}
-                    required
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Amount"
-                    fullWidth
-                    size="small"
-                    name="amount"
-                    onChange={handleChange}
-                    value={addForm.amount}
-                    required
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Amount After Tax"
-                    fullWidth
-                    size="small"
-                    name="amountAfterTax"
-                    onChange={handleChange}
-                    value={addForm.amountAfterTax}
-                    required
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  />
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Remarks"
-                    fullWidth
-                    size="small"
-                    name="remarks"
-                    onChange={handleChange}
-                    value={addForm.remarks}
-                    required
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  />
-                </Grid> */}
                 <Grid item xs={12}>
                   <Receive
                     fabrics={fabrics}
                     setFabrics={setFabrics}
                     stockId={stockId}
+                    handleClose={handleClose}
+                    refetchStockData={refetchStockData}
                   />
-                  {/* <div style={{ height: 400, width: '100%' }}>
-                    <DataGrid
-                      rows={fabrics}
-                      columns={designsColumns}
-                      apiRef={apiRef}
-                      disableRowSelectionOnClick
-                      checkboxSelection
-                      onRowSelectionModelChange={handleRowSelectionModelChange}
-                      rowSelectionModel={rowSelectionModel}
-                    />
-                  </div> */}
                 </Grid>
-                {/* <Grid item xs={9} textAlign="right" sx={{ mt: 2 }}>
-                  <Button variant="contained" size="small" onClick={handleSave}>
-                    Save
-                  </Button>
-                </Grid> */}
-                {/* <Grid item xs={12}>
+              </Grid>
+            </DialogContent>
+          </Dialog>
+          <Dialog open={open2} onClose={handleClose2} fullWidth maxWidth="xl">
+            <DialogTitle
+              sx={{
+                backgroundColor: '#A11F23',
+                color: '#ffffff',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingX: '24px',
+                paddingY: '4px'
+              }}
+            >
+              <Typography
+                variant="h4"
+                component="div"
+                color="#ffffff"
+                gutterBottom
+                fontSize={20}
+                fontWeight={2}
+                fontStyle={'normal'}
+              >
+                {'View Stock Receiving Details'}
+              </Typography>
+              <IconButton onClick={handleClose2} sx={{ color: '#ffffff' }}>
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+              <Grid
+                container
+                spacing={1}
+                width="Inherit"
+                sx={{ paddingY: 2, paddingX: 2 }}
+              >
+                <Grid item xs={12}>
                   <ReuseableDataGrid
-                    initialRows={fabricDetails}
-                    iColumns={fabricColumns}
+                    initialRows={stockView}
+                    iColumns={viewColumns}
                     hideAction
                   />
-                </Grid> */}
+                </Grid>
               </Grid>
             </DialogContent>
           </Dialog>

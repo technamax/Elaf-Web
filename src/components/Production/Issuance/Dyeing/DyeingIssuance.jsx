@@ -20,7 +20,8 @@ import {
   useGetFabricForProductionByProductionIdQuery,
   useGetVendorsByFabricIDQuery,
   useGetProductionPODesignByFabricAndProductionIdQuery,
-  useGetDyeingPODetailsPoIdQuery
+  useGetDyeingPODetailsPoIdQuery,
+  useGetProductionFabricDetailByProductionIdandStatusQuery
 } from 'api/store/Apis/productionApi';
 import {
   useGetWareHouseLocationsQuery,
@@ -35,6 +36,7 @@ import { useUser } from 'context/User';
 import { useSnackbar } from 'notistack';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
+import EmbroideryIssuance from './../../../../views/Production/EmbroideryIssuance';
 
 const SmallTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-input': {
@@ -52,20 +54,38 @@ const DyeingIssuance = ({ rowData }) => {
   const apiRef = useGridApiRef();
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
+  const [initialRows, setInitialRows] = useState([]);
+  const [poDetails, setPoDetails] = useState([]);
+  const [quantities, setQuantities] = useState([]);
+
+  const Quantity = poDetails
+    .reduce((sum, row) => sum + (row.quantity ?? 0), 0)
+    .toFixed(2);
+  console.log('Quantity', Quantity);
+  const totalAssign = poDetails
+    .reduce((sum, row) => sum + (row.issuanceQuantity ?? 0), 0)
+    .toFixed(2);
+  console.log('quantities', quantities);
   const [formData, setFormData] = useState({
+    issuanceId: 0,
     poId: rowData?.poId || 0,
-    productionId: '',
-    issuanceDate: null,
-    expectedReturnDate: '',
+    productionId: rowData?.productionId || '',
+    issuanceDate: rowData?.issuanceDate || null,
+    expectedReturnDate: rowData?.expectedReturnDate || '',
     processTypeId: 1223,
-    fabricId: '',
-    fabricName: '',
-    vendorId: '',
-    vendorName: '',
-    shrinkage: '',
-    wastage: '',
-    locationId: '',
-    fullLocation: '',
+    fabricId: rowData?.fabricId || '',
+    fabricName: rowData?.fabricName || '',
+    vendorId: rowData?.vendorId || '',
+    vendorName: rowData?.vendorName || '',
+    shrinkage: rowData?.shrinkage || '',
+    wastage: rowData?.wastage || '',
+    locationId: rowData?.locationId || '',
+    fullLocation: rowData?.fullLocation || '',
+
+    poQuantity: 0,
+    assignQuantity: 0,
+    stockReceived: 0,
+    remainingQuantity: 0,
 
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -74,14 +94,19 @@ const DyeingIssuance = ({ rowData }) => {
     LastUpdatedBy: user.empId
   });
   useEffect(() => {
-    setFormData({ ...formData, poId: rowData?.poId || 0 });
-  }, [rowData]);
-  const [initialRows, setInitialRows] = useState([]);
-  const [poDetails, setPoDetails] = useState([]);
+    setFormData((prevFormData) => ({
+      ...formData,
+      // poId: rowData?.poId || 0,
+      poQuantity: Quantity || 0,
+      assignQuantity: quantities.itpQuantity || 0,
+      stockReceived: quantities.stockReceived || 0,
+      remainingQuantity: prevFormData.stockReceived - totalAssign || 0
+    }));
+  }, [rowData, poDetails, quantities]);
+
   const [fabricsList, setFabricsList] = useState([]);
   const [vendorsList, setVendorsList] = useState([]);
   const [locationsList, setLocationsList] = useState([]);
-  const [dyeingDetails, setDyeingDetails] = useState([]);
 
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
     useGetDyeingPoHeaderListQuery();
@@ -101,9 +126,9 @@ const DyeingIssuance = ({ rowData }) => {
     useGetVendorsByFabricIDQuery(formData.fabricId, {
       skip: !formData.fabricId // Skip the query if no collection is selected
     });
-  const { data: columnsData, refetch: refetchcolumnsData } =
-    useGetProductionPODesignByFabricAndProductionIdQuery(
-      { fabricId: formData.fabricId, productionId: formData.productionId },
+  const { data: quantityData, refetch: refetchquantityData } =
+    useGetProductionFabricDetailByProductionIdandStatusQuery(
+      { productionId: formData.productionId, fabricId: formData.fabricId },
       {
         skip: !formData.fabricId || !formData.productionId // Skip the query if no collection is selected
       }
@@ -145,15 +170,16 @@ const DyeingIssuance = ({ rowData }) => {
     }
   }, [fabricsData, refetchFabricsData]);
   useEffect(() => {
-    if (columnsData) {
-      setDyeingDetails(
-        columnsData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
+    if (quantityData) {
+      setQuantities(
+        quantityData.result[0]
+        // .map((row, index) => ({
+        //   id: index + 1,
+        //   ...row
+        // }))
       );
     }
-  }, [columnsData, refetchcolumnsData]);
+  }, [quantityData, refetchquantityData]);
   useEffect(() => {
     if (vendorsData) {
       setVendorsList(
@@ -185,7 +211,7 @@ const DyeingIssuance = ({ rowData }) => {
     }
   }, [productionBatchData, refetchProductionBatchData]);
 
-  console.log('initialRows', initialRows);
+  console.log('quantities', quantities);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -217,25 +243,25 @@ const DyeingIssuance = ({ rowData }) => {
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:83/api/TermsConditions/SaveCategory',
+        'http://100.42.177.77:83/api/Issuance/IssuanceToVendor',
         formData
       );
 
       console.log('Save response:', response.data);
 
-      setFormData((prevFormData) => ({
-        categoryId: 0,
-        description: '',
-        enabled: '',
+      // setFormData((prevFormData) => ({
+      //   categoryId: 0,
+      //   description: '',
+      //   enabled: '',
 
-        appId: user.appId,
-        createdOn: new Date().toISOString(),
-        createdBy: user.empId,
-        lastUpdatedOn: new Date().toISOString(),
-        lastUpdatedBy: user.empId
-      }));
+      //   appId: user.appId,
+      //   createdOn: new Date().toISOString(),
+      //   createdBy: user.empId,
+      //   lastUpdatedOn: new Date().toISOString(),
+      //   lastUpdatedBy: user.empId
+      // }));
 
-      refetch();
+      // refetch();
       // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
@@ -274,8 +300,8 @@ const DyeingIssuance = ({ rowData }) => {
             const updatedRow = {
               ...row,
               [field]: value,
-              poId: 0,
-              poDetId: 0,
+              issuanceId: 0,
+              issuanceDetId: 0,
               appId: user.appId,
               createdOn: new Date().toISOString(),
               createdBy: user.empId,
@@ -303,7 +329,16 @@ const DyeingIssuance = ({ rowData }) => {
     },
     [setPoDetails, user.appId, user.empId]
   );
-
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...formData,
+      // poId: rowData?.poId || 0,
+      // poQuantity: Quantity || 0,
+      // assignQuantity: quantities.itpQuantity || 0,
+      // stockReceived: quantities.stockReceived || 0,
+      remainingQuantity: prevFormData.stockReceived - totalAssign || 0
+    }));
+  }, [handleCellEdit]);
   const designsColumns = [
     {
       field: 'id',
@@ -315,19 +350,19 @@ const DyeingIssuance = ({ rowData }) => {
       headerName: 'Design'
     },
     {
-      field: 'baseColor',
+      field: 'colorName',
       headerName: 'Color'
     },
-    {
-      field: 'total',
-      headerName: 'Planned Qty'
-    },
+    // {
+    //   field: 'total',
+    //   headerName: 'Planned Qty'
+    // },
     {
       field: 'quantity',
-      headerName: 'Assigned Qty'
+      headerName: 'Total Qty'
     },
     {
-      field: 'issuance',
+      field: 'issuanceQuantity',
       headerName: 'Issuance Qty',
       // flex: 1,
       // width: 'auto',
@@ -338,11 +373,11 @@ const DyeingIssuance = ({ rowData }) => {
           size="small"
           // fullWidth
           sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.issuance || ''}
+          value={params.row.issuanceQuantity || ''}
           onChange={(event) =>
             handleCellEdit({
               id: params.id,
-              field: 'issuance',
+              field: 'issuanceQuantity',
               value: Number(event.target.value)
             })
           }
@@ -397,7 +432,7 @@ const DyeingIssuance = ({ rowData }) => {
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      dyeingPoDetailsList: selectedFabrics
+      issuanceTransactionDetails: selectedFabrics
     }));
   }, [poDetails, rowSelectionModel]);
 
@@ -578,19 +613,63 @@ const DyeingIssuance = ({ rowData }) => {
               size="small"
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
-            >
-              {/* {locationsList.map((option) => (
-                <MenuItem key={option.locationId} value={option.locationId}>
-                  {option.section +
-                    '.' +
-                    option.aisle +
-                    '.' +
-                    option.rack +
-                    '.' +
-                    option.bin}
-                </MenuItem>
-              ))} */}
-            </TextField>
+            ></TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              // select
+              label="PO Quantity"
+              name="poQuantity"
+              value={formData.poQuantity}
+              onChange={handleChange}
+              size="small"
+              disabled
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              // select
+              label="Total Quantity"
+              name="assignQuantity"
+              value={formData.assignQuantity}
+              onChange={handleChange}
+              size="small"
+              disabled
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              // select
+              label="Available Quantity"
+              name="stockReceived"
+              value={formData.stockReceived}
+              onChange={handleChange}
+              size="small"
+              disabled
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              // select
+              label="Remaining Quantity"
+              name="remainingQuantity"
+              value={formData.remainingQuantity}
+              onChange={handleChange}
+              size="small"
+              disabled
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            ></TextField>
           </Grid>
           <Grid item xs={12}>
             <DataGrid
