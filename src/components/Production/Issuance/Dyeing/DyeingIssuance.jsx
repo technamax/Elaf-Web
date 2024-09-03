@@ -98,6 +98,7 @@ const DyeingIssuance = ({ rowData }) => {
       ...formData,
       // poId: rowData?.poId || 0,
       poQuantity: Quantity || 0,
+      productionHeaderId: quantities.productionHeaderId || 0,
       assignQuantity: quantities.itpQuantity || 0,
       stockReceived: quantities.stockReceived || 0,
       remainingQuantity: prevFormData.stockReceived - totalAssign || 0
