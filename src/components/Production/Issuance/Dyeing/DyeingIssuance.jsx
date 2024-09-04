@@ -10,9 +10,16 @@ import {
   Tab,
   Card,
   CardHeader,
-  Avatar,
-  FormControl
+  ButtonGroup,
+  Typography,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+
 import '../../../../assets/scss/style.scss';
 
 import {
@@ -21,7 +28,8 @@ import {
   useGetVendorsByFabricIDQuery,
   useGetProductionPODesignByFabricAndProductionIdQuery,
   useGetDyeingPODetailsPoIdQuery,
-  useGetProductionFabricDetailByProductionIdandStatusQuery
+  useGetProductionFabricDetailByProductionIdandStatusQuery,
+  useGetIssuanceByPoIdQuery
 } from 'api/store/Apis/productionApi';
 import {
   useGetWareHouseLocationsQuery,
@@ -29,7 +37,7 @@ import {
 } from 'api/store/Apis/lookupApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
-
+import DyeingIssuanceView from './DyeingIssuanceView';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
@@ -108,11 +116,16 @@ const DyeingIssuance = ({ rowData }) => {
   const [fabricsList, setFabricsList] = useState([]);
   const [vendorsList, setVendorsList] = useState([]);
   const [locationsList, setLocationsList] = useState([]);
+  const [issuanceList, setIssuanceList] = useState([]);
 
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
     useGetDyeingPoHeaderListQuery();
   const { data: poDetailsData, refetch: refetchPoDetailsData } =
     useGetDyeingPODetailsPoIdQuery(formData.poId, {
+      skip: !formData.poId // Skip the query if no collection is selected
+    });
+  const { data: issuanceData, refetch: refetchIssuanceData } =
+    useGetIssuanceByPoIdQuery(formData.poId, {
       skip: !formData.poId // Skip the query if no collection is selected
     });
   const { data: dyeingPoData, refetch: refetchDyeingPoData } =
@@ -160,6 +173,16 @@ const DyeingIssuance = ({ rowData }) => {
       );
     }
   }, [dyeingPoData, refetchDyeingPoData]);
+  useEffect(() => {
+    if (issuanceData) {
+      setIssuanceList(
+        issuanceData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [issuanceData, refetchIssuanceData]);
   useEffect(() => {
     if (fabricsData) {
       setFabricsList(
@@ -444,6 +467,207 @@ const DyeingIssuance = ({ rowData }) => {
     }
   }, [apiRef]);
 
+  const [open, setOpen] = React.useState(false);
+  // const [open2, setOpen2] = React.useState(false);
+  const [iss, setIss] = React.useState(false);
+
+  const handleClickOpen = async (data) => {
+    setIss(data);
+    setOpen(true);
+  };
+  // const handleClickOpen2 = async (data) => {
+  //   setOpen2(true);
+  // };
+  // console.log('terms condition', vId);
+  const handleClose = () => {
+    setOpen(false);
+  };
+  // const handleClose2 = () => {
+  //   // setShowUpperDiv(true);
+  //   setOpen2(false);
+  // };
+  // const handleIssuanceClick = (rowData) => {
+  //   navigate('/Production/Issuance', { state: { data: rowData, tab: 1 } });
+  // };
+  const printOgp = (ogpData) => {
+    const newWindow = window.open('', '', 'width=800,height=600');
+    const doc = newWindow.document;
+
+    doc.write(`
+      <html>
+        <head>
+          <title>Outward Gate Pass</title>
+          <style>
+            body { font-family: Arial, sans-serif; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { padding: 8px; border: 1px solid black; text-align: left; }
+            .header { margin-bottom: 20px; }
+            .header td { border: none; padding: 5px 0; }
+          </style>
+        </head>
+        <body>
+          <h2>Elaf</h2>
+          <h3>OUTWARD GATE PASS</h3>
+  
+          <table class="header">
+            <tr>
+              <td><strong>OGP #:</strong> ${ogpData.vIssuanceTransaction.ogpNumber}</td>
+              <td><strong>Process:</strong> ${ogpData.vIssuanceTransaction.processTypeName}</td>
+            </tr>
+            <tr>
+              <td><strong>OGP Date:</strong> ${new Date(ogpData.vIssuanceTransaction.ogpDate).toLocaleDateString()}</td>
+              <td><strong>Stage:</strong> Work in Process</td>
+            </tr>
+            <tr>
+              <td><strong>Vendor Name:</strong> ${ogpData.vIssuanceTransaction.vendorName}</td>
+              <td><strong>Vendor Contact:</strong> TBD</td>
+            </tr>
+            <tr>
+              <td><strong>Purpose:</strong> Dyeing</td>
+              <td></td>
+            </tr>
+          </table>
+  
+          <table>
+            <thead>
+              <tr>
+                <th>PO #</th>
+                <th>Description</th>
+                <th>Design #</th>
+                <th>UOM</th>
+                <th>Qty Required</th>
+                <th>Shrinkage</th>
+                <th>Total Qty</th>
+                <th>Rate</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${ogpData.vIssuanceTransactionDetailsList
+                .map(
+                  (item) => `
+                <tr>
+                  <td>${item.poId}</td>
+                  <td>${item.fabricName}</td>
+                  <td>${item.fabricCount}</td>
+                  <td>${item.uomName}</td>
+                  <td>${item.issuanceQuantity}</td>
+                  <td>-</td>
+                  <td>${item.issuanceQuantity}</td>
+                  <td>${item.rate}</td>
+                  <td>${item.totalAfterTax}</td>
+                </tr>
+              `
+                )
+                .join('')}
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `);
+
+    doc.close();
+    newWindow.print();
+  };
+
+  const handlePrintOgp = async (rowData) => {
+    try {
+      const response = await axios.get(
+        `http://100.42.177.77:83/api/Issuance/GetOutwardGatePassByIssuanceId`,
+        {
+          params: { issuanceId: rowData.issuanceId }
+        }
+      );
+
+      if (response.data.success) {
+        const ogpData = response.data.result;
+        // Call the function to print the data
+        printOgp(ogpData);
+      } else {
+        console.error('Failed to fetch OGP data:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching OGP data:', error);
+    }
+  };
+
+  const issuanceColumns = [
+    {
+      field: 'id',
+      headerName: 'Sr#'
+      // flex: 1
+    },
+    {
+      field: 'issuanceId',
+      headerName: 'Issuance'
+      // flex: 1
+    },
+    {
+      field: 'vendorName',
+      headerName: 'Vendor'
+    },
+    {
+      field: 'issuanceQuantity',
+      headerName: 'Issuance'
+    },
+    {
+      field: 'issuanceDate',
+      headerName: 'Issuance Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'expectedReturnDate',
+      headerName: 'Expected Return Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'fabricCount',
+      headerName: 'Fabrics'
+    },
+    {
+      field: 'statusName',
+      headerName: 'Status'
+    },
+    {
+      field: 'Actions',
+      headerName: 'Actions',
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup variant="text" size="small">
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => handleClickOpen(params.row)}
+            >
+              View Details
+            </Button>
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => handlePrintOgp(params.row)}
+            >
+              Print OGP
+            </Button>
+          </ButtonGroup>
+        </div>
+      )
+    }
+  ];
+
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
       <Card variant="outlined">
@@ -696,7 +920,7 @@ const DyeingIssuance = ({ rowData }) => {
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
           avatar={<VisibilityOutlinedIcon />}
-          title="View Issuance Details"
+          title="View Issuance"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid
@@ -707,10 +931,46 @@ const DyeingIssuance = ({ rowData }) => {
         >
           <Grid item xs={12}>
             <ReuseableDataGrid
-              initialRows={initialRows}
-              iColumns={columns}
-              disableDelete={true}
+              initialRows={issuanceList}
+              iColumns={issuanceColumns}
+              hideAction
             />
+            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
+              <DialogTitle
+                sx={{
+                  backgroundColor: '#A11F23',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingX: '24px',
+                  paddingY: '4px'
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="div"
+                  color="#ffffff"
+                  gutterBottom
+                  fontSize={20}
+                  fontWeight={2}
+                  fontStyle={'normal'}
+                >
+                  {'View Issuance Details'}
+                </Typography>
+                <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                <DyeingIssuanceView
+                  iss={iss}
+                  handleClose={handleClose}
+                  refetchIssuanceData={refetchIssuanceData}
+                />
+              </DialogContent>
+            </Dialog>
           </Grid>
         </Grid>
       </Card>
