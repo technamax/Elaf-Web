@@ -7,15 +7,13 @@ import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import {} from '@mui/material';
 import '../../assets/scss/style.scss';
-import DyeingIssuance from 'components/Production/Issuance/Dyeing/DyeingIssuance';
-import EmbroideryIssuance from 'components/Production/Issuance/Embroidery/EmbroideryIssuance';
-// import DyeingIssuance from 'components/Production/Issuance/Dyeing/DyeingIssuance';
-// import EmbroideryIssuance from 'components/Production/Issuance/Embroidery/EmbroideryIssuance';
+import DyeingReceiving from 'components/Production/Receiving/Dyeing/DyeingReceiving';
+// import EmbroideryReceiving from 'components/Production/Receiving/Embroidery/EmbroideryReceiving';
 import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useUser } from 'context/User';
 
-const Issuance = () => {
+const Receiving = () => {
   const location = useLocation();
   const rowData = location.state?.data;
   const tab = location.state?.tab?.toString(); // Convert tab to string
@@ -53,7 +51,7 @@ const Issuance = () => {
             <TabList onChange={handleChangeTabs}>
               <Tab
                 icon={<CategoryOutlinedIcon />}
-                label="Dyeing Issuance"
+                label="Dyeing Receiving"
                 value="1"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
@@ -63,7 +61,7 @@ const Issuance = () => {
               />
               <Tab
                 icon={<AssignmentOutlinedIcon />}
-                label="Embroidery Issuance"
+                label="Embroidery Receiving"
                 value="2"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
@@ -73,7 +71,7 @@ const Issuance = () => {
               />
               <Tab
                 icon={<AssignmentOutlinedIcon />}
-                label="Schiffili Issuance"
+                label="Schiffili Receiving"
                 value="3"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
@@ -83,7 +81,7 @@ const Issuance = () => {
               />
               <Tab
                 icon={<AssignmentOutlinedIcon />}
-                label="Additional Process Issuance"
+                label="Additional Process Receiving"
                 value="4"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
@@ -93,7 +91,7 @@ const Issuance = () => {
               />
               <Tab
                 icon={<AssignmentOutlinedIcon />}
-                label="Additional Services Issuance"
+                label="Additional Services Receiving"
                 value="5"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
@@ -104,11 +102,9 @@ const Issuance = () => {
             </TabList>
           </Box>
           <TabPanel value="1">
-            <DyeingIssuance rowData={rowData} />
+            <DyeingReceiving rowData={rowData} />
           </TabPanel>
-          <TabPanel value="2">
-            <EmbroideryIssuance />
-          </TabPanel>
+          <TabPanel value="2">{/* <EmbroideryReceiving /> */}</TabPanel>
           <TabPanel value="3">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="4">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="5">{/* <AssignTermsAndConditions /> */}</TabPanel>
@@ -119,4 +115,4 @@ const Issuance = () => {
   );
 };
 
-export default Issuance;
+export default Receiving;

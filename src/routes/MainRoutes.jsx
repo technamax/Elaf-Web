@@ -43,16 +43,17 @@ const FabricationSelectionIssuance = Loadable(
 const ReceivingFromBX = Loadable(
   lazy(() => import('views/Production/ReceivingFromBX'))
 );
+const Receiving = Loadable(lazy(() => import('views/Production/Receiving')));
 const Issuance = Loadable(lazy(() => import('views/Production/Issuance')));
-const EmbroideryIssuance = Loadable(
-  lazy(() => import('views/Production/EmbroideryIssuance'))
-);
-const SchiffiliIssuance = Loadable(
-  lazy(() => import('views/Production/SchiffiliIssuance'))
-);
-const AdditionalProcessIssuance = Loadable(
-  lazy(() => import('views/Production/AdditionalProcessIssuance'))
-);
+// const EmbroideryIssuance = Loadable(
+//   lazy(() => import('views/Production/EmbroideryIssuance'))
+// );
+// const SchiffiliIssuance = Loadable(
+//   lazy(() => import('views/Production/SchiffiliIssuance'))
+// );
+// const AdditionalProcessIssuance = Loadable(
+//   lazy(() => import('views/Production/AdditionalProcessIssuance'))
+// );
 const ProductionReceiving = Loadable(
   lazy(() => import('views/Production/ProductionReceiving'))
 );
@@ -131,6 +132,10 @@ const MainRoutes = {
           element: <ProtectedRoute element={ReceivingFromBX} />
         },
         {
+          path: 'Receiving',
+          element: <ProtectedRoute element={Receiving} />
+        },
+        {
           path: 'FabricationSelectionIssuance',
           element: <ProtectedRoute element={FabricationSelectionIssuance} />
         },
@@ -138,18 +143,18 @@ const MainRoutes = {
           path: 'Issuance',
           element: <ProtectedRoute element={Issuance} />
         },
-        {
-          path: 'EmbroideryIssuance',
-          element: <ProtectedRoute element={EmbroideryIssuance} />
-        },
-        {
-          path: 'SchiffiliIssuance',
-          element: <ProtectedRoute element={SchiffiliIssuance} />
-        },
-        {
-          path: 'AdditionalProcessIssuance',
-          element: <ProtectedRoute element={AdditionalProcessIssuance} />
-        },
+        // {
+        //   path: 'EmbroideryIssuance',
+        //   element: <ProtectedRoute element={EmbroideryIssuance} />
+        // },
+        // {
+        //   path: 'SchiffiliIssuance',
+        //   element: <ProtectedRoute element={SchiffiliIssuance} />
+        // },
+        // {
+        //   path: 'AdditionalProcessIssuance',
+        //   element: <ProtectedRoute element={AdditionalProcessIssuance} />
+        // },
         {
           path: 'ProductionReceiving',
           element: <ProtectedRoute element={ProductionReceiving} />
