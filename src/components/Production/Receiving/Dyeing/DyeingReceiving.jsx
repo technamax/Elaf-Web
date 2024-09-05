@@ -20,7 +20,8 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 
 import '../../../../assets/scss/style.scss';
-
+import ReceivingDetails from './ReceivingDetails';
+import { useGetIssuanceByIssuanceIdAndStatusQuery } from 'api/store/Apis/productionApi';
 import {
   useGetSubMenuListQuery,
   useGetMainMenuListQuery
@@ -55,33 +56,15 @@ const DyeingReceiving = () => {
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: user.empId
   });
-  const options = [
-    {
-      value: 'Yes',
-      label: 'Yes'
-    },
-    {
-      value: 'No',
-      label: 'No'
-    }
-  ];
-  // console.log('initialData', initialData);
-  useEffect(() => {
-    setFormData({
-      issuanceId: initialData?.issuanceId || '',
-      // categoryId: initialData?.categoryId || '',
-      // termCondDesc: initialData?.termCondDesc || '',
-      // enabled: initialData?.enabled || '',
 
-      appId: initialData?.appId || user.appId,
-      createdOn: initialData?.createdOn || new Date().toISOString(),
-      createdBy: initialData?.createdBy || user.empId,
-      lastUpdatedOn: new Date().toISOString(),
-      LastUpdatedBy: user.empId
-    });
-  }, [initialData]);
   const [initialRows, setInitialRows] = useState([]);
-  const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
+  const [triggerSearch, setTriggerSearch] = useState(false);
+
+  // Hook to fetch the data, and it's controlled by triggerSearch state
+  const { data, error, isLoading, refetch } =
+    useGetIssuanceByIssuanceIdAndStatusQuery(formData.issuanceId, {
+      skip: !triggerSearch || !formData.issuanceId // Skip query if no issuanceId or if not triggered
+    });
 
   // const { data: categoriesData, refetch: refetchCategoriesdata } =
   //   useGetCategoriesListQuery();
@@ -90,7 +73,7 @@ const DyeingReceiving = () => {
   //     skip: !formData.categoryId // Skip the query if no collection is selected
   //   });
   // const { data: subMenuData, refetch } = useGetSubMenuListQuery();
-  const [categories, setCategories] = useState([]);
+  // const [categories, setCategories] = useState([]);
 
   // useEffect(() => {
   //   if (termsConditionsData) {
@@ -102,16 +85,16 @@ const DyeingReceiving = () => {
   //     );
   //   }
   // }, [termsConditionsData, refetchTermsConditionsData]);
-  // useEffect(() => {
-  //   if (categoriesData) {
-  //     setCategories(
-  //       categoriesData.result.map((row, index) => ({
-  //         id: index,
-  //         ...row
-  //       }))
-  //     );
-  //   }
-  // }, [categoriesData, refetchCategoriesdata]);
+  useEffect(() => {
+    if (data) {
+      setInitialRows(
+        data.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+    }
+  }, [data, refetch]);
 
   console.log('initialRows', initialRows);
 
@@ -120,42 +103,62 @@ const DyeingReceiving = () => {
 
     setFormData({ ...formData, [name]: value });
   };
+  const handleSearch = () => {
+    if (formData.issuanceId) {
+      // Set the state to trigger the query
+      setTriggerSearch(true);
+      console.log(`Triggering search for issuanceId: ${formData.issuanceId}`);
+    }
+    // if (data) {
+    //   setInitialRows(
+    //     data.result.map((row, index) => ({
+    //       id: index + 1,
+    //       ...row
+    //     }))
+    //   );
+    // }
+  };
 
-  const handleSearch = async () => {
-    console.log('formData', formData);
-    try {
-      // Make the API call
-      const response = await axios.get(
-        `http://100.42.177.77:83/api/Receiving/GetIssuanceByIssuanceIdAndStatus?issuanceId=${formData.issuanceId}&status=9`
-      );
-      console.log('Save response:', response.data);
-
-      if (!response.data.success) {
-        enqueueSnackbar(`${response.data.message} !`, {
-          variant: 'error',
-          autoHideDuration: 5000
-        });
-        console.log('response.message', response.data.message);
-      } else {
-        enqueueSnackbar(`${response.data.message} !`, {
-          variant: 'success',
-          autoHideDuration: 5000
-        });
-        setInitialRows(
-          response.data.result.map((row, index) => ({
-            id: index + 1,
-            ...row
-          }))
-        );
-      }
-    } catch (error) {
-      console.error('Error saving data:', error);
-      enqueueSnackbar('FAILED: Unable to start Process', {
-        variant: 'error',
-        autoHideDuration: 5000
-      });
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
     }
   };
+  // const handleSearch = async () => {
+  //   console.log('formData', formData);
+  //   try {
+  //     // Make the API call
+  //     const response = await axios.get(
+  //       `http://100.42.177.77:83/api/Receiving/GetIssuanceByIssuanceIdAndStatus?issuanceId=${formData.issuanceId}&status=9`
+  //     );
+  //     console.log('Save response:', response.data);
+
+  //     if (!response.data.success) {
+  //       enqueueSnackbar(`${response.data.message} !`, {
+  //         variant: 'error',
+  //         autoHideDuration: 5000
+  //       });
+  //       console.log('response.message', response.data.message);
+  //     } else {
+  //       enqueueSnackbar(`${response.data.message} !`, {
+  //         variant: 'success',
+  //         autoHideDuration: 5000
+  //       });
+  //       setInitialRows(
+  //         response.data.result.map((row, index) => ({
+  //           id: index + 1,
+  //           ...row
+  //         }))
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.error('Error saving data:', error);
+  //     enqueueSnackbar('FAILED: Unable to start Process', {
+  //       variant: 'error',
+  //       autoHideDuration: 5000
+  //     });
+  //   }
+  // };
   console.log('formData', formData);
 
   const [open, setOpen] = React.useState(false);
@@ -263,21 +266,6 @@ const DyeingReceiving = () => {
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Enter Issuance ID"
-              type="number"
-              fullWidth
-              size="small"
-              name="issuanceId"
-              onChange={handleChange}
-              value={formData.issuanceId}
-              required
-              // disabled={isEdit}
-              // error={!!formErrors.collectionName}
-              // helperText={formErrors.collectionName}
-            />
-          </Grid>
           {/* <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -297,6 +285,24 @@ const DyeingReceiving = () => {
               ))}
             </TextField>
           </Grid> */}
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Enter Issuance ID"
+              type="number"
+              fullWidth
+              size="small"
+              name="issuanceId"
+              onChange={handleChange}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
+              // onKeyPress={handleKeyPress}
+              value={formData.issuanceId}
+              required
+            />
+          </Grid>
 
           <Grid item xs={12} md={3} sx={{ mt: 0.5 }}>
             <Button variant="contained" size="small" onClick={handleSearch}>
@@ -339,11 +345,12 @@ const DyeingReceiving = () => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                {/* <DyeingIssuanceView
+                <ReceivingDetails
                   iss={iss}
                   handleClose={handleClose}
-                  refetchIssuanceData={refetchIssuanceData}
-                /> */}
+                  refetchIssuanceData={refetch}
+                  // refetchIssuanceData={refetchIssuanceData}
+                />
               </DialogContent>
             </Dialog>
           </Grid>

@@ -283,12 +283,6 @@ const Receive = ({
     }
   ];
 
-  // const fetchData = React.useCallback(() => {
-  //   apiRef.current.autosizeColumns({
-  //     includeHeaders: true,
-  //     includeOutliers: true
-  //   });
-  // }, [apiRef]);
   const fetchData = () => {
     apiRef.current.autosizeColumns({
       includeHeaders: true,
