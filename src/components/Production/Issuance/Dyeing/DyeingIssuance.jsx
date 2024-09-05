@@ -10,9 +10,16 @@ import {
   Tab,
   Card,
   CardHeader,
-  Avatar,
-  FormControl
+  ButtonGroup,
+  Typography,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+
 import '../../../../assets/scss/style.scss';
 
 import {
@@ -20,7 +27,9 @@ import {
   useGetFabricForProductionByProductionIdQuery,
   useGetVendorsByFabricIDQuery,
   useGetProductionPODesignByFabricAndProductionIdQuery,
-  useGetDyeingPODetailsPoIdQuery
+  useGetDyeingPODetailsPoIdQuery,
+  useGetProductionFabricDetailByProductionIdandStatusQuery,
+  useGetIssuanceByPoIdQuery
 } from 'api/store/Apis/productionApi';
 import {
   useGetWareHouseLocationsQuery,
@@ -28,13 +37,14 @@ import {
 } from 'api/store/Apis/lookupApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
-
+import DyeingIssuanceView from './DyeingIssuanceView';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
 import { useSnackbar } from 'notistack';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
+// import EmbroideryIssuance from './../../../../views/Production/EmbroideryIssuance';
 
 const SmallTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-input': {
@@ -52,20 +62,38 @@ const DyeingIssuance = ({ rowData }) => {
   const apiRef = useGridApiRef();
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
+  const [initialRows, setInitialRows] = useState([]);
+  const [poDetails, setPoDetails] = useState([]);
+  const [quantities, setQuantities] = useState([]);
+
+  const Quantity = poDetails
+    .reduce((sum, row) => sum + (row.quantity ?? 0), 0)
+    .toFixed(2);
+  console.log('Quantity', Quantity);
+  const totalAssign = poDetails
+    .reduce((sum, row) => sum + (row.issuanceQuantity ?? 0), 0)
+    .toFixed(2);
+  console.log('quantities', quantities);
   const [formData, setFormData] = useState({
+    issuanceId: 0,
     poId: rowData?.poId || 0,
-    productionId: '',
-    issuanceDate: null,
-    expectedReturnDate: '',
+    productionId: rowData?.productionId || '',
+    issuanceDate: rowData?.issuanceDate || null,
+    expectedReturnDate: rowData?.expectedReturnDate || '',
     processTypeId: 1223,
-    fabricId: '',
-    fabricName: '',
-    vendorId: '',
-    vendorName: '',
-    shrinkage: '',
-    wastage: '',
-    locationId: '',
-    fullLocation: '',
+    fabricId: rowData?.fabricId || '',
+    fabricName: rowData?.fabricName || '',
+    vendorId: rowData?.vendorId || '',
+    vendorName: rowData?.vendorName || '',
+    shrinkage: rowData?.shrinkage || '',
+    wastage: rowData?.wastage || '',
+    locationId: rowData?.locationId || '',
+    fullLocation: rowData?.fullLocation || '',
+
+    poQuantity: 0,
+    assignQuantity: 0,
+    stockReceived: 0,
+    remainingQuantity: 0,
 
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -74,19 +102,30 @@ const DyeingIssuance = ({ rowData }) => {
     LastUpdatedBy: user.empId
   });
   useEffect(() => {
-    setFormData({ ...formData, poId: rowData?.poId || 0 });
-  }, [rowData]);
-  const [initialRows, setInitialRows] = useState([]);
-  const [poDetails, setPoDetails] = useState([]);
+    setFormData((prevFormData) => ({
+      ...formData,
+      // poId: rowData?.poId || 0,
+      poQuantity: Quantity || 0,
+      productionHeaderId: quantities.productionHeaderId || 0,
+      assignQuantity: quantities.itpQuantity || 0,
+      stockReceived: quantities.stockReceived || 0,
+      remainingQuantity: prevFormData.stockReceived - totalAssign || 0
+    }));
+  }, [rowData, poDetails, quantities]);
+
   const [fabricsList, setFabricsList] = useState([]);
   const [vendorsList, setVendorsList] = useState([]);
   const [locationsList, setLocationsList] = useState([]);
-  const [dyeingDetails, setDyeingDetails] = useState([]);
+  const [issuanceList, setIssuanceList] = useState([]);
 
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
     useGetDyeingPoHeaderListQuery();
   const { data: poDetailsData, refetch: refetchPoDetailsData } =
     useGetDyeingPODetailsPoIdQuery(formData.poId, {
+      skip: !formData.poId // Skip the query if no collection is selected
+    });
+  const { data: issuanceData, refetch: refetchIssuanceData } =
+    useGetIssuanceByPoIdQuery(formData.poId, {
       skip: !formData.poId // Skip the query if no collection is selected
     });
   const { data: dyeingPoData, refetch: refetchDyeingPoData } =
@@ -101,9 +140,9 @@ const DyeingIssuance = ({ rowData }) => {
     useGetVendorsByFabricIDQuery(formData.fabricId, {
       skip: !formData.fabricId // Skip the query if no collection is selected
     });
-  const { data: columnsData, refetch: refetchcolumnsData } =
-    useGetProductionPODesignByFabricAndProductionIdQuery(
-      { fabricId: formData.fabricId, productionId: formData.productionId },
+  const { data: quantityData, refetch: refetchquantityData } =
+    useGetProductionFabricDetailByProductionIdandStatusQuery(
+      { productionId: formData.productionId, fabricId: formData.fabricId },
       {
         skip: !formData.fabricId || !formData.productionId // Skip the query if no collection is selected
       }
@@ -135,6 +174,16 @@ const DyeingIssuance = ({ rowData }) => {
     }
   }, [dyeingPoData, refetchDyeingPoData]);
   useEffect(() => {
+    if (issuanceData) {
+      setIssuanceList(
+        issuanceData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [issuanceData, refetchIssuanceData]);
+  useEffect(() => {
     if (fabricsData) {
       setFabricsList(
         fabricsData.result.map((row, index) => ({
@@ -145,15 +194,16 @@ const DyeingIssuance = ({ rowData }) => {
     }
   }, [fabricsData, refetchFabricsData]);
   useEffect(() => {
-    if (columnsData) {
-      setDyeingDetails(
-        columnsData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
+    if (quantityData) {
+      setQuantities(
+        quantityData.result[0]
+        // .map((row, index) => ({
+        //   id: index + 1,
+        //   ...row
+        // }))
       );
     }
-  }, [columnsData, refetchcolumnsData]);
+  }, [quantityData, refetchquantityData]);
   useEffect(() => {
     if (vendorsData) {
       setVendorsList(
@@ -185,7 +235,7 @@ const DyeingIssuance = ({ rowData }) => {
     }
   }, [productionBatchData, refetchProductionBatchData]);
 
-  console.log('initialRows', initialRows);
+  console.log('quantities', quantities);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -217,25 +267,25 @@ const DyeingIssuance = ({ rowData }) => {
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:83/api/TermsConditions/SaveCategory',
+        'http://100.42.177.77:83/api/Issuance/IssuanceToVendor',
         formData
       );
 
       console.log('Save response:', response.data);
 
-      setFormData((prevFormData) => ({
-        categoryId: 0,
-        description: '',
-        enabled: '',
+      // setFormData((prevFormData) => ({
+      //   categoryId: 0,
+      //   description: '',
+      //   enabled: '',
 
-        appId: user.appId,
-        createdOn: new Date().toISOString(),
-        createdBy: user.empId,
-        lastUpdatedOn: new Date().toISOString(),
-        lastUpdatedBy: user.empId
-      }));
+      //   appId: user.appId,
+      //   createdOn: new Date().toISOString(),
+      //   createdBy: user.empId,
+      //   lastUpdatedOn: new Date().toISOString(),
+      //   lastUpdatedBy: user.empId
+      // }));
 
-      refetch();
+      // refetch();
       // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
@@ -274,8 +324,8 @@ const DyeingIssuance = ({ rowData }) => {
             const updatedRow = {
               ...row,
               [field]: value,
-              poId: 0,
-              poDetId: 0,
+              issuanceId: 0,
+              issuanceDetId: 0,
               appId: user.appId,
               createdOn: new Date().toISOString(),
               createdBy: user.empId,
@@ -303,7 +353,16 @@ const DyeingIssuance = ({ rowData }) => {
     },
     [setPoDetails, user.appId, user.empId]
   );
-
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...formData,
+      // poId: rowData?.poId || 0,
+      // poQuantity: Quantity || 0,
+      // assignQuantity: quantities.itpQuantity || 0,
+      // stockReceived: quantities.stockReceived || 0,
+      remainingQuantity: prevFormData.stockReceived - totalAssign || 0
+    }));
+  }, [handleCellEdit]);
   const designsColumns = [
     {
       field: 'id',
@@ -315,19 +374,19 @@ const DyeingIssuance = ({ rowData }) => {
       headerName: 'Design'
     },
     {
-      field: 'baseColor',
+      field: 'colorName',
       headerName: 'Color'
     },
-    {
-      field: 'total',
-      headerName: 'Planned Qty'
-    },
+    // {
+    //   field: 'total',
+    //   headerName: 'Planned Qty'
+    // },
     {
       field: 'quantity',
-      headerName: 'Assigned Qty'
+      headerName: 'Total Qty'
     },
     {
-      field: 'issuance',
+      field: 'issuanceQuantity',
       headerName: 'Issuance Qty',
       // flex: 1,
       // width: 'auto',
@@ -338,11 +397,11 @@ const DyeingIssuance = ({ rowData }) => {
           size="small"
           // fullWidth
           sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.issuance || ''}
+          value={params.row.issuanceQuantity || ''}
           onChange={(event) =>
             handleCellEdit({
               id: params.id,
-              field: 'issuance',
+              field: 'issuanceQuantity',
               value: Number(event.target.value)
             })
           }
@@ -397,7 +456,7 @@ const DyeingIssuance = ({ rowData }) => {
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      dyeingPoDetailsList: selectedFabrics
+      issuanceTransactionDetails: selectedFabrics
     }));
   }, [poDetails, rowSelectionModel]);
 
@@ -407,6 +466,207 @@ const DyeingIssuance = ({ rowData }) => {
       console.log('API ref is ready:', apiRef.current);
     }
   }, [apiRef]);
+
+  const [open, setOpen] = React.useState(false);
+  // const [open2, setOpen2] = React.useState(false);
+  const [iss, setIss] = React.useState(false);
+
+  const handleClickOpen = async (data) => {
+    setIss(data);
+    setOpen(true);
+  };
+  // const handleClickOpen2 = async (data) => {
+  //   setOpen2(true);
+  // };
+  // console.log('terms condition', vId);
+  const handleClose = () => {
+    setOpen(false);
+  };
+  // const handleClose2 = () => {
+  //   // setShowUpperDiv(true);
+  //   setOpen2(false);
+  // };
+  // const handleIssuanceClick = (rowData) => {
+  //   navigate('/Production/Issuance', { state: { data: rowData, tab: 1 } });
+  // };
+  const printOgp = (ogpData) => {
+    const newWindow = window.open('', '', 'width=800,height=600');
+    const doc = newWindow.document;
+
+    doc.write(`
+      <html>
+        <head>
+          <title>Outward Gate Pass</title>
+          <style>
+            body { font-family: Arial, sans-serif; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { padding: 8px; border: 1px solid black; text-align: left; }
+            .header { margin-bottom: 20px; }
+            .header td { border: none; padding: 5px 0; }
+          </style>
+        </head>
+        <body>
+          <h2>Elaf</h2>
+          <h3>OUTWARD GATE PASS</h3>
+  
+          <table class="header">
+            <tr>
+              <td><strong>OGP #:</strong> ${ogpData.vIssuanceTransaction.ogpNumber}</td>
+              <td><strong>Process:</strong> ${ogpData.vIssuanceTransaction.processTypeName}</td>
+            </tr>
+            <tr>
+              <td><strong>OGP Date:</strong> ${new Date(ogpData.vIssuanceTransaction.ogpDate).toLocaleDateString()}</td>
+              <td><strong>Stage:</strong> Work in Process</td>
+            </tr>
+            <tr>
+              <td><strong>Vendor Name:</strong> ${ogpData.vIssuanceTransaction.vendorName}</td>
+              <td><strong>Vendor Contact:</strong> TBD</td>
+            </tr>
+            <tr>
+              <td><strong>Purpose:</strong> Dyeing</td>
+              <td></td>
+            </tr>
+          </table>
+  
+          <table>
+            <thead>
+              <tr>
+                <th>PO #</th>
+                <th>Description</th>
+                <th>Design #</th>
+                <th>UOM</th>
+                <th>Qty Required</th>
+                <th>Shrinkage</th>
+                <th>Total Qty</th>
+                <th>Rate</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${ogpData.vIssuanceTransactionDetailsList
+                .map(
+                  (item) => `
+                <tr>
+                  <td>${item.poId}</td>
+                  <td>${item.fabricName}</td>
+                  <td>${item.fabricCount}</td>
+                  <td>${item.uomName}</td>
+                  <td>${item.issuanceQuantity}</td>
+                  <td>-</td>
+                  <td>${item.issuanceQuantity}</td>
+                  <td>${item.rate}</td>
+                  <td>${item.totalAfterTax}</td>
+                </tr>
+              `
+                )
+                .join('')}
+            </tbody>
+          </table>
+        </body>
+      </html>
+    `);
+
+    doc.close();
+    newWindow.print();
+  };
+
+  const handlePrintOgp = async (rowData) => {
+    try {
+      const response = await axios.get(
+        `http://100.42.177.77:83/api/Issuance/GetOutwardGatePassByIssuanceId`,
+        {
+          params: { issuanceId: rowData.issuanceId }
+        }
+      );
+
+      if (response.data.success) {
+        const ogpData = response.data.result;
+        // Call the function to print the data
+        printOgp(ogpData);
+      } else {
+        console.error('Failed to fetch OGP data:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching OGP data:', error);
+    }
+  };
+
+  const issuanceColumns = [
+    {
+      field: 'id',
+      headerName: 'Sr#'
+      // flex: 1
+    },
+    {
+      field: 'issuanceId',
+      headerName: 'Issuance'
+      // flex: 1
+    },
+    {
+      field: 'vendorName',
+      headerName: 'Vendor'
+    },
+    {
+      field: 'issuanceQuantity',
+      headerName: 'Issuance'
+    },
+    {
+      field: 'issuanceDate',
+      headerName: 'Issuance Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'expectedReturnDate',
+      headerName: 'Expected Return Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'fabricCount',
+      headerName: 'Fabrics'
+    },
+    {
+      field: 'statusName',
+      headerName: 'Status'
+    },
+    {
+      field: 'Actions',
+      headerName: 'Actions',
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup variant="text" size="small">
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => handleClickOpen(params.row)}
+            >
+              View Details
+            </Button>
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => handlePrintOgp(params.row)}
+            >
+              Print OGP
+            </Button>
+          </ButtonGroup>
+        </div>
+      )
+    }
+  ];
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -578,19 +838,63 @@ const DyeingIssuance = ({ rowData }) => {
               size="small"
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
-            >
-              {/* {locationsList.map((option) => (
-                <MenuItem key={option.locationId} value={option.locationId}>
-                  {option.section +
-                    '.' +
-                    option.aisle +
-                    '.' +
-                    option.rack +
-                    '.' +
-                    option.bin}
-                </MenuItem>
-              ))} */}
-            </TextField>
+            ></TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              // select
+              label="PO Quantity"
+              name="poQuantity"
+              value={formData.poQuantity}
+              onChange={handleChange}
+              size="small"
+              disabled
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              // select
+              label="Total Quantity"
+              name="assignQuantity"
+              value={formData.assignQuantity}
+              onChange={handleChange}
+              size="small"
+              disabled
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              // select
+              label="Available Quantity"
+              name="stockReceived"
+              value={formData.stockReceived}
+              onChange={handleChange}
+              size="small"
+              disabled
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              // select
+              label="Remaining Quantity"
+              name="remainingQuantity"
+              value={formData.remainingQuantity}
+              onChange={handleChange}
+              size="small"
+              disabled
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            ></TextField>
           </Grid>
           <Grid item xs={12}>
             <DataGrid
@@ -616,7 +920,7 @@ const DyeingIssuance = ({ rowData }) => {
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
           avatar={<VisibilityOutlinedIcon />}
-          title="View Issuance Details"
+          title="View Issuance"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid
@@ -627,10 +931,46 @@ const DyeingIssuance = ({ rowData }) => {
         >
           <Grid item xs={12}>
             <ReuseableDataGrid
-              initialRows={initialRows}
-              iColumns={columns}
-              disableDelete={true}
+              initialRows={issuanceList}
+              iColumns={issuanceColumns}
+              hideAction
             />
+            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
+              <DialogTitle
+                sx={{
+                  backgroundColor: '#A11F23',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingX: '24px',
+                  paddingY: '4px'
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="div"
+                  color="#ffffff"
+                  gutterBottom
+                  fontSize={20}
+                  fontWeight={2}
+                  fontStyle={'normal'}
+                >
+                  {'View Issuance Details'}
+                </Typography>
+                <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                <DyeingIssuanceView
+                  iss={iss}
+                  handleClose={handleClose}
+                  refetchIssuanceData={refetchIssuanceData}
+                />
+              </DialogContent>
+            </Dialog>
           </Grid>
         </Grid>
       </Card>

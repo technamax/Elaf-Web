@@ -18,7 +18,13 @@ const SmallTextField = styled(TextField)(({ theme }) => ({
   minHeight: '30px' // Set minimum height to ensure it's usable
 }));
 
-const Receive = ({ fabrics, setFabrics, stockId }) => {
+const Receive = ({
+  fabrics,
+  setFabrics,
+  stockId,
+  handleClose,
+  refetchStockData
+}) => {
   const { user } = useUser();
   const { enqueueSnackbar } = useSnackbar();
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
@@ -64,6 +70,9 @@ const Receive = ({ fabrics, setFabrics, stockId }) => {
   //     );
   //   }
   // };
+  const fFabrics = fabrics.filter((row) => row.itpQuantity > 0);
+  console.log('fabrics', fabrics);
+  console.log('fFabrics', fFabrics);
 
   const handleCellEdit = (params) => {
     const { id, field, value } = params;
@@ -75,6 +84,8 @@ const Receive = ({ fabrics, setFabrics, stockId }) => {
           const updatedRow = {
             ...row,
             [field]: value,
+            quantity: row.itpQuantity,
+            productName: row.fabricName,
             appId: user.appId,
             createdOn: new Date().toISOString(),
             createdBy: user.empId,
@@ -103,7 +114,7 @@ const Receive = ({ fabrics, setFabrics, stockId }) => {
   React.useEffect(() => {
     setFormData({
       ...formData,
-      stockReceivingDetails: fabrics
+      stockReceivingDetails: fabrics.filter((row) => row.itpQuantity > 0)
     });
   }, [fabrics, setFabrics]);
   console.log('fabrics', fabrics);
@@ -126,18 +137,18 @@ const Receive = ({ fabrics, setFabrics, stockId }) => {
       field: 'uomName',
       headerName: 'UOM'
     },
-    {
-      field: 'totalQuantity',
-      headerName: 'totalQuantityAKArequiredQty'
-    },
+    // {
+    //   field: 'totalQuantity',
+    //   headerName: 'totalQuantityAKArequiredQty'
+    // },
     {
       field: 'assignQty',
       headerName: 'Assigned Qty'
     },
-    {
-      field: 'stockReceived',
-      headerName: 'stock Received Qty'
-    },
+    // {
+    //   field: 'stockReceived',
+    //   headerName: 'stock Received Qty'
+    // },
     {
       field: 'itpQuantity',
       headerName: 'itp Qty Received'
@@ -155,10 +166,11 @@ const Receive = ({ fabrics, setFabrics, stockId }) => {
       renderCell: (params) => (
         <SmallTextField
           variant="outlined"
+          disabled
           size="small"
           // fullWidth
           sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.quantity || ''}
+          value={params.row.itpQuantity || ''}
           onChange={(event) =>
             handleCellEdit({
               id: params.id,
@@ -313,7 +325,8 @@ const Receive = ({ fabrics, setFabrics, stockId }) => {
           autoHideDuration: 5000
         });
       }
-
+      refetchStockData();
+      handleClose();
       // refetchDyeingPrintingData();
       // setAccordionExpanded(false);
     } catch (error) {
@@ -328,78 +341,6 @@ const Receive = ({ fabrics, setFabrics, stockId }) => {
     }
   };
 
-  // const [shrinkages, setShrinkages] = React.useState([]);
-  // const [wastages, setWastages] = React.useState([]);
-  // const [fabricIds, setFabricIds] = React.useState([]);
-  // const handleRowSelectionModelChange = React.useCallback(
-  //   (newRowSelectionModel) => {
-  //     setRowSelectionModel(newRowSelectionModel);
-  //     const designsIds = newRowSelectionModel
-  //       .map((id) => {
-  //         const rowData = apiRef.current.getRow(id);
-  //         console.log('rowData', rowData);
-  //         return rowData ? rowData['shrikage'] : null; // Adjust the field name to match your data
-  //       })
-  //       .filter((id) => id !== null); // Filter out any null values
-  //     const poPcsLists = newRowSelectionModel
-  //       .map((id) => {
-  //         const rowData = apiRef.current.getRow(id);
-  //         console.log('rowData', rowData);
-  //         return rowData ? rowData['wastage'] : null; // Adjust the field name to match your data
-  //       })
-  //       .filter((id) => id !== null); // Filter out any null values
-  //     const fabricsIds = newRowSelectionModel
-  //       .map((id) => {
-  //         const rowData = apiRef.current.getRow(id);
-  //         console.log('rowData', rowData);
-  //         return rowData ? rowData['lookUpId'] : null; // Adjust the field name to match your data
-  //       })
-  //       .filter((id) => id !== null);
-  //     console.log('poPcsLists', poPcsLists);
-  //     setShrinkages(designsIds);
-  //     setWastages(poPcsLists);
-  //     setFabricIds(fabricsIds);
-  //   },
-  //   [apiRef]
-  // );
-  // React.useEffect(() => {
-  //   const updatedShrinkages = rowSelectionModel.map((id) => {
-  //     const rowData = apiRef.current.getRow(id);
-  //     return rowData && rowData['shrikage'] !== undefined
-  //       ? rowData['shrikage']
-  //       : 0;
-  //   });
-
-  //   const updatedWastages = rowSelectionModel.map((id) => {
-  //     const rowData = apiRef.current.getRow(id);
-  //     return rowData && rowData['wastage'] !== undefined
-  //       ? rowData['wastage']
-  //       : 0;
-  //   });
-
-  //   setShrinkages(updatedShrinkages);
-  //   setWastages(updatedWastages);
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     shrinkage: updatedShrinkages,
-  //     wastage: updatedWastages
-  //   }));
-  // }, [fabrics, rowSelectionModel]);
-
-  // React.useEffect(() => {
-  //   setFormData({
-  //     ...formData,
-  //     fabricId: fabricIds,
-  //     shrinkage: shrinkages,
-  //     wastage: wastages
-  //   });
-  // }, [shrinkages, wastages]);
-  // React.useEffect(() => {
-  //   if (apiRef.current) {
-  //     console.log('API ref is ready:', apiRef.current);
-  //   }
-  // }, [apiRef]);
-
   return (
     <Grid
       container
@@ -410,7 +351,7 @@ const Receive = ({ fabrics, setFabrics, stockId }) => {
       <Grid item xs={12}>
         <div style={{ height: 400, width: '100%' }}>
           <DataGrid
-            rows={fabrics}
+            rows={fFabrics}
             columns={designsColumns}
             apiRef={apiRef}
             disableRowSelectionOnClick

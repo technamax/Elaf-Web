@@ -6,12 +6,15 @@ import {
   useGetCategoriesListQuery,
   useGetTermsByVendorIdQuery
 } from 'api/store/Apis/termsAndConditionsApi';
+import { useDyeingPoAssignTermDetailsByPoIdQuery } from 'api/store/Apis/productionApi';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import { useUser } from 'context/User';
+import { useSnackbar } from 'notistack';
 
-const AssignTerms = ({ vId }) => {
+const AssignTerms = ({ vId, handleClose }) => {
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
   const apiRef = useGridApiRef();
+  const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
   const [categories, setCategories] = useState([]);
   const [tcs, setTcs] = useState([]);
@@ -22,6 +25,10 @@ const AssignTerms = ({ vId }) => {
   });
 
   const { data: categoriesData } = useGetCategoriesListQuery();
+  const { data: assignedTermsData, refetch: refetchAssignedTermsData } =
+    useDyeingPoAssignTermDetailsByPoIdQuery(vId.poId, {
+      skip: !vId.poId // Skip the query if no collection is selected
+    });
   const { data: columnsData, refetch: refetchcolumnsData } =
     useGetTermsByVendorIdQuery(
       { vId: vId.vendorId, categoryId: formData.categoryId },
@@ -144,33 +151,27 @@ const AssignTerms = ({ vId }) => {
         formData
       );
 
+      if (!response.data.success) {
+        enqueueSnackbar(`${response.data.message} !`, {
+          variant: 'error',
+          autoHideDuration: 5000
+        });
+        console.log('response.message', response.data.message);
+      } else {
+        enqueueSnackbar(`${response.data.message} !`, {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+      }
+      refetchAssignedTermsData();
       console.log('Save response:', response.data);
-
-      // setFormData((prevFormData) => ({
-      //   poId: 0,
-      //   productionId: '',
-      //   issuanceDate: '',
-      //   expectedReturnDate: '',
-      //   fabricId: '',
-      //   processTypeId: 1223,
-      //   vendorId: '',
-      //   shrinkage: '',
-      //   wastage: '',
-      //   locationId: '',
-
-      //   appId: user.appId,
-      //   createdOn: new Date().toISOString(),
-      //   createdBy: user.empId,
-      //   lastUpdatedOn: new Date().toISOString(),
-      //   LastUpdatedBy: user.empId
-      // }));
-      // setFabrics([]);
-      // setRowSelectionModel([]);
-      // // refetchFabricsData();
-      // setIsEdit(false);
-      // setAccordionExpanded(false);
+      handleClose();
     } catch (error) {
       console.error('Error saving data:', error);
+      enqueueSnackbar('FAILED: Unable to start Process', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
     }
   };
   return (
