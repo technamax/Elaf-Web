@@ -60,7 +60,7 @@
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
     "swr": "^2.2.5",
-    "vite": "^5.2.10",
+    "vite": "^5.4.3",
     "vite-jsconfig-paths": "^2.0.1",
     "web-vitals": "^3.5.2",
     "xlsx": "^0.18.5",
