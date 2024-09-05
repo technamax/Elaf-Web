@@ -1,11 +1,9 @@
 import React from 'react';
-import ReportViewer from 'views/Reports';
-
+views / DetailedReports / Reports;
 const EmbroideryIssuance = () => {
   return (
     <div>
       <h1>SSRS Report Viewer</h1>
-      <ReportViewer />
     </div>
   );
 };

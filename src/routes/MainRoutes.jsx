@@ -63,6 +63,9 @@ const ShrinkageWastageConfiguration = Loadable(
 const POGeneration = Loadable(
   lazy(() => import('views/Production/POGeneration'))
 );
+
+const Reports = Loadable(lazy(() => import('views/DetailedReports/Reports')));
+
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 const WelcomePage = Loadable(lazy(() => import('views/welcome/WelcomePage')));
 
@@ -171,6 +174,23 @@ const MainRoutes = {
         {
           path: 'ShrinkageWastageConfiguration',
           element: <ProtectedRoute element={ShrinkageWastageConfiguration} />
+        },
+        {
+          path: 'TermsandConditions',
+          element: <ProtectedRoute element={TermsandConditions} />
+        }
+        // {
+        //   path: 'ProductionBatch',
+        //   element: <ProtectedRoute element={ProductionBatch} />
+        // },
+      ]
+    },
+    {
+      path: 'DetailedReports',
+      children: [
+        {
+          path: 'Reports',
+          element: <ProtectedRoute element={Reports} />
         },
         {
           path: 'TermsandConditions',
