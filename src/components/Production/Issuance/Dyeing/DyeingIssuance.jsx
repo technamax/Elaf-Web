@@ -477,6 +477,7 @@ const DyeingIssuance = ({ rowData }) => {
   };
   const handleClickOpen2 = async (data) => {
     setOpen2(true);
+    setIss(data);
   };
   // console.log('terms condition', vId);
   const handleClose = () => {
@@ -1013,7 +1014,7 @@ const DyeingIssuance = ({ rowData }) => {
                   handleClose={handleClose}
                   refetchIssuanceData={refetchIssuanceData}
                 /> */}
-                <SSRSReport rId={13} />
+                <SSRSReport rId={13} paramIssuanceId={iss.issuanceId} />
               </DialogContent>
             </Dialog>
           </Grid>

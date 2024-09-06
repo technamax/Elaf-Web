@@ -59,10 +59,12 @@ const SSRSReport = ({ rId, paramIssuanceId }) => {
   };
 
   useEffect(() => {
-    const iframe = iframeRef.current;
-    if (iframe && selectedReportUrl) {
-      const newUrl = `${selectedReportUrl}&ParamIssuanceId=${paramIssuanceId || '8'}`;
-      iframe.src = newUrl;
+    if (paramIssuanceId) {
+      const iframe = iframeRef.current;
+      if (iframe && selectedReportUrl) {
+        const newUrl = `${selectedReportUrl}&ParamIssuanceId=${paramIssuanceId || ''}`;
+        iframe.src = newUrl;
+      }
     }
   }, [selectedReportUrl, paramIssuanceId]);
 
