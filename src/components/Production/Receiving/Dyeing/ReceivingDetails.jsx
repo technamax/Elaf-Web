@@ -93,6 +93,7 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
     });
   }, [issuanceDetails, setIssuanceDetails]);
   console.log('formData', formData);
+  console.log('issuanceDetails', issuanceDetails);
 
   const columns = [
     {
@@ -209,7 +210,7 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
       )
     },
     {
-      field: 'gradeOthersQty',
+      field: 'others1Qty',
       headerName: 'Others',
       renderCell: (params) => (
         <SmallTextField
@@ -217,11 +218,11 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
           size="small"
           // fullWidth
           sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.gradeOthersQty || 0}
+          value={params.row.others1Qty || 0}
           onChange={(event) =>
             handleCellEdit({
               id: params.id,
-              field: 'gradeOthersQty',
+              field: 'others1Qty',
               value: Number(event.target.value)
             })
           }
