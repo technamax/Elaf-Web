@@ -1,5 +1,4 @@
 import React from 'react';
-views / DetailedReports / Reports;
 const EmbroideryIssuance = () => {
   return (
     <div>
