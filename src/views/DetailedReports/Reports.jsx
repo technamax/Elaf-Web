@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   MenuItem,
   Select,
@@ -9,11 +9,12 @@ import {
   CardHeader
 } from '@mui/material';
 
-const SSRSReport = ({ rId }) => {
+const SSRSReport = ({ rId, paramIssuanceId }) => {
   const [reports, setReports] = useState([]);
   const [selectedReportUrl, setSelectedReportUrl] = useState('');
   const [selectedReport, setSelectedReport] = useState('');
   const [selectedReportDesc, setSelectedReportDesc] = useState('');
+  const iframeRef = useRef(null);
 
   // Fetch reports data from the API
   useEffect(() => {
@@ -56,6 +57,14 @@ const SSRSReport = ({ rId }) => {
       selectedReportData ? selectedReportData.reportDesc : ''
     );
   };
+
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (iframe && selectedReportUrl) {
+      const newUrl = `${selectedReportUrl}&ParamIssuanceId=${paramIssuanceId || '8'}`;
+      iframe.src = newUrl;
+    }
+  }, [selectedReportUrl, paramIssuanceId]);
 
   return (
     <Card variant="outlined">
@@ -113,6 +122,7 @@ const SSRSReport = ({ rId }) => {
       </Grid>
       {selectedReportUrl && (
         <iframe
+          ref={iframeRef}
           src={selectedReportUrl}
           style={{
             height: '80vh',
