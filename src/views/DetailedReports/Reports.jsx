@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import {
+  MenuItem,
+  Select,
+  Typography,
+  Grid,
+  TextField,
+  Card,
+  CardHeader
+} from '@mui/material';
 
 const SSRSReport = () => {
   const [reports, setReports] = useState([]);
   const [selectedReportUrl, setSelectedReportUrl] = useState('');
   const [selectedReport, setSelectedReport] = useState('');
+  const [selectedReportDesc, setSelectedReportDesc] = useState('');
 
   // Fetch reports data from the API
   useEffect(() => {
@@ -33,27 +42,65 @@ const SSRSReport = () => {
     setSelectedReportUrl(
       selectedReportData ? selectedReportData.reportUrl : ''
     );
+    setSelectedReportDesc(
+      selectedReportData ? selectedReportData.reportDesc : ''
+    );
   };
 
   return (
-    <div style={{ height: '100vh', width: '100%' }}>
-      <h1>Report Viewer</h1>
-      <FormControl fullWidth>
-        <InputLabel id="report-select-label">Select Report</InputLabel>
-        <Select
-          labelId="report-select-label"
-          value={selectedReport}
-          onChange={handleReportChange}
-          label="Select Report"
-        >
-          {reports.map((report) => (
-            <MenuItem key={report.reportId} value={report.reportId}>
-              {report.reportName}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
+    <Card variant="outlined">
+      <CardHeader
+        className="css-4rfrnx-MuiCardHeader-root"
+        // avatar={<VisibilityOutlinedIcon />}
+        title="View Reports "
+        titleTypographyProps={{ style: { color: 'white' } }}
+      ></CardHeader>{' '}
+      <Grid
+        container
+        spacing={2}
+        width="Inherit"
+        sx={{ paddingY: 2, paddingX: 2 }}
+      >
+        <Grid item xs={12} md={6}>
+          <TextField
+            fullWidth
+            select
+            label="Select Report"
+            name="selectedReport"
+            value={selectedReport}
+            onChange={handleReportChange}
+            size="small"
+            InputLabelProps={{
+              sx: {
+                color: 'black'
+              }
+            }}
+          >
+            {reports.map((report) => (
+              <MenuItem key={report.reportId} value={report.reportId}>
+                {report.reportName}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <TextField
+            fullWidth
+            label="Report Description"
+            name="selectedReportDesc"
+            value={selectedReportDesc}
+            InputProps={{
+              readOnly: true
+            }}
+            size="small"
+            InputLabelProps={{
+              sx: {
+                color: 'black'
+              }
+            }}
+          />
+        </Grid>
+      </Grid>
       {selectedReportUrl && (
         <iframe
           src={selectedReportUrl}
@@ -66,7 +113,7 @@ const SSRSReport = () => {
           title="SSRS Report"
         ></iframe>
       )}
-    </div>
+    </Card>
   );
 };
 
