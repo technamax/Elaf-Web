@@ -9,7 +9,7 @@ import {
   CardHeader
 } from '@mui/material';
 
-const SSRSReport = () => {
+const SSRSReport = ({ rId }) => {
   const [reports, setReports] = useState([]);
   const [selectedReportUrl, setSelectedReportUrl] = useState('');
   const [selectedReport, setSelectedReport] = useState('');
@@ -24,15 +24,25 @@ const SSRSReport = () => {
         );
         const data = await response.json();
         setReports(data.result);
+
+        // If rId is passed, auto-select the report
+        if (rId) {
+          const report = data.result.find((report) => report.reportId === rId);
+          if (report) {
+            setSelectedReport(rId);
+            setSelectedReportUrl(report.reportUrl);
+            setSelectedReportDesc(report.reportDesc);
+          }
+        }
       } catch (error) {
         console.error('Error fetching reports:', error);
       }
     };
 
     fetchReports();
-  }, []);
+  }, [rId]);
 
-  // Handle report selection
+  // Handle report selection by the user
   const handleReportChange = (event) => {
     const reportId = event.target.value;
     const selectedReportData = reports.find(
@@ -67,7 +77,7 @@ const SSRSReport = () => {
             select
             label="Select Report"
             name="selectedReport"
-            value={selectedReport}
+            value={rId || selectedReport}
             onChange={handleReportChange}
             size="small"
             InputLabelProps={{

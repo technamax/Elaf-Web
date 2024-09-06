@@ -21,7 +21,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 
 import '../../../../assets/scss/style.scss';
-
+import SSRSReport from '../../../../views/DetailedReports/Reports';
 import {
   useGetDyeingPoHeaderListQuery,
   useGetFabricForProductionByProductionIdQuery,
@@ -468,24 +468,24 @@ const DyeingIssuance = ({ rowData }) => {
   }, [apiRef]);
 
   const [open, setOpen] = React.useState(false);
-  // const [open2, setOpen2] = React.useState(false);
+  const [open2, setOpen2] = React.useState(false);
   const [iss, setIss] = React.useState(false);
 
   const handleClickOpen = async (data) => {
     setIss(data);
     setOpen(true);
   };
-  // const handleClickOpen2 = async (data) => {
-  //   setOpen2(true);
-  // };
+  const handleClickOpen2 = async (data) => {
+    setOpen2(true);
+  };
   // console.log('terms condition', vId);
   const handleClose = () => {
     setOpen(false);
   };
-  // const handleClose2 = () => {
-  //   // setShowUpperDiv(true);
-  //   setOpen2(false);
-  // };
+  const handleClose2 = () => {
+    // setShowUpperDiv(true);
+    setOpen2(false);
+  };
   // const handleIssuanceClick = (rowData) => {
   //   navigate('/Production/Issuance', { state: { data: rowData, tab: 1 } });
   // };
@@ -658,10 +658,17 @@ const DyeingIssuance = ({ rowData }) => {
             <Button
               size="small"
               color="primary"
+              onClick={() => handleClickOpen2(params.row)}
+            >
+              OGP
+            </Button>
+            {/* <Button
+              size="small"
+              color="primary"
               onClick={() => handlePrintOgp(params.row)}
             >
               Print OGP
-            </Button>
+            </Button> */}
           </ButtonGroup>
         </div>
       )
@@ -969,6 +976,44 @@ const DyeingIssuance = ({ rowData }) => {
                   handleClose={handleClose}
                   refetchIssuanceData={refetchIssuanceData}
                 />
+              </DialogContent>
+            </Dialog>
+            <Dialog open={open2} onClose={handleClose2} fullWidth maxWidth="xl">
+              <DialogTitle
+                sx={{
+                  backgroundColor: '#A11F23',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingX: '24px',
+                  paddingY: '4px',
+                  mb: 2.5
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="div"
+                  color="#ffffff"
+                  gutterBottom
+                  fontSize={20}
+                  fontWeight={2}
+                  fontStyle={'normal'}
+                >
+                  {'Create OGP'}
+                </Typography>
+                <IconButton onClick={handleClose2} sx={{ color: '#ffffff' }}>
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                {/* <DyeingIssuanceView
+                  iss={iss}
+                  handleClose={handleClose}
+                  refetchIssuanceData={refetchIssuanceData}
+                /> */}
+                <SSRSReport rId={13} />
               </DialogContent>
             </Dialog>
           </Grid>
