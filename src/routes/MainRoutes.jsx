@@ -40,6 +40,10 @@ const ProductionBatch = Loadable(
 const FabricationSelectionIssuance = Loadable(
   lazy(() => import('views/Production/FabricationSelectionIssuance'))
 );
+const Inspection = Loadable(lazy(() => import('views/Production/Inspection')));
+
+const GRN = Loadable(lazy(() => import('views/Production/GRN')));
+
 const ReceivingFromBX = Loadable(
   lazy(() => import('views/Production/ReceivingFromBX'))
 );
@@ -165,6 +169,14 @@ const MainRoutes = {
         {
           path: 'POGeneration',
           element: <ProtectedRoute element={POGeneration} />
+        },
+        {
+          path: 'Inspection',
+          element: <ProtectedRoute element={Inspection} />
+        },
+        {
+          path: 'GRN',
+          element: <ProtectedRoute element={GRN} />
         }
       ]
     },
