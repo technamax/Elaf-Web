@@ -67,6 +67,8 @@ const DyeingPO = () => {
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [savedRowIds, setSavedRowIds] = useState(new Set());
+
   const [formData, setFormData] = useState({
     poId: 0,
     productionId: '',
@@ -135,6 +137,7 @@ const DyeingPO = () => {
       );
     }
   }, [dyeingPoData, refetchDyeingPoData]);
+
   useEffect(() => {
     if (fabricsData) {
       setFabricsList(
@@ -206,7 +209,55 @@ const DyeingPO = () => {
     }
   };
 
+  // const handleSave = async () => {
+  //   console.log('formData', formData);
+  //   try {
+  //     // Make the API call
+  //     const response = await axios.post(
+  //       'http://100.42.177.77:83/api/PO/SavePOHeader',
+  //       formData
+  //     );
+
+  //     console.log('Save response:', response.data);
+
+  //     setFormData((prevFormData) => ({
+  //       poId: 0,
+  //       productionId: '',
+  //       issuanceDate: '',
+  //       expectedReturnDate: '',
+  //       fabricId: '',
+  //       processTypeId: 1223,
+  //       vendorId: '',
+  //       shrinkage: '',
+  //       wastage: '',
+  //       locationId: '',
+
+  //       appId: user.appId,
+  //       createdOn: new Date().toISOString(),
+  //       createdBy: user.empId,
+  //       lastUpdatedOn: new Date().toISOString(),
+  //       LastUpdatedBy: user.empId
+  //     }));
+  //     setFabrics([]);
+  //     refetchDyeingPoData();
+  //     setRowSelectionModel([]);
+  //     // refetchFabricsData();
+  //     setIsEdit(false);
+  //     // setAccordionExpanded(false);
+  //   } catch (error) {
+  //     console.error('Error saving data:', error);
+  //   }
+  // };
   const handleSave = async () => {
+    if (rowSelectionModel.length === 0) {
+      // Show a snackbar warning if no rows are selected
+      enqueueSnackbar('Please select at least one row before saving!', {
+        variant: 'warning',
+        autoHideDuration: 5000
+      });
+      return;
+    }
+
     console.log('formData', formData);
     try {
       // Make the API call
@@ -217,34 +268,53 @@ const DyeingPO = () => {
 
       console.log('Save response:', response.data);
 
-      setFormData((prevFormData) => ({
-        poId: 0,
-        productionId: '',
-        issuanceDate: '',
-        expectedReturnDate: '',
-        fabricId: '',
-        processTypeId: 1223,
-        vendorId: '',
-        shrinkage: '',
-        wastage: '',
-        locationId: '',
+      // Check for success
+      if (response.data.success) {
+        // Show a success snackbar if the save operation was successful
+        enqueueSnackbar('Data saved successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+        setSavedRowIds((prev) => new Set([...prev, ...rowSelectionModel]));
 
-        appId: user.appId,
-        createdOn: new Date().toISOString(),
-        createdBy: user.empId,
-        lastUpdatedOn: new Date().toISOString(),
-        LastUpdatedBy: user.empId
-      }));
-      setFabrics([]);
-      refetchDyeingPoData();
-      setRowSelectionModel([]);
-      // refetchFabricsData();
-      setIsEdit(false);
-      // setAccordionExpanded(false);
+        // Reset formData and related states
+        setFormData({
+          poId: 0,
+          productionId: '',
+          issuanceDate: '',
+          expectedReturnDate: '',
+          fabricId: '',
+          processTypeId: 1223,
+          vendorId: '',
+          shrinkage: '',
+          wastage: '',
+          locationId: '',
+          appId: user.appId,
+          createdOn: new Date().toISOString(),
+          createdBy: user.empId,
+          lastUpdatedOn: new Date().toISOString(),
+          lastUpdatedBy: user.empId
+        });
+        setFabrics([]);
+        refetchDyeingPoData();
+        setRowSelectionModel([]);
+        setIsEdit(false);
+      } else {
+        // Show an error snackbar if the save operation was not successful
+        enqueueSnackbar(`Save failed: ${response.data.message}`, {
+          variant: 'error',
+          autoHideDuration: 5000
+        });
+      }
     } catch (error) {
       console.error('Error saving data:', error);
+      enqueueSnackbar('Failed to save data. Please try again.', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
     }
   };
+
   console.log('formData', formData);
   const [open, setOpen] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
@@ -306,6 +376,14 @@ const DyeingPO = () => {
       field: 'poIdName',
       headerName: 'PO ID'
       // flex: 1
+    },
+    {
+      field: 'collectionName',
+      headerName: 'Collection Name'
+    },
+    {
+      field: 'fabricName',
+      headerName: 'Fabric Name'
     },
     {
       field: 'vendorName',
@@ -446,7 +524,10 @@ const DyeingPO = () => {
     },
     {
       field: 'total',
-      headerName: 'Planned Qty'
+      headerName: 'Planned Qty',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'quantity',
@@ -459,7 +540,7 @@ const DyeingPO = () => {
           variant="outlined"
           size="small"
           // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          sx={{ mt: 1, width: '100%' }}
           value={params.row.quantity || ''}
           onChange={(event) =>
             handleCellEdit({
@@ -470,7 +551,7 @@ const DyeingPO = () => {
           }
           type="number"
           InputProps={{
-            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+            style: { fontSize: '0.875rem' }
           }}
         />
       )
@@ -531,58 +612,114 @@ const DyeingPO = () => {
         />
       )
     },
+    // {
+    //   field: 'totalBeforeTax',
+    //   headerName: 'Total',
+
+    //   renderCell: (params) => (
+    //     <SmallTextField
+    //       variant="outlined"
+    //       size="small"
+    //       // fullWidth
+    //       sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+    //       value={params.row.totalBeforeTax || ''}
+    //       onChange={(event) =>
+    //         handleCellEdit({
+    //           id: params.id,
+    //           field: 'totalBeforeTax',
+    //           value: Number(event.target.value)
+    //         })
+    //       }
+    //       type="number"
+    //       InputProps={{
+    //         style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+    //       }}
+    //     />
+    //   )
+    // },
+    // {
+    //   field: 'totalAfterTax',
+    //   headerName: 'Total After Tax',
+
+    //   renderCell: (params) => (
+    //     <SmallTextField
+    //       variant="outlined"
+    //       size="small"
+    //       // fullWidth
+    //       sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+    //       value={params.row.totalAfterTax || ''}
+    //       onChange={(event) =>
+    //         handleCellEdit({
+    //           id: params.id,
+    //           field: 'totalAfterTax',
+    //           value: Number(event.target.value)
+    //         })
+    //       }
+    //       type="number"
+    //       InputProps={{
+    //         style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+    //       }}
+    //     />
+    //   )
+    // }
+
     {
       field: 'totalBeforeTax',
       headerName: 'Total',
-      // width: 'auto',
-
-      // flex: 1,
-
-      renderCell: (params) => (
-        <SmallTextField
-          variant="outlined"
-          size="small"
-          // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.totalBeforeTax || ''}
-          onChange={(event) =>
-            handleCellEdit({
-              id: params.id,
-              field: 'totalBeforeTax',
-              value: Number(event.target.value)
-            })
-          }
-          type="number"
-          InputProps={{
-            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-          }}
-        />
-      )
+      renderCell: (params) => {
+        const totalBeforeTax = params.row.totalBeforeTax || 0;
+        const formattedTotalBeforeTax = totalBeforeTax.toLocaleString();
+        return (
+          <SmallTextField
+            variant="outlined"
+            size="small"
+            sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+            value={formattedTotalBeforeTax} // Display formatted total
+            onChange={(event) => {
+              // Remove thousand separators before converting to number
+              const numericValue = Number(event.target.value.replace(/,/g, ''));
+              handleCellEdit({
+                id: params.id,
+                field: 'totalBeforeTax',
+                value: numericValue
+              });
+            }}
+            type="text" // Use text type for formatted display
+            InputProps={{
+              style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+            }}
+          />
+        );
+      }
     },
     {
       field: 'totalAfterTax',
       headerName: 'Total After Tax',
-
-      renderCell: (params) => (
-        <SmallTextField
-          variant="outlined"
-          size="small"
-          // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.totalAfterTax || ''}
-          onChange={(event) =>
-            handleCellEdit({
-              id: params.id,
-              field: 'totalAfterTax',
-              value: Number(event.target.value)
-            })
-          }
-          type="number"
-          InputProps={{
-            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-          }}
-        />
-      )
+      renderCell: (params) => {
+        const totalAfterTax = params.row.totalAfterTax || 0;
+        const formattedTotalAfterTax = totalAfterTax.toLocaleString();
+        return (
+          <SmallTextField
+            variant="outlined"
+            size="small"
+            sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+            value={formattedTotalAfterTax} // Display formatted total
+            onChange={(event) => {
+              // Remove thousand separators before converting to number
+              const numericValue = Number(event.target.value.replace(/,/g, ''));
+              handleCellEdit({
+                id: params.id,
+                field: 'totalAfterTax',
+                value: numericValue
+              });
+            }}
+            type="text" // Use text type for formatted display
+            InputProps={{
+              style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+            }}
+          />
+        );
+      }
     }
   ];
 
@@ -819,6 +956,7 @@ const DyeingPO = () => {
               <DataGrid
                 rows={fabrics}
                 columns={designsColumns}
+                pageSize={10} // Adjust based on your needs
                 apiRef={apiRef}
                 disableRowSelectionOnClick
                 checkboxSelection
@@ -853,6 +991,7 @@ const DyeingPO = () => {
             <ReuseableDataGrid
               initialRows={initialRows}
               iColumns={columns}
+              pageSize={10} // Adjust based on your needs
               setInitialData={setInitialData}
               hideAction
             />

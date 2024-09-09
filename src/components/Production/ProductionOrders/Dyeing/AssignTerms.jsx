@@ -13,6 +13,8 @@ import { useSnackbar } from 'notistack';
 
 const AssignTerms = ({ vId, handleClose }) => {
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
+  const [savedTerms, setSavedTerms] = useState([]); // Track saved terms
+
   const apiRef = useGridApiRef();
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
@@ -54,16 +56,28 @@ const AssignTerms = ({ vId, handleClose }) => {
       return;
     }
 
+    //   if (columnsData?.result) {
+    //     // if (columnsData) {
+    //     setTcs(
+    //       columnsData.result.map((row, index) => ({
+    //         id: index + 1,
+    //         ...row
+    //       }))
+    //     );
+    //   }
+    // }, [columnsData, refetchcolumnsData]);
     if (columnsData?.result) {
-      // if (columnsData) {
       setTcs(
-        columnsData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
+        columnsData.result
+          .filter((term) => !savedTerms.some((saved) => saved.id === term.id)) // Filter out saved terms
+          .map((row, index) => ({
+            id: index + 1,
+            ...row
+          }))
       );
     }
-  }, [columnsData, refetchcolumnsData]);
+  }, [columnsData, savedTerms, refetchcolumnsData]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -143,8 +157,19 @@ const AssignTerms = ({ vId, handleClose }) => {
   }, [apiRef]);
 
   console.log('selectedDesigns:', selectedDesigns);
+
   const handleSave = async () => {
-    console.log('formData', formData);
+    if (selectedDesigns.length === 0) {
+      enqueueSnackbar(
+        'No terms are selected. Please select at least one term.',
+        {
+          variant: 'warning',
+          autoHideDuration: 5000
+        }
+      );
+      return;
+    }
+
     try {
       const response = await axios.post(
         'http://100.42.177.77:83/api/PO/AssignTermToDyeingPo',
@@ -156,15 +181,20 @@ const AssignTerms = ({ vId, handleClose }) => {
           variant: 'error',
           autoHideDuration: 5000
         });
-        console.log('response.message', response.data.message);
       } else {
         enqueueSnackbar(`${response.data.message} !`, {
           variant: 'success',
           autoHideDuration: 5000
         });
+
+        // Update saved terms
+        setSavedTerms((prevSavedTerms) => [
+          ...prevSavedTerms,
+          ...selectedDesigns
+        ]);
       }
+
       refetchAssignedTermsData();
-      console.log('Save response:', response.data);
       handleClose();
     } catch (error) {
       console.error('Error saving data:', error);

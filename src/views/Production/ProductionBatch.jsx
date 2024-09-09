@@ -193,6 +193,14 @@ const ProductionBatch = () => {
       setFormErrors(errors);
       return;
     }
+    // Check if any rows are selected
+    if (rowSelectionModel.length === 0) {
+      enqueueSnackbar('Please select at least one row before saving!', {
+        variant: 'warning',
+        autoHideDuration: 5000
+      });
+      return;
+    }
 
     try {
       // Make the API call

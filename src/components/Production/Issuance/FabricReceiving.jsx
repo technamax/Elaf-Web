@@ -360,8 +360,11 @@ const FabricReceiving = () => {
         `http://100.42.177.77:83/api/StockReceiving/GetStockByStatusList?productionId=${data.productionId}&status=8`
       );
       console.log('response', response);
+      const result = response.data.result;
+      console.log('API Data Result:', result); // Log to check the data structure
+
       setStockView(
-        response.data.result.map((row, index) => ({
+        result.map((row, index) => ({
           id: index + 1,
           ...row
         }))
@@ -371,6 +374,7 @@ const FabricReceiving = () => {
     }
     setOpen2(true);
   };
+
   console.log('stockView', stockView);
   const handleClose = () => {
     setOpen(false);
@@ -455,33 +459,20 @@ const FabricReceiving = () => {
       field: 'uomName',
       headerName: 'UOM'
     },
-    // {
-    //   field: 'totalQuantity',
-    //   headerName: 'totalQuantityAKArequiredQty'
-    // },
-    // {
-    //   field: 'assignQty',
-    //   headerName: 'Assigned Qty'
-    // },
-    // {
-    //   field: 'stockReceived',
-    //   headerName: 'stock Received Qty'
-    // },
-    // {
-    //   field: 'itpQuantity',
-    //   headerName: 'itp Qty Received'
-    // },
-    // {
-    //   field: 'itpQuantity',
-    //   headerName: 'Qty Received'
-    // },
+
     {
       field: 'quantity',
-      headerName: 'Quantity Received'
+      headerName: 'Quantity Received',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'rate',
-      headerName: 'Rate'
+      headerName: 'Rate',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'tax',
@@ -489,11 +480,18 @@ const FabricReceiving = () => {
     },
     {
       field: 'amount',
-      headerName: 'Amount'
+      headerName: 'Amount',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
+
     {
       field: 'amountAfterTax',
-      headerName: 'Amount After Tax'
+      headerName: 'Amount After Tax',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     }
   ];
 
@@ -698,7 +696,7 @@ const FabricReceiving = () => {
                 fontWeight={2}
                 fontStyle={'normal'}
               >
-                {'View Details'}
+                {'Save Details'}
               </Typography>
               <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
                 <CloseIcon />

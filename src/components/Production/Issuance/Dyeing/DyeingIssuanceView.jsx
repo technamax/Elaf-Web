@@ -46,6 +46,7 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
       field: 'fabricName',
       headerName: 'Fabric'
     },
+
     // {
     //   field: 'baseColor',
     //   headerName: 'Base Color'
@@ -56,11 +57,22 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
     },
     {
       field: 'issuanceQuantity',
-      headerName: 'issuanceQuantity'
+      headerName: 'Issuance Quantity',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
+    },
+    {
+      field: 'rate',
+      headerName: 'Rate'
     },
     {
       field: 'uomName',
       headerName: 'UOM'
+    },
+    {
+      field: 'vendorName',
+      headerName: 'Fabric'
     }
   ];
   const handleOgp = async () => {

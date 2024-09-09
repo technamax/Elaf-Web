@@ -65,6 +65,7 @@ const DyeingIssuance = ({ rowData }) => {
   const [initialRows, setInitialRows] = useState([]);
   const [poDetails, setPoDetails] = useState([]);
   const [quantities, setQuantities] = useState([]);
+  const [savedRows, setSavedRows] = useState([]); // New state for tracking saved rows
 
   const Quantity = poDetails
     .reduce((sum, row) => sum + (row.quantity ?? 0), 0)
@@ -263,6 +264,23 @@ const DyeingIssuance = ({ rowData }) => {
   };
 
   const handleSave = async () => {
+    // if (
+    //   !formData.issuanceTransactionDetails ||
+    //   formData.issuanceTransactionDetails.length === 0
+    // ) {
+    //   enqueueSnackbar('Please select at least one row before saving.', {
+    //     variant: 'warning'
+    //   });
+    //   return;
+    // }
+
+    if (rowSelectionModel.length !== poDetails.length) {
+      enqueueSnackbar('Please select all rows before saving.', {
+        variant: 'warning'
+      });
+      return;
+    }
+
     console.log('formData', formData);
     try {
       // Make the API call
@@ -272,23 +290,14 @@ const DyeingIssuance = ({ rowData }) => {
       );
 
       console.log('Save response:', response.data);
-
-      // setFormData((prevFormData) => ({
-      //   categoryId: 0,
-      //   description: '',
-      //   enabled: '',
-
-      //   appId: user.appId,
-      //   createdOn: new Date().toISOString(),
-      //   createdBy: user.empId,
-      //   lastUpdatedOn: new Date().toISOString(),
-      //   lastUpdatedBy: user.empId
-      // }));
-
-      // refetch();
-      // setAccordionExpanded(false);
+      enqueueSnackbar('Data saved successfully!', { variant: 'success' });
+      setSavedRows((prev) => [...prev, ...formData.issuanceTransactionDetails]);
+      refetchIssuanceData();
     } catch (error) {
       console.error('Error saving data:', error);
+
+      // Show error snackbar
+      enqueueSnackbar('Error saving data!', { variant: 'error' });
     }
   };
   console.log('formData', formData);
@@ -383,7 +392,10 @@ const DyeingIssuance = ({ rowData }) => {
     // },
     {
       field: 'quantity',
-      headerName: 'Total Qty'
+      headerName: 'Total Qty',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'issuanceQuantity',
@@ -460,6 +472,10 @@ const DyeingIssuance = ({ rowData }) => {
     }));
   }, [poDetails, rowSelectionModel]);
 
+  const isRowSelectable = (params) => {
+    return !savedRows.some((row) => row.id === params.id);
+  };
+
   console.log('poDetails', poDetails);
   React.useEffect(() => {
     if (apiRef.current) {
@@ -490,6 +506,13 @@ const DyeingIssuance = ({ rowData }) => {
   // const handleIssuanceClick = (rowData) => {
   //   navigate('/Production/Issuance', { state: { data: rowData, tab: 1 } });
   // };
+  const formatNumber = (value) => {
+    if (value === null || value === undefined || isNaN(value)) {
+      return '';
+    }
+    return new Intl.NumberFormat().format(value);
+  };
+
   const printOgp = (ogpData) => {
     const newWindow = window.open('', '', 'width=800,height=600');
     const doc = newWindow.document;
@@ -854,7 +877,7 @@ const DyeingIssuance = ({ rowData }) => {
               // select
               label="PO Quantity"
               name="poQuantity"
-              value={formData.poQuantity}
+              value={formatNumber(formData.poQuantity)}
               onChange={handleChange}
               size="small"
               disabled
@@ -868,7 +891,7 @@ const DyeingIssuance = ({ rowData }) => {
               // select
               label="Total Quantity"
               name="assignQuantity"
-              value={formData.assignQuantity}
+              value={formatNumber(formData.assignQuantity)}
               onChange={handleChange}
               size="small"
               disabled
@@ -882,7 +905,7 @@ const DyeingIssuance = ({ rowData }) => {
               // select
               label="Available Quantity"
               name="stockReceived"
-              value={formData.stockReceived}
+              value={formatNumber(formData.stockReceived)}
               onChange={handleChange}
               size="small"
               disabled
@@ -896,7 +919,7 @@ const DyeingIssuance = ({ rowData }) => {
               // select
               label="Remaining Quantity"
               name="remainingQuantity"
-              value={formData.remainingQuantity}
+              value={formatNumber(formData.remainingQuantity)}
               onChange={handleChange}
               size="small"
               disabled
@@ -911,6 +934,7 @@ const DyeingIssuance = ({ rowData }) => {
               apiRef={apiRef}
               disableRowSelectionOnClick
               checkboxSelection
+              isRowSelectable={isRowSelectable} // Disable saved rows
               onRowSelectionModelChange={handleRowSelectionModelChange}
               rowSelectionModel={rowSelectionModel}
             />
@@ -942,6 +966,7 @@ const DyeingIssuance = ({ rowData }) => {
               initialRows={issuanceList}
               iColumns={issuanceColumns}
               hideAction
+              refetchIssuanceData={refetchIssuanceData}
             />
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
               <DialogTitle

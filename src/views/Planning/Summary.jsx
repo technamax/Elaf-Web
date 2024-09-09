@@ -229,16 +229,40 @@ const Summary = ({
     { field: 'planningProcessTypeName', headerName: 'Process Type' },
     { field: 'componentsCount', headerName: 'Components Count' },
     { field: 'fabricCount', headerName: 'Fabric Count' },
-    { field: 'totalFabricSum', headerName: 'Total Fabric Sum' },
-    { field: 'totalFabricRequiredSum', headerName: 'Total Fabric Required Sum' }
+    {
+      field: 'totalFabricSum',
+      headerName: 'Total Fabric Sum',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
+    },
+    {
+      field: 'totalFabricRequiredSum',
+      headerName: 'Total Fabric Required Sum',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
+    }
   ];
 
   const fabricationColumns = [
     { field: 'designNo', headerName: 'Design No' },
     { field: 'batchNo', headerName: 'Batch No' },
     { field: 'fabricCount', headerName: 'Fabric Count' },
-    { field: 'totalExcGst', headerName: 'Total Excluding GST' },
-    { field: 'totalIncGst', headerName: 'Total Including GST' }
+    {
+      field: 'totalExcGst',
+      headerName: 'Total Excluding GST',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
+    },
+    {
+      field: 'totalIncGst',
+      headerName: 'Total Including GST',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
+    }
   ];
 
   const dyeingPrintingColumns = [
@@ -246,11 +270,23 @@ const Summary = ({
     { field: 'batchNo', headerName: 'Batch No' },
     { field: 'processType', headerName: 'Process Type' },
     { field: 'assignedQtySum', headerName: 'Assigned Qty Sum' },
-    { field: 'availableQtySum', headerName: 'Available Qty Sum' },
+    {
+      field: 'availableQtySum',
+      headerName: 'Available Qty Sum',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
+    },
     { field: 'colorCount', headerName: 'Color Count' },
     { field: 'fabricCount', headerName: 'Fabric Count' },
     { field: 'outputQtySum', headerName: 'Output Qty Sum' },
-    { field: 'totalIncGst', headerName: 'Total Including GST' }
+    {
+      field: 'totalIncGst',
+      headerName: 'Total Including GST',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
+    }
   ];
 
   const embroideryColumns = [
@@ -261,10 +297,24 @@ const Summary = ({
     { field: 'fabricCount', headerName: 'Fabric Count', width: 150 },
     { field: 'componentCount', headerName: 'Component Count', width: 150 },
     { field: 'requiredPcsSum', headerName: 'Required Pcs Sum', width: 150 },
-    { field: 'totalAmountSum', headerName: 'Total Amount Sum', width: 150 }
+    {
+      field: 'totalAmountSum',
+      headerName: 'Total Amount Sum',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      },
+      width: 150
+    }
   ];
   const schiffiliColumns = [
-    { field: 'availableQtySum', headerName: 'Available Qty Sum', width: 150 },
+    {
+      field: 'availableQtySum',
+      headerName: 'Available Qty Sum',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      },
+      width: 150
+    },
     { field: 'totalPcsSum', headerName: 'Total Pcs Sum', width: 150 },
     { field: 'fabricCount', headerName: 'Fabric Count', width: 150 },
     { field: 'componentCount', headerName: 'Component Count', width: 150 }
@@ -399,6 +449,10 @@ const Summary = ({
           variant: 'success'
         });
         console.log('requestbody', requestBody);
+
+        setSummaryHeaderRows((prevRows) =>
+          prevRows.filter((row) => !planningHeaderIds.includes(row.id))
+        );
       } else {
         enqueueSnackbar('Failed to save data', { variant: 'error' });
       }

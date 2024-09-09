@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
+
 import axios from 'axios';
 import { TextField, Grid, Button } from '@mui/material';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
@@ -30,46 +32,10 @@ const Receive = ({
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
   const [formData, setFormData] = React.useState({ stockId: stockId });
   console.log('receiveFormData', formData);
+  const [formErrors, setFormErrors] = useState({});
+
   const apiRef = useGridApiRef();
-  // const [fabrics, setFabrics] = useState([]);
-  // const handleCellEdit = (params) => {
-  //   const { id, field, value } = params;
-  //   console.log('Editing cell:', params); // Debugging line
 
-  //   if (field === 'wastage') {
-  //     setFabrics((prevRows) =>
-  //       prevRows.map((row) =>
-  //         row.id === id ? { ...row, wastage: value } : row
-  //       )
-  //     );
-  //   } else if (field === 'shrikage') {
-  //     setFabrics((prevRows) =>
-  //       prevRows.map((row) =>
-  //         row.id === id ? { ...row, shrikage: value } : row
-  //       )
-  //     );
-  //   }
-  // };
-  // const handleCellEdit = (params) => {
-  //   const { id, field, value } = params;
-  //   console.log('Editing cell:', params); // Debugging line
-
-  //   const editableFields = [
-  //     'itpQuantity',
-  //     'rate',
-  //     'tax',
-  //     'amount',
-  //     'amountAfterTax'
-  //   ]; // List of fields that can be edited
-
-  //   if (editableFields.includes(field)) {
-  //     setFabrics((prevRows) =>
-  //       prevRows.map((row) =>
-  //         row.id === id ? { ...row, [field]: value } : row
-  //       )
-  //     );
-  //   }
-  // };
   const fFabrics = fabrics.filter((row) => row.itpQuantity > 0);
   console.log('fabrics', fabrics);
   console.log('fFabrics', fFabrics);
@@ -137,32 +103,23 @@ const Receive = ({
       field: 'uomName',
       headerName: 'UOM'
     },
-    // {
-    //   field: 'totalQuantity',
-    //   headerName: 'totalQuantityAKArequiredQty'
-    // },
     {
       field: 'assignQty',
-      headerName: 'Assigned Qty'
+      headerName: 'Assigned Qty',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
-    // {
-    //   field: 'stockReceived',
-    //   headerName: 'stock Received Qty'
-    // },
     {
       field: 'itpQuantity',
-      headerName: 'itp Qty Received'
+      headerName: 'itp Qty Received',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
-    // {
-    //   field: 'itpQuantity',
-    //   headerName: 'Qty Received'
-    // },
     {
       field: 'quantity',
       headerName: 'add qty',
-      // flex: 1,
-      // width: 'auto',
-
       renderCell: (params) => (
         <SmallTextField
           variant="outlined"
@@ -236,50 +193,50 @@ const Receive = ({
     {
       field: 'amount',
       headerName: 'Amount',
-      renderCell: (params) => (
-        <SmallTextField
-          variant="outlined"
-          size="small"
-          // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.rate * params.row.quantity || ''}
-          // onChange={(event) =>
-          //   handleCellEdit({
-          //     id: params.id,
-          //     field: 'amount',
-          //     value: Number(event.target.value)
-          //   })
-          // }
-          type="number"
-          InputProps={{
-            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-          }}
-        />
-      )
+      renderCell: (params) => {
+        const amount = params.row.rate * params.row.quantity || 0;
+        const formattedAmount = amount.toLocaleString();
+        return (
+          <SmallTextField
+            variant="outlined"
+            size="small"
+            sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+            value={formattedAmount} // Display formatted amount
+            type="text" // Use text type for formatted display
+            InputProps={{
+              style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+            }}
+          />
+        );
+      }
     },
     {
       field: 'amountAfterTax',
-      headerName: 'amount After Tax',
-      renderCell: (params) => (
-        <SmallTextField
-          variant="outlined"
-          size="small"
-          // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.amountAfterTax || ''}
-          onChange={(event) =>
-            handleCellEdit({
-              id: params.id,
-              field: 'amountAfterTax',
-              value: Number(event.target.value)
-            })
-          }
-          type="number"
-          InputProps={{
-            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-          }}
-        />
-      )
+      headerName: 'Amount After Tax',
+      renderCell: (params) => {
+        const amountAfterTax = params.row.amountAfterTax || 0;
+        const formattedAmountAfterTax = amountAfterTax.toLocaleString();
+        return (
+          <SmallTextField
+            variant="outlined"
+            size="small"
+            sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+            value={formattedAmountAfterTax} // Display formatted amount
+            onChange={(event) => {
+              const numericValue = Number(event.target.value.replace(/,/g, ''));
+              handleCellEdit({
+                id: params.id,
+                field: 'amountAfterTax',
+                value: numericValue
+              });
+            }}
+            type="text"
+            InputProps={{
+              style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+            }}
+          />
+        );
+      }
     }
   ];
 
@@ -294,19 +251,24 @@ const Receive = ({
   });
 
   const handleSave = async () => {
-    // console.log('addForm', addForm);
+    const missingRates = fFabrics.some(
+      (row) => row.rate === undefined || row.rate === 0
+    );
+
+    if (missingRates) {
+      enqueueSnackbar('Please enter rate for all fabrics before saving!', {
+        variant: 'warning',
+        autoHideDuration: 5000
+      });
+      return;
+    }
     try {
       const response = await axios.post(
         'http://100.42.177.77:83/api/StockReceiving/SaveStockReceivingDetails',
         formData
       );
       console.log('Save response:', response.data);
-      // setInitialRows(
-      //   response.data.result.map((row, index) => ({
-      //     id: index + 1,
-      //     ...row
-      //   }))
-      // );
+
       if (!response.data.success) {
         enqueueSnackbar(`${response.data.message} !`, {
           variant: 'error',
@@ -321,20 +283,14 @@ const Receive = ({
       }
       refetchStockData();
       handleClose();
-      // refetchDyeingPrintingData();
-      // setAccordionExpanded(false);
     } catch (error) {
-      // Handle error (e.g., show an error message)
-
       console.error('Error saving data:', error);
       enqueueSnackbar('FAILED: Unable to save', {
         variant: 'error',
         autoHideDuration: 5000
       });
-      // Handle error (e.g., show an error message)
     }
   };
-
   return (
     <Grid
       container
@@ -347,13 +303,11 @@ const Receive = ({
           <DataGrid
             rows={fFabrics}
             columns={designsColumns}
+            pageSize={10}
             apiRef={apiRef}
             disableRowSelectionOnClick
-            // checkboxSelection
-            // onRowSelectionModelChange={handleRowSelectionModelChange}
-            // rowSelectionModel={rowSelectionModel}
           />
-        </div>{' '}
+        </div>
       </Grid>
       <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
         <Button variant="contained" size="small" onClick={handleSave}>

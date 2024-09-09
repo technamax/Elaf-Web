@@ -151,16 +151,39 @@ const IssuanceView = () => {
       );
     }
   }, [fabricDetailData, refetchFabricDetailData]);
+  // useEffect(() => {
+  //   if (productionData) {
+  //     setProductionList(
+  //       productionData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [productionData, refetchProductionData]);
   useEffect(() => {
     if (productionData) {
-      setProductionList(
-        productionData.result.map((row, index) => ({
+      // Create a Set to track seen collection names
+      const seenCollectionNames = new Set();
+
+      // Filter productionData.result to remove duplicates
+      const uniqueProductionList = productionData.result
+        .filter((row) => {
+          if (seenCollectionNames.has(row.collectionName)) {
+            return false;
+          }
+          seenCollectionNames.add(row.collectionName);
+          return true;
+        })
+        .map((row, index) => ({
           id: index + 1,
           ...row
-        }))
-      );
+        }));
+
+      setProductionList(uniqueProductionList);
     }
   }, [productionData, refetchProductionData]);
+
   useEffect(() => {
     if (productionProcessData) {
       setInitialRows(
@@ -223,13 +246,25 @@ const IssuanceView = () => {
       headerName: 'Process Type'
     },
     {
-      field: 'startDate',
-      headerName: 'Start Date'
+      field: 'orderNumber',
+      headerName: 'Order Number'
     },
     {
-      field: 'completedDate',
-      headerName: 'Completed Date'
+      field: 'startDate',
+      headerName: 'Start Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
     },
+    // {
+    //   field: 'completedDate',
+    //   headerName: 'Completed Date'
+    // },
     {
       field: 'statusName',
       headerName: 'Status'
@@ -268,7 +303,10 @@ const IssuanceView = () => {
     },
     {
       field: 'assignQty',
-      headerName: 'PX Assigned Qty'
+      headerName: 'PX Assigned Qty',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'rate',

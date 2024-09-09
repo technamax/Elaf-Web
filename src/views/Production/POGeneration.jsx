@@ -137,25 +137,6 @@ const POGeneration = () => {
   };
   console.log('formData', formData);
 
-  const columns = [
-    {
-      field: 'id',
-      headerName: 'Sr#'
-      // flex: 1
-    },
-    {
-      field: 'description',
-      headerName: 'Description',
-      flex: 1
-    },
-
-    {
-      field: 'enabled',
-      headerName: 'Enabled'
-      // flex: 1
-    }
-  ];
-
   return (
     <MainCard
       style={{

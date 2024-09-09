@@ -37,15 +37,38 @@ const POView = ({ vId }) => {
       setAssignedTerms([]);
       return;
     }
+
     if (assignedTermsData) {
+      // Remove duplicates based on the termCondDesc
+      const uniqueTerms = assignedTermsData.result.reduce((acc, current) => {
+        const x = acc.find(
+          (item) => item.termCondDesc === current.termCondDesc
+        );
+        if (!x) {
+          return acc.concat([current]);
+        } else {
+          return acc;
+        }
+      }, []);
+
       setAssignedTerms(
-        assignedTermsData.result.map((row, index) => ({
+        uniqueTerms.map((row, index) => ({
           id: index + 1,
           ...row
         }))
       );
     }
   }, [assignedTermsData, refetchAssignedTermsData]);
+
+  //   if (assignedTermsData) {
+  //     setAssignedTerms(
+  //       assignedTermsData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [assignedTermsData, refetchAssignedTermsData]);
   console.log('vId', vId);
 
   const columns = [
@@ -76,11 +99,17 @@ const POView = ({ vId }) => {
     },
     {
       field: 'total',
-      headerName: 'Planned Qty'
+      headerName: 'Planned Qty',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'quantity',
-      headerName: 'Assigned Qty'
+      headerName: 'Assigned Qty',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'rate',
@@ -92,11 +121,17 @@ const POView = ({ vId }) => {
     },
     {
       field: 'totalBeforeTax',
-      headerName: 'Total'
+      headerName: 'Total',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'totalAfterTax',
-      headerName: 'Total After Tax'
+      headerName: 'Total After Tax',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     }
   ];
 
@@ -297,6 +332,7 @@ const POView = ({ vId }) => {
             initialRows={poDetails}
             iColumns={columns}
             hideAction
+            pageSize={10} // Adjust based on your needs
           />
         </Grid>
       </Grid>
@@ -314,6 +350,7 @@ const POView = ({ vId }) => {
             initialRows={assignedTerms}
             iColumns={termsColumns}
             hideAction
+            pageSize={10} // Adjust based on your needs
           />
         </Grid>
       </Grid>

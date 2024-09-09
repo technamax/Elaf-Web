@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
+
 import ReactToPrint from 'react-to-print';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -160,15 +162,28 @@ const ReuseableDataGrid = ({
       : null
   ].filter(Boolean);
 
-  const handleStateChange = (params) => {
+  // const handleStateChange = (params) => {
+  //   if (apiRef.current && apiRef.current.autosizeColumns) {
+  //     apiRef.current.autosizeColumns({
+  //       // columns: autoSizeColumns,
+  //       includeOutliers: true,
+  //       includeHeaders: true
+  //     });
+  //   }
+  // };
+
+  const handleStateChange = useCallback(() => {
     if (apiRef.current && apiRef.current.autosizeColumns) {
       apiRef.current.autosizeColumns({
-        // columns: autoSizeColumns,
         includeOutliers: true,
         includeHeaders: true
       });
     }
-  };
+  }, [apiRef]);
+
+  useEffect(() => {
+    handleStateChange();
+  }, [handleStateChange, initialRows]);
 
   const getRowStyle = (params) => {
     if (params.id === 'TOTAL_SUMMARY') {
@@ -209,6 +224,12 @@ const ReuseableDataGrid = ({
         onStateChange={handleStateChange}
         slots={{ toolbar: EditToolbar }}
         sx={{
+          overflow: 'auto', // Ensure scrolling is not affected by styles
+          '& .MuiDataGrid-root': {
+            overflow: 'auto'
+          },
+
+          /////////////////
           '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
           '& .css-1kyxv1r-MuiDataGrid-root': {
             color: 'white',

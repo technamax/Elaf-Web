@@ -53,6 +53,7 @@ import {
   useGetStatusLookUpQuery
 } from 'api/store/Apis/lookupApi';
 import { styled } from '@mui/material/styles';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 //////
 import * as React from 'react';
@@ -76,6 +77,7 @@ const FabricationSelectionIssuance = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [processType, setProcessType] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const [formData, setFormData] = useState({
     productionId: 0,
@@ -322,6 +324,9 @@ const FabricationSelectionIssuance = () => {
       field: 'quantity',
       headerName: 'Quantity',
       flex: 1,
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      },
       renderCell: (params) => (
         <Typography sx={{ fontWeight: 'bold', mt: 2 }}>
           {params.value}
@@ -356,7 +361,10 @@ const FabricationSelectionIssuance = () => {
     {
       field: 'bxQuantity',
       headerName: 'BX Quantity',
-      flex: 1
+      flex: 1,
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
 
     {
@@ -441,8 +449,18 @@ const FabricationSelectionIssuance = () => {
     setSelectedRows(newSelection);
     console.log('New Selection:', newSelection); // Debugging line
   };
+  const [savedRowIds, setSavedRowIds] = React.useState([]);
 
   const handleSave = async () => {
+    if (selectedRows.length === 0) {
+      // alert('Please select at least one row before saving!');
+      enqueueSnackbar('Please select at least one row before saving!', {
+        variant: 'warning',
+        autoHideDuration: 5000
+      });
+      return;
+    }
+
     try {
       console.log('FormData:', formData); // Debugging line
       console.log('Selected Rows:', selectedRows); // Debugging line
@@ -491,18 +509,35 @@ const FabricationSelectionIssuance = () => {
       );
 
       if (response.data.success) {
-        alert('Production process started successfully!');
+        enqueueSnackbar('Production process started successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
         console.log('API saved successfully');
         console.log('Response:', response);
+
+        setSavedRowIds((prevSavedRowIds) => [
+          ...prevSavedRowIds,
+          ...selectedRows
+        ]);
+
         refetchProductionProcessList();
-        // Optionally, reset form and state here
       } else {
         console.error(response.data.message);
-        alert('Failed to start production process');
+        enqueueSnackbar('Failed to start production process', {
+          variant: 'error',
+          autoHideDuration: 5000
+        });
       }
     } catch (error) {
       console.error('Error starting production process', error);
-      alert('An error occurred while starting the production process');
+      enqueueSnackbar(
+        'An error occurred while starting the production process',
+        {
+          variant: 'error',
+          autoHideDuration: 5000
+        }
+      );
     }
   };
   const apiRef = useGridApiRef();
@@ -556,7 +591,7 @@ const FabricationSelectionIssuance = () => {
                   }
                 })}
               />
-              <Tab
+              {/* <Tab
                 icon={<AssignmentOutlinedIcon />}
                 label="Issuance Details/OGP"
                 value="3"
@@ -565,7 +600,7 @@ const FabricationSelectionIssuance = () => {
                     backgroundColor: `${theme.palette.primary.main} !important`
                   }
                 })}
-              />
+              /> */}
             </TabList>
           </Box>
           <TabPanel value="1">
@@ -677,7 +712,10 @@ const FabricationSelectionIssuance = () => {
                 </Grid>
                 <Grid item xs={12} mt={1}>
                   <DataGrid
-                    rows={initialRows}
+                    // rows={initialRows}
+                    rows={initialRows.filter(
+                      (row) => !savedRowIds.includes(row.id)
+                    )}
                     checkboxSelection
                     columns={columns}
                     disableDelete={true}
