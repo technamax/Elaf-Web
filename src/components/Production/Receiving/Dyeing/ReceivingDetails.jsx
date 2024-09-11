@@ -106,7 +106,10 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
     },
     {
       field: 'issuanceQuantity',
-      headerName: 'Quantity Issued'
+      headerName: 'Quantity Issued',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'uomName',

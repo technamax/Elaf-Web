@@ -107,6 +107,10 @@ export const productionApi = createApi({
     getReceivingDetailsForInspection: builder.query({
       query: (receivingId) =>
         `Receiving/GetReceivingDetailsForInspection?receivingId=${receivingId}&status=8`
+    }),
+    getInspectionDetails: builder.query({
+      query: (receivingId) =>
+        `Receiving/GetInspectionDetails?receivingId=${receivingId}`
     })
   })
 });
@@ -139,5 +143,6 @@ export const {
   useGetIssuanceDetailByPoIdQuery,
   useGetIssuanceByIssuanceIdAndStatusQuery,
   useGetIssuanceDetailsByIssuanceIdQuery,
-  useGetReceivingDetailsForInspectionQuery
+  useGetReceivingDetailsForInspectionQuery,
+  useGetInspectionDetailsQuery
 } = productionApi;

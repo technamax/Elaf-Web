@@ -7,6 +7,7 @@ import { useUser } from 'context/User';
 import axios from 'axios';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
+import { getValue } from '@mui/system';
 const SmallTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-input': {
     fontSize: '0.875rem', // Adjust font size
@@ -18,7 +19,7 @@ const SmallTextField = styled(TextField)(({ theme }) => ({
   minHeight: '30px' // Set minimum height to ensure it's usable
 }));
 
-const DyeingInspection = ({ rData, handleClose, refetchIssuanceData }) => {
+const DyeingInspection = ({ rData, handleClose, refetch }) => {
   const [formData, setFormData] = useState({ inspectionId: 0, ...rData });
   const apiRef = useGridApiRef();
 
@@ -54,6 +55,12 @@ const DyeingInspection = ({ rData, handleClose, refetchIssuanceData }) => {
     setReceiveDetails((prevRows) =>
       prevRows.map((row) => {
         if (row.id === id) {
+          const expectedQty = (
+            (row.issuanceQuantity * 100) /
+            (100 + row.shrinkage + row.wastage)
+          ).toFixed(2);
+
+          const shortStock = Math.max(expectedQty - row.receivedQty, 0);
           const updatedRow = {
             ...row,
             [field]: value,
@@ -61,6 +68,8 @@ const DyeingInspection = ({ rData, handleClose, refetchIssuanceData }) => {
             // productName: row.fabricName,
             inspectionId: 0,
             inspectiondetId: 0,
+            expectedQty: Number(expectedQty), // Add expectedQty to the row
+            shortStock: Number(shortStock),
             appId: user.appId,
             createdOn: new Date().toISOString(),
             createdBy: user.empId,
@@ -89,7 +98,7 @@ const DyeingInspection = ({ rData, handleClose, refetchIssuanceData }) => {
   React.useEffect(() => {
     setFormData({
       ...formData,
-      receivingTransactionsDetailsModelList: receiveDetails
+      inspectionTransactionsDetailsModelList: receiveDetails
     });
   }, [receiveDetails, setReceiveDetails]);
   console.log('formData', formData);
@@ -101,58 +110,86 @@ const DyeingInspection = ({ rData, handleClose, refetchIssuanceData }) => {
       headerName: 'Sr#'
     },
     {
+      field: 'designNo',
+      headerName: 'Design'
+    },
+    {
+      field: 'colorName',
+      headerName: 'Color'
+    },
+    {
       field: 'fabricName',
       headerName: 'Fabric'
     },
     {
       field: 'issuanceQuantity',
-      headerName: 'Quantity Issued'
+      headerName: 'Quantity Issued',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'receivedQty',
-      headerName: 'Received'
+      headerName: 'Received',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
+    },
+    {
+      field: 'expectedQty',
+      headerName: 'Expected',
+      valueGetter: (value, row) => {
+        return (
+          ((row.issuanceQuantity * 100) / (100 + row.shrinkage + row.wastage))
+            // .toFixed(2)
+            .toLocaleString()
+        );
+      }
     },
     {
       field: 'recA',
-      headerName: 'rec GradeA Qty'
+      headerName: 'Rec. GradeA',
+      valueGetter: (params) => {
+        if (params) {
+          return params.toLocaleString();
+        } else {
+          return '0';
+        }
+      }
     },
     {
       field: 'recB',
-      headerName: 'Rec GradeB Qty'
+      headerName: 'Rec. GradeB ',
+      valueGetter: (params) => {
+        if (params) {
+          return params.toLocaleString();
+        } else {
+          return '0';
+        }
+      }
     },
     {
       field: 'recCp',
-      headerName: 'Rec GradeCPQty'
+      headerName: 'Rec. GradeCP',
+      valueGetter: (params) => {
+        if (params) {
+          return params.toLocaleString();
+        } else {
+          return '0';
+        }
+      }
     },
     {
       field: 'recOthers1',
-      headerName: 'Rec Others'
+      headerName: 'Rec. Others',
+      valueGetter: (params) => {
+        if (params) {
+          return params.toLocaleString();
+        } else {
+          return '0';
+        }
+      }
     },
-    // {
-    //   field: 'receivedQty',
-    //   headerName: 'Received qty',
-    //   renderCell: (params) => (
-    //     <SmallTextField
-    //       variant="outlined"
-    //       // disabled
-    //       size="small"
-    //       // fullWidth
-    //       sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-    //       value={params.row.receivedQty || 0}
-    //       onChange={(event) =>
-    //         handleCellEdit({
-    //           id: params.id,
-    //           field: 'receivedQty',
-    //           value: Number(event.target.value)
-    //         })
-    //       }
-    //       type="number"
-    //       InputProps={{
-    //         style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-    //       }}
-    //     />
-    //   )
-    // },
     {
       field: 'gradeAQty',
       headerName: 'Grade A',
@@ -250,6 +287,20 @@ const DyeingInspection = ({ rData, handleClose, refetchIssuanceData }) => {
       )
     },
     {
+      field: 'shortStock',
+      headerName: 'Short Stock',
+      valueGetter: (value, row) => {
+        const expected = row.expectedQty;
+        const received = row.receivedQty;
+        const shortStock = expected - received;
+        if (shortStock > 0) {
+          return shortStock.toLocaleString();
+        } else {
+          return 0;
+        }
+      }
+    },
+    {
       field: 'remarks',
       headerName: 'Remarks',
       renderCell: (params) => (
@@ -287,10 +338,9 @@ const DyeingInspection = ({ rData, handleClose, refetchIssuanceData }) => {
   const handleSave = async () => {
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/Receiving/SaveReceiving',
+        'http://100.42.177.77:83/api/Receiving/SaveInspection',
         formData
       );
-      refetchIssuanceData();
       if (!response.data.success) {
         enqueueSnackbar(`${response.data.message} !`, {
           variant: 'error',
@@ -303,7 +353,7 @@ const DyeingInspection = ({ rData, handleClose, refetchIssuanceData }) => {
           autoHideDuration: 5000
         });
       }
-      // refetchAssignedTermsData();
+      refetch();
       console.log('Save response:', response.data);
       handleClose();
     } catch (error) {
@@ -354,13 +404,7 @@ const DyeingInspection = ({ rData, handleClose, refetchIssuanceData }) => {
             size="small"
             // error={!!formErrors.brandId}
             // helperText={formErrors.brandId}
-          >
-            {/* {vendorsList.map((option) => (
-                <MenuItem key={option.vendorId} value={option.vendorId}>
-                  {option.vendorName}
-                </MenuItem>
-              ))} */}
-          </TextField>
+          ></TextField>
         </Grid>
         <Grid item xs={12} md={3}>
           <TextField

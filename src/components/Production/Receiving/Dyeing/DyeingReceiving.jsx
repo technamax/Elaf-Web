@@ -203,7 +203,10 @@ const DyeingReceiving = () => {
     },
     {
       field: 'issuanceQuantity',
-      headerName: 'Total'
+      headerName: 'Total',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
     },
     {
       field: 'issuanceDate',
@@ -407,60 +410,6 @@ const DyeingReceiving = () => {
                 <SSRSReport rId={14} OGPNumber={iss.ogpNumber} />
               </DialogContent>
             </Dialog>
-          </Grid>
-        </Grid>
-        <Divider color="#921e22" sx={{ height: 3, width: '100%', mb: 1 }} />{' '}
-        <CardHeader
-          className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={
-          // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
-          // }
-          title="Inspection"
-          titleTypographyProps={{ style: { color: 'white' } }}
-        ></CardHeader>
-        {/* inspectionscreen */}
-        <Grid
-          container
-          spacing={1}
-          width="Inherit"
-          sx={{ paddingY: 2, paddingX: 2 }}
-        >
-          {/* <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Enabled"
-              name="enabled"
-              value={formData.enabled}
-              onChange={handleChange}
-              size="small"
-              // error={!!formErrors.brandId}
-              // helperText={formErrors.brandId}
-            >
-              {options.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid> */}
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Enter Issuance Number"
-              type="number"
-              fullWidth
-              size="small"
-              name="issuanceId"
-              onChange={handleChange}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleSearch();
-                }
-              }}
-              // onKeyPress={handleKeyPress}
-              value={formData.issuanceId}
-              required
-            />
           </Grid>
         </Grid>
       </Card>

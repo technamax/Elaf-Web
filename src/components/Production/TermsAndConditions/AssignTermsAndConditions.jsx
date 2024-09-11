@@ -76,10 +76,6 @@ const AssignTermsAndConditions = () => {
   }, [initialData]);
   const [initialRows, setInitialRows] = useState([]);
   const [tcList, setTcList] = useState([]);
-  const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
-  const handleAccordionToggle = (event, isExpanded) => {
-    setAccordionExpanded(!accordionExpanded);
-  };
 
   const { data: lookupData } = useGetLookUpListQuery();
   // const { data: termsConditionsData, refetch } = useGetSubMenuListQuery();
@@ -164,20 +160,21 @@ const AssignTermsAndConditions = () => {
 
       console.log('Save response:', response.data);
 
-      setFormData((prevFormData) => ({
-        assignId: 0,
-        vendorId: '',
-        categoryId: '',
-        appId: user.appId,
-        createdOn: new Date().toISOString(),
-        createdBy: user.empId,
-        lastUpdatedOn: new Date().toISOString(),
-        LastUpdatedBy: user.empId
-      }));
+      // setFormData((prevFormData) => ({
+      //   assignId: 0,
+      //   vendorId: '',
+      //   categoryId: '',
+      //   appId: user.appId,
+      //   createdOn: new Date().toISOString(),
+      //   createdBy: user.empId,
+      //   lastUpdatedOn: new Date().toISOString(),
+      //   LastUpdatedBy: user.empId
+      // }));
 
       // refetch();
       refetchTermsData();
       setIsEdit(false);
+      setRowSelectionModel([]);
       // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
