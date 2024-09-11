@@ -76,6 +76,7 @@ const DyeingPO = () => {
     expectedReturnDate: '',
     processTypeId: 1223,
     fabricId: '',
+    assignQty: 0,
     vendorId: '',
     shrinkage: '',
     wastage: '',
@@ -189,6 +190,20 @@ const DyeingPO = () => {
     }
   }, [productionBatchData, refetchProductionBatchData]);
 
+  const Quantity = fabrics
+    .reduce((sum, row) => sum + (row.total ?? 0), 0)
+    .toFixed(2);
+  const assignedQuantity = fabrics
+    .reduce((sum, row) => sum + (row.quantity ?? 0), 0)
+    .toFixed(2);
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...formData,
+      overallQty: Quantity,
+      remainingQuantity:
+        (prevFormData.overallQty - assignedQuantity).toFixed(2) || 0
+    }));
+  }, [setFabrics, fabrics]);
   console.log('initialRows', initialRows);
 
   const handleChange = (e) => {
@@ -203,6 +218,16 @@ const DyeingPO = () => {
         vendorId: value,
         shrinkage: selectedvendor ? selectedvendor.shrinkage : '',
         wastage: selectedvendor ? selectedvendor.wastage : ''
+      });
+    } else if (name === 'fabricId') {
+      const selectedFabric = fabricsList.find(
+        (collection) => collection.fabricId === parseInt(value)
+      );
+
+      setFormData({
+        ...formData,
+        fabricId: value,
+        assignQty: selectedFabric ? selectedFabric.assignQty : ''
       });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -950,6 +975,30 @@ const DyeingPO = () => {
                 </MenuItem>
               ))}
             </TextField>
+          </Grid>
+          <Grid item xs={6} textAlign="right">
+            <Typography
+              variant="overline"
+              sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
+            >
+              Assign Quantity : {formData.assignQty}
+            </Typography>
+          </Grid>
+          <Grid item xs={3} textAlign="right">
+            <Typography
+              variant="overline"
+              sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
+            >
+              Overall Quantity : {formData.overallQty}
+            </Typography>
+          </Grid>
+          <Grid item xs={3} textAlign="right">
+            <Typography
+              variant="overline"
+              sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
+            >
+              Remaining Quantity : {formData.remainingQuantity}
+            </Typography>
           </Grid>
           <Grid item xs={12}>
             <div style={{ height: 400, width: '100%' }}>

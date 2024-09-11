@@ -69,16 +69,18 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
           };
 
           // Recalculate the amount when rate or quantity is updated
-          // if (field === 'rate' || field === 'quantity') {
-          //   updatedRow.amount = updatedRow.rate * updatedRow.quantity;
-          // }
-
-          // // Optionally, update amountAfterTax if it's a function of amount and tax
-          // if (field === 'tax' || field === 'rate' || field === 'quantity') {
-          //   updatedRow.amountAfterTax =
-          //     updatedRow.amount + updatedRow.amount * (updatedRow.tax / 100);
-          // }
-
+          if (
+            field === 'gradeAQty' ||
+            field === 'gradeBQty' ||
+            field === 'gradeCPQty' ||
+            field === 'others1Qty'
+          ) {
+            updatedRow.receivedQty =
+              (updatedRow.gradeAQty || 0) +
+              (updatedRow.gradeBQty || 0) +
+              (updatedRow.gradeCPQty || 0) +
+              (updatedRow.others1Qty || 0);
+          }
           return updatedRow;
         }
         return row;
@@ -111,9 +113,17 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
         return params.toLocaleString();
       }
     },
+
     {
       field: 'uomName',
       headerName: 'UOM'
+    },
+    {
+      field: 'lastReceivedQty',
+      headerName: 'Overall Received',
+      valueGetter: (params, row) => {
+        return params - row.shortStock;
+      }
     },
     {
       field: 'receivedQty',
@@ -121,11 +131,16 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
       renderCell: (params) => (
         <SmallTextField
           variant="outlined"
-          // disabled
+          disabled
           size="small"
           // fullWidth
           sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.receivedQty || 0}
+          value={
+            (params.row.gradeAQty || 0) +
+            (params.row.gradeBQty || 0) +
+            (params.row.gradeCPQty || 0) +
+            (params.row.others1Qty || 0)
+          }
           onChange={(event) =>
             handleCellEdit({
               id: params.id,
@@ -150,6 +165,7 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
           // fullWidth
           sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
           value={params.row.gradeAQty || 0}
+          defaultValue={10}
           onChange={(event) =>
             handleCellEdit({
               id: params.id,
@@ -272,6 +288,18 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
     fetchData();
   });
   const handleIGP = async () => {
+    for (let detail of issuanceDetails) {
+      if (detail.receivedQty > detail.issuanceQuantity) {
+        enqueueSnackbar(
+          'Error: Received quantity cannot be greater than issuance quantity!',
+          {
+            variant: 'error',
+            autoHideDuration: 5000
+          }
+        );
+        return; // Stop further execution
+      }
+    }
     try {
       const response = await axios.post(
         'http://100.42.177.77:83/api/Receiving/SaveReceiving',
@@ -293,6 +321,7 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
       // refetchAssignedTermsData();
       console.log('Save response:', response.data);
       handleClose();
+      refetchIssuanceDetailsData();
     } catch (error) {
       console.error('Error saving data:', error);
       enqueueSnackbar('FAILED: Unable to start Process', {

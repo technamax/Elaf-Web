@@ -60,7 +60,14 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
             (100 + row.shrinkage + row.wastage)
           ).toFixed(2);
 
-          const shortStock = Math.max(expectedQty - row.receivedQty, 0);
+          const shortStock = Math.max(
+            row.receivedQty -
+              ((row.gradeAQty || 0) +
+                (row.gradeBQty || 0) +
+                (row.gradeCPQty || 0) +
+                (row.others1Qty || 0)),
+            0
+          );
           const updatedRow = {
             ...row,
             [field]: value,
@@ -125,14 +132,22 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
       field: 'issuanceQuantity',
       headerName: 'Quantity Issued',
       valueGetter: (params) => {
-        return params.toLocaleString();
+        if (params) {
+          return params.toLocaleString();
+        } else {
+          return '0';
+        }
       }
     },
     {
       field: 'receivedQty',
       headerName: 'Received',
       valueGetter: (params) => {
-        return params.toLocaleString();
+        if (params) {
+          return params.toLocaleString();
+        } else {
+          return '0';
+        }
       }
     },
     {
@@ -292,7 +307,12 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
       valueGetter: (value, row) => {
         const expected = row.expectedQty;
         const received = row.receivedQty;
-        const shortStock = expected - received;
+        const shortStock =
+          row.receivedQty -
+          ((row.gradeAQty || 0) +
+            (row.gradeBQty || 0) +
+            (row.gradeCPQty || 0) +
+            (row.others1Qty || 0));
         if (shortStock > 0) {
           return shortStock.toLocaleString();
         } else {
@@ -336,6 +356,24 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
     fetchData();
   });
   const handleSave = async () => {
+    for (let detail of receiveDetails) {
+      if (
+        detail.receivedQty <
+        (detail.gradeAQty || 0) +
+          (detail.gradeBQty || 0) +
+          (detail.gradeCPQty || 0) +
+          (detail.others1Qty || 0)
+      ) {
+        enqueueSnackbar(
+          'Error: Received quantity cannot be greater than issuance quantity!',
+          {
+            variant: 'error',
+            autoHideDuration: 5000
+          }
+        );
+        return; // Stop further execution
+      }
+    }
     try {
       const response = await axios.post(
         'http://100.42.177.77:83/api/Receiving/SaveInspection',

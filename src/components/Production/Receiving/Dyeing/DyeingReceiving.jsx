@@ -15,7 +15,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -209,6 +210,13 @@ const DyeingReceiving = () => {
       }
     },
     {
+      field: 'receivedQty',
+      headerName: 'Received',
+      valueGetter: (params, row) => {
+        return params - row.shortStock;
+      }
+    },
+    {
       field: 'issuanceDate',
       headerName: 'Issuance Date',
       valueGetter: (params) => {
@@ -238,7 +246,33 @@ const DyeingReceiving = () => {
     },
     {
       field: 'statusName',
-      headerName: 'Status'
+      headerName: 'Status',
+      renderCell: (params) => {
+        const chipColor = 'primary.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : chipColor,
+              color:
+                chipColor === 'primary' || chipColor === 'default'
+                  ? undefined
+                  : 'white'
+            }}
+            color={
+              chipColor === 'primary'
+                ? 'primary'
+                : chipColor === 'default'
+                  ? 'default'
+                  : undefined
+            }
+          />
+        );
+      }
     },
     {
       field: 'Actions',
@@ -361,7 +395,7 @@ const DyeingReceiving = () => {
                   fontWeight={2}
                   fontStyle={'normal'}
                 >
-                  {'View Details'}
+                  {'View Receiving Details'}
                 </Typography>
                 <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
                   <CloseIcon />

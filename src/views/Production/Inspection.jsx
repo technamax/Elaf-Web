@@ -17,6 +17,7 @@ import DyeingInspection from '../../components/Production/Inspection/Dyeing/Dyei
 
 import {
   Grid,
+  Chip,
   TextField,
   Button,
   MenuItem,
@@ -98,9 +99,9 @@ const Inspection = () => {
         const resultArray = response.data.result;
 
         if (Array.isArray(resultArray)) {
-          const dataWithIds = resultArray.map((row) => ({
+          const dataWithIds = resultArray.map((row, index) => ({
             ...row,
-            id: row.receivingId // Ensure unique id for each row
+            id: index + 1
           }));
 
           setInitialRows(dataWithIds);
@@ -164,7 +165,16 @@ const Inspection = () => {
     setOpen2(false);
   };
   const columns = [
-    { field: 'receivingId', headerName: 'Receiving ID' },
+    { field: 'id', headerName: 'Sr #' },
+    { field: 'collectionName', headerName: 'Collection Name' },
+    { field: 'poName', headerName: 'PO' },
+    {
+      field: 'ogpNumber',
+      headerName: 'OGP Number',
+      renderCell: (params) => {
+        <span style={{ fontWeight: 'bolder' }}>{params.value}</span>;
+      }
+    },
     { field: 'igpNumber', headerName: 'IGP Number' },
     {
       field: 'igpDate',
@@ -178,7 +188,6 @@ const Inspection = () => {
         });
       }
     },
-
     {
       field: 'receivingDate',
       headerName: 'Receiving Date',
@@ -191,10 +200,42 @@ const Inspection = () => {
         });
       }
     },
-    { field: 'collectionName', headerName: 'Collection Name' },
-    { field: 'poName', headerName: 'PO Name', width: 180 },
+
+    { field: 'receivedQty', headerName: 'Received' },
     { field: 'processTypename', headerName: 'Process Type' },
-    { field: 'statusName', headerName: 'Status' },
+    {
+      field: 'statusName',
+      headerName: 'Status',
+      renderCell: (params) => {
+        const chipColor = 'primary.dark';
+        if (params.value === null) {
+          return;
+        } else {
+          return (
+            <Chip
+              label={params.value}
+              sx={{
+                backgroundColor:
+                  chipColor === 'primary' || chipColor === 'default'
+                    ? undefined
+                    : chipColor,
+                color:
+                  chipColor === 'primary' || chipColor === 'default'
+                    ? undefined
+                    : 'white'
+              }}
+              color={
+                chipColor === 'primary'
+                  ? 'primary'
+                  : chipColor === 'default'
+                    ? 'default'
+                    : undefined
+              }
+            />
+          );
+        }
+      }
+    },
     {
       field: 'Actions',
       headerName: 'Actions',
