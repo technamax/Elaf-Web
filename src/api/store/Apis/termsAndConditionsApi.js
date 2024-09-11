@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const termsAndConditionsApi = createApi({
   reducerPath: 'termsAndConditionsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://100.42.177.77:83/api/TermsConditions/'
+    baseUrl: 'http://100.42.177.77:81/api/TermsConditions/'
   }),
   endpoints: (builder) => ({
     getCategoriesList: builder.query({

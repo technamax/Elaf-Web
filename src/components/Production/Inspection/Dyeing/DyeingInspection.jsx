@@ -338,7 +338,7 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
   const handleSave = async () => {
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/Receiving/SaveInspection',
+        'http://100.42.177.77:81/api/Receiving/SaveInspection',
         formData
       );
       if (!response.data.success) {

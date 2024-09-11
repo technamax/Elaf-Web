@@ -21,7 +21,7 @@ const SSRSReport = ({ rId, paramIssuanceId, OGPNumber }) => {
     const fetchReports = async () => {
       try {
         const response = await fetch(
-          'http://100.42.177.77:83/api/Reports/GetReportsByAppId?appId=1'
+          'http://100.42.177.77:81/api/Reports/GetReportsByAppId?appId=1'
         );
         const data = await response.json();
         setReports(data.result);

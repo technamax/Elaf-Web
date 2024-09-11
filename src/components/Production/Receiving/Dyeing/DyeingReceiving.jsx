@@ -130,7 +130,7 @@ const DyeingReceiving = () => {
   //   try {
   //     // Make the API call
   //     const response = await axios.get(
-  //       `http://100.42.177.77:83/api/Receiving/GetIssuanceByIssuanceIdAndStatus?issuanceId=${formData.issuanceId}&status=9`
+  //       `http://100.42.177.77:81/api/Receiving/GetIssuanceByIssuanceIdAndStatus?issuanceId=${formData.issuanceId}&status=9`
   //     );
   //     console.log('Save response:', response.data);
 

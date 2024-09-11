@@ -84,7 +84,7 @@ const Inspection = () => {
     if (formData.issuanceId) {
       try {
         const response = await axios.get(
-          `http://100.42.177.77:83/api/Receiving/GetReceivingHeader`,
+          `http://100.42.177.77:81/api/Receiving/GetReceivingHeader`,
           {
             params: {
               issuanceId: formData.issuanceId,

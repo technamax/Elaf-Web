@@ -285,7 +285,7 @@ const DyeingIssuance = ({ rowData }) => {
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:83/api/Issuance/IssuanceToVendor',
+        'http://100.42.177.77:81/api/Issuance/IssuanceToVendor',
         formData
       );
 
@@ -597,7 +597,7 @@ const DyeingIssuance = ({ rowData }) => {
   const handlePrintOgp = async (rowData) => {
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/Issuance/GetOutwardGatePassByIssuanceId`,
+        `http://100.42.177.77:81/api/Issuance/GetOutwardGatePassByIssuanceId`,
         {
           params: { issuanceId: rowData.issuanceId }
         }

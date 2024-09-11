@@ -264,7 +264,7 @@ const Receive = ({
     }
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/StockReceiving/SaveStockReceivingDetails',
+        'http://100.42.177.77:81/api/StockReceiving/SaveStockReceivingDetails',
         formData
       );
       console.log('Save response:', response.data);

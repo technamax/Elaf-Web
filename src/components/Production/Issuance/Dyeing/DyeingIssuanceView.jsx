@@ -78,7 +78,7 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
   const handleOgp = async () => {
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/Issuance/GenerateOGP?poId=${iss.poId}&issuanceId=${iss.issuanceId}&processTypeId=${iss.processTypeId}&createdBy=${user.empId}`
+        `http://100.42.177.77:81/api/Issuance/GenerateOGP?poId=${iss.poId}&issuanceId=${iss.issuanceId}&processTypeId=${iss.processTypeId}&createdBy=${user.empId}`
       );
       refetchIssuanceData();
       if (!response.data.success) {
