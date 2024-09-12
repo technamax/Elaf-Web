@@ -7,7 +7,14 @@ import { useUser } from 'context/User';
 import axios from 'axios';
 
 const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    poId: 0,
+    dispatchedQuantity: 0,
+    dispatchFrom: 0,
+    destination: 0,
+    isRejectedOGP: 'N',
+    remarks: ''
+  });
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
   const [issuanceDetails, setIssuanceDetails] = useState([]);
@@ -35,7 +42,12 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
   }, [issuanceDetailsData, refetchIssuanceDetailsData]);
 
   console.log('iss', iss);
+  console.log('formData', formData);
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
   const columns = [
     {
       field: 'id',
@@ -76,9 +88,16 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
     }
   ];
   const handleOgp = async () => {
+    setFormData({
+      ...formData,
+      issuanceId: iss.issuanceId,
+      processTypeId: iss.processTypeId,
+      createdBy: iss.createdBy
+    });
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/Issuance/GenerateOGP?poId=${iss.poId}&issuanceId=${iss.issuanceId}&processTypeId=${iss.processTypeId}&createdBy=${user.empId}`
+        `http://100.42.177.77:83/api/Issuance/GenerateOGP`,
+        formData
       );
       refetchIssuanceData();
       if (!response.data.success) {
@@ -204,6 +223,35 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
                 </MenuItem>
               ))} */}
           </TextField>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            disabled
+            // select
+            label="Issuance Quantity"
+            name="issuanceQuantity"
+            value={iss.issuanceQuantity}
+            // onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          ></TextField>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            // disabled
+            // select
+            type="Number"
+            label="DispatchedQuantity"
+            name="dispatchedQuantity"
+            value={formData.dispatchedQuantity}
+            onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          ></TextField>
         </Grid>
       </Grid>
       <Grid

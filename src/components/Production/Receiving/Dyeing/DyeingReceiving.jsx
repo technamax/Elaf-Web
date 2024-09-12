@@ -22,7 +22,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import '../../../../assets/scss/style.scss';
 import ReceivingDetails from './ReceivingDetails';
-import { useGetIssuanceByIssuanceIdAndStatusQuery } from 'api/store/Apis/productionApi';
+import { useGetIssuanceListQuery } from 'api/store/Apis/productionApi';
 import {
   useGetSubMenuListQuery,
   useGetMainMenuListQuery
@@ -48,7 +48,7 @@ const DyeingReceiving = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({
     issuanceId: '',
-    // categoryId: '',
+    poId: '',
     // termCondDesc: '',
     // enabled: '',
 
@@ -60,13 +60,11 @@ const DyeingReceiving = () => {
   });
 
   const [initialRows, setInitialRows] = useState([]);
+  const [issuanceList, setIssuanceList] = useState([]);
   const [triggerSearch, setTriggerSearch] = useState(false);
 
   // Hook to fetch the data, and it's controlled by triggerSearch state
-  const { data, error, isLoading, refetch } =
-    useGetIssuanceByIssuanceIdAndStatusQuery(formData.issuanceId, {
-      skip: !triggerSearch || !formData.issuanceId // Skip query if no issuanceId or if not triggered
-    });
+  const { data, error, isLoading, refetch } = useGetIssuanceListQuery();
 
   // const { data: categoriesData, refetch: refetchCategoriesdata } =
   //   useGetCategoriesListQuery();
@@ -89,7 +87,7 @@ const DyeingReceiving = () => {
   // }, [termsConditionsData, refetchTermsConditionsData]);
   useEffect(() => {
     if (data) {
-      setInitialRows(
+      setIssuanceList(
         data.result.map((row, index) => ({
           id: index,
           ...row
@@ -102,65 +100,80 @@ const DyeingReceiving = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'poId') {
+      const selectedPO = issuanceList.find(
+        (collection) => collection.poId === parseInt(value)
+      );
 
-    setFormData({ ...formData, [name]: value });
-  };
-  const handleSearch = () => {
-    if (formData.issuanceId) {
-      // Set the state to trigger the query
-      setTriggerSearch(true);
-      console.log(`Triggering search for issuanceId: ${formData.issuanceId}`);
+      setFormData({
+        ...formData,
+        poId: value,
+        issuanceId: selectedPO ? selectedPO.issuanceId : '',
+        issuanceName: selectedPO
+          ? `ISS-${selectedPO.issuanceId}-${selectedPO.issuanceQuantity}`
+          : ''
+        // wastage: selectedPO ? selectedPO.wastage : ''
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
     }
-    // if (data) {
-    //   setInitialRows(
-    //     data.result.map((row, index) => ({
-    //       id: index + 1,
-    //       ...row
-    //     }))
-    //   );
-    // }
   };
+  // const handleSearch = () => {
+  //   if (formData.issuanceId) {
+  //     // Set the state to trigger the query
+  //     setTriggerSearch(true);
+  //     console.log(`Triggering search for issuanceId: ${formData.issuanceId}`);
+  //   }
+  //   // if (data) {
+  //   //   setInitialRows(
+  //   //     data.result.map((row, index) => ({
+  //   //       id: index + 1,
+  //   //       ...row
+  //   //     }))
+  //   //   );
+  //   // }
+  // };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       handleSearch();
     }
   };
-  // const handleSearch = async () => {
-  //   console.log('formData', formData);
-  //   try {
-  //     // Make the API call
-  //     const response = await axios.get(
-  //       `http://100.42.177.77:83/api/Receiving/GetIssuanceByIssuanceIdAndStatus?issuanceId=${formData.issuanceId}&status=9`
-  //     );
-  //     console.log('Save response:', response.data);
+  const handleSearch = async () => {
+    console.log('formData', formData);
+    try {
+      // Make the API call
+      const response = await axios.get(
+        `http://100.42.177.77:83/api/Receiving/GetIssuanceByPoIdAndOGPNumber?poId=${formData.poId}&issuanceId=${formData.issuanceId}`
+      );
+      console.log('Save response:', response.data);
 
-  //     if (!response.data.success) {
-  //       enqueueSnackbar(`${response.data.message} !`, {
-  //         variant: 'error',
-  //         autoHideDuration: 5000
-  //       });
-  //       console.log('response.message', response.data.message);
-  //     } else {
-  //       enqueueSnackbar(`${response.data.message} !`, {
-  //         variant: 'success',
-  //         autoHideDuration: 5000
-  //       });
-  //       setInitialRows(
-  //         response.data.result.map((row, index) => ({
-  //           id: index + 1,
-  //           ...row
-  //         }))
-  //       );
-  //     }
-  //   } catch (error) {
-  //     console.error('Error saving data:', error);
-  //     enqueueSnackbar('FAILED: Unable to start Process', {
-  //       variant: 'error',
-  //       autoHideDuration: 5000
-  //     });
-  //   }
-  // };
+      if (!response.data.success) {
+        enqueueSnackbar(`${response.data.message} !`, {
+          variant: 'error',
+          autoHideDuration: 5000
+        });
+        console.log('response.message', response.data.message);
+      } else {
+        enqueueSnackbar(`${response.data.message} !`, {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+        setInitialRows(
+          response.data.result.map((row, index) => ({
+            id: index + 1,
+            ...row
+          }))
+        );
+      }
+    } catch (error) {
+      console.error('Error saving data:', error);
+      enqueueSnackbar('FAILED: Unable to start Process', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+    }
+  };
   console.log('formData', formData);
 
   const [open, setOpen] = React.useState(false);
@@ -213,7 +226,7 @@ const DyeingReceiving = () => {
       field: 'receivedQty',
       headerName: 'Received',
       valueGetter: (params, row) => {
-        return params - row.shortStock;
+        return params - row.shortageQty;
       }
     },
     {
@@ -324,32 +337,32 @@ const DyeingReceiving = () => {
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
-          {/* <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={3}>
             <TextField
               fullWidth
               select
-              label="Enabled"
-              name="enabled"
-              value={formData.enabled}
+              label="PO#"
+              name="poId"
+              value={formData.poId}
               onChange={handleChange}
               size="small"
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             >
-              {options.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+              {issuanceList.map((option) => (
+                <MenuItem key={option.poId} value={option.poId}>
+                  {option.poName}
                 </MenuItem>
               ))}
             </TextField>
-          </Grid> */}
+          </Grid>
           <Grid item xs={12} md={3}>
             <TextField
               label="Enter Issuance ID"
-              type="number"
+              // type="number"
               fullWidth
               size="small"
-              name="issuanceId"
+              name="issuanceName"
               onChange={handleChange}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
@@ -357,7 +370,7 @@ const DyeingReceiving = () => {
                 }
               }}
               // onKeyPress={handleKeyPress}
-              value={formData.issuanceId}
+              value={formData.issuanceName}
               required
             />
           </Grid>

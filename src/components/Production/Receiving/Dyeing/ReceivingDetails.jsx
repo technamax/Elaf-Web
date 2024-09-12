@@ -122,7 +122,7 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
       field: 'lastReceivedQty',
       headerName: 'Overall Received',
       valueGetter: (params, row) => {
-        return params - row.shortStock;
+        return params - row.shortageQty;
       }
     },
     {

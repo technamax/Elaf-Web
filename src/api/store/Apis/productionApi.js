@@ -96,9 +96,8 @@ export const productionApi = createApi({
       query: ({ poId, issuanceId }) =>
         `Issuance/GetIssuanceDetailByPoId?poId=${poId}&issuanceId=${issuanceId}`
     }),
-    getIssuanceByIssuanceIdAndStatus: builder.query({
-      query: (issuanceId) =>
-        `Receiving/GetIssuanceByIssuanceIdAndStatus?issuanceId=${issuanceId}&status=9`
+    getIssuanceList: builder.query({
+      query: () => `Receiving/GetIssuanceList?AppId=1`
     }),
     getIssuanceDetailsByIssuanceId: builder.query({
       query: (issuanceId) =>
@@ -141,7 +140,7 @@ export const {
   useGetProductionFabricDetailByProductionIdandStatusQuery,
   useGetIssuanceByPoIdQuery,
   useGetIssuanceDetailByPoIdQuery,
-  useGetIssuanceByIssuanceIdAndStatusQuery,
+  useGetIssuanceListQuery,
   useGetIssuanceDetailsByIssuanceIdQuery,
   useGetReceivingDetailsForInspectionQuery,
   useGetInspectionDetailsQuery
