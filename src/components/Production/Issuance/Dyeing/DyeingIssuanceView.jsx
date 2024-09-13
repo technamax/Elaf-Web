@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField, Typography, Button } from '@mui/material';
+import { Grid, TextField, Typography, Button, MenuItem } from '@mui/material';
 import { useGetIssuanceDetailByPoIdQuery } from 'api/store/Apis/productionApi';
+import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
 import { useUser } from 'context/User';
 import axios from 'axios';
 
 const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
+  const { user } = useUser();
   const [formData, setFormData] = useState({
-    poId: 0,
-    dispatchedQuantity: 0,
-    dispatchFrom: 0,
-    destination: 0,
+    poId: iss.poId,
+    issuanceId: iss.issuanceId,
+    processTypeId: iss.processTypeId,
+    dispatchedQuantity: '',
+    dispatchFrom: '',
+    destination: '',
     isRejectedOGP: 'N',
-    remarks: ''
+    remarks: '',
+    createdBy: user.empId
   });
   const { enqueueSnackbar } = useSnackbar();
-  const { user } = useUser();
   const [issuanceDetails, setIssuanceDetails] = useState([]);
+  const [destinantionsList, setDestinantionsList] = useState([]);
+  const [dispatchFromList, setDispatchFromList] = useState([]);
   const { data: issuanceDetailsData, refetch: refetchIssuanceDetailsData } =
     useGetIssuanceDetailByPoIdQuery(
       { poId: iss.poId, issuanceId: iss.issuanceId },
@@ -25,6 +31,8 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
         skip: !iss.poId || !iss.issuanceId
       }
     );
+  const { data: lookupData, refetch: refetchLookupData } =
+    useGetLookUpListQuery();
 
   useEffect(() => {
     if (issuanceDetailsData?.result === null) {
@@ -40,9 +48,27 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
       );
     }
   }, [issuanceDetailsData, refetchIssuanceDetailsData]);
+  useEffect(() => {
+    if (lookupData) {
+      setDestinantionsList(
+        lookupData.result[0].destination.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+      setDispatchFromList(
+        lookupData.result[0].dispatchFrom.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [lookupData, refetchIssuanceDetailsData]);
 
   console.log('iss', iss);
   console.log('formData', formData);
+  console.log('destinantionsList', destinantionsList);
+  console.log('dispatchFromList', dispatchFromList);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,10 +95,10 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
     },
     {
       field: 'issuanceQuantity',
-      headerName: 'Issuance Quantity',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      }
+      headerName: 'Issuance Quantity'
+      // valueGetter: (params) => {
+      //   return params.toLocaleString();
+      // }
     },
     {
       field: 'rate',
@@ -88,14 +114,8 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
     }
   ];
   const handleOgp = async () => {
-    setFormData({
-      ...formData,
-      issuanceId: iss.issuanceId,
-      processTypeId: iss.processTypeId,
-      createdBy: iss.createdBy
-    });
     try {
-      const response = await axios.get(
+      const response = await axios.post(
         `http://100.42.177.77:83/api/Issuance/GenerateOGP`,
         formData
       );
@@ -141,13 +161,33 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
             size="small"
           ></TextField>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} md={1.5}>
+          <TextField
+            fullWidth
+            disabled
+            // select
+            label="Vendor"
+            name="vendorId"
+            value={iss.vendorName}
+            // onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          >
+            {/* {vendorsList.map((option) => (
+                <MenuItem key={option.vendorId} value={option.vendorId}>
+                  {option.vendorName}
+                </MenuItem>
+              ))} */}
+          </TextField>
+        </Grid>
+        <Grid item xs={12} md={1.5}>
           <TextField
             fullWidth
             disabled
             label="Process Type"
-            name="productionId"
-            value={iss.processTypeName}
+            name="processTypename"
+            value={iss.processTypename}
             size="small"
           ></TextField>
         </Grid>
@@ -207,24 +247,23 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
-            disabled
-            // select
-            label="Vendor"
-            name="vendorId"
-            value={iss.vendorName}
-            // onChange={handleChange}
+            select
+            label="Dispatch From"
+            name="dispatchFrom"
+            value={formData.dispatchFrom}
+            onChange={handleChange}
             size="small"
             // error={!!formErrors.brandId}
             // helperText={formErrors.brandId}
           >
-            {/* {vendorsList.map((option) => (
-                <MenuItem key={option.vendorId} value={option.vendorId}>
-                  {option.vendorName}
-                </MenuItem>
-              ))} */}
+            {dispatchFromList.map((option) => (
+              <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                {option.lookUpName}
+              </MenuItem>
+            ))}
           </TextField>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} md={1.5}>
           <TextField
             fullWidth
             disabled
@@ -238,7 +277,7 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
             // helperText={formErrors.brandId}
           ></TextField>
         </Grid>
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} md={1.5}>
           <TextField
             fullWidth
             // disabled
@@ -247,6 +286,40 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
             label="DispatchedQuantity"
             name="dispatchedQuantity"
             value={formData.dispatchedQuantity}
+            onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          ></TextField>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            select
+            label="Destination"
+            name="destination"
+            value={formData.destination}
+            onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          >
+            {destinantionsList.map((option) => (
+              <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                {option.lookUpName}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            // disabled
+            // select
+            label="Remarks"
+            name="remarks"
+            value={formData.remarks}
             onChange={handleChange}
             size="small"
             // error={!!formErrors.brandId}

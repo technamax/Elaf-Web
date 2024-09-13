@@ -22,7 +22,10 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import '../../../../assets/scss/style.scss';
 import ReceivingDetails from './ReceivingDetails';
-import { useGetIssuanceListQuery } from 'api/store/Apis/productionApi';
+import {
+  useGetDyeingPoListQuery,
+  useGetIssuanceListQuery
+} from 'api/store/Apis/productionApi';
 import {
   useGetSubMenuListQuery,
   useGetMainMenuListQuery
@@ -49,6 +52,7 @@ const DyeingReceiving = () => {
   const [formData, setFormData] = useState({
     issuanceId: '',
     poId: '',
+    ogpNumber: '',
     // termCondDesc: '',
     // enabled: '',
 
@@ -60,34 +64,20 @@ const DyeingReceiving = () => {
   });
 
   const [initialRows, setInitialRows] = useState([]);
+  const [polist, setPolist] = useState([]);
   const [issuanceList, setIssuanceList] = useState([]);
   const [triggerSearch, setTriggerSearch] = useState(false);
 
   // Hook to fetch the data, and it's controlled by triggerSearch state
-  const { data, error, isLoading, refetch } = useGetIssuanceListQuery();
+  const { data, error, isLoading, refetch } = useGetDyeingPoListQuery();
+  const { data: issuanceData, refetch: refetchIssuanceData } =
+    useGetIssuanceListQuery(formData.poId, {
+      skip: !formData.poId // Skip the query if no collection is selected
+    });
 
-  // const { data: categoriesData, refetch: refetchCategoriesdata } =
-  //   useGetCategoriesListQuery();
-  // const { data: termsConditionsData, refetch: refetchTermsConditionsData } =
-  //   useGetTermsConditionsListQuery(formData.categoryId, {
-  //     skip: !formData.categoryId // Skip the query if no collection is selected
-  //   });
-  // const { data: subMenuData, refetch } = useGetSubMenuListQuery();
-  // const [categories, setCategories] = useState([]);
-
-  // useEffect(() => {
-  //   if (termsConditionsData) {
-  //     setInitialRows(
-  //       termsConditionsData.result.map((row, index) => ({
-  //         id: index + 1,
-  //         ...row
-  //       }))
-  //     );
-  //   }
-  // }, [termsConditionsData, refetchTermsConditionsData]);
   useEffect(() => {
     if (data) {
-      setIssuanceList(
+      setPolist(
         data.result.map((row, index) => ({
           id: index,
           ...row
@@ -97,26 +87,39 @@ const DyeingReceiving = () => {
   }, [data, refetch]);
 
   console.log('initialRows', initialRows);
+  useEffect(() => {
+    if (issuanceData) {
+      setIssuanceList(
+        issuanceData.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+    }
+  }, [issuanceData, refetchIssuanceData]);
+
+  console.log('initialRows', initialRows);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'poId') {
-      const selectedPO = issuanceList.find(
-        (collection) => collection.poId === parseInt(value)
-      );
+    // if (name === 'poId') {
+    //   const selectedPO = polist.find(
+    //     (collection) => collection.poId === parseInt(value)
+    //   );
 
-      setFormData({
-        ...formData,
-        poId: value,
-        issuanceId: selectedPO ? selectedPO.issuanceId : '',
-        issuanceName: selectedPO
-          ? `ISS-${selectedPO.issuanceId}-${selectedPO.issuanceQuantity}`
-          : ''
-        // wastage: selectedPO ? selectedPO.wastage : ''
-      });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    //   setFormData({
+    //     ...formData,
+    //     poId: value,
+    //     issuanceId: selectedPO ? selectedPO.issuanceId : '',
+    //     ogpNumber: selectedPO ? selectedPO.ogpNumber : '',
+    //     issuanceName: selectedPO
+    //       ? `ISS-${selectedPO.issuanceId}-${selectedPO.issuanceQuantity}`
+    //       : ''
+    //     // wastage: selectedPO ? selectedPO.wastage : ''
+    //   });
+    // } else {
+    setFormData({ ...formData, [name]: value });
+    // }
   };
   // const handleSearch = () => {
   //   if (formData.issuanceId) {
@@ -349,30 +352,12 @@ const DyeingReceiving = () => {
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             >
-              {issuanceList.map((option) => (
+              {polist.map((option) => (
                 <MenuItem key={option.poId} value={option.poId}>
                   {option.poName}
                 </MenuItem>
               ))}
             </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Enter Issuance ID"
-              // type="number"
-              fullWidth
-              size="small"
-              name="issuanceName"
-              onChange={handleChange}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleSearch();
-                }
-              }}
-              // onKeyPress={handleKeyPress}
-              value={formData.issuanceName}
-              required
-            />
           </Grid>
 
           <Grid item xs={12} md={3} sx={{ mt: 0.5 }}>
@@ -382,7 +367,7 @@ const DyeingReceiving = () => {
           </Grid>
           <Grid item xs={12}>
             <ReuseableDataGrid
-              initialRows={initialRows}
+              initialRows={issuanceList}
               iColumns={columns}
               hideAction
             />

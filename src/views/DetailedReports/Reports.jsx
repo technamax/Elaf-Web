@@ -9,7 +9,7 @@ import {
   CardHeader
 } from '@mui/material';
 
-const SSRSReport = ({ rId, paramIssuanceId, OGPNumber }) => {
+const SSRSReport = ({ rId, paramIssuanceId, OGPNumber, ogpNumber }) => {
   const [reports, setReports] = useState([]);
   const [selectedReportUrl, setSelectedReportUrl] = useState('');
   const [selectedReport, setSelectedReport] = useState('');
@@ -62,7 +62,7 @@ const SSRSReport = ({ rId, paramIssuanceId, OGPNumber }) => {
     if (paramIssuanceId) {
       const iframe = iframeRef.current;
       if (iframe && selectedReportUrl) {
-        const newUrl = `${selectedReportUrl}&ParamIssuanceId=${paramIssuanceId || ''}`;
+        const newUrl = `${selectedReportUrl}&ParamIssuanceId=${paramIssuanceId || ''}&ParamOGP=${ogpNumber || ''}`;
         iframe.src = newUrl;
       }
     }
@@ -73,7 +73,7 @@ const SSRSReport = ({ rId, paramIssuanceId, OGPNumber }) => {
         iframe.src = newUrl;
       }
     }
-  }, [selectedReportUrl, paramIssuanceId, OGPNumber]);
+  }, [selectedReportUrl, paramIssuanceId, OGPNumber, ogpNumber]);
 
   return (
     <Card variant="outlined">

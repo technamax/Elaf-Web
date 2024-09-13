@@ -18,18 +18,25 @@ import {
   DialogTitle,
   IconButton
 } from '@mui/material';
+import MainCard from 'ui-component/cards/MainCard';
+
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 
 import '../../../../assets/scss/style.scss';
 import SSRSReport from '../../../../views/DetailedReports/Reports';
 import {
+  useGetDyeingPoHeaderListbyPoIdQuery,
   useGetDyeingPoHeaderListQuery,
   useGetFabricForProductionByProductionIdQuery,
   useGetVendorsByFabricIDQuery,
   useGetProductionPODesignByFabricAndProductionIdQuery,
   useGetDyeingPODetailsPoIdQuery,
   useGetProductionFabricDetailByProductionIdandStatusQuery,
-  useGetIssuanceByPoIdQuery
+  useGetIssuanceByPoIdQuery,
+  useGetIssuanceOGPByIdQuery
 } from 'api/store/Apis/productionApi';
 import {
   useGetWareHouseLocationsQuery,
@@ -38,6 +45,7 @@ import {
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import DyeingIssuanceView from './DyeingIssuanceView';
+import OGPView from './OGPView';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
@@ -62,7 +70,7 @@ const DyeingIssuance = ({ rowData }) => {
   const apiRef = useGridApiRef();
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
-  const [initialRows, setInitialRows] = useState([]);
+  // const [initialRows, setInitialRows] = useState([]);
   const [poDetails, setPoDetails] = useState([]);
   const [quantities, setQuantities] = useState([]);
   const [savedRows, setSavedRows] = useState([]); // New state for tracking saved rows
@@ -95,6 +103,7 @@ const DyeingIssuance = ({ rowData }) => {
     assignQuantity: 0,
     stockReceived: 0,
     remainingQuantity: 0,
+    quantity: 0,
 
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -102,25 +111,25 @@ const DyeingIssuance = ({ rowData }) => {
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: user.empId
   });
-  useEffect(() => {
-    setFormData((prevFormData) => ({
-      ...formData,
-      // poId: rowData?.poId || 0,
-      poQuantity: Quantity || 0,
-      productionHeaderId: quantities.productionHeaderId || 0,
-      assignQuantity: quantities.itpQuantity || 0,
-      stockReceived: quantities.stockReceived || 0,
-      remainingQuantity: prevFormData.stockReceived - totalAssign || 0
-    }));
-  }, [rowData, poDetails, quantities]);
 
   const [fabricsList, setFabricsList] = useState([]);
   const [vendorsList, setVendorsList] = useState([]);
   const [locationsList, setLocationsList] = useState([]);
   const [issuanceList, setIssuanceList] = useState([]);
+  const [issuanceOGPList, setIssuanceOGPList] = useState([]);
+  const [value, setValue] = useState('1');
+
+  const handleChangeTabs = (event, newValue) => {
+    setValue(newValue);
+    console.log('value', value);
+  };
 
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
     useGetDyeingPoHeaderListQuery();
+  const { data: poHeaderData, refetch: refetchPoHeaderData } =
+    useGetDyeingPoHeaderListbyPoIdQuery(formData.poId, {
+      skip: !formData.poId // Skip the query if no collection is selected
+    });
   const { data: poDetailsData, refetch: refetchPoDetailsData } =
     useGetDyeingPODetailsPoIdQuery(formData.poId, {
       skip: !formData.poId // Skip the query if no collection is selected
@@ -129,8 +138,8 @@ const DyeingIssuance = ({ rowData }) => {
     useGetIssuanceByPoIdQuery(formData.poId, {
       skip: !formData.poId // Skip the query if no collection is selected
     });
-  const { data: dyeingPoData, refetch: refetchDyeingPoData } =
-    useGetDyeingPoHeaderListQuery();
+  // const { data: dyeingPoData, refetch: refetchDyeingPoData } =
+  //   useGetDyeingPoHeaderListQuery();
   const { data: locationsData, refetch: refetchLocationsData } =
     useGetWareHouseLocationsQuery();
   const { data: fabricsData, refetch: refetchFabricsData } =
@@ -148,8 +157,76 @@ const DyeingIssuance = ({ rowData }) => {
         skip: !formData.fabricId || !formData.productionId // Skip the query if no collection is selected
       }
     );
+  const { data: issuanceOGPData, refetch: refetchIssuanceOGPData } =
+    useGetIssuanceOGPByIdQuery(
+      { poId: formData.poId, issuanceId: formData.issuanceId },
+      {
+        skip: !formData.poId || !formData.issuanceId // Skip the query if no collection is selected
+      }
+    );
   // const { data: subMenuData, refetch } = useGetSubMenuListQuery();
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      // poId: rowData?.poId || 0,
+      // poQuantity: Quantity || 0,
+      // productionHeaderId: quantities.productionHeaderId || 0,
+      // assignQuantity: quantities.itpQuantity || 0,
+      // stockReceived: quantities.stockReceived || 0,
+      // balance: prevFormData.quantity - totalAssign || 0,
+      remainingQuantity: prevFormData.quantity - prevFormData.issuanceQty || 0
+    }));
+  }, [rowData, poDetails, poHeaderData]);
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      balance: prevFormData.remainingQuantity - totalAssign || 0
+    }));
+  }, [rowData, poDetails, poHeaderData, formData.remainingQuantity]);
+
   const [productions, setProductions] = useState([]);
+  useEffect(() => {
+    if (poHeaderData) {
+      setFormData({
+        ...formData,
+        shrinkage: poHeaderData.result[0].shrinkage,
+        productionId: poHeaderData.result[0].productionId,
+        productionHeaderId: poHeaderData.result[0].productionHeaderId,
+        issuanceDate: poHeaderData.result[0].issuanceDate,
+        expectedReturnDate: poHeaderData.result[0].expectedReturnDate,
+        fabricId: poHeaderData.result[0].fabricId,
+        vendorId: poHeaderData.result[0].vendorId,
+        locationId: poHeaderData.result[0].locationId,
+        fullLocation: poHeaderData.result[0].fullLocation,
+        fabricName: poHeaderData.result[0].fabricName,
+        vendorName: poHeaderData.result[0].vendorName,
+        wastage: poHeaderData.result[0].wastage,
+        issuanceQty: poHeaderData.result[0].issuanceQty,
+        stockInHandQty: poHeaderData.result[0].stockInHandQty,
+        quantity: poHeaderData.result[0].quantity
+      });
+      // setIssuanceOGPList(
+      //   poHeaderData.result.map((row, index) => ({
+      //     id: index + 1,
+      //     ...row
+      //   }))
+      // );
+    }
+  }, [poHeaderData, refetchPoHeaderData]);
+  useEffect(() => {
+    if (issuanceOGPData?.result === null) {
+      setIssuanceOGPList([]);
+      return;
+    }
+    if (issuanceOGPData) {
+      setIssuanceOGPList(
+        issuanceOGPData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [issuanceOGPData, refetchIssuanceOGPData]);
   useEffect(() => {
     if (poDetailsData?.result === null) {
       setPoDetails([]);
@@ -164,16 +241,16 @@ const DyeingIssuance = ({ rowData }) => {
       );
     }
   }, [poDetailsData, refetchPoDetailsData]);
-  useEffect(() => {
-    if (dyeingPoData) {
-      setInitialRows(
-        dyeingPoData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [dyeingPoData, refetchDyeingPoData]);
+  // useEffect(() => {
+  //   if (dyeingPoData) {
+  //     setInitialRows(
+  //       dyeingPoData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [dyeingPoData, refetchDyeingPoData]);
   useEffect(() => {
     if (issuanceData) {
       setIssuanceList(
@@ -274,12 +351,12 @@ const DyeingIssuance = ({ rowData }) => {
     //   return;
     // }
 
-    if (rowSelectionModel.length !== poDetails.length) {
-      enqueueSnackbar('Please select all rows before saving.', {
-        variant: 'warning'
-      });
-      return;
-    }
+    // if (rowSelectionModel.length !== poDetails.length) {
+    //   enqueueSnackbar('Please select all rows before saving.', {
+    //     variant: 'warning'
+    //   });
+    //   return;
+    // }
 
     console.log('formData', formData);
     try {
@@ -364,12 +441,12 @@ const DyeingIssuance = ({ rowData }) => {
   );
   useEffect(() => {
     setFormData((prevFormData) => ({
-      ...formData,
+      ...formData
       // poId: rowData?.poId || 0,
       // poQuantity: Quantity || 0,
       // assignQuantity: quantities.itpQuantity || 0,
       // stockReceived: quantities.stockReceived || 0,
-      remainingQuantity: prevFormData.stockReceived - totalAssign || 0
+      // remainingQuantity: prevFormData.stockReceived - totalAssign || 0
     }));
   }, [handleCellEdit]);
   const designsColumns = [
@@ -395,6 +472,20 @@ const DyeingIssuance = ({ rowData }) => {
       headerName: 'Total Qty',
       valueGetter: (params) => {
         return params.toLocaleString();
+      }
+    },
+    {
+      field: 'assignQuantity',
+      headerName: 'Assign Quantity',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
+    },
+    {
+      field: 'remaining',
+      headerName: 'Remaining',
+      valueGetter: (params, row) => {
+        return row.quantity - row.assignQuantity;
       }
     },
     {
@@ -491,13 +582,13 @@ const DyeingIssuance = ({ rowData }) => {
     setIss(data);
     setOpen(true);
   };
-  const handleClickOpen2 = async (data) => {
-    setOpen2(true);
-    setIss(data);
-  };
   // console.log('terms condition', vId);
   const handleClose = () => {
     setOpen(false);
+  };
+  const handleClickOpen2 = async (data) => {
+    setOpen2(true);
+    setIss(data);
   };
   const handleClose2 = () => {
     // setShowUpperDiv(true);
@@ -619,12 +710,10 @@ const DyeingIssuance = ({ rowData }) => {
     {
       field: 'id',
       headerName: 'Sr#'
-      // flex: 1
     },
     {
       field: 'issuanceId',
       headerName: 'Issuance'
-      // flex: 1
     },
     {
       field: 'vendorName',
@@ -633,6 +722,10 @@ const DyeingIssuance = ({ rowData }) => {
     {
       field: 'issuanceQuantity',
       headerName: 'Issuance'
+    },
+    {
+      field: 'dispatchedQuantity',
+      headerName: 'Dispatch'
     },
     {
       field: 'issuanceDate',
@@ -663,29 +756,34 @@ const DyeingIssuance = ({ rowData }) => {
       headerName: 'Fabrics'
     },
     {
-      field: 'statusName',
+      field: 'ogpStatus',
       headerName: 'Status'
     },
     {
       field: 'Actions',
       headerName: 'Actions',
       renderCell: (params) => (
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <ButtonGroup variant="text" size="small">
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-around'
+          }}
+        >
+          <ButtonGroup variant="text" size="small" sx={{ marginTop: 1 }}>
             <Button
               size="small"
               color="primary"
               onClick={() => handleClickOpen(params.row)}
             >
-              View Details
+              Generate OGP
             </Button>
-            <Button
+            {/* <Button
               size="small"
               color="primary"
               onClick={() => handleClickOpen2(params.row)}
             >
               OGP
-            </Button>
+            </Button> */}
             {/* <Button
               size="small"
               color="primary"
@@ -876,8 +974,8 @@ const DyeingIssuance = ({ rowData }) => {
               fullWidth
               // select
               label="PO Quantity"
-              name="poQuantity"
-              value={formatNumber(formData.poQuantity)}
+              name="quantity"
+              value={formatNumber(formData.quantity)}
               onChange={handleChange}
               size="small"
               disabled
@@ -889,9 +987,9 @@ const DyeingIssuance = ({ rowData }) => {
             <TextField
               fullWidth
               // select
-              label="Total Quantity"
-              name="assignQuantity"
-              value={formatNumber(formData.assignQuantity)}
+              label="Issued Quantity"
+              name="issuanceQty"
+              value={formatNumber(formData.issuanceQty)}
               onChange={handleChange}
               size="small"
               disabled
@@ -899,20 +997,20 @@ const DyeingIssuance = ({ rowData }) => {
               // helperText={formErrors.brandId}
             ></TextField>
           </Grid>
-          <Grid item xs={12} md={3}>
+          {/* <Grid item xs={12} md={3}>
             <TextField
               fullWidth
               // select
-              label="Available Quantity"
-              name="stockReceived"
-              value={formatNumber(formData.stockReceived)}
+              label="Remaining Quantity"
+              name="remainingQuantity"
+              value={formatNumber(formData.remainingQuantity)}
               onChange={handleChange}
               size="small"
               disabled
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             ></TextField>
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -927,6 +1025,28 @@ const DyeingIssuance = ({ rowData }) => {
               // helperText={formErrors.brandId}
             ></TextField>
           </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              // select
+              label="Stock InHAnd"
+              name="stockInHandQty"
+              value={formatNumber(formData.stockInHandQty)}
+              onChange={handleChange}
+              size="small"
+              disabled
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12} textAlign="right">
+            <Typography
+              variant="overline"
+              sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
+            >
+              Balance : {formData.balance}
+            </Typography>
+          </Grid>
           <Grid item xs={12}>
             <DataGrid
               rows={poDetails}
@@ -934,7 +1054,11 @@ const DyeingIssuance = ({ rowData }) => {
               apiRef={apiRef}
               disableRowSelectionOnClick
               checkboxSelection
-              isRowSelectable={isRowSelectable} // Disable saved rows
+              isRowSelectable={
+                (params) => params.row.quantity !== params.row.assignQuantity
+                // params.row.quantity > params.row.assignQuantity
+              }
+              // isRowSelectable={isRowSelectable} // Disable saved rows
               onRowSelectionModelChange={handleRowSelectionModelChange}
               rowSelectionModel={rowSelectionModel}
             />
@@ -955,95 +1079,174 @@ const DyeingIssuance = ({ rowData }) => {
           title="View Issuance"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
-        <Grid
-          container
-          spacing={2}
-          width="Inherit"
-          // sx={{ paddingY: 2, paddingX: 2 }}
+        <MainCard
+          style={{
+            borderWidth: 1,
+            borderStyle: 'dotted',
+            borderColor: '#a11f23',
+            // backgroundColor: '#eef2f6',
+            width: 'auto',
+            maxHeight: { xs: '80vh', md: 'auto' },
+            overflow: 'auto'
+          }}
         >
-          <Grid item xs={12}>
-            <ReuseableDataGrid
-              initialRows={issuanceList}
-              iColumns={issuanceColumns}
-              hideAction
-              refetchIssuanceData={refetchIssuanceData}
-            />
-            <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
-              <DialogTitle
-                sx={{
-                  backgroundColor: '#A11F23',
-                  color: '#ffffff',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  paddingX: '24px',
-                  paddingY: '4px'
-                }}
-              >
-                <Typography
-                  variant="h4"
-                  component="div"
-                  color="#ffffff"
-                  gutterBottom
-                  fontSize={20}
-                  fontWeight={2}
-                  fontStyle={'normal'}
+          <Box sx={{ width: '100%', typography: 'body1' }}>
+            <TabContext value={value}>
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <TabList onChange={handleChangeTabs}>
+                  <Tab
+                    icon={<CategoryOutlinedIcon />}
+                    label="Issuance"
+                    value="1"
+                    sx={(theme) => ({
+                      '& .MuiTouchRipple-child': {
+                        backgroundColor: `${theme.palette.primary.main} !important`
+                      }
+                    })}
+                  />
+                  <Tab
+                    icon={<AssignmentOutlinedIcon />}
+                    label="OGP"
+                    value="2"
+                    sx={(theme) => ({
+                      '& .MuiTouchRipple-child': {
+                        backgroundColor: `${theme.palette.primary.main} !important`
+                      }
+                    })}
+                  />
+                </TabList>
+              </Box>
+              <TabPanel value="1">
+                <Grid
+                  container
+                  spacing={2}
+                  width="Inherit"
+                  // sx={{ paddingY: 2, paddingX: 2 }}
                 >
-                  {'View Issuance Details'}
-                </Typography>
-                <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
-                  <CloseIcon />
-                </IconButton>
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                <DyeingIssuanceView
-                  iss={iss}
-                  handleClose={handleClose}
-                  refetchIssuanceData={refetchIssuanceData}
-                />
-              </DialogContent>
-            </Dialog>
-            <Dialog open={open2} onClose={handleClose2} fullWidth maxWidth="xl">
-              <DialogTitle
-                sx={{
-                  backgroundColor: '#A11F23',
-                  color: '#ffffff',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  paddingX: '24px',
-                  paddingY: '4px',
-                  mb: 2.5
-                }}
-              >
-                <Typography
-                  variant="h4"
-                  component="div"
-                  color="#ffffff"
-                  gutterBottom
-                  fontSize={20}
-                  fontWeight={2}
-                  fontStyle={'normal'}
-                >
-                  {'Create OGP'}
-                </Typography>
-                <IconButton onClick={handleClose2} sx={{ color: '#ffffff' }}>
-                  <CloseIcon />
-                </IconButton>
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                {/* <DyeingIssuanceView
-                  iss={iss}
-                  handleClose={handleClose}
-                  refetchIssuanceData={refetchIssuanceData}
-                /> */}
-                <SSRSReport rId={13} paramIssuanceId={iss.issuanceId} />
-              </DialogContent>
-            </Dialog>
-          </Grid>
-        </Grid>
+                  {/* <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Issuance"
+              name="issuanceId"
+              value={formData.issuanceId}
+              onChange={handleChange}
+              size="small"
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            >
+              {issuanceList.map((option) => (
+                <MenuItem key={option.issuanceId} value={option.issuanceId}>
+                  {option.issuanceId}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid> */}
+                  <Grid item xs={12}>
+                    <ReuseableDataGrid
+                      initialRows={issuanceList}
+                      iColumns={issuanceColumns}
+                      hideAction
+                      refetchIssuanceData={refetchIssuanceData}
+                    />
+                    <Dialog
+                      open={open}
+                      onClose={handleClose}
+                      fullWidth
+                      maxWidth="xl"
+                    >
+                      <DialogTitle
+                        sx={{
+                          backgroundColor: '#A11F23',
+                          color: '#ffffff',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          paddingX: '24px',
+                          paddingY: '4px'
+                        }}
+                      >
+                        <Typography
+                          variant="h4"
+                          component="div"
+                          color="#ffffff"
+                          gutterBottom
+                          fontSize={20}
+                          fontWeight={2}
+                          fontStyle={'normal'}
+                        >
+                          {'View Issuance Details'}
+                        </Typography>
+                        <IconButton
+                          onClick={handleClose}
+                          sx={{ color: '#ffffff' }}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      </DialogTitle>
+                      <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                        <DyeingIssuanceView
+                          iss={iss}
+                          handleClose={handleClose}
+                          refetchIssuanceData={refetchIssuanceData}
+                        />
+                      </DialogContent>
+                    </Dialog>
+                    {/* <Dialog
+                      open={open2}
+                      onClose={handleClose2}
+                      fullWidth
+                      maxWidth="xl"
+                    >
+                      <DialogTitle
+                        sx={{
+                          backgroundColor: '#A11F23',
+                          color: '#ffffff',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          paddingX: '24px',
+                          paddingY: '4px',
+                          mb: 2.5
+                        }}
+                      >
+                        <Typography
+                          variant="h4"
+                          component="div"
+                          color="#ffffff"
+                          gutterBottom
+                          fontSize={20}
+                          fontWeight={2}
+                          fontStyle={'normal'}
+                        >
+                          {'Create OGP'}
+                        </Typography>
+                        <IconButton
+                          onClick={handleClose2}
+                          sx={{ color: '#ffffff' }}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      </DialogTitle>
+                      <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                        <SSRSReport
+                          rId={13}
+                          paramIssuanceId={iss.issuanceId}
+                          ogpNumber={iss.ogpNumber}
+                        />
+                      </DialogContent>
+                    </Dialog> */}
+                  </Grid>
+                </Grid>
+              </TabPanel>
+              <TabPanel value="2">
+                <OGPView po={formData.poId} />
+              </TabPanel>
+            </TabContext>
+          </Box>
+        </MainCard>
       </Card>
     </Box>
   );

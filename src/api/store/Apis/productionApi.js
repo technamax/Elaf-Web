@@ -97,7 +97,7 @@ export const productionApi = createApi({
         `Issuance/GetIssuanceDetailByPoId?poId=${poId}&issuanceId=${issuanceId}`
     }),
     getIssuanceList: builder.query({
-      query: () => `Receiving/GetIssuanceList?AppId=1`
+      query: (poId) => `Receiving/GetIssuanceList?PoId=${poId}`
     }),
     getIssuanceDetailsByIssuanceId: builder.query({
       query: (issuanceId) =>
@@ -110,6 +110,13 @@ export const productionApi = createApi({
     getInspectionDetails: builder.query({
       query: (receivingId) =>
         `Receiving/GetInspectionDetails?receivingId=${receivingId}`
+    }),
+    getIssuanceOGPById: builder.query({
+      query: ({ poId, issuanceId }) =>
+        `Issuance/GetIssuanceOGPById?poId=${poId}&issuanceId=${issuanceId}`
+    }),
+    getDyeingPoList: builder.query({
+      query: () => `Receiving/GetDyeingPoList?AppId=1`
     })
   })
 });
@@ -143,5 +150,7 @@ export const {
   useGetIssuanceListQuery,
   useGetIssuanceDetailsByIssuanceIdQuery,
   useGetReceivingDetailsForInspectionQuery,
-  useGetInspectionDetailsQuery
+  useGetInspectionDetailsQuery,
+  useGetIssuanceOGPByIdQuery,
+  useGetDyeingPoListQuery
 } = productionApi;
