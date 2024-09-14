@@ -70,12 +70,55 @@ const POView = ({ vId }) => {
   //   }
   // }, [assignedTermsData, refetchAssignedTermsData]);
   console.log('vId', vId);
+  const [totalSum, setTotalSum] = useState(0);
+  const [quantitySum, setQuantitySum] = useState(0);
+  const [totalBeforeTaxSum, setTotalBeforeTaxSum] = useState(0);
+  const [totalAfterTaxSum, setTotalAfterTaxSum] = useState(0);
+  useEffect(() => {
+    const totalSum = poDetails
+      .reduce((sum, row) => sum + (row.total ?? 0), 0)
+      .toFixed(2);
+    const quantitySum = poDetails
+      .reduce((sum, row) => sum + (row.quantity ?? 0), 0)
+      .toFixed(2);
+    const totalBeforeTaxSum = poDetails
+      .reduce((sum, row) => sum + (row.totalBeforeTax ?? 0), 0)
+      .toFixed(2);
+    const totalAfterTaxSum = poDetails
+      .reduce((sum, row) => sum + (row.totalAfterTax ?? 0), 0)
+      .toFixed(2);
 
+    setTotalSum(parseFloat(totalSum).toLocaleString());
+    setQuantitySum(parseFloat(quantitySum).toLocaleString());
+    setTotalBeforeTaxSum(parseFloat(totalBeforeTaxSum).toLocaleString());
+    setTotalAfterTaxSum(parseFloat(totalAfterTaxSum).toLocaleString());
+  }, [poDetails]);
+
+  const rows = [
+    ...poDetails,
+    {
+      id: 'TOTAL_SUMMARY',
+      // componentName: 'Total Summary',
+      total: totalSum,
+      quantity: quantitySum,
+      totalBeforeTax: totalBeforeTaxSum,
+      totalAfterTax: totalAfterTaxSum
+    }
+  ];
   const columns = [
     {
       field: 'id',
+      headerName: 'Sr#',
+      colSpan: (value, row) => (row.id === 'TOTAL_SUMMARY' ? 4 : undefined),
 
-      headerName: 'Sr#'
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: 'black', fontWeight: 'bold' }}>
+            Total Summary
+          </span>
+        ) : (
+          params.value
+        )
     },
     {
       field: 'designNo',
@@ -102,14 +145,30 @@ const POView = ({ vId }) => {
       headerName: 'Planned Qty',
       valueGetter: (params) => {
         return params.toLocaleString();
-      }
+      },
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
     },
     {
       field: 'quantity',
       headerName: 'Assigned Qty',
       valueGetter: (params) => {
         return params.toLocaleString();
-      }
+      },
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
     },
     {
       field: 'rate',
@@ -124,14 +183,30 @@ const POView = ({ vId }) => {
       headerName: 'Total',
       valueGetter: (params) => {
         return params.toLocaleString();
-      }
+      },
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
     },
     {
       field: 'totalAfterTax',
       headerName: 'Total After Tax',
       valueGetter: (params) => {
         return params.toLocaleString();
-      }
+      },
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
     }
   ];
 
@@ -329,7 +404,7 @@ const POView = ({ vId }) => {
 
         <Grid item xs={12}>
           <ReuseableDataGrid
-            initialRows={poDetails}
+            initialRows={rows}
             iColumns={columns}
             hideAction
             pageSize={10} // Adjust based on your needs

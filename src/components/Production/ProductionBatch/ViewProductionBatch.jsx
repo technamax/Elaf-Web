@@ -520,6 +520,7 @@ const ViewProductionBatch = () => {
                     <ReuseableDataGrid
                       initialRows={batchDetailsRows}
                       iColumns={detailsColumns}
+                      hideAction
                       // disableDelete={true}
                       // setInitialData={setInitialData}
                       // setIsEdit={setIsEdit}

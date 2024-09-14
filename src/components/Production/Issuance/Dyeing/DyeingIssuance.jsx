@@ -357,6 +357,27 @@ const DyeingIssuance = ({ rowData }) => {
     //   });
     //   return;
     // }
+    if (rowSelectionModel.length === 0) {
+      // Show a snackbar warning if no rows are selected
+      enqueueSnackbar('Please select at least one row before saving!', {
+        variant: 'warning',
+        autoHideDuration: 5000
+      });
+      return;
+    }
+
+    for (let po of poDetails) {
+      if (po.issuanceQuantity > po.remaining) {
+        enqueueSnackbar(
+          'Error:Iissuance quantity cannot be greater than remaining quantity!',
+          {
+            variant: 'error',
+            autoHideDuration: 5000
+          }
+        );
+        return; // Stop further execution
+      }
+    }
 
     console.log('formData', formData);
     try {
@@ -407,11 +428,13 @@ const DyeingIssuance = ({ rowData }) => {
       setPoDetails((prevRows) =>
         prevRows.map((row) => {
           if (row.id === id) {
+            const remaining = row.quantity - row.assignQuantity;
             const updatedRow = {
               ...row,
               [field]: value,
               issuanceId: 0,
               issuanceDetId: 0,
+              remaining: Number(remaining),
               appId: user.appId,
               createdOn: new Date().toISOString(),
               createdBy: user.empId,
@@ -476,7 +499,7 @@ const DyeingIssuance = ({ rowData }) => {
     },
     {
       field: 'assignQuantity',
-      headerName: 'Assign Quantity',
+      headerName: 'Assigned Quantity',
       valueGetter: (params) => {
         return params.toLocaleString();
       }
@@ -838,6 +861,7 @@ const DyeingIssuance = ({ rowData }) => {
               size="small"
               // type="date"
               label="Issuance Date"
+              disabled
               name="issuanceDate"
               value={
                 !formData.issuanceDate
@@ -867,6 +891,7 @@ const DyeingIssuance = ({ rowData }) => {
           <Grid item xs={12} md={3}>
             <TextField
               size="small"
+              disabled
               // type="date"
               label="Planning Date"
               name="expectedReturnDate"
@@ -898,6 +923,7 @@ const DyeingIssuance = ({ rowData }) => {
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
+              disabled
               // select
               label="Select Fabric"
               name="fabricName"
@@ -917,6 +943,7 @@ const DyeingIssuance = ({ rowData }) => {
           <Grid item xs={12} md={3}>
             <TextField
               label="Vendor"
+              disabled
               fullWidth
               size="small"
               name="vendorName"
@@ -932,6 +959,7 @@ const DyeingIssuance = ({ rowData }) => {
             <TextField
               label="Shrinkage"
               fullWidth
+              disabled
               size="small"
               name="shrinkage"
               onChange={handleChange}
@@ -946,6 +974,7 @@ const DyeingIssuance = ({ rowData }) => {
             <TextField
               label="Wastage"
               fullWidth
+              disabled
               size="small"
               name="wastage"
               onChange={handleChange}
@@ -959,6 +988,7 @@ const DyeingIssuance = ({ rowData }) => {
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
+              disabled
               // select
               label="Select Location"
               name="fullLocation"

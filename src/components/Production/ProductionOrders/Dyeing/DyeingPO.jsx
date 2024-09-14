@@ -76,7 +76,7 @@ const DyeingPO = () => {
     expectedReturnDate: '',
     processTypeId: 1223,
     fabricId: '',
-    assignQty: 0,
+    pxQty: 0,
     vendorId: '',
     shrinkage: '',
     wastage: '',
@@ -191,7 +191,7 @@ const DyeingPO = () => {
   }, [productionBatchData, refetchProductionBatchData]);
 
   const Quantity = fabrics
-    .reduce((sum, row) => sum + (row.total ?? 0), 0)
+    .reduce((sum, row) => sum + (row.availableQty ?? 0), 0)
     .toFixed(2);
   const assignedQuantity = fabrics
     .reduce((sum, row) => sum + (row.quantity ?? 0), 0)
@@ -227,7 +227,10 @@ const DyeingPO = () => {
       setFormData({
         ...formData,
         fabricId: value,
-        assignQty: selectedFabric ? selectedFabric.assignQty : ''
+        pxQty: selectedFabric ? selectedFabric.pxQty : '',
+        vendorId: '',
+        shrinkage: '',
+        wastage: ''
       });
     } else {
       setFormData({ ...formData, [name]: value });
@@ -544,12 +547,19 @@ const DyeingPO = () => {
       headerName: 'Design'
     },
     {
-      field: 'color',
+      field: 'colorName',
       headerName: 'Color'
     },
     {
-      field: 'total',
+      field: 'availableQty',
       headerName: 'Planned Qty',
+      valueGetter: (params) => {
+        return params.toLocaleString();
+      }
+    },
+    {
+      field: 'prevoiusPoQty',
+      headerName: 'Prevoius PO.Qty',
       valueGetter: (params) => {
         return params.toLocaleString();
       }
@@ -981,7 +991,7 @@ const DyeingPO = () => {
               variant="overline"
               sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
             >
-              Assign Quantity : {formData.assignQty}
+              Assign Quantity : {formData.pxQty}
             </Typography>
           </Grid>
           <Grid item xs={3} textAlign="right">
@@ -989,7 +999,7 @@ const DyeingPO = () => {
               variant="overline"
               sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
             >
-              Overall Quantity : {formData.overallQty}
+              planned Quantity : {formData.overallQty}
             </Typography>
           </Grid>
           <Grid item xs={3} textAlign="right">
