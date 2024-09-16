@@ -69,7 +69,7 @@ const SSRSReport = ({ rId, paramIssuanceId, OGPNumber, ogpNumber }) => {
     if (OGPNumber) {
       const iframe = iframeRef.current;
       if (iframe && selectedReportUrl) {
-        const newUrl = `${selectedReportUrl}&ParamOGPNumber=${OGPNumber || ''}`;
+        const newUrl = `${selectedReportUrl}&ParamIGPNumber=${OGPNumber || ''}`;
         iframe.src = newUrl;
       }
     }

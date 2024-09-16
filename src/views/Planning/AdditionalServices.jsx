@@ -82,6 +82,18 @@ export default function AdditionalServices({ initialValues }) {
       // batchNo: initialValues?.batchNo || ''
     });
   }, [setFormData]);
+  useEffect(() => {
+    if (formData.productionStatus === 3) {
+      enqueueSnackbar(
+        'Production Staus is completed. Select other Collection!',
+        {
+          variant: 'warning',
+          autoHideDuration: 5000
+        }
+      );
+    }
+  }, [formData.productionStatus]);
+
   const handleChange = async (e) => {
     const { name, value } = e.target;
     console.log(`Updating ${name} to ${value}`);
@@ -91,10 +103,22 @@ export default function AdditionalServices({ initialValues }) {
       const selectedCollection = plannedCollection.find(
         (collection) => collection.collectionId === value
       );
+      setFormData({
+        ...formData,
+        collectionId: value,
+
+        productionStatus: selectedCollection
+          ? selectedCollection.productionStatus
+          : ''
+        // poPcs: selectedCollection ? selectedCollection.poPcs : ''
+      });
       if (selectedCollection) {
         setFormData((prevFormData) => ({
           ...prevFormData,
-          poPcs: selectedCollection.poPcs
+          poPcs: selectedCollection.poPcs,
+          productionStatus: selectedCollection
+            ? selectedCollection.productionStatus
+            : ''
         }));
       }
     }
@@ -604,6 +628,7 @@ export default function AdditionalServices({ initialValues }) {
               variant="contained"
               color="primary"
               size="small"
+              disabled={formData.productionStatus === 3}
               onClick={handleSave}
             >
               Save

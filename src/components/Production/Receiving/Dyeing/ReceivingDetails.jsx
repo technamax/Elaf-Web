@@ -103,6 +103,10 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
       headerName: 'Sr#'
     },
     {
+      field: 'colorName',
+      headerName: 'Color'
+    },
+    {
       field: 'fabricName',
       headerName: 'Fabric'
     },
@@ -287,9 +291,27 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
   React.useEffect(() => {
     fetchData();
   });
+  const [disable, setdisable] = useState(false);
+  useEffect(() => {
+    for (let detail of issuanceDetails) {
+      if (detail.issuanceQuantity === detail.lastReceivedQty) {
+        setdisable(true);
+        // enqueueSnackbar(
+        //   'Error: Received quantity cannot be greater than issuance quantity!',
+        //   {
+        //     variant: 'error',
+        //     autoHideDuration: 5000
+        //   }
+        // );
+      }
+    }
+  }, [issuanceDetails, setIssuanceDetails]);
   const handleIGP = async () => {
     for (let detail of issuanceDetails) {
-      if (detail.receivedQty > detail.issuanceQuantity) {
+      if (
+        detail.receivedQty > detail.issuanceQuantity ||
+        detail.issuanceQuantity === detail.lastReceivedQty
+      ) {
         enqueueSnackbar(
           'Error: Received quantity cannot be greater than issuance quantity!',
           {
@@ -460,6 +482,7 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
             variant="contained"
             size="small"
             onClick={handleIGP}
+            disabled={disable}
             // disabled={iss.status === 9}
           >
             Generate IGP

@@ -423,6 +423,17 @@ const Embroidery = ({ initialValues }) => {
       [name]: checked
     }));
   };
+  useEffect(() => {
+    if (formData.productionStatus === 3) {
+      enqueueSnackbar(
+        'Production Staus is completed. Select other Collection!',
+        {
+          variant: 'warning',
+          autoHideDuration: 5000
+        }
+      );
+    }
+  }, [formData.productionStatus]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -455,6 +466,9 @@ const Embroidery = ({ initialValues }) => {
         totalPcs: '', //repeat*itemsPerRepeat
         totalAmount: '', //
         threadStiches: '',
+        productionStatus: selectedCollection
+          ? selectedCollection.productionStatus
+          : '',
         threadRate: '',
         threadAmount: '',
         tillaStiches: '',
@@ -1414,7 +1428,12 @@ const Embroidery = ({ initialValues }) => {
             />
           </Grid>
           <Grid item xs={12} md={4.5} textAlign="right" sx={{ mt: 2 }}>
-            <Button variant="contained" size="small" onClick={handleSave}>
+            <Button
+              variant="contained"
+              size="small"
+              disabled={formData.productionStatus === 3}
+              onClick={handleSave}
+            >
               Save
             </Button>
           </Grid>

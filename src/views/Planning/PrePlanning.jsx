@@ -342,7 +342,17 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
   };
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
   const [expanded, setExpanded] = useState(false);
-
+  useEffect(() => {
+    if (formData.productionStatus === 3) {
+      enqueueSnackbar(
+        'Production Staus is completed. Select other Collection!',
+        {
+          variant: 'warning',
+          autoHideDuration: 5000
+        }
+      );
+    }
+  }, [formData.productionStatus]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'collectionId') {
@@ -372,6 +382,9 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         total: '',
         collectionId: value,
         noOfDesigns: selectedCollection ? selectedCollection.noOfDesigns : '',
+        productionStatus: selectedCollection
+          ? selectedCollection.productionStatus
+          : '',
         noOfColors: selectedCollection ? selectedCollection.noOfColors : ''
       });
     } else if (name === 'designId') {
@@ -1672,7 +1685,12 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
               </Grid>
               {/* ) : null} */}
               <Grid item xs={12} textAlign="right">
-                <Button variant="contained" size="small" onClick={handleSave}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleSave}
+                  disabled={formData.productionStatus === 3}
+                >
                   Save
                 </Button>
               </Grid>

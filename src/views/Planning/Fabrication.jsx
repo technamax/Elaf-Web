@@ -243,6 +243,17 @@ const Fabrication = ({ initialValues, setInitialValues }) => {
     formData.gst,
     formData.totalInclGst
   ]);
+  useEffect(() => {
+    if (formData.productionStatus === 3) {
+      enqueueSnackbar(
+        'Production Staus is completed. Select other Collection!',
+        {
+          variant: 'warning',
+          autoHideDuration: 5000
+        }
+      );
+    }
+  }, [formData.productionStatus]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -270,7 +281,10 @@ const Fabrication = ({ initialValues, setInitialValues }) => {
         unitPrice: '0',
         gst: '', //// not in api
         totalInclGst: '',
-        collectionId: value
+        collectionId: value,
+        productionStatus: selectedCollection
+          ? selectedCollection.productionStatus
+          : ''
 
         // poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
@@ -997,7 +1011,12 @@ const Fabrication = ({ initialValues, setInitialValues }) => {
                 />
               </Grid>
               <Grid item xs={12} textAlign="right">
-                <Button variant="contained" size="small" onClick={handleSave}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleSave}
+                  disabled={formData.productionStatus === 3}
+                >
                   Save
                 </Button>
               </Grid>

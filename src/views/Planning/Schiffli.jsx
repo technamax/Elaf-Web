@@ -355,6 +355,18 @@ const Schiffli = ({ initialValues }) => {
       [name]: checked
     }));
   };
+  useEffect(() => {
+    if (formData.productionStatus === 3) {
+      enqueueSnackbar(
+        'Production Staus is completed. Select other Collection!',
+        {
+          variant: 'warning',
+          autoHideDuration: 5000
+        }
+      );
+    }
+  }, [formData.productionStatus]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'collectionId') {
@@ -370,6 +382,9 @@ const Schiffli = ({ initialValues }) => {
         collectionId: value,
         designId: '',
         planningHeaderId: 0,
+        productionStatus: selectedCollection
+          ? selectedCollection.productionStatus
+          : '',
         batchNo: '',
         componentId: '',
         poPcs: '',
@@ -1463,7 +1478,12 @@ const Schiffli = ({ initialValues }) => {
                 </Grid>
               ) : null}
               <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-                <Button variant="contained" size="small" onClick={handleSave}>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleSave}
+                  disabled={formData.productionStatus === 3}
+                >
                   Save
                 </Button>
               </Grid>

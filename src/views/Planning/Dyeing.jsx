@@ -247,6 +247,17 @@ const Dyeing = ({ initialValues }) => {
   }, [collectionData]);
 
   // const collectionList = collectionData?.result || [];
+  useEffect(() => {
+    if (formData.productionStatus === 3) {
+      enqueueSnackbar(
+        'Production Staus is completed. Select other Collection!',
+        {
+          variant: 'warning',
+          autoHideDuration: 5000
+        }
+      );
+    }
+  }, [formData.productionStatus]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -283,6 +294,10 @@ const Dyeing = ({ initialValues }) => {
         // // GSTAmount: '',
         // TotalIncludingGst: '',
         // createdBy: 0,
+        productionStatus: selectedCollection
+          ? selectedCollection.productionStatus
+          : '',
+
         poPcs: '',
         baseColorName: ''
         // poPcs: selectedCollection ? selectedCollection.poPcs : ''
@@ -1200,6 +1215,7 @@ const Dyeing = ({ initialValues }) => {
               variant="contained"
               color="primary"
               size="small"
+              disabled={formData.productionStatus === 3}
               onClick={handleSave}
             >
               Save

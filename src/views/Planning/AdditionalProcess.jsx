@@ -273,6 +273,17 @@ const AdditionalProcess = ({ initialValues }) => {
   console.log('initialRows', initialRows);
 
   // const collectionList = collectionData?.result || [];
+  useEffect(() => {
+    if (formData.productionStatus === 3) {
+      enqueueSnackbar(
+        'Production Staus is completed. Select other Collection!',
+        {
+          variant: 'warning',
+          autoHideDuration: 5000
+        }
+      );
+    }
+  }, [formData.productionStatus]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -288,6 +299,9 @@ const AdditionalProcess = ({ initialValues }) => {
         collectionId: value,
         designId: '',
         planningHeaderId: 0,
+        productionStatus: selectedCollection
+          ? selectedCollection.productionStatus
+          : '',
         batchNo: '',
         componentId: '',
         colorId: '',
@@ -879,7 +893,12 @@ const AdditionalProcess = ({ initialValues }) => {
           </Grid>
 
           <Grid item xs={12} textAlign="right" sx={{ mt: 0 }}>
-            <Button variant="contained" size="small" onClick={handleSave}>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              disabled={formData.productionStatus === 3}
+            >
               Save
             </Button>
           </Grid>
