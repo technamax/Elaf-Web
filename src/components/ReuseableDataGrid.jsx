@@ -41,7 +41,8 @@ const ReuseableDataGrid = ({
   height,
   checkboxSelection,
   onRowSelectionModelChange,
-  hideAction
+  hideAction,
+  onRowDoubleClick
   // Make sure to pass checkboxSelection
 }) => {
   const apiRef = useGridApiRef();
@@ -218,6 +219,7 @@ const ReuseableDataGrid = ({
         apiRef={apiRef}
         ref={componentRef}
         autosizeOnMount
+        onRowDoubleClick={onRowDoubleClick}
         checkboxSelection={checkboxSelection}
         getCellClassName={getCellClassName}
         onRowSelectionModelChange={onRowSelectionModelChange}

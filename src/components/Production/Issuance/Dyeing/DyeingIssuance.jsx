@@ -779,7 +779,7 @@ const DyeingIssuance = ({ rowData }) => {
       headerName: 'Fabrics'
     },
     {
-      field: 'ogpStatus',
+      field: 'statusName',
       headerName: 'Status'
     },
     {

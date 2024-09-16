@@ -24,7 +24,8 @@ import '../../../../assets/scss/style.scss';
 import ReceivingDetails from './ReceivingDetails';
 import {
   useGetDyeingPoListQuery,
-  useGetIssuanceListQuery
+  useGetIssuanceListQuery,
+  useGetReceivingHeaderQuery
 } from 'api/store/Apis/productionApi';
 import {
   useGetSubMenuListQuery,
@@ -65,7 +66,9 @@ const DyeingReceiving = () => {
 
   const [initialRows, setInitialRows] = useState([]);
   const [polist, setPolist] = useState([]);
+  const [issId, setIssId] = useState([]);
   const [issuanceList, setIssuanceList] = useState([]);
+  const [receivingList, setReceivingList] = useState([]);
   const [triggerSearch, setTriggerSearch] = useState(false);
 
   // Hook to fetch the data, and it's controlled by triggerSearch state
@@ -74,17 +77,34 @@ const DyeingReceiving = () => {
     useGetIssuanceListQuery(formData.poId, {
       skip: !formData.poId // Skip the query if no collection is selected
     });
+  const { data: receivingData, refetch: refetchReceivingData } =
+    useGetReceivingHeaderQuery(
+      { issuanceId: issId, processTypename: 'Dyeing' },
+      {
+        skip: !issId // Skip the query if no collection is selected
+      }
+    );
 
   useEffect(() => {
     if (data) {
       setPolist(
         data.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );
     }
   }, [data, refetch]);
+  useEffect(() => {
+    if (receivingData) {
+      setReceivingList(
+        receivingData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [receivingData, refetchReceivingData]);
 
   console.log('initialRows', initialRows);
   useEffect(() => {
@@ -102,24 +122,24 @@ const DyeingReceiving = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // if (name === 'poId') {
-    //   const selectedPO = polist.find(
-    //     (collection) => collection.poId === parseInt(value)
-    //   );
+    if (name === 'poId') {
+      const selectedPO = polist.find(
+        (collection) => collection.poId === parseInt(value)
+      );
 
-    //   setFormData({
-    //     ...formData,
-    //     poId: value,
-    //     issuanceId: selectedPO ? selectedPO.issuanceId : '',
-    //     ogpNumber: selectedPO ? selectedPO.ogpNumber : '',
-    //     issuanceName: selectedPO
-    //       ? `ISS-${selectedPO.issuanceId}-${selectedPO.issuanceQuantity}`
-    //       : ''
-    //     // wastage: selectedPO ? selectedPO.wastage : ''
-    //   });
-    // } else {
-    setFormData({ ...formData, [name]: value });
-    // }
+      setFormData({
+        ...formData,
+        poId: value,
+        issuanceId: selectedPO ? selectedPO.issuanceId : ''
+        // ogpNumber: selectedPO ? selectedPO.ogpNumber : '',
+        // issuanceName: selectedPO
+        //   ? `ISS-${selectedPO.issuanceId}-${selectedPO.issuanceQuantity}`
+        //   : ''
+        // wastage: selectedPO ? selectedPO.wastage : ''
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
   // const handleSearch = () => {
   //   if (formData.issuanceId) {
@@ -200,6 +220,9 @@ const DyeingReceiving = () => {
     // setShowUpperDiv(true);
     setOpen2(false);
   };
+  // const handleViews = async (data) => {
+  //   setIssId(data.issuanceId);
+  // };
   const columns = [
     {
       field: 'id',
@@ -210,10 +233,10 @@ const DyeingReceiving = () => {
       field: 'issuanceId',
       headerName: 'issuance#'
     },
-    {
-      field: 'ogpNumber',
-      headerName: 'OGP#'
-    },
+    // {
+    //   field: 'ogpNumber',
+    //   headerName: 'OGP#'
+    // },
     {
       field: 'vendorName',
       headerName: 'Vendor'
@@ -301,8 +324,120 @@ const DyeingReceiving = () => {
               color="primary"
               onClick={() => handleClickOpen(params.row)}
             >
-              View Details
+              Generate IGP
             </Button>
+            {/* <Button
+              size="small"
+              color="primary"
+              onClick={() => handleClickOpen2(params.row)}
+            >
+              IGP
+            </Button> */}
+            {/* <Button
+              size="small"
+              color="primary"
+              onClick={() => handleViews(params.row)}
+            >
+              Get Receivings
+            </Button> */}
+          </ButtonGroup>
+        </div>
+      )
+    }
+  ];
+  const receivingColumns = [
+    { field: 'id', headerName: 'Sr #' },
+    { field: 'collectionName', headerName: 'Collection Name' },
+    { field: 'poName', headerName: 'PO' },
+    {
+      field: 'ogpNumber',
+      headerName: 'OGP Number',
+      renderCell: (params) => {
+        <span style={{ fontWeight: 'bolder' }}>{params.value}</span>;
+      }
+    },
+    { field: 'igpNumber', headerName: 'IGP Number' },
+    {
+      field: 'igpDate',
+      headerName: 'IGP Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'receivingDate',
+      headerName: 'Receiving Date',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+
+    { field: 'receivedQty', headerName: 'Received' },
+    { field: 'processTypename', headerName: 'Process Type' },
+    {
+      field: 'statusName',
+      headerName: 'Status',
+      renderCell: (params) => {
+        const chipColor = 'primary.dark';
+        if (params.value === null) {
+          return;
+        } else {
+          return (
+            <Chip
+              label={params.value}
+              sx={{
+                backgroundColor:
+                  chipColor === 'primary' || chipColor === 'default'
+                    ? undefined
+                    : chipColor,
+                color:
+                  chipColor === 'primary' || chipColor === 'default'
+                    ? undefined
+                    : 'white'
+              }}
+              color={
+                chipColor === 'primary'
+                  ? 'primary'
+                  : chipColor === 'default'
+                    ? 'default'
+                    : undefined
+              }
+            />
+          );
+        }
+      }
+    },
+    {
+      field: 'Actions',
+      headerName: 'Actions',
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup variant="text" size="small" sx={{ mt: 1 }}>
+            {/* <Button
+              size="small"
+              color="primary"
+              onClick={() => handleClickOpen(params.row)}
+              disabled={params.row.status === 4}
+            >
+              Inspection
+            </Button>
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => handleClickOpen2(params.row)}
+            >
+              View
+            </Button> */}
             <Button
               size="small"
               color="primary"
@@ -310,19 +445,11 @@ const DyeingReceiving = () => {
             >
               IGP
             </Button>
-            {/* <Button
-              size="small"
-              color="primary"
-              onClick={() => handlePrintOgp(params.row)}
-            >
-              Print OGP
-            </Button> */}
           </ButtonGroup>
         </div>
       )
     }
   ];
-
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
       <Card variant="outlined">
@@ -367,8 +494,9 @@ const DyeingReceiving = () => {
           </Grid>
           <Grid item xs={12}>
             <ReuseableDataGrid
-              initialRows={issuanceList}
+              initialRows={initialRows}
               iColumns={columns}
+              onRowDoubleClick={(params) => setIssId(params.row.issuanceId)}
               hideAction
             />
 
@@ -439,9 +567,33 @@ const DyeingReceiving = () => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                <SSRSReport rId={14} OGPNumber={iss.ogpNumber} />
+                <SSRSReport rId={14} OGPNumber={iss.igpNumber} />
               </DialogContent>
             </Dialog>
+          </Grid>
+        </Grid>
+      </Card>
+      <Card variant="outlined" sx={{ marginTop: 2 }}>
+        <CardHeader
+          className="css-4rfrnx-MuiCardHeader-root"
+          // avatar={
+          // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
+          // }
+          title="View All"
+          titleTypographyProps={{ style: { color: 'white' } }}
+        ></CardHeader>
+        <Grid
+          container
+          spacing={1}
+          width="Inherit"
+          sx={{ paddingY: 2, paddingX: 2 }}
+        >
+          <Grid item xs={12}>
+            <ReuseableDataGrid
+              initialRows={receivingList}
+              iColumns={receivingColumns}
+              hideAction
+            />
           </Grid>
         </Grid>
       </Card>

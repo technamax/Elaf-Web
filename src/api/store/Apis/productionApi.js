@@ -117,6 +117,10 @@ export const productionApi = createApi({
     }),
     getDyeingPoList: builder.query({
       query: () => `Receiving/GetDyeingPoList?AppId=1`
+    }),
+    getReceivingHeader: builder.query({
+      query: ({ issuanceId, processTypename }) =>
+        `Receiving/GetReceivingHeader?issuanceId=${issuanceId}&processTypename=${processTypename}`
     })
   })
 });
@@ -152,5 +156,6 @@ export const {
   useGetReceivingDetailsForInspectionQuery,
   useGetInspectionDetailsQuery,
   useGetIssuanceOGPByIdQuery,
-  useGetDyeingPoListQuery
+  useGetDyeingPoListQuery,
+  useGetReceivingHeaderQuery
 } = productionApi;

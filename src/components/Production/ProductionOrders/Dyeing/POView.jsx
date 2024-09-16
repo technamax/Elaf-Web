@@ -76,7 +76,7 @@ const POView = ({ vId }) => {
   const [totalAfterTaxSum, setTotalAfterTaxSum] = useState(0);
   useEffect(() => {
     const totalSum = poDetails
-      .reduce((sum, row) => sum + (row.total ?? 0), 0)
+      .reduce((sum, row) => sum + (row.planningQty ?? 0), 0)
       .toFixed(2);
     const quantitySum = poDetails
       .reduce((sum, row) => sum + (row.quantity ?? 0), 0)
@@ -99,7 +99,7 @@ const POView = ({ vId }) => {
     {
       id: 'TOTAL_SUMMARY',
       // componentName: 'Total Summary',
-      total: totalSum,
+      planningQty: totalSum,
       quantity: quantitySum,
       totalBeforeTax: totalBeforeTaxSum,
       totalAfterTax: totalAfterTaxSum
@@ -141,11 +141,11 @@ const POView = ({ vId }) => {
       headerName: 'UOM'
     },
     {
-      field: 'total',
+      field: 'planningQty',
       headerName: 'Planned Qty',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      },
+      // valueGetter: (params) => {
+      //   return params.toLocaleString();
+      // },
       renderCell: (params) =>
         params.row.id === 'TOTAL_SUMMARY' ? (
           <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
@@ -158,9 +158,9 @@ const POView = ({ vId }) => {
     {
       field: 'quantity',
       headerName: 'Assigned Qty',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      },
+      // valueGetter: (params) => {
+      //   return params.toLocaleString();
+      // },
       renderCell: (params) =>
         params.row.id === 'TOTAL_SUMMARY' ? (
           <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
