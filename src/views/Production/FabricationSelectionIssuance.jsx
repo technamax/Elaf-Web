@@ -307,18 +307,18 @@ const FabricationSelectionIssuance = () => {
     // },
     {
       field: 'sr',
-      headerName: 'Sr#',
-      flex: 1
+      headerName: 'Sr#'
+      // flex: 1
     },
     {
       field: 'collectionName',
       headerName: 'Collection Name',
-      flex: 1
+      flex: 2
     },
     {
       field: 'fabricName',
       headerName: 'Fabric Name',
-      flex: 1
+      flex: 2
     },
     {
       field: 'quantity',
@@ -342,7 +342,7 @@ const FabricationSelectionIssuance = () => {
         <SmallTextField
           variant="outlined"
           size="small"
-          sx={{ mt: 1, width: 100 }} // Adjust width and height as needed
+          sx={{ mt: 1, width: 50 }} // Adjust width and height as needed
           value={params.row.AssignQty || ''}
           onChange={(event) =>
             handleCellEdit({

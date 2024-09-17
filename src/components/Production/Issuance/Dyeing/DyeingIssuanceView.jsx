@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, TextField, Typography, Button, MenuItem } from '@mui/material';
 import { useGetIssuanceDetailByPoIdQuery } from 'api/store/Apis/productionApi';
-import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
+import {
+  useGetLookUpListQuery,
+  useGetDriverInfoQuery,
+  useGetTruckInfoQuery
+} from 'api/store/Apis/lookupApi';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
 import { useUser } from 'context/User';
@@ -18,12 +22,16 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
     destination: '',
     isRejectedOGP: 'N',
     remarks: '',
+    truckId: '',
+    driverId: '',
     createdBy: user.empId
   });
   const { enqueueSnackbar } = useSnackbar();
   const [issuanceDetails, setIssuanceDetails] = useState([]);
   const [destinantionsList, setDestinantionsList] = useState([]);
   const [dispatchFromList, setDispatchFromList] = useState([]);
+  const [driversList, setDriversList] = useState([]);
+  const [trucksList, setTrucksList] = useState([]);
   const { data: issuanceDetailsData, refetch: refetchIssuanceDetailsData } =
     useGetIssuanceDetailByPoIdQuery(
       { poId: iss.poId, issuanceId: iss.issuanceId },
@@ -33,6 +41,10 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
     );
   const { data: lookupData, refetch: refetchLookupData } =
     useGetLookUpListQuery();
+  const { data: driversData, refetch: refetchDriversData } =
+    useGetDriverInfoQuery();
+  const { data: trucksData, refetch: refetchTrucksData } =
+    useGetTruckInfoQuery();
 
   useEffect(() => {
     if (issuanceDetailsData?.result === null) {
@@ -48,6 +60,26 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
       );
     }
   }, [issuanceDetailsData, refetchIssuanceDetailsData]);
+  useEffect(() => {
+    if (driversData) {
+      setDriversList(
+        driversData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [driversData, refetchDriversData]);
+  useEffect(() => {
+    if (trucksData) {
+      setTrucksList(
+        trucksData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [trucksData, refetchTrucksData]);
   useEffect(() => {
     if (lookupData) {
       setDestinantionsList(
@@ -307,6 +339,44 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
             {destinantionsList.map((option) => (
               <MenuItem key={option.lookUpId} value={option.lookUpId}>
                 {option.lookUpName}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            select
+            label="Drivers"
+            name="driverId"
+            value={formData.driverId}
+            onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          >
+            {driversList.map((option) => (
+              <MenuItem key={option.driverId} value={option.driverId}>
+                {option.driverName}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            select
+            label="Trucks"
+            name="truckId"
+            value={formData.truckId}
+            onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          >
+            {trucksList.map((option) => (
+              <MenuItem key={option.truckId} value={option.truckId}>
+                {option.truckNumber}
               </MenuItem>
             ))}
           </TextField>

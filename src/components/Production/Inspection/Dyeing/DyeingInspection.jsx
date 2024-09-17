@@ -213,7 +213,7 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
           variant="outlined"
           size="small"
           // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
           value={params.row.gradeAQty || 0}
           onChange={(event) =>
             handleCellEdit({
@@ -237,7 +237,7 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
           variant="outlined"
           size="small"
           // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
           value={params.row.gradeBQty || 0}
           onChange={(event) =>
             handleCellEdit({
@@ -261,7 +261,7 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
           variant="outlined"
           size="small"
           // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
           value={params.row.gradeCPQty || 0}
           onChange={(event) =>
             handleCellEdit({
@@ -285,7 +285,7 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
           variant="outlined"
           size="small"
           // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
           value={params.row.others1Qty || 0}
           onChange={(event) =>
             handleCellEdit({
@@ -328,7 +328,7 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
           variant="outlined"
           size="small"
           // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
           value={params.row.remarks || ''}
           onChange={(event) =>
             handleCellEdit({

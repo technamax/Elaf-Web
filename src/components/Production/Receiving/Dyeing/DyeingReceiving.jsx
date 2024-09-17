@@ -220,9 +220,9 @@ const DyeingReceiving = () => {
     // setShowUpperDiv(true);
     setOpen2(false);
   };
-  // const handleViews = async (data) => {
-  //   setIssId(data.issuanceId);
-  // };
+  const handleViews = async (data) => {
+    setIssId(data.issuanceId);
+  };
   const columns = [
     {
       field: 'id',
@@ -333,13 +333,13 @@ const DyeingReceiving = () => {
             >
               IGP
             </Button> */}
-            {/* <Button
+            <Button
               size="small"
               color="primary"
               onClick={() => handleViews(params.row)}
             >
               Get Receivings
-            </Button> */}
+            </Button>
           </ButtonGroup>
         </div>
       )

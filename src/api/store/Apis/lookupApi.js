@@ -15,6 +15,12 @@ export const lookupApi = createApi({
     }),
     getWareHouseLocations: builder.query({
       query: () => `Common/GetLocationsbyAppId?appId=1`
+    }),
+    getTruckInfo: builder.query({
+      query: () => `Common/GetTruckInfo`
+    }),
+    getDriverInfo: builder.query({
+      query: () => `Common/GetDriverInfo`
     })
   })
 });
@@ -23,5 +29,7 @@ export const {
   useGetLookUpListQuery,
   useGetShrinkageWastageListQuery,
   useGetStatusLookUpQuery,
-  useGetWareHouseLocationsQuery
+  useGetWareHouseLocationsQuery,
+  useGetTruckInfoQuery,
+  useGetDriverInfoQuery
 } = lookupApi;

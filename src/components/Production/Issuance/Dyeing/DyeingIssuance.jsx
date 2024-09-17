@@ -104,6 +104,7 @@ const DyeingIssuance = ({ rowData }) => {
     stockReceived: 0,
     remainingQuantity: 0,
     quantity: 0,
+    remarks: '',
 
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -522,7 +523,7 @@ const DyeingIssuance = ({ rowData }) => {
           variant="outlined"
           size="small"
           // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
           value={params.row.issuanceQuantity || ''}
           onChange={(event) =>
             handleCellEdit({
@@ -955,7 +956,7 @@ const DyeingIssuance = ({ rowData }) => {
               // helperText={formErrors.collectionName}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={1.5}>
             <TextField
               label="Shrinkage"
               fullWidth
@@ -970,7 +971,7 @@ const DyeingIssuance = ({ rowData }) => {
               // helperText={formErrors.collectionName}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={1.5}>
             <TextField
               label="Wastage"
               fullWidth
@@ -998,6 +999,20 @@ const DyeingIssuance = ({ rowData }) => {
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             ></TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Remarks"
+              fullWidth
+              size="small"
+              name="remarks"
+              onChange={handleChange}
+              value={formData.remarks}
+              required
+              // disabled={isEdit}
+              // error={!!formErrors.collectionName}
+              // helperText={formErrors.collectionName}
+            />
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField
