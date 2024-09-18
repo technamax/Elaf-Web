@@ -24,17 +24,13 @@ import axios from 'axios';
 const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
   const { user } = useUser();
   const [formData, setFormData] = useState({
-    poId: iss.poId,
-    issuanceId: iss.issuanceId,
-    processTypeId: iss.processTypeId,
-    dispatchedQuantity: '',
-    dispatchFrom: '',
-    destination: '',
-    isRejectedOGP: 'N',
-    remarks: '',
-    truckId: '',
-    driverId: '',
-    createdBy: user.empId
+    grnHeader: {
+      grnId: 0,
+      grnNumber: '',
+      ...iss,
+      createdBy: user.empId,
+      remarks: ''
+    }
   });
   const { enqueueSnackbar } = useSnackbar();
   const [GRNList, setGRNList] = useState([]);
@@ -111,16 +107,31 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevState) => ({
+      ...prevState,
+      grnHeader: {
+        ...prevState.grnHeader,
+        [name]: value // Update the field in grnHeader
+      }
+    }));
   };
+
   const calRows = GRNList.map((row) => ({
     ...row,
     grnId: 0,
     grnItemId: 0,
     total: row.gradeAQty * row.rate,
+    acceptedQty: row.gradeAQty,
+    grnaQty: row.gradeAQty,
+    grnbQty: row.gradeBQty,
+    grncpQty: row.gradeCPQty,
     bGradetotal: row.gradeBQty * row.rate * row.bGradeRate
   }));
   console.log('calRows', calRows);
+  useEffect(() => {
+    setFormData({ ...formData, grnDetailsList: [...calRows] });
+  }, [GRNList]);
+  console.log('formData', formData);
   const columns = [
     {
       field: 'id',
@@ -216,7 +227,7 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
   const handleSave = async () => {
     try {
       const response = await axios.post(
-        `http://100.42.177.77:83/api/Issuance/GenerateOGP`,
+        `http://100.42.177.77:83/api/GRN/SaveGRN`,
         formData
       );
       refetchData();
@@ -331,6 +342,20 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
             size="small"
             // error={!!formErrors.brandId}
             // helperText={formErrors.brandId}
+          />
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            label="Remarks"
+            fullWidth
+            size="small"
+            name="remarks"
+            onChange={handleChange}
+            value={formData.grnHeader.remarks}
+            required
+            // disabled={isEdit}
+            // error={!!formErrors.collectionName}
+            // helperText={formErrors.collectionName}
           />
         </Grid>
       </Grid>
