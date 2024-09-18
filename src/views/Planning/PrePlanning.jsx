@@ -1177,6 +1177,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
               </TextField> */}
                 <Autocomplete
                   fullWidth
+                  disabled={lock}
                   options={Fabrications}
                   getOptionLabel={(option) => option.lookUpName}
                   value={

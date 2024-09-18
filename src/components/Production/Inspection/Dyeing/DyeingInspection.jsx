@@ -60,11 +60,12 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
             (100 + row.shrinkage + row.wastage)
           ).toFixed(2);
 
-          const shortStock = Math.max(
+          const shortageQty = Math.max(
             row.receivedQty -
               ((row.gradeAQty || 0) +
                 (row.gradeBQty || 0) +
                 (row.gradeCPQty || 0) +
+                (row.rejectedQty || 0) +
                 (row.others1Qty || 0)),
             0
           );
@@ -76,7 +77,7 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
             inspectionId: 0,
             inspectiondetId: 0,
             expectedQty: Number(expectedQty), // Add expectedQty to the row
-            shortStock: Number(shortStock),
+            shortageQty: Number(shortageQty),
             appId: user.appId,
             createdOn: new Date().toISOString(),
             createdBy: user.empId,
@@ -302,23 +303,48 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
       )
     },
     {
-      field: 'shortStock',
+      field: 'shortageQty',
       headerName: 'Short Stock',
       valueGetter: (value, row) => {
         const expected = row.expectedQty;
         const received = row.receivedQty;
-        const shortStock =
+        const shortageQty =
           row.receivedQty -
           ((row.gradeAQty || 0) +
             (row.gradeBQty || 0) +
             (row.gradeCPQty || 0) +
+            (row.rejectedQty || 0) +
             (row.others1Qty || 0));
-        if (shortStock > 0) {
-          return shortStock.toLocaleString();
+        if (shortageQty > 0) {
+          return shortageQty.toLocaleString();
         } else {
           return 0;
         }
       }
+    },
+    {
+      field: 'rejectedQty',
+      headerName: 'Rejected',
+      renderCell: (params) => (
+        <SmallTextField
+          variant="outlined"
+          size="small"
+          // fullWidth
+          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
+          value={params.row.rejectedQty || ''}
+          onChange={(event) =>
+            handleCellEdit({
+              id: params.id,
+              field: 'rejectedQty',
+              value: event.target.value
+            })
+          }
+          // type="number"
+          InputProps={{
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+          }}
+        />
+      )
     },
     {
       field: 'remarks',

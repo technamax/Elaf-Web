@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField, Typography, Button, MenuItem } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Typography,
+  Button,
+  MenuItem,
+  Chip
+} from '@mui/material';
 import {
   useGetIssuanceDetailByPoIdQuery,
   useGetInspectionForGRNDetailbyInspectionIdQuery
@@ -167,6 +174,43 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
     {
       field: 'gradeCPQty',
       headerName: 'GradeCP'
+    },
+    {
+      field: 'rejectedQty',
+      headerName: 'Rejected',
+      renderCell: (params) => {
+        const chipColor = 'error.dark';
+        if (params.value === 0) {
+          return;
+        } else {
+          return (
+            <Chip
+              label={params.value}
+              sx={{
+                backgroundColor:
+                  chipColor === 'primary' || chipColor === 'default'
+                    ? undefined
+                    : chipColor,
+                color:
+                  chipColor === 'primary' || chipColor === 'default'
+                    ? undefined
+                    : 'white'
+              }}
+              color={
+                chipColor === 'primary'
+                  ? 'primary'
+                  : chipColor === 'default'
+                    ? 'default'
+                    : undefined
+              }
+            />
+          );
+        }
+      }
+    },
+    {
+      field: 'shortageQty',
+      headerName: 'Shortage'
     }
   ];
   const handleSave = async () => {
