@@ -12,6 +12,7 @@ import DyeingReceiving from 'components/Production/Receiving/Dyeing/DyeingReceiv
 import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useUser } from 'context/User';
+import DyeingGRN from 'components/Production/GRN/Dyeing/DyeingGRN';
 
 const GRN = () => {
   const location = useLocation();
@@ -102,7 +103,7 @@ const GRN = () => {
             </TabList>
           </Box>
           <TabPanel value="1">
-            {/* <DyeingReceiving rowData={rowData} /> */}
+            <DyeingGRN />
           </TabPanel>
           <TabPanel value="2">{/* <EmbroideryReceiving /> */}</TabPanel>
           <TabPanel value="3">{/* <AssignTermsAndConditions /> */}</TabPanel>
