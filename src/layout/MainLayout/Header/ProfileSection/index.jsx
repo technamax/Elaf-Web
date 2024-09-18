@@ -123,7 +123,7 @@ const ProfileSection = (username) => {
         }}
         icon={
           <Avatar
-            src={Elogo}
+            // src={Elogo}
             sx={{
               ...theme.typography.mediumAvatar,
               backgroundColor: 'white',
@@ -188,7 +188,7 @@ const ProfileSection = (username) => {
                           variant="h4"
                           sx={{ fontWeight: 400 }}
                         >
-                          {/* Elaf Develop */}
+                          {/* TM Develop */}
                           {user.firstName}
                         </Typography>
                       </Stack>

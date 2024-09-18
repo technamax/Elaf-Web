@@ -645,7 +645,7 @@ const DyeingIssuance = ({ rowData }) => {
           </style>
         </head>
         <body>
-          <h2>Elaf</h2>
+          <h2>TM</h2>
           <h3>OUTWARD GATE PASS</h3>
   
           <table class="header">

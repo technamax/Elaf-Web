@@ -44,7 +44,7 @@ const Login = () => {
                 >
                   <Grid item sx={{ mb: 1 }}>
                     <Link to="#" aria-label="logo">
-                      <Logo />
+                      {/* <Logo /> */}
                     </Link>
                   </Grid>
                   <Grid item xs={12}>
@@ -65,7 +65,7 @@ const Login = () => {
                             gutterBottom
                             variant={downMD ? 'h3' : 'h2'}
                           >
-                            Welcome to ELAF
+                            Welcome to TM
                           </Typography>
                           <Typography
                             color="grey[600]"

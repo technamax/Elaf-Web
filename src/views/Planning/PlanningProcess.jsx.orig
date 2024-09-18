@@ -23,7 +23,7 @@ import AdditionalServices from './AdditionalServices';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 
 =======
->>>>>>> ELAF-46-Embroidery-Module
+>>>>>>> TM-46-Embroidery-Module
 // import { color } from '@mui/system';
 const steps = [
   'Pre Planning',
@@ -314,7 +314,7 @@ export default function PlanningProcess() {
           {activeStep === 5 && <AdditionalProcess />}
           {activeStep === 6 && <AdditionalServices />}
 =======
->>>>>>> ELAF-46-Embroidery-Module
+>>>>>>> TM-46-Embroidery-Module
           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
             <Button
               color="inherit"

@@ -18,7 +18,7 @@ console.log(router.basename);
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter basename="/Elaf">
+    <BrowserRouter basename="/TM">
       <RouterProvider router={router} />
     </BrowserRouter>
   </React.StrictMode>,
