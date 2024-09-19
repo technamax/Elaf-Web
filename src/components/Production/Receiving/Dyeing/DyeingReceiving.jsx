@@ -338,7 +338,7 @@ const DyeingReceiving = () => {
               color="primary"
               onClick={() => handleViews(params.row)}
             >
-              Get Receivings
+              View Receivings
             </Button>
           </ButtonGroup>
         </div>
@@ -493,6 +493,9 @@ const DyeingReceiving = () => {
             </Button>
           </Grid>
           <Grid item xs={12}>
+            <Typography variant="h3">Issuances</Typography>
+          </Grid>
+          <Grid item xs={12}>
             <ReuseableDataGrid
               initialRows={initialRows}
               iColumns={columns}
@@ -588,6 +591,9 @@ const DyeingReceiving = () => {
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
+          <Grid item xs={12}>
+            <Typography variant="h3">Receivings</Typography>
+          </Grid>
           <Grid item xs={12}>
             <ReuseableDataGrid
               initialRows={receivingList}

@@ -1020,29 +1020,31 @@ const DyeingPO = () => {
               // helperText={formErrors.collectionName}
             />
           </Grid>
-          <Grid item xs={6} textAlign="right">
+          <Grid item xs={12} textAlign="right">
             <Typography
               variant="overline"
               sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
             >
-              Assign Quantity : {formData.pxQty}
+              Assign Quantity : {formData.pxQty} | planned Quantity :{' '}
+              {formData.overallQty} | Remaining Quantity :{' '}
+              {formData.remainingQuantity}
             </Typography>
-          </Grid>
-          <Grid item xs={3} textAlign="right">
-            <Typography
+            {/* </Grid>
+          <Grid item xs={3} textAlign="right"> */}
+            {/* <Typography
               variant="overline"
               sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
             >
               planned Quantity : {formData.overallQty}
-            </Typography>
-          </Grid>
-          <Grid item xs={3} textAlign="right">
-            <Typography
+            </Typography> */}
+            {/* </Grid>
+          <Grid item xs={3} textAlign="right"> */}
+            {/* <Typography
               variant="overline"
               sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
             >
               Remaining Quantity : {formData.remainingQuantity}
-            </Typography>
+            </Typography> */}
           </Grid>
           <Grid item xs={12}>
             <div style={{ height: 400, width: '100%' }}>
@@ -1064,7 +1066,14 @@ const DyeingPO = () => {
           </Grid>
 
           <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-            <Button variant="contained" size="small" onClick={handleSave}>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              disabled={fabrics.every(
+                (item) => item.prevoiusPoQty >= item.availableQty
+              )}
+            >
               Save
             </Button>
           </Grid>

@@ -220,6 +220,10 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
       }
     },
     {
+      field: 'remarks',
+      headerName: 'Remarks'
+    },
+    {
       field: 'shortageQty',
       headerName: 'Shortage'
     }

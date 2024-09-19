@@ -392,6 +392,7 @@ const DyeingIssuance = ({ rowData }) => {
       enqueueSnackbar('Data saved successfully!', { variant: 'success' });
       setSavedRows((prev) => [...prev, ...formData.issuanceTransactionDetails]);
       refetchIssuanceData();
+      refetchPoDetailsData();
     } catch (error) {
       console.error('Error saving data:', error);
 

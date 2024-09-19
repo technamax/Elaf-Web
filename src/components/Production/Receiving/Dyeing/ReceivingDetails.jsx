@@ -266,6 +266,10 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
           // fullWidth
           sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
           value={params.row.remarks || ''}
+          onKeyDown={(event) => {
+            console.log('Key down: ', event.key);
+            event.stopPropagation();
+          }}
           onChange={(event) =>
             handleCellEdit({
               id: params.id,
