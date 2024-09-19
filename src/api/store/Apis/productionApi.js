@@ -128,6 +128,9 @@ export const productionApi = createApi({
     GetInspectionForGRNDetailbyInspectionId: builder.query({
       query: (inspectionId) =>
         `GRN/GetInspectionForGRNDetailbyInspectionId?inspectionId=${inspectionId}`
+    }),
+    getRejectionByPoId: builder.query({
+      query: (poId) => `GRN/GetRejectionByPoId?PoId=${poId}`
     })
   })
 });
@@ -166,5 +169,6 @@ export const {
   useGetDyeingPoListQuery,
   useGetReceivingHeaderQuery,
   useGetInspectionForGRNHeaderQuery,
-  useGetInspectionForGRNDetailbyInspectionIdQuery
+  useGetInspectionForGRNDetailbyInspectionIdQuery,
+  useGetRejectionByPoIdQuery
 } = productionApi;
