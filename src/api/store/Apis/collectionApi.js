@@ -9,6 +9,10 @@ export const collectionApi = createApi({
     getCollectionList: builder.query({
       query: () => 'CollectionRegistration/GetCollectionList?appId=1'
     }),
+    getDistinctCollections: builder.query({
+      query: (collectionId) =>
+        `PrePlanning/GetDistinctCollections?collectionId=${collectionId}`
+    }),
     getCollectionById: builder.query({
       query: (collectionId) =>
         `CollectionRegistration/GetCollectionByCollectionId?collectionId=${collectionId}`
@@ -31,6 +35,7 @@ export const collectionApi = createApi({
 
 export const {
   useGetCollectionListQuery,
+  useGetDistinctCollectionsQuery,
   useGetCollectionByIdQuery,
   useDeleteCollectionByIdMutation,
   useSaveCollectionMutation

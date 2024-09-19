@@ -560,6 +560,7 @@ const Summary = ({
               checkboxSelection
               getRowId={(row) => row.id} // Ensure each row has a unique ID
               disableRowSelectionOnClick
+              isRowSelectable={(params) => params.row.statusId !== 3}
               autosizeOnMount
               apiRef={apiRef}
               onStateChange={handleStateChange}

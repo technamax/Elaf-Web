@@ -14,12 +14,16 @@ import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
+import { useSnackbar } from 'notistack';
+import { useGetDistinctCollectionsQuery } from 'api/store/Apis/prePlanningHeaderApi';
 
 export default function AdditionalServices({ initialValues }) {
   const [isLoading, setIsLoading] = useState(true);
+  const { enqueueSnackbar } = useSnackbar();
 
   const { data: lookupData } = useGetLookUpListQuery();
   const [serviceType, setServiceType] = useState([]);
+  const [batchList, setBatchList] = useState([]);
   const [serviceList, setServiceList] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [plannedCollection, setPlannedCollection] = useState([]);
@@ -38,6 +42,7 @@ export default function AdditionalServices({ initialValues }) {
   const [formData, setFormData] = useState({
     additionalServiceId: 0,
     collectionId: '',
+    batchNo: '',
     serviceTypeId: '',
     serviceListId: '',
     vendorId: '',
@@ -73,6 +78,10 @@ export default function AdditionalServices({ initialValues }) {
       lastUpdatedBy: user.empId
     });
   }, [initialData]);
+  const { data: batchData, refetch: refetchBatches } =
+    useGetDistinctCollectionsQuery(formData.collectionId, {
+      skip: !formData.collectionId // Skip the query if no collection is selected
+    });
   useEffect(() => {
     // setSelectedCollectionId(initialValues.collectionId);
     setFormData({
@@ -82,6 +91,12 @@ export default function AdditionalServices({ initialValues }) {
       // batchNo: initialValues?.batchNo || ''
     });
   }, [setFormData]);
+  useEffect(() => {
+    if (batchData) {
+      setBatchList(batchData);
+      // refetchBatches();
+    }
+  }, [batchData, refetchBatches]);
   useEffect(() => {
     if (formData.productionStatus === 3) {
       enqueueSnackbar(
@@ -109,18 +124,33 @@ export default function AdditionalServices({ initialValues }) {
 
         productionStatus: selectedCollection
           ? selectedCollection.productionStatus
-          : ''
-        // poPcs: selectedCollection ? selectedCollection.poPcs : ''
+          : '',
+        poPcs: ''
       });
-      if (selectedCollection) {
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          poPcs: selectedCollection.poPcs,
-          productionStatus: selectedCollection
-            ? selectedCollection.productionStatus
-            : ''
-        }));
-      }
+      // if (selectedCollection) {
+      //   setFormData((prevFormData) => ({
+      //     ...prevFormData,
+      //     poPcs: selectedCollection.poPcs,
+      //     productionStatus: selectedCollection
+      //       ? selectedCollection.productionStatus
+      //       : ''
+      //   }));
+      // }
+    } else if (name === 'batchNo') {
+      const selectedBatch = batchList.find(
+        (batch) => batch.distinctId === value
+      );
+      setFormData({
+        ...formData,
+        batchNo: value,
+        // planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : '',
+        poPcs: selectedBatch ? selectedBatch.poPcsSum : '',
+        createdOn: new Date().toISOString(),
+        createdBy: user.empId,
+        lastUpdatedOn: new Date().toISOString(),
+        LastUpdatedBy: user.empId
+      });
+      setAccordionExpanded(true);
     }
   };
   useEffect(() => {
@@ -183,7 +213,7 @@ export default function AdditionalServices({ initialValues }) {
     const getCollectionFromPlanningHeader = async () => {
       try {
         const response = await axios.get(
-          'http://100.42.177.77:83/api/CollectionRegistration/GetCollectionList?appId=1'
+          'http://100.42.177.77:83/api/PrePlanning/GetCollectionListFromPlanningHeader'
         );
         console.log('GetCollectionFromPlanningHeader', response);
         setPlannedCollection(response.data.result);
@@ -380,7 +410,7 @@ export default function AdditionalServices({ initialValues }) {
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={3}>
             <TextField
               fullWidth
               select
@@ -411,7 +441,30 @@ export default function AdditionalServices({ initialValues }) {
               )}
             </TextField>
           </Grid>
-          <Grid item md={4} width="inherit" paddingX={1}>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Batch No."
+              name="batchNo"
+              value={formData.batchNo}
+              onChange={handleChange}
+              size="small"
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            >
+              {batchList.map((option) => (
+                <MenuItem key={option.distinctId} value={option.distinctId}>
+                  {option.distinctId}
+                </MenuItem>
+              ))}
+            </TextField>{' '}
+          </Grid>
+          <Grid item md={3} width="inherit">
             <TextField
               id="outlined-select-option"
               select
@@ -436,7 +489,7 @@ export default function AdditionalServices({ initialValues }) {
               ))}
             </TextField>
           </Grid>
-          <Grid item md={4} width="inherit" paddingX={1}>
+          <Grid item md={3} width="inherit">
             <TextField
               id="outlined-select-option"
               select
@@ -461,7 +514,7 @@ export default function AdditionalServices({ initialValues }) {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={3}>
             <TextField
               fullWidth
               select
@@ -484,7 +537,7 @@ export default function AdditionalServices({ initialValues }) {
               ))}
             </TextField>
           </Grid>
-          <Grid item md={2} width="inherit" paddingX={1}>
+          <Grid item md={1.5} width="inherit">
             <TextField
               id="outlined-required"
               label="PO PC's"
@@ -523,7 +576,7 @@ export default function AdditionalServices({ initialValues }) {
               }}
             />
           </Grid>
-          <Grid item md={2} width="inherit" paddingX={1}>
+          <Grid item md={1.5} width="inherit">
             <TextField
               id="outlined-required"
               label="Qty"
@@ -542,7 +595,7 @@ export default function AdditionalServices({ initialValues }) {
               }}
             />
           </Grid>
-          <Grid item md={2} width="inherit" paddingX={1}>
+          <Grid item md={1.5} width="inherit">
             <TextField
               fullWidth
               select
@@ -566,7 +619,7 @@ export default function AdditionalServices({ initialValues }) {
               ))}
             </TextField>
           </Grid>
-          <Grid item md={2} width="inherit" paddingX={1}>
+          <Grid item md={1.5} width="inherit">
             <TextField
               id="outlined-required"
               label="Rate"
@@ -585,7 +638,7 @@ export default function AdditionalServices({ initialValues }) {
               }}
             />
           </Grid>
-          <Grid item md={2} width="inherit" paddingX={1}>
+          <Grid item md={1.5} width="inherit">
             <TextField
               id="outlined-required"
               label="Total Amount"
@@ -604,7 +657,7 @@ export default function AdditionalServices({ initialValues }) {
               }}
             />
           </Grid>
-          <Grid item md={2} width="inherit" paddingX={1}>
+          <Grid item md={1.5} width="inherit">
             <TextField
               id="outlined-required"
               label="Cost per Piece"
