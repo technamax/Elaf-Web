@@ -267,7 +267,7 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
           sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
           value={params.row.remarks || ''}
           onKeyDown={(event) => {
-            console.log('Key down: ', event.key);
+            // console.log('Key down: ', event.key);
             event.stopPropagation();
           }}
           onChange={(event) =>

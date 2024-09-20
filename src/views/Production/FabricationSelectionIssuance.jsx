@@ -78,21 +78,22 @@ const FabricationSelectionIssuance = () => {
   const [processType, setProcessType] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const apiRef = useGridApiRef();
 
   const [formData, setFormData] = useState({
     productionId: 0,
     collectionId: '',
-    viewCollectionId: '',
-    processType: '',
-    AssignQty: '',
+    // viewCollectionId: '',
+    processTypeId: '',
+    // AssignQty: '',
     status: '',
     startDate: new Date().toISOString(),
     appId: user.appId,
     createdOn: new Date().toISOString(),
     createdBy: user.empId,
     lastUpdatedOn: new Date().toISOString(),
-    lastUpdatedBy: user.empId,
-    ViewStatus: ''
+    lastUpdatedBy: user.empId
+    // ViewStatus: ''
   });
   console.log('Form Data:', formData); // Debugging line
 
@@ -101,20 +102,12 @@ const FabricationSelectionIssuance = () => {
     setValue(newValue);
   };
   // console.log('initialData', initialData);
-  useEffect(() => {
-    setFormData({
-      // categoryId: initialData?.categoryId || 0,
-      // description: initialData?.description || '',
-      // enabled: initialData?.enabled || '',
-      // appId: initialData?.appId || user.appId,
-      // createdOn: initialData?.createdOn || new Date().toISOString(),
-      // createdBy: initialData?.createdBy || user.empId,
-      // lastUpdatedOn: new Date().toISOString(),
-      // lastUpdatedBy: user.empId
-    });
-  }, [initialData]);
+  // useEffect(() => {
+  //   setFormData({
+  //         });
+  // }, [initialData]);
   const [initialRows, setInitialRows] = useState([]);
-  const [selectedRows, setSelectedRows] = useState([]);
+  // const [selectedRows, setSelectedRows] = useState([]);
 
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
   const handleAccordionToggle = (event, isExpanded) => {
@@ -212,25 +205,26 @@ const FabricationSelectionIssuance = () => {
       setFormData({
         ...formData,
         collectionId: value,
-        productionId: selectedCollection ? selectedCollection.productionId : ''
+        productionId: selectedCollection ? selectedCollection.productionId : '',
+        status: selectedCollection ? selectedCollection.status : ''
       });
       GetFabricForProductionByCollectionId(1, value);
-    } else if (name === 'viewCollectionId') {
-      const selectedViewCollection = productioncollectionList.find(
-        (collection) => collection.collectionId === parseInt(value)
-      );
+      // } else if (name === 'viewCollectionId') {
+      //   const selectedViewCollection = productioncollectionList.find(
+      //     (collection) => collection.collectionId === parseInt(value)
+      //   );
 
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        viewCollectionId: value,
-        ViewStatus: selectedViewCollection ? selectedViewCollection.status : '',
-        productionId: selectedViewCollection
-          ? selectedViewCollection.productionId
-          : ''
-      }));
+      //   setFormData((prevFormData) => ({
+      //     ...prevFormData,
+      //     viewCollectionId: value,
+      //     ViewStatus: selectedViewCollection ? selectedViewCollection.status : '',
+      //     productionId: selectedViewCollection
+      //       ? selectedViewCollection.productionId
+      //       : ''
+      //   }));
 
-      // Trigger refetch after setting the form data, ensuring it has the latest values
-      refetchViewData();
+      //   // Trigger refetch after setting the form data, ensuring it has the latest values
+      //   refetchViewData();
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -288,18 +282,54 @@ const FabricationSelectionIssuance = () => {
   }, [viewData, refetchViewData]);
   console.log(initialRowsView);
 
+  // const handleCellEdit = (params) => {
+  //   const { id, field, value } = params;
+  //   console.log('Editing cell:', params); // Debugging line
+
+  //   if (field === 'AssignQty') {
+  //     setInitialRows((prevRows) =>
+  //       prevRows.map((row) =>
+  //         row.id === id ? { ...row, AssignQty: value } : row
+  //       )
+  //     );
+  //   }
+  // };
   const handleCellEdit = (params) => {
     const { id, field, value } = params;
     console.log('Editing cell:', params); // Debugging line
 
-    if (field === 'AssignQty') {
-      setInitialRows((prevRows) =>
-        prevRows.map((row) =>
-          row.id === id ? { ...row, AssignQty: value } : row
-        )
-      );
-    }
+    setInitialRows((prevRows) =>
+      prevRows.map((row) => {
+        if (row.id === id) {
+          const updatedRow = {
+            ...row,
+            [field]: value,
+            // quantity: row.itpQuantity,
+            // productName: row.fabricName,
+            productionHeaderId: 0,
+            productionHeaderDetId: 0,
+            // expectedQty: Number(expectedQty), // Add expectedQty to the row
+            // shortageQty: Number(shortageQty),
+            appId: user.appId,
+            createdOn: new Date().toISOString(),
+            createdBy: user.empId,
+            lastUpdatedOn: new Date().toISOString(),
+            lastUpdatedBy: user.empId
+          };
+
+          return updatedRow;
+        }
+        return row;
+      })
+    );
   };
+
+  React.useEffect(() => {
+    setFormData({
+      ...formData,
+      productionDetails: initialRows
+    });
+  }, [initialRows, setInitialRows]);
   const columns = [
     // {
     //   field: 'id',
@@ -312,18 +342,18 @@ const FabricationSelectionIssuance = () => {
     },
     {
       field: 'collectionName',
-      headerName: 'Collection Name',
-      flex: 2
+      headerName: 'Collection Name'
+      // flex: 2
     },
     {
       field: 'fabricName',
-      headerName: 'Fabric Name',
-      flex: 2
+      headerName: 'Fabric Name'
+      // flex: 2
     },
     {
       field: 'quantity',
       headerName: 'Quantity',
-      flex: 1,
+      // flex: 1,
       valueGetter: (params) => {
         return params.toLocaleString();
       },
@@ -334,20 +364,20 @@ const FabricationSelectionIssuance = () => {
       )
     },
     {
-      field: 'AssignQty',
+      field: 'assignQty',
       headerName: 'Assign Quantity',
-      flex: 1,
+      // flex: 1,
 
       renderCell: (params) => (
         <SmallTextField
           variant="outlined"
           size="small"
           sx={{ mt: 1, width: 50 }} // Adjust width and height as needed
-          value={params.row.AssignQty || ''}
+          value={params.row.assignQty || ''}
           onChange={(event) =>
             handleCellEdit({
               id: params.id,
-              field: 'AssignQty',
+              field: 'assignQty',
               value: event.target.value
             })
           }
@@ -361,7 +391,7 @@ const FabricationSelectionIssuance = () => {
     {
       field: 'bxQuantity',
       headerName: 'BX Quantity',
-      flex: 1,
+      // flex: 1,
       valueGetter: (params) => {
         return params.toLocaleString();
       }
@@ -369,143 +399,47 @@ const FabricationSelectionIssuance = () => {
 
     {
       field: 'uomName',
-      headerName: 'UOM',
-      flex: 1
+      headerName: 'UOM'
+      // flex: 1
     }
   ];
+
+  // const fetchData = () => {
+  //   apiRef.current.autosizeColumns({
+  //     includeHeaders: true,
+  //     includeOutliers: true
+  //   });
+  // };
+  // React.useEffect(() => {
+  //   fetchData();
+  // });
   const handleTabChange = (newValue) => {
     setValue(newValue);
   };
-  const columnView = [
-    {
-      field: 'sr',
-      headerName: 'Sr#'
-    },
-    // {
-    //   field: 'productionId',
-    //   headerName: 'productionId'
-    // },
-    {
-      field: 'collectionName',
-      headerName: 'Collection Name',
-      flex: 1
-    },
-    {
-      field: 'orderNumber',
-      headerName: 'Order Number',
-      flex: 1
-    },
-    {
-      field: 'processTypeName',
-      headerName: 'Process Type',
-      flex: 1
-    },
-    {
-      field: 'startDate',
-      headerName: 'Start Date',
-      flex: 1,
 
-      valueGetter: (params) => {
-        const date = new Date(params);
-        return date.toLocaleDateString('en-GB', {
-          day: 'numeric',
-          month: 'short',
-          year: '2-digit'
-        });
-      }
-    },
-    {
-      field: 'status',
-      headerName: 'Status',
-      flex: 1
-    },
-
-    {
-      field: 'designCount',
-      headerName: 'Design Count',
-      flex: 1
-    },
-    {
-      field: 'action',
-      headerName: 'Action',
-      flex: 1,
-      renderCell: (params) => (
-        <ButtonGroup
-          variant="outlined"
-          size="small"
-          aria-label="outlined primary button group"
-        >
-          <Button onClick={() => handleTabChange('2')}>Issuance</Button>
-          <Button onClick={() => handleTabChange('3')}>Recieving</Button>
-        </ButtonGroup>
-      ),
-      sortable: false,
-      filterable: false
-    }
-  ];
-  console.log('Selected Rows:', selectedRows); // Debugging line
-
-  const handleRowSelection = (newSelection) => {
-    setSelectedRows(newSelection);
-    console.log('New Selection:', newSelection); // Debugging line
-  };
-  const [savedRowIds, setSavedRowIds] = React.useState([]);
+  console.log('FormData:', formData); // Debugging line
+  // console.log('Selected Rows:', selectedRows); // Debugging line
+  console.log('Initial Rows:', initialRows); // Debugging line
 
   const handleSave = async () => {
-    if (selectedRows.length === 0) {
-      // alert('Please select at least one row before saving!');
-      enqueueSnackbar('Please select at least one row before saving!', {
-        variant: 'warning',
-        autoHideDuration: 5000
-      });
-      return;
+    for (let detail of initialRows) {
+      if (!detail.assignQty) {
+        enqueueSnackbar('Error: Enter assign quantity!', {
+          variant: 'error',
+          autoHideDuration: 5000
+        });
+        return; // Stop further execution
+      }
     }
 
     try {
       console.log('FormData:', formData); // Debugging line
-      console.log('Selected Rows:', selectedRows); // Debugging line
+      // console.log('Selected Rows:', selectedRows); // Debugging line
       console.log('Initial Rows:', initialRows); // Debugging line
-
-      const selectedRowsData = initialRows.filter((row) =>
-        selectedRows.includes(row.id)
-      );
-
-      const productionDetails = selectedRowsData.map((row) => ({
-        productionHeaderDetId: 0,
-        productionHeaderId: formData.productionId || 0,
-        fabricId: row.fabricId,
-        totalQuantity: row.quantity || 0,
-        assignQty: row.AssignQty || '0',
-        status: '',
-        uomId: row.uomId || 0,
-        createdBy: formData.createdBy || 0,
-        createdOn: formData.createdOn || new Date().toISOString(),
-        lastUpdatedBy: formData.lastUpdatedBy || 0,
-        lastUpdatedOn: formData.lastUpdatedOn || new Date().toISOString(),
-        rate: row.rate || 0,
-        tax: row.tax || 0,
-        totalBeforeTax: row.totalBeforeTax || 0,
-        totalAfterTax: row.totalAfterTax || 0
-      }));
-
-      const payload = {
-        productionHeaderId: formData.productionId || 0,
-        productionId: formData.productionId || 0,
-        processTypeId: formData.processType || 0,
-        status: formData.status,
-        startDate: formData.startDate || new Date().toISOString(),
-        createdOn: formData.createdOn || new Date().toISOString(),
-        createdBy: formData.createdBy || 0,
-        lastUpdatedOn: formData.lastUpdatedOn || new Date().toISOString(),
-        lastUpdatedBy: formData.lastUpdatedBy || 0,
-        productionDetails
-      };
-
-      console.log('Payload:', payload); // Debugging line
 
       const response = await axios.post(
         'http://100.42.177.77:83/api/Production/StartProductionProcess',
-        payload
+        formData
       );
 
       if (response.data.success) {
@@ -515,11 +449,25 @@ const FabricationSelectionIssuance = () => {
         });
         console.log('API saved successfully');
         console.log('Response:', response);
-
-        setSavedRowIds((prevSavedRowIds) => [
-          ...prevSavedRowIds,
-          ...selectedRows
-        ]);
+        setInitialRows([]);
+        setFormData({
+          productionId: 0,
+          collectionId: '',
+          // viewCollectionId: '',
+          processTypeId: '',
+          // AssignQty: '',
+          status: '',
+          startDate: new Date().toISOString(),
+          appId: user.appId,
+          createdOn: new Date().toISOString(),
+          createdBy: user.empId,
+          lastUpdatedOn: new Date().toISOString(),
+          lastUpdatedBy: user.empId
+        });
+        // setSavedRowIds((prevSavedRowIds) => [
+        //   ...prevSavedRowIds,
+        //   ...selectedRows
+        // ]);
 
         refetchProductionProcessList();
       } else {
@@ -540,7 +488,6 @@ const FabricationSelectionIssuance = () => {
       );
     }
   };
-  const apiRef = useGridApiRef();
 
   const handleStateChange = (params) => {
     if (apiRef.current && apiRef.current.autosizeColumns) {
@@ -657,8 +604,8 @@ const FabricationSelectionIssuance = () => {
                     fullWidth
                     select
                     label="Select Process"
-                    name="processType"
-                    value={formData.processType}
+                    name="processTypeId"
+                    value={formData.processTypeId}
                     onChange={handleChange}
                     size="small"
                     InputLabelProps={{
@@ -712,137 +659,18 @@ const FabricationSelectionIssuance = () => {
                 </Grid>
                 <Grid item xs={12} mt={1}>
                   <DataGrid
-                    // rows={initialRows}
-                    rows={initialRows.filter(
-                      (row) => !savedRowIds.includes(row.id)
-                    )}
-                    checkboxSelection
+                    rows={initialRows}
+                    // rows={initialRows.filter(
+                    //   (row) => !savedRowIds.includes(row.id)
+                    // )}
+                    // checkboxSelection
                     columns={columns}
-                    disableDelete={true}
+                    // disableDelete={true}
                     getRowId={(row) => row.id}
                     disableRowSelectionOnClick
-                    autosizeOnMount
+                    // autosizeOnMount
                     apiRef={apiRef}
                     onStateChange={handleStateChange}
-                    onRowSelectionModelChange={(newSelectionModel) =>
-                      handleRowSelection(newSelectionModel)
-                    }
-                    sx={{
-                      '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
-                      '& .css-1kyxv1r-MuiDataGrid-root': {
-                        color: 'white',
-                        backgroundColor: '#323232'
-                      },
-                      '& .MuiDataGrid-container--top [role=row]': {
-                        color: 'white',
-                        backgroundColor: '#323232'
-                      },
-                      '& .MuiDataGrid-columnSeparator': {
-                        color: 'white'
-                      },
-                      '& .MuiDataGrid-iconButtonContainer': {
-                        color: 'white'
-                      },
-                      '& .MuiDataGrid-sortIcon': {
-                        color: 'white'
-                      },
-                      '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
-                      '& .MuiDataGrid-row': {
-                        '&.total-summary-row': {
-                          backgroundColor: 'darkgray'
-                        }
-                      }
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            </Card>
-            <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
-            <IssuanceView />
-            {/* <Card variant="outlined">
-              <CardHeader
-                className="css-4rfrnx-MuiCardHeader-root"
-                avatar={<VisibilityOutlinedIcon />}
-                title="View Production Process"
-                titleTypographyProps={{ style: { color: 'white' } }}
-              ></CardHeader>
-              <Grid
-                container
-                spacing={2}
-                width="Inherit"
-                sx={{ paddingY: 2, paddingX: 2 }}
-              >
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Collection1221"
-                    fullWidth
-                    select
-                    size="small"
-                    name="viewCollectionId"
-                    onChange={handleChange}
-                    value={formData.viewCollectionId}
-                    required
-                    disabled={isEdit}
-                    InputLabelProps={{
-                      shrink: true,
-                      sx: {
-                        // set the color of the label when not shrinked
-                        color: 'black'
-                        // fontWeight: 'bold' // Use fontWeight to set the font to bold
-                      }
-                    }}
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  >
-                    {productioncollectionList.map((option) => (
-                      <MenuItem
-                        key={option.collectionId}
-                        value={option.collectionId}
-                      >
-                        {option.collectionName}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} md={3}>
-                  <TextField
-                    label="Status"
-                    fullWidth
-                    select
-                    size="small"
-                    name="ViewStatus"
-                    onChange={handleChange}
-                    value={formData.ViewStatus}
-                    required
-                    disabled={isEdit}
-                    InputLabelProps={{
-                      shrink: true,
-                      sx: {
-                        // set the color of the label when not shrinked
-                        color: 'black'
-                        // fontWeight: 'bold' // Use fontWeight to set the font to bold
-                      }
-                    }}
-                    // error={!!formErrors.collectionName}
-                    // helperText={formErrors.collectionName}
-                  >
-                    {statusLookup.map((option) => (
-                      <MenuItem key={option.statusId} value={option.statusId}>
-                        {option.statusDesc}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-                <Grid item xs={12} mt={2}>
-                  <DataGrid
-                    rows={initialRowsView}
-                    columns={columnView}
-                    disableDelete={true}
-                    // getRowId={(row) => row.id}
-                    disableRowSelectionOnClick
-                    autosizeOnMount
-                    apiRef={apiRef}
-                    // onStateChange={handleStateChange}
                     // onRowSelectionModelChange={(newSelectionModel) =>
                     //   handleRowSelection(newSelectionModel)
                     // }
@@ -875,14 +703,16 @@ const FabricationSelectionIssuance = () => {
                   />
                 </Grid>
               </Grid>
-            </Card> */}
+            </Card>
+            <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
+            <IssuanceView />
           </TabPanel>
           <TabPanel value="2">
             <FabricReceiving />
           </TabPanel>
-          <TabPanel value="3">
+          {/* <TabPanel value="3">
             <IssuanceView />
-          </TabPanel>
+          </TabPanel> */}
         </TabContext>
       </Box>
     </MainCard>
