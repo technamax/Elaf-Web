@@ -139,23 +139,25 @@ const ReuseableDataGrid = ({
           renderCell: (params) => (
             <div style={{ display: 'flex' }}>
               <ButtonGroup size="small" variant="text">
-                {!disableEdit && (
-                  <IconButton
-                    aria-label="Edit"
-                    onClick={() => handleEdit(params.row)}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                )}
-                {!disableDelete && (
-                  <IconButton
-                    aria-label="delete"
-                    color="primary"
-                    onClick={() => handleClickOpen(params.row[deleteBy])}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                )}
+                {/* {!disableEdit && ( */}
+                <IconButton
+                  aria-label="Edit"
+                  onClick={() => handleEdit(params.row)}
+                  disabled={disableEdit}
+                >
+                  <EditIcon />
+                </IconButton>
+                {/* )} */}
+                {/* {!disableDelete && ( */}
+                <IconButton
+                  aria-label="delete"
+                  color="primary"
+                  onClick={() => handleClickOpen(params.row[deleteBy])}
+                  disabled={disableDelete}
+                >
+                  <DeleteIcon />
+                </IconButton>
+                {/* )} */}
               </ButtonGroup>
             </div>
           )

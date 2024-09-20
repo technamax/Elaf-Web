@@ -11,7 +11,8 @@ const AssignVendorFormTable = ({
   additionalProcessData,
   setAdditionalProcessData,
   refetchAdditionalProcessList,
-  handleClickOpen
+  handleClickOpen,
+  productionStatus
 }) => {
   const { user } = useUser();
   const [initialRows, setInitialRows] = useState([]);
@@ -846,7 +847,9 @@ const AssignVendorFormTable = ({
             variant="contained"
             size="small"
             onClick={handleSave}
-            disabled={!formData.remainingPcsPerComponent}
+            disabled={
+              !formData.remainingPcsPerComponent || productionStatus === 3
+            }
           >
             Save
           </Button>
@@ -864,6 +867,8 @@ const AssignVendorFormTable = ({
           <ReuseableDataGrid
             iColumns={columns}
             initialRows={initialRows}
+            disableDelete={productionStatus === 3}
+            disableEdit={productionStatus === 3}
             setInitialData={setInitialData}
             deleteApi={deleteApi}
             deleteBy="additionalProcessDetId"

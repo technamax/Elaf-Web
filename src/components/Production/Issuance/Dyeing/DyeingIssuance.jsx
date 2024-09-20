@@ -104,6 +104,7 @@ const DyeingIssuance = ({ rowData }) => {
     stockReceived: 0,
     remainingQuantity: 0,
     quantity: 0,
+    balance: 0,
     remarks: '',
 
     appId: user.appId,
@@ -422,10 +423,51 @@ const DyeingIssuance = ({ rowData }) => {
   ];
   console.log('productions', productions);
 
+  // const handleCellEdit = React.useCallback(
+  //   (params) => {
+  //     const { id, field, value } = params;
+  //     console.log('Editing cell:', params); // Debugging line
+
+  //     setPoDetails((prevRows) =>
+  //       prevRows.map((row) => {
+  //         if (row.id === id) {
+  //           const remaining = row.quantity - row.assignQuantity;
+  //           const updatedRow = {
+  //             ...row,
+  //             [field]: value,
+  //             issuanceId: 0,
+  //             issuanceDetId: 0,
+  //             remaining: Number(remaining),
+  //             appId: user.appId,
+  //             createdOn: new Date().toISOString(),
+  //             createdBy: user.empId,
+  //             lastUpdatedOn: new Date().toISOString(),
+  //             lastUpdatedBy: user.empId
+  //           };
+
+  //           // Recalculate the totalBeforeTax when rate or quantity is updated
+  //           // if (field === 'rate' || field === 'quantity') {
+  //           //   updatedRow.totalBeforeTax = updatedRow.rate * updatedRow.quantity;
+  //           // }
+
+  //           // // Optionally, update totalAfterTax if it's a function of totalBeforeTax and tax
+  //           // if (field === 'tax' || field === 'rate' || field === 'quantity') {
+  //           //   updatedRow.totalAfterTax =
+  //           //     updatedRow.totalBeforeTax +
+  //           //     updatedRow.totalBeforeTax * (updatedRow.tax / 100);
+  //           // }
+
+  //           return updatedRow;
+  //         }
+  //         return row;
+  //       })
+  //     );
+  //   },
+  //   [setPoDetails, user.appId, user.empId]
+  // );
   const handleCellEdit = React.useCallback(
     (params) => {
       const { id, field, value } = params;
-      console.log('Editing cell:', params); // Debugging line
 
       setPoDetails((prevRows) =>
         prevRows.map((row) => {
@@ -444,17 +486,15 @@ const DyeingIssuance = ({ rowData }) => {
               lastUpdatedBy: user.empId
             };
 
-            // Recalculate the totalBeforeTax when rate or quantity is updated
-            // if (field === 'rate' || field === 'quantity') {
-            //   updatedRow.totalBeforeTax = updatedRow.rate * updatedRow.quantity;
-            // }
-
-            // // Optionally, update totalAfterTax if it's a function of totalBeforeTax and tax
-            // if (field === 'tax' || field === 'rate' || field === 'quantity') {
-            //   updatedRow.totalAfterTax =
-            //     updatedRow.totalBeforeTax +
-            //     updatedRow.totalBeforeTax * (updatedRow.tax / 100);
-            // }
+            // Auto-select the row if a value is entered in the text field
+            if (field === 'issuanceQuantity' && value > 0) {
+              setRowSelectionModel((prevSelectionModel) => {
+                if (!prevSelectionModel.includes(id)) {
+                  return [...prevSelectionModel, id]; // Add the row ID to the selection model
+                }
+                return prevSelectionModel;
+              });
+            }
 
             return updatedRow;
           }
@@ -462,8 +502,9 @@ const DyeingIssuance = ({ rowData }) => {
         })
       );
     },
-    [setPoDetails, user.appId, user.empId]
+    [setPoDetails, setRowSelectionModel, user.appId, user.empId]
   );
+
   useEffect(() => {
     setFormData((prevFormData) => ({
       ...formData
@@ -534,6 +575,7 @@ const DyeingIssuance = ({ rowData }) => {
             })
           }
           type="number"
+          disabled={params.row.quantity === params.row.assignQuantity}
           InputProps={{
             style: { fontSize: '0.875rem' } // Ensure the font size is suitable
           }}
@@ -1001,20 +1043,7 @@ const DyeingIssuance = ({ rowData }) => {
               // helperText={formErrors.brandId}
             ></TextField>
           </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              label="Remarks"
-              fullWidth
-              size="small"
-              name="remarks"
-              onChange={handleChange}
-              value={formData.remarks}
-              required
-              // disabled={isEdit}
-              // error={!!formErrors.collectionName}
-              // helperText={formErrors.collectionName}
-            />
-          </Grid>
+
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -1085,13 +1114,29 @@ const DyeingIssuance = ({ rowData }) => {
               // helperText={formErrors.brandId}
             ></TextField>
           </Grid>
-          <Grid item xs={12} textAlign="right">
+          <Grid item xs={3} textAlign="right">
             <Typography
               variant="overline"
               sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
             >
               Balance : {formData.balance}
             </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Remarks"
+              fullWidth
+              size="small"
+              multiline
+              maxRows={3}
+              name="remarks"
+              onChange={handleChange}
+              value={formData.remarks}
+              required
+              // disabled={isEdit}
+              // error={!!formErrors.collectionName}
+              // helperText={formErrors.collectionName}
+            />
           </Grid>
           <Grid item xs={12}>
             <DataGrid

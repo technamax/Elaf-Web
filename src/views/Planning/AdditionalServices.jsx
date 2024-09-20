@@ -722,6 +722,8 @@ export default function AdditionalServices({ initialValues }) {
         <ReuseableDataGrid
           iColumns={columns}
           initialRows={rows}
+          disableDelete={formData.productionStatus === 3}
+          disableEdit={formData.productionStatus === 3}
           isLoading={isLoading}
           setInitialData={setInitialData}
           deleteApi={deleteApi}

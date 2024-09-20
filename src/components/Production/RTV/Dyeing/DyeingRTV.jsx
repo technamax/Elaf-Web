@@ -171,8 +171,8 @@ const DyeingRTV = () => {
       // flex: 1
     },
     {
-      field: 'issuanceId',
-      headerName: 'issuance#'
+      field: 'rtvNo',
+      headerName: 'RTV#'
     },
     {
       field: 'poName',

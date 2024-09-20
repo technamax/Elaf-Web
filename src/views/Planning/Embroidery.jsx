@@ -1488,6 +1488,8 @@ const Embroidery = ({ initialValues }) => {
             <ReuseableDataGrid
               iColumns={columns}
               initialRows={rows}
+              disableDelete={formData.productionStatus === 3}
+              disableEdit={formData.productionStatus === 3}
               setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="embroideryId"
@@ -1528,6 +1530,7 @@ const Embroidery = ({ initialValues }) => {
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
                 <EmbroideryAssignVendor
                   initialFormData={initialFormData}
+                  productionStatus={formData.productionStatus}
                   setInitialFormData={setInitialFormData}
                   refetchDyeingPrintingData={refetchEmbroideryList}
                   handleClickOpen={handleClickOpen}

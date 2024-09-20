@@ -1741,6 +1741,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
             <ReuseableDataGrid
               iColumns={columns}
               initialRows={rows}
+              disableDelete={formData.productionStatus === 3}
+              disableEdit={formData.productionStatus === 3}
               setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="planningId"

@@ -1535,6 +1535,8 @@ const Schiffli = ({ initialValues }) => {
             <ReuseableDataGrid
               iColumns={columns}
               initialRows={rowsWithFooter}
+              disableDelete={formData.productionStatus === 3}
+              disableEdit={formData.productionStatus === 3}
               setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="schiffiliId"
