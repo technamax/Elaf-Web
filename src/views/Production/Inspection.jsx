@@ -11,7 +11,10 @@ import DyeingReceiving from 'components/Production/Receiving/Dyeing/DyeingReceiv
 // import EmbroideryReceiving from 'components/Production/Receiving/Embroidery/EmbroideryReceiving';
 import * as React from 'react';
 import { useLocation } from 'react-router-dom';
-import { useGetInspectionDetailsQuery } from 'api/store/Apis/productionApi';
+import {
+  useGetInspectionDetailsQuery,
+  useGetDyeingPoListQuery
+} from 'api/store/Apis/productionApi';
 // import { useUser } from 'context/User';
 import DyeingInspection from '../../components/Production/Inspection/Dyeing/DyeingInspection';
 
@@ -67,18 +70,50 @@ const Inspection = () => {
 
   const [formData, setFormData] = useState({
     issuanceId: '',
+    poId: '',
     appId: user.appId,
     createdOn: new Date().toISOString(),
     createdBy: user.empId,
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: user.empId
   });
+  const [polist, setPolist] = useState([]);
+  const { data, error, isLoading, refetch } = useGetDyeingPoListQuery();
+
   const [initialRows, setInitialRows] = useState([]);
   const [triggerSearch, setTriggerSearch] = useState(false);
   console.log('initialRows', initialRows);
+
+  useEffect(() => {
+    if (data) {
+      setPolist(
+        data.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [data, refetch]);
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (name === 'poId') {
+      const selectedPO = polist.find(
+        (collection) => collection.poId === parseInt(value)
+      );
+
+      setFormData({
+        ...formData,
+        poId: value,
+        issuanceId: selectedPO ? selectedPO.issuanceId : ''
+        // ogpNumber: selectedPO ? selectedPO.ogpNumber : '',
+        // issuanceName: selectedPO
+        //   ? `ISS-${selectedPO.issuanceId}-${selectedPO.issuanceQuantity}`
+        //   : ''
+        // wastage: selectedPO ? selectedPO.wastage : ''
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSearch = async () => {
@@ -440,6 +475,25 @@ const Inspection = () => {
                   width="Inherit"
                   sx={{ paddingY: 2, paddingX: 2 }}
                 >
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      fullWidth
+                      select
+                      label="PO#"
+                      name="poId"
+                      value={formData.poId}
+                      onChange={handleChange}
+                      size="small"
+                      // error={!!formErrors.brandId}
+                      // helperText={formErrors.brandId}
+                    >
+                      {polist.map((option) => (
+                        <MenuItem key={option.poId} value={option.poId}>
+                          {option.poName}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
                   <Grid item xs={12} md={3}>
                     <TextField
                       label="Enter Issuance Number"

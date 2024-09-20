@@ -1280,7 +1280,7 @@ const DyeingIssuance = ({ rowData }) => {
                         <DyeingIssuanceView
                           iss={iss}
                           handleClose={handleClose}
-                          refetchIssuanceData={refetchIssuanceData}
+                          refetchData={refetchIssuanceData}
                         />
                       </DialogContent>
                     </Dialog>

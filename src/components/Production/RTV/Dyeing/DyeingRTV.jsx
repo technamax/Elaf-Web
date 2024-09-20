@@ -41,7 +41,8 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
 import SSRSReport from '../../../../views/DetailedReports/Reports';
-// import ReceiveGRN from './ReceiveGRN';
+// import RTVOgp from './RTVOgp';
+import DyeingIssuanceView from 'components/Production/Issuance/Dyeing/DyeingIssuanceView';
 
 //////
 import * as React from 'react';
@@ -175,39 +176,39 @@ const DyeingRTV = () => {
       headerName: 'RTV#'
     },
     {
-      field: 'poName',
-      headerName: 'PO#'
+      field: 'fabricName',
+      headerName: 'Fabric'
     },
     {
-      field: 'igpNumber',
-      headerName: 'IGP#'
+      field: 'vendorName',
+      headerName: 'Vendor'
     },
     {
-      field: 'collectionName',
-      headerName: 'Production'
+      field: 'receivedQty',
+      headerName: 'Received'
     },
     {
-      field: 'processTypeName',
-      headerName: 'Process'
+      field: 'rejectedQty',
+      headerName: 'Rejected'
     },
-    // {
-    //   field: 'expectedReturnDate',
-    //   headerName: 'Expected Return Date',
-    //   valueGetter: (params) => {
-    //     const date = new Date(params);
-    //     return date.toLocaleDateString('en-GB', {
-    //       day: 'numeric',
-    //       month: 'short',
-    //       year: '2-digit'
-    //     });
-    //   }
-    // },
-    // {
-    //   field: 'fabricCount',
-    //   headerName: 'Fabrics'
-    // },
     {
-      field: 'statusName',
+      field: 'rejectionReason',
+      headerName: 'Reason'
+    },
+    {
+      field: 'rejectionDate',
+      headerName: 'Rejected On',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'actionTaken',
       headerName: 'Status',
       renderCell: (params) => {
         const chipColor = 'primary.dark';
@@ -347,12 +348,13 @@ const DyeingRTV = () => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                {/* <ReceiveGRN
+                <DyeingIssuanceView
                   iss={iss}
                   handleClose={handleClose}
                   refetchData={refetch}
+                  isRejected
                   // refetchIssuanceData={refetchIssuanceData}
-                /> */}
+                />
               </DialogContent>
             </Dialog>
             <Dialog open={open2} onClose={handleClose2} fullWidth maxWidth="xl">
@@ -385,7 +387,7 @@ const DyeingRTV = () => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                <SSRSReport rId={14} OGPNumber={iss.igpNumber} />
+                {/* <SSRSReport rId={14} OGPNumber={iss.igpNumber} /> */}
               </DialogContent>
             </Dialog>
           </Grid>

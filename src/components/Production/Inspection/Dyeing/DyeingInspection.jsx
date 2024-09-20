@@ -331,15 +331,15 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
           size="small"
           // fullWidth
           sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
-          value={params.row.rejectedQty || ''}
+          value={params.row.rejectedQty || 0}
           onChange={(event) =>
             handleCellEdit({
               id: params.id,
               field: 'rejectedQty',
-              value: event.target.value
+              value: Number(event.target.value)
             })
           }
-          // type="number"
+          type="number"
           InputProps={{
             style: { fontSize: '0.875rem' } // Ensure the font size is suitable
           }}
@@ -356,6 +356,10 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
           // fullWidth
           sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
           value={params.row.remarks || ''}
+          onKeyDown={(event) => {
+            console.log('Key down: ', event.key);
+            event.stopPropagation();
+          }}
           onChange={(event) =>
             handleCellEdit({
               id: params.id,

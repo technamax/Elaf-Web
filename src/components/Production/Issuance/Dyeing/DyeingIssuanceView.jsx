@@ -11,16 +11,17 @@ import { useSnackbar } from 'notistack';
 import { useUser } from 'context/User';
 import axios from 'axios';
 
-const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
+const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
   const { user } = useUser();
   const [formData, setFormData] = useState({
     poId: iss.poId,
     issuanceId: iss.issuanceId,
-    processTypeId: iss.processTypeId,
+    rejectionId: iss.rejectionId || null,
+    processTypeId: iss.processTypeId || 1223,
     dispatchedQuantity: '',
     dispatchFrom: '',
     destination: '',
-    isRejectedOGP: 'N',
+    isRejectedOGP: isRejected ? 'Y' : 'N',
     remarks: '',
     truckId: '',
     driverId: '',
@@ -151,7 +152,7 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
         `http://100.42.177.77:83/api/Issuance/GenerateOGP`,
         formData
       );
-      refetchIssuanceData();
+      refetchData();
       if (!response.data.success) {
         enqueueSnackbar(`${response.data.message} !`, {
           variant: 'error',
@@ -226,17 +227,22 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
         <Grid item xs={12} md={3}>
           <TextField
             size="small"
+            type={!iss.issuanceDate ? 'Date' : null}
             // type="date"
             label="Issuance Date"
             name="issuanceDate"
-            value={new Date(iss.issuanceDate).toLocaleDateString('en-GB', {
-              day: 'numeric',
-              month: 'short',
-              year: '2-digit'
-            })}
+            value={
+              iss.issuanceDate
+                ? new Date(iss.issuanceDate).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: '2-digit'
+                  })
+                : formData.issuanceDate
+            }
             // onChange={handleChange}
             fullWidth
-            disabled
+            disabled={iss.issuanceDate}
             // error={!!formErrors.launchDate}
             // helperText={formErrors.launchDate}
             InputLabelProps={{
@@ -251,20 +257,21 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
         <Grid item xs={12} md={3}>
           <TextField
             size="small"
-            // type="date"
+            type={!iss.issuanceDate ? 'Date' : null}
             label="ExpectedReturn Date"
             name="expectedReturnDate"
-            value={new Date(iss.expectedReturnDate).toLocaleDateString(
-              'en-GB',
-              {
-                day: 'numeric',
-                month: 'short',
-                year: '2-digit'
-              }
-            )}
+            value={
+              iss.expectedReturnDate
+                ? new Date(iss.expectedReturnDate).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: '2-digit'
+                  })
+                : formData.expectedReturnDate
+            }
             // onChange={handleChange}
             fullWidth
-            disabled
+            disabled={iss.expectedReturnDate}
             // error={!!formErrors.expectedReturnDate}
             // helperText={formErrors.expectedReturnDate}
             InputLabelProps={{
@@ -302,7 +309,7 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
             // select
             label="Issuance Quantity"
             name="issuanceQuantity"
-            value={iss.issuanceQuantity}
+            value={iss.issuanceQuantity || iss.rejectedQty}
             // onChange={handleChange}
             size="small"
             // error={!!formErrors.brandId}
