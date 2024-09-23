@@ -79,9 +79,9 @@ const DyeingReceiving = () => {
     });
   const { data: receivingData, refetch: refetchReceivingData } =
     useGetReceivingHeaderQuery(
-      { issuanceId: issId, processTypename: 'Dyeing' },
+      { poId: formData.poId, processTypename: 'Dyeing', status: 8 },
       {
-        skip: !issId // Skip the query if no collection is selected
+        skip: !formData.poId // Skip the query if no collection is selected
       }
     );
 

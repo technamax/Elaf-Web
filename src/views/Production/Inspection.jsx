@@ -117,13 +117,14 @@ const Inspection = () => {
   };
 
   const handleSearch = async () => {
-    if (formData.issuanceId) {
+    if (formData.poId) {
       try {
         const response = await axios.get(
           `http://100.42.177.77:83/api/Receiving/GetReceivingHeader`,
           {
             params: {
-              issuanceId: formData.issuanceId,
+              poId: formData.poId,
+              status: 4,
               processTypename: 'Dyeing' // assuming you want to use a fixed status of 7
             }
           }
@@ -494,7 +495,7 @@ const Inspection = () => {
                       ))}
                     </TextField>
                   </Grid>
-                  <Grid item xs={12} md={3}>
+                  {/* <Grid item xs={12} md={3}>
                     <TextField
                       label="Enter Issuance Number"
                       type="number"
@@ -510,7 +511,7 @@ const Inspection = () => {
                       value={formData.issuanceId}
                       required
                     />
-                  </Grid>
+                  </Grid> */}
                   <Grid item xs={12} md={3} sx={{ mt: 0.5 }}>
                     <Button
                       variant="contained"

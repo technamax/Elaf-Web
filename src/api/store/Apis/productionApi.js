@@ -119,8 +119,8 @@ export const productionApi = createApi({
       query: () => `Receiving/GetDyeingPoList?AppId=1`
     }),
     getReceivingHeader: builder.query({
-      query: ({ issuanceId, processTypename }) =>
-        `Receiving/GetReceivingHeader?issuanceId=${issuanceId}&processTypename=${processTypename}`
+      query: ({ poId, processTypename, status }) =>
+        `Receiving/GetReceivingHeader?poId=${poId}&processTypename=${processTypename}&status=${status}`
     }),
     getInspectionForGRNHeader: builder.query({
       query: () => `GRN/GetInspectionForGRNHeader?appId=1`
