@@ -111,8 +111,8 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
       headerName: 'Fabric'
     },
     {
-      field: 'issuanceQuantity',
-      headerName: 'Quantity Issued',
+      field: 'dispatchedQuantity',
+      headerName: 'Quantity',
       valueGetter: (params) => {
         return params.toLocaleString();
       }
@@ -325,6 +325,22 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
         );
         return; // Stop further execution
       }
+      // else if (
+      //   detail.dispatchedQuantity <
+      //   (detail.gradeAQty || 0) +
+      //     (detail.gradeBQty || 0) +
+      //     (detail.gradeCPQty || 0) +
+      //     (detail.others1Qty || 0)
+      // ) {
+      //   enqueueSnackbar(
+      //     'Error: Received quantity cannot be greater than issuance quantity!',
+      //     {
+      //       variant: 'error',
+      //       autoHideDuration: 5000
+      //     }
+      //   );
+      //   return; // Stop further execution
+      // }
     }
     try {
       const response = await axios.post(

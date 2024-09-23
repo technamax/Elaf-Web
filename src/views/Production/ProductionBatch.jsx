@@ -451,7 +451,7 @@ const ProductionBatch = () => {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} md={8}>
+                <Grid item xs={12}>
                   <TextField
                     label="Remarks"
                     fullWidth
@@ -530,7 +530,7 @@ const ProductionBatch = () => {
             {/* </Card> */}
           </TabPanel>
           <TabPanel value="2">
-            <ViewProductionBatch />
+            <ViewProductionBatch handleChangeTabs={handleChangeTabs} />
           </TabPanel>
         </TabContext>
       </Box>

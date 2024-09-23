@@ -22,12 +22,12 @@ import { useUser } from 'context/User';
 import axios from 'axios';
 import SSRSReport from '../../../../views/DetailedReports/Reports';
 
-const OGPView = ({ po, handleClose, refetchIssuanceData }) => {
+const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
   const { user } = useUser();
 
   const [formData, setFormData] = useState({
     poId: po || 0,
-    issuanceId: ''
+    issuanceId: issId || ''
     // processTypeId: iss?.processTypeId || 0,
     // dispatchedQuantity: '',
     // dispatchFrom: '',
@@ -120,10 +120,10 @@ const OGPView = ({ po, handleClose, refetchIssuanceData }) => {
       field: 'vendorName',
       headerName: 'Vendor'
     },
-    {
-      field: 'issuanceQuantity',
-      headerName: 'Issuance'
-    },
+    // {
+    //   field: 'issuanceQuantity',
+    //   headerName: 'Issuance'
+    // },
     {
       field: 'dispatchedQuantity',
       headerName: 'Dispatch'
@@ -152,12 +152,12 @@ const OGPView = ({ po, handleClose, refetchIssuanceData }) => {
         });
       }
     },
+    // {
+    //   field: 'fabricCount',
+    //   headerName: 'Fabrics'
+    // },
     {
-      field: 'fabricCount',
-      headerName: 'Fabrics'
-    },
-    {
-      field: 'ogpStatus',
+      field: 'statusName',
       headerName: 'Status'
     },
     {
@@ -228,7 +228,7 @@ const OGPView = ({ po, handleClose, refetchIssuanceData }) => {
         width="Inherit"
         // sx={{ paddingY: 2, paddingX: 2 }}
       >
-        <Grid item xs={12} md={3}>
+        {/* <Grid item xs={12} md={3}>
           <TextField
             fullWidth
             // disabled
@@ -241,7 +241,7 @@ const OGPView = ({ po, handleClose, refetchIssuanceData }) => {
             // error={!!formErrors.brandId}
             // helperText={formErrors.brandId}
           ></TextField>
-        </Grid>
+        </Grid> */}
         {/* <Grid item xs={2} sx={{ mt: 0.5 }}>
           <Button
             variant="contained"
@@ -252,6 +252,14 @@ const OGPView = ({ po, handleClose, refetchIssuanceData }) => {
             Generate OGP
           </Button>
         </Grid> */}
+        <Grid item xs={3} textAlign="right">
+          <Typography
+            variant="overline"
+            sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
+          >
+            Issuance Quantity : {issuanceDetails[0].issuanceQuantity}
+          </Typography>
+        </Grid>
       </Grid>
       <Grid
         container

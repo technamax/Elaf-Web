@@ -639,7 +639,7 @@ const FabricReceiving = () => {
           <TextField
             fullWidth
             select
-            label="Select ITP"
+            label="Issuance Name"
             name="itpId"
             value={formData.itpId}
             onChange={handleChange}
@@ -656,7 +656,7 @@ const FabricReceiving = () => {
           >
             {itps.map((option) => (
               <MenuItem key={option.id} value={option.itpId}>
-                {option.collectionName}
+                {option.issuanceName}
               </MenuItem>
             ))}
           </TextField>
@@ -716,6 +716,7 @@ const FabricReceiving = () => {
                     setFabrics={setFabrics}
                     stockId={stockId}
                     handleClose={handleClose}
+                    initialFormData={initialFormData}
                     refetchStockData={refetchStockData}
                   />
                 </Grid>

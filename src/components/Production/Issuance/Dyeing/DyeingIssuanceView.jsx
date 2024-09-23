@@ -302,35 +302,6 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
             ))}
           </TextField>
         </Grid>
-        <Grid item xs={12} md={1.5}>
-          <TextField
-            fullWidth
-            disabled
-            // select
-            label="Issuance Quantity"
-            name="issuanceQuantity"
-            value={iss.issuanceQuantity || iss.rejectedQty}
-            // onChange={handleChange}
-            size="small"
-            // error={!!formErrors.brandId}
-            // helperText={formErrors.brandId}
-          ></TextField>
-        </Grid>
-        <Grid item xs={12} md={1.5}>
-          <TextField
-            fullWidth
-            // disabled
-            // select
-            type="Number"
-            label="DispatchedQuantity"
-            name="dispatchedQuantity"
-            value={formData.dispatchedQuantity}
-            onChange={handleChange}
-            size="small"
-            // error={!!formErrors.brandId}
-            // helperText={formErrors.brandId}
-          ></TextField>
-        </Grid>
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
@@ -403,6 +374,50 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
             // helperText={formErrors.brandId}
           ></TextField>
         </Grid>
+
+        <Grid item xs={12} md={1.5}>
+          <TextField
+            fullWidth
+            disabled
+            // select
+            label="Issuance Quantity"
+            name="issuanceQuantity"
+            value={iss.issuanceQuantity || iss.rejectedQty}
+            // onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          ></TextField>
+        </Grid>
+        <Grid item xs={12} md={1.5}>
+          <TextField
+            fullWidth
+            disabled
+            // select
+            label="Remaining Quantity"
+            name="issuanceQuantity"
+            value={iss.issuanceQuantity - iss.dispatchedQuantity}
+            // onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          ></TextField>
+        </Grid>
+        <Grid item xs={12} md={1.5}>
+          <TextField
+            fullWidth
+            // disabled
+            // select
+            type="Number"
+            label="DispatchedQuantity"
+            name="dispatchedQuantity"
+            value={formData.dispatchedQuantity}
+            onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          ></TextField>
+        </Grid>
       </Grid>
       <Grid
         container
@@ -426,7 +441,7 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
             variant="contained"
             size="small"
             onClick={handleOgp}
-            disabled={iss.status === 9}
+            // disabled={iss.status === 9}
           >
             Generate OGP
           </Button>

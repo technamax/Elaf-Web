@@ -246,14 +246,48 @@ const DyeingReceiving = () => {
       headerName: 'Total',
       valueGetter: (params) => {
         return params.toLocaleString();
+      },
+      renderCell: (params) => {
+        // const chipColor = 'primary.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor: 'primary.dark',
+              // chipColor === 'primary' || chipColor === 'default'
+              //   ? undefined
+              //   : chipColor,
+              color: 'white'
+              // chipColor === 'primary' || chipColor === 'default'
+              //   ? undefined
+              //   : 'white'
+            }}
+            // color="primary"
+            // {
+            //   chipColor === 'green'
+            //   // ? 'primary'
+            //   // : chipColor === 'default'
+            //   //   ? 'default'
+            //   //   : undefined
+            // }
+          />
+        );
+      }
+    },
+    {
+      field: 'dispatchedQuantity',
+      headerName: 'Dispatched',
+      valueGetter: (params) => {
+        return params.toLocaleString();
       }
     },
     {
       field: 'receivedQty',
-      headerName: 'Received',
-      valueGetter: (params, row) => {
-        return params - row.shortageQty;
-      }
+      headerName: 'Received'
+      // valueGetter: (params, row) => {
+      //   return params - row.shortageQty;
+      // }
     },
     {
       field: 'issuanceDate',
@@ -323,6 +357,7 @@ const DyeingReceiving = () => {
               size="small"
               color="primary"
               onClick={() => handleClickOpen(params.row)}
+              disabled={params.row.status !== 9}
             >
               Generate IGP
             </Button>

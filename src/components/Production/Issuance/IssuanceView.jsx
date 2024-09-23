@@ -280,7 +280,7 @@ const IssuanceView = () => {
           aria-label="outlined primary button group"
         >
           <Button onClick={() => handleClickOpen(params.row)}>View</Button>
-          <Button onClick={handleIssuance}>Issuance</Button>
+          {/* <Button onClick={handleIssuance}>Issuance</Button> */}
         </ButtonGroup>
       ),
       sortable: false,
