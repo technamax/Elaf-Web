@@ -39,7 +39,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
 import SSRSReport from '../../../../views/DetailedReports/Reports';
-
+import StatusChip from '../../../../components/StatusChip';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
@@ -314,39 +314,46 @@ const DyeingReceiving = () => {
       }
     },
     {
-      field: 'fabricCount',
-      headerName: 'Fabrics'
-    },
-    {
       field: 'statusName',
       headerName: 'Status',
       renderCell: (params) => {
-        const chipColor = 'primary.dark';
-
-        return (
-          <Chip
-            label={params.value}
-            sx={{
-              backgroundColor:
-                chipColor === 'primary' || chipColor === 'default'
-                  ? undefined
-                  : chipColor,
-              color:
-                chipColor === 'primary' || chipColor === 'default'
-                  ? undefined
-                  : 'white'
-            }}
-            color={
-              chipColor === 'primary'
-                ? 'primary'
-                : chipColor === 'default'
-                  ? 'default'
-                  : undefined
-            }
-          />
-        );
+        return <StatusChip status={params.value} />;
       }
     },
+    // {
+    //   field: 'fabricCount',
+    //   headerName: 'Fabrics'
+    // },
+    // {
+    //   field: 'statusName',
+    //   headerName: 'Status',
+    //   renderCell: (params) => {
+    //     const chipColor = 'primary.dark';
+
+    //     return (
+    //       <Chip
+    //         label={params.value}
+    //         sx={{
+    //           backgroundColor:
+    //             chipColor === 'primary' || chipColor === 'default'
+    //               ? undefined
+    //               : chipColor,
+    //           color:
+    //             chipColor === 'primary' || chipColor === 'default'
+    //               ? undefined
+    //               : 'white'
+    //         }}
+    //         color={
+    //           chipColor === 'primary'
+    //             ? 'primary'
+    //             : chipColor === 'default'
+    //               ? 'default'
+    //               : undefined
+    //         }
+    //       />
+    //     );
+    //   }
+    // },
     {
       field: 'Actions',
       headerName: 'Actions',
@@ -384,13 +391,13 @@ const DyeingReceiving = () => {
     { field: 'id', headerName: 'Sr #' },
     { field: 'collectionName', headerName: 'Collection Name' },
     { field: 'poName', headerName: 'PO' },
-    {
-      field: 'ogpNumber',
-      headerName: 'OGP Number',
-      renderCell: (params) => {
-        <span style={{ fontWeight: 'bolder' }}>{params.value}</span>;
-      }
-    },
+    // {
+    //   field: 'ogpNumber',
+    //   headerName: 'OGP Number',
+    //   renderCell: (params) => {
+    //     <span style={{ fontWeight: 'bolder' }}>{params.value}</span>;
+    //   }
+    // },
     { field: 'igpNumber', headerName: 'IGP Number' },
     {
       field: 'igpDate',
@@ -419,37 +426,44 @@ const DyeingReceiving = () => {
 
     { field: 'receivedQty', headerName: 'Received' },
     { field: 'processTypename', headerName: 'Process Type' },
+    // {
+    //   field: 'statusName',
+    //   headerName: 'Status',
+    //   renderCell: (params) => {
+    //     const chipColor = 'primary.dark';
+    //     if (params.value === null) {
+    //       return;
+    //     } else {
+    //       return (
+    //         <Chip
+    //           label={params.value}
+    //           sx={{
+    //             backgroundColor:
+    //               chipColor === 'primary' || chipColor === 'default'
+    //                 ? undefined
+    //                 : chipColor,
+    //             color:
+    //               chipColor === 'primary' || chipColor === 'default'
+    //                 ? undefined
+    //                 : 'white'
+    //           }}
+    //           color={
+    //             chipColor === 'primary'
+    //               ? 'primary'
+    //               : chipColor === 'default'
+    //                 ? 'default'
+    //                 : undefined
+    //           }
+    //         />
+    //       );
+    //     }
+    //   }
+    // },
     {
       field: 'statusName',
       headerName: 'Status',
       renderCell: (params) => {
-        const chipColor = 'primary.dark';
-        if (params.value === null) {
-          return;
-        } else {
-          return (
-            <Chip
-              label={params.value}
-              sx={{
-                backgroundColor:
-                  chipColor === 'primary' || chipColor === 'default'
-                    ? undefined
-                    : chipColor,
-                color:
-                  chipColor === 'primary' || chipColor === 'default'
-                    ? undefined
-                    : 'white'
-              }}
-              color={
-                chipColor === 'primary'
-                  ? 'primary'
-                  : chipColor === 'default'
-                    ? 'default'
-                    : undefined
-              }
-            />
-          );
-        }
+        return <StatusChip status={params.value} />;
       }
     },
     {

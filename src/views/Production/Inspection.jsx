@@ -17,7 +17,7 @@ import {
 } from 'api/store/Apis/productionApi';
 // import { useUser } from 'context/User';
 import DyeingInspection from '../../components/Production/Inspection/Dyeing/DyeingInspection';
-
+import StatusChip from '../../components/StatusChip';
 import {
   Grid,
   Chip,
@@ -204,13 +204,13 @@ const Inspection = () => {
     { field: 'id', headerName: 'Sr #' },
     { field: 'collectionName', headerName: 'Collection Name' },
     { field: 'poName', headerName: 'PO' },
-    {
-      field: 'ogpNumber',
-      headerName: 'OGP Number',
-      renderCell: (params) => {
-        <span style={{ fontWeight: 'bolder' }}>{params.value}</span>;
-      }
-    },
+    // {
+    //   field: 'ogpNumber',
+    //   headerName: 'OGP Number'
+    //   // renderCell: (params) => {
+    //   //   <span style={{ fontWeight: 'bolder' }}>{params.value}</span>;
+    //   // }
+    // },
     { field: 'igpNumber', headerName: 'IGP Number' },
     {
       field: 'igpDate',
@@ -239,39 +239,48 @@ const Inspection = () => {
 
     { field: 'receivedQty', headerName: 'Received' },
     { field: 'processTypename', headerName: 'Process Type' },
+
     {
       field: 'statusName',
       headerName: 'Status',
       renderCell: (params) => {
-        const chipColor = 'primary.dark';
-        if (params.value === null) {
-          return;
-        } else {
-          return (
-            <Chip
-              label={params.value}
-              sx={{
-                backgroundColor:
-                  chipColor === 'primary' || chipColor === 'default'
-                    ? undefined
-                    : chipColor,
-                color:
-                  chipColor === 'primary' || chipColor === 'default'
-                    ? undefined
-                    : 'white'
-              }}
-              color={
-                chipColor === 'primary'
-                  ? 'primary'
-                  : chipColor === 'default'
-                    ? 'default'
-                    : undefined
-              }
-            />
-          );
-        }
+        return <StatusChip status={params.value} />;
       }
     },
+
+    // {
+    //   field: 'statusName',
+    //   headerName: 'Status',
+    //   renderCell: (params) => {
+    //     const chipColor = '#33CCCC';
+    //     if (params.value === null) {
+    //       return;
+    //     } else {
+    //       return (
+    //         <Chip
+    //           label={params.value}
+    //           sx={{
+    //             backgroundColor:
+    //               chipColor === 'primary' || chipColor === 'default'
+    //                 ? undefined
+    //                 : chipColor,
+    //             color:
+    //               chipColor === 'primary' || chipColor === 'default'
+    //                 ? undefined
+    //                 : 'white'
+    //           }}
+    //           color={
+    //             chipColor === 'primary'
+    //               ? 'primary'
+    //               : chipColor === 'default'
+    //                 ? 'default'
+    //                 : undefined
+    //           }
+    //         />
+    //       );
+    //     }
+    //   }
+    // },
     {
       field: 'Actions',
       headerName: 'Actions',
