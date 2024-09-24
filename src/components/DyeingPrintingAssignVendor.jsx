@@ -21,7 +21,8 @@ const DyeingPrintingAssignVendor = ({
   setAdditionalProcessData,
   refetchDyeingPrintingData,
   handleClickOpen,
-  showUpperDiv
+  showUpperDiv,
+  productionStatus
 }) => {
   const { user } = useUser();
   const [initialRows, setInitialRows] = useState([]);
@@ -844,7 +845,12 @@ const DyeingPrintingAssignVendor = ({
           </Grid>
 
           <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-            <Button variant="contained" size="small" onClick={handleSave}>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              disabled={productionStatus === 3}
+            >
               Save
             </Button>
           </Grid>
@@ -868,6 +874,8 @@ const DyeingPrintingAssignVendor = ({
           <ReuseableDataGrid
             iColumns={columns}
             initialRows={initialRows}
+            disableDelete={productionStatus === 3}
+            disableEdit={productionStatus === 3}
             setInitialData={setInitialData}
             deleteApi={deleteApi}
             deleteBy="dpIdDet"

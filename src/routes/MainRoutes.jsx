@@ -49,6 +49,7 @@ const ReceivingFromBX = Loadable(
 );
 const Receiving = Loadable(lazy(() => import('views/Production/Receiving')));
 const Issuance = Loadable(lazy(() => import('views/Production/Issuance')));
+const RTV = Loadable(lazy(() => import('views/Production/RTV')));
 // const EmbroideryIssuance = Loadable(
 //   lazy(() => import('views/Production/EmbroideryIssuance'))
 // );
@@ -177,6 +178,10 @@ const MainRoutes = {
         {
           path: 'GRN',
           element: <ProtectedRoute element={GRN} />
+        },
+        {
+          path: 'RTV',
+          element: <ProtectedRoute element={RTV} />
         }
       ]
     },

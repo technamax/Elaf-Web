@@ -1395,6 +1395,8 @@ const Dyeing = ({ initialValues }) => {
             <ReuseableDataGrid
               iColumns={columns}
               initialRows={rows}
+              disableDelete={formData.productionStatus === 3}
+              disableEdit={formData.productionStatus === 3}
               setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="dpId"
@@ -1435,6 +1437,7 @@ const Dyeing = ({ initialValues }) => {
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
                 <DyeingPrintingAssignVendor
                   initialFormData={initialFormData}
+                  productionStatus={formData.productionStatus}
                   setInitialFormData={setInitialFormData}
                   refetchDyeingPrintingData={refetchDyeingPrintingData}
                   handleClickOpen={handleClickOpen}

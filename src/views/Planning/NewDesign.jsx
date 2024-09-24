@@ -63,7 +63,7 @@ const NewDesign = () => {
     }
   }, [lookupData]);
 
-  console.log('lookupData', lookupData.result[0]);
+  // console.log('lookupData', lookupData.result[0]);
 
   useEffect(() => {
     if (designData) {

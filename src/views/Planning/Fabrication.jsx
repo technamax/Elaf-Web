@@ -1067,6 +1067,8 @@ const Fabrication = ({ initialValues, setInitialValues }) => {
             <ReuseableDataGrid
               iColumns={columns}
               initialRows={rows}
+              disableDelete={formData.productionStatus === 3}
+              disableEdit={formData.productionStatus === 3}
               setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="fabricationId"

@@ -963,6 +963,8 @@ const AdditionalProcess = ({ initialValues }) => {
             <ReuseableDataGrid
               iColumns={columns}
               initialRows={rows}
+              disableDelete={formData.productionStatus === 3}
+              disableEdit={formData.productionStatus === 3}
               setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="additionalProcessId"
@@ -1002,6 +1004,7 @@ const AdditionalProcess = ({ initialValues }) => {
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
                 <AssignVendorFormTable
                   additionalProcessData={additionalProcessData}
+                  productionStatus={formData.productionStatus}
                   setAdditionalProcessData={setAdditionalProcessData}
                   refetchAdditionalProcessList={refetchAdditionalProcessList}
                   handleClickOpen={handleClickOpen}

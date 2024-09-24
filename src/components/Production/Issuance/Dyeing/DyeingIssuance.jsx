@@ -104,6 +104,8 @@ const DyeingIssuance = ({ rowData }) => {
     stockReceived: 0,
     remainingQuantity: 0,
     quantity: 0,
+    balance: 0,
+    remarks: '',
 
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -112,11 +114,11 @@ const DyeingIssuance = ({ rowData }) => {
     LastUpdatedBy: user.empId
   });
 
-  const [fabricsList, setFabricsList] = useState([]);
-  const [vendorsList, setVendorsList] = useState([]);
-  const [locationsList, setLocationsList] = useState([]);
+  // const [fabricsList, setFabricsList] = useState([]);
+  // const [vendorsList, setVendorsList] = useState([]);
+  // const [locationsList, setLocationsList] = useState([]);
   const [issuanceList, setIssuanceList] = useState([]);
-  const [issuanceOGPList, setIssuanceOGPList] = useState([]);
+  // const [issuanceOGPList, setIssuanceOGPList] = useState([]);
   const [value, setValue] = useState('1');
 
   const handleChangeTabs = (event, newValue) => {
@@ -140,16 +142,16 @@ const DyeingIssuance = ({ rowData }) => {
     });
   // const { data: dyeingPoData, refetch: refetchDyeingPoData } =
   //   useGetDyeingPoHeaderListQuery();
-  const { data: locationsData, refetch: refetchLocationsData } =
-    useGetWareHouseLocationsQuery();
-  const { data: fabricsData, refetch: refetchFabricsData } =
-    useGetFabricForProductionByProductionIdQuery(formData.productionId, {
-      skip: !formData.productionId // Skip the query if no collection is selected
-    });
-  const { data: vendorsData, refetch: refetchVendorsData } =
-    useGetVendorsByFabricIDQuery(formData.fabricId, {
-      skip: !formData.fabricId // Skip the query if no collection is selected
-    });
+  // const { data: locationsData, refetch: refetchLocationsData } =
+  //   useGetWareHouseLocationsQuery();
+  // const { data: fabricsData, refetch: refetchFabricsData } =
+  //   useGetFabricForProductionByProductionIdQuery(formData.productionId, {
+  //     skip: !formData.productionId // Skip the query if no collection is selected
+  //   });
+  // const { data: vendorsData, refetch: refetchVendorsData } =
+  //   useGetVendorsByFabricIDQuery(formData.fabricId, {
+  //     skip: !formData.fabricId // Skip the query if no collection is selected
+  //   });
   const { data: quantityData, refetch: refetchquantityData } =
     useGetProductionFabricDetailByProductionIdandStatusQuery(
       { productionId: formData.productionId, fabricId: formData.fabricId },
@@ -157,13 +159,13 @@ const DyeingIssuance = ({ rowData }) => {
         skip: !formData.fabricId || !formData.productionId // Skip the query if no collection is selected
       }
     );
-  const { data: issuanceOGPData, refetch: refetchIssuanceOGPData } =
-    useGetIssuanceOGPByIdQuery(
-      { poId: formData.poId, issuanceId: formData.issuanceId },
-      {
-        skip: !formData.poId || !formData.issuanceId // Skip the query if no collection is selected
-      }
-    );
+  // const { data: issuanceOGPData, refetch: refetchIssuanceOGPData } =
+  //   useGetIssuanceOGPByIdQuery(
+  //     { poId: formData.poId, issuanceId: formData.issuanceId },
+  //     {
+  //       skip: !formData.poId || !formData.issuanceId // Skip the query if no collection is selected
+  //     }
+  //   );
   // const { data: subMenuData, refetch } = useGetSubMenuListQuery();
   useEffect(() => {
     setFormData((prevFormData) => ({
@@ -213,20 +215,20 @@ const DyeingIssuance = ({ rowData }) => {
       // );
     }
   }, [poHeaderData, refetchPoHeaderData]);
-  useEffect(() => {
-    if (issuanceOGPData?.result === null) {
-      setIssuanceOGPList([]);
-      return;
-    }
-    if (issuanceOGPData) {
-      setIssuanceOGPList(
-        issuanceOGPData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [issuanceOGPData, refetchIssuanceOGPData]);
+  // useEffect(() => {
+  //   if (issuanceOGPData?.result === null) {
+  //     setIssuanceOGPList([]);
+  //     return;
+  //   }
+  //   if (issuanceOGPData) {
+  //     setIssuanceOGPList(
+  //       issuanceOGPData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [issuanceOGPData, refetchIssuanceOGPData]);
   useEffect(() => {
     if (poDetailsData?.result === null) {
       setPoDetails([]);
@@ -261,16 +263,16 @@ const DyeingIssuance = ({ rowData }) => {
       );
     }
   }, [issuanceData, refetchIssuanceData]);
-  useEffect(() => {
-    if (fabricsData) {
-      setFabricsList(
-        fabricsData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [fabricsData, refetchFabricsData]);
+  // useEffect(() => {
+  //   if (fabricsData) {
+  //     setFabricsList(
+  //       fabricsData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [fabricsData, refetchFabricsData]);
   useEffect(() => {
     if (quantityData) {
       setQuantities(
@@ -282,26 +284,26 @@ const DyeingIssuance = ({ rowData }) => {
       );
     }
   }, [quantityData, refetchquantityData]);
-  useEffect(() => {
-    if (vendorsData) {
-      setVendorsList(
-        vendorsData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [vendorsData, refetchVendorsData]);
-  useEffect(() => {
-    if (locationsData) {
-      setLocationsList(
-        locationsData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [locationsData]);
+  // useEffect(() => {
+  //   if (vendorsData) {
+  //     setVendorsList(
+  //       vendorsData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [vendorsData, refetchVendorsData]);
+  // useEffect(() => {
+  //   if (locationsData) {
+  //     setLocationsList(
+  //       locationsData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [locationsData]);
   useEffect(() => {
     if (productionBatchData) {
       setProductions(
@@ -339,7 +341,22 @@ const DyeingIssuance = ({ rowData }) => {
       setFormData({ ...formData, [name]: value });
     }
   };
-
+  const handleDisabled = () => {
+    let disabled = false;
+    for (let po of poDetails) {
+      if (po.quantity >= po.assignQuantity) {
+        disabled = true;
+      }
+    }
+    return disabled;
+    // if (poDetailsData) {
+    //   const disabled = poDetails.every((po) => po.quantity >= po.assignQuantity);
+    //   return !disabled;
+    // } else {
+    //   return false;
+    // }
+  };
+  console.log('handleDisabled', handleDisabled());
   const handleSave = async () => {
     // if (
     //   !formData.issuanceTransactionDetails ||
@@ -391,6 +408,7 @@ const DyeingIssuance = ({ rowData }) => {
       enqueueSnackbar('Data saved successfully!', { variant: 'success' });
       setSavedRows((prev) => [...prev, ...formData.issuanceTransactionDetails]);
       refetchIssuanceData();
+      refetchPoDetailsData();
     } catch (error) {
       console.error('Error saving data:', error);
 
@@ -420,10 +438,51 @@ const DyeingIssuance = ({ rowData }) => {
   ];
   console.log('productions', productions);
 
+  // const handleCellEdit = React.useCallback(
+  //   (params) => {
+  //     const { id, field, value } = params;
+  //     console.log('Editing cell:', params); // Debugging line
+
+  //     setPoDetails((prevRows) =>
+  //       prevRows.map((row) => {
+  //         if (row.id === id) {
+  //           const remaining = row.quantity - row.assignQuantity;
+  //           const updatedRow = {
+  //             ...row,
+  //             [field]: value,
+  //             issuanceId: 0,
+  //             issuanceDetId: 0,
+  //             remaining: Number(remaining),
+  //             appId: user.appId,
+  //             createdOn: new Date().toISOString(),
+  //             createdBy: user.empId,
+  //             lastUpdatedOn: new Date().toISOString(),
+  //             lastUpdatedBy: user.empId
+  //           };
+
+  //           // Recalculate the totalBeforeTax when rate or quantity is updated
+  //           // if (field === 'rate' || field === 'quantity') {
+  //           //   updatedRow.totalBeforeTax = updatedRow.rate * updatedRow.quantity;
+  //           // }
+
+  //           // // Optionally, update totalAfterTax if it's a function of totalBeforeTax and tax
+  //           // if (field === 'tax' || field === 'rate' || field === 'quantity') {
+  //           //   updatedRow.totalAfterTax =
+  //           //     updatedRow.totalBeforeTax +
+  //           //     updatedRow.totalBeforeTax * (updatedRow.tax / 100);
+  //           // }
+
+  //           return updatedRow;
+  //         }
+  //         return row;
+  //       })
+  //     );
+  //   },
+  //   [setPoDetails, user.appId, user.empId]
+  // );
   const handleCellEdit = React.useCallback(
     (params) => {
       const { id, field, value } = params;
-      console.log('Editing cell:', params); // Debugging line
 
       setPoDetails((prevRows) =>
         prevRows.map((row) => {
@@ -442,17 +501,15 @@ const DyeingIssuance = ({ rowData }) => {
               lastUpdatedBy: user.empId
             };
 
-            // Recalculate the totalBeforeTax when rate or quantity is updated
-            // if (field === 'rate' || field === 'quantity') {
-            //   updatedRow.totalBeforeTax = updatedRow.rate * updatedRow.quantity;
-            // }
-
-            // // Optionally, update totalAfterTax if it's a function of totalBeforeTax and tax
-            // if (field === 'tax' || field === 'rate' || field === 'quantity') {
-            //   updatedRow.totalAfterTax =
-            //     updatedRow.totalBeforeTax +
-            //     updatedRow.totalBeforeTax * (updatedRow.tax / 100);
-            // }
+            // Auto-select the row if a value is entered in the text field
+            if (field === 'issuanceQuantity' && value > 0) {
+              setRowSelectionModel((prevSelectionModel) => {
+                if (!prevSelectionModel.includes(id)) {
+                  return [...prevSelectionModel, id]; // Add the row ID to the selection model
+                }
+                return prevSelectionModel;
+              });
+            }
 
             return updatedRow;
           }
@@ -460,8 +517,9 @@ const DyeingIssuance = ({ rowData }) => {
         })
       );
     },
-    [setPoDetails, user.appId, user.empId]
+    [setPoDetails, setRowSelectionModel, user.appId, user.empId]
   );
+
   useEffect(() => {
     setFormData((prevFormData) => ({
       ...formData
@@ -522,7 +580,7 @@ const DyeingIssuance = ({ rowData }) => {
           variant="outlined"
           size="small"
           // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
           value={params.row.issuanceQuantity || ''}
           onChange={(event) =>
             handleCellEdit({
@@ -532,6 +590,7 @@ const DyeingIssuance = ({ rowData }) => {
             })
           }
           type="number"
+          disabled={params.row.quantity === params.row.assignQuantity}
           InputProps={{
             style: { fontSize: '0.875rem' } // Ensure the font size is suitable
           }}
@@ -627,86 +686,86 @@ const DyeingIssuance = ({ rowData }) => {
     return new Intl.NumberFormat().format(value);
   };
 
-  const printOgp = (ogpData) => {
-    const newWindow = window.open('', '', 'width=800,height=600');
-    const doc = newWindow.document;
+  // const printOgp = (ogpData) => {
+  //   const newWindow = window.open('', '', 'width=800,height=600');
+  //   const doc = newWindow.document;
 
-    doc.write(`
-      <html>
-        <head>
-          <title>Outward Gate Pass</title>
-          <style>
-            body { font-family: Arial, sans-serif; }
-            table { width: 100%; border-collapse: collapse; }
-            th, td { padding: 8px; border: 1px solid black; text-align: left; }
-            .header { margin-bottom: 20px; }
-            .header td { border: none; padding: 5px 0; }
-          </style>
-        </head>
-        <body>
-          <h2>Elaf</h2>
-          <h3>OUTWARD GATE PASS</h3>
-  
-          <table class="header">
-            <tr>
-              <td><strong>OGP #:</strong> ${ogpData.vIssuanceTransaction.ogpNumber}</td>
-              <td><strong>Process:</strong> ${ogpData.vIssuanceTransaction.processTypeName}</td>
-            </tr>
-            <tr>
-              <td><strong>OGP Date:</strong> ${new Date(ogpData.vIssuanceTransaction.ogpDate).toLocaleDateString()}</td>
-              <td><strong>Stage:</strong> Work in Process</td>
-            </tr>
-            <tr>
-              <td><strong>Vendor Name:</strong> ${ogpData.vIssuanceTransaction.vendorName}</td>
-              <td><strong>Vendor Contact:</strong> TBD</td>
-            </tr>
-            <tr>
-              <td><strong>Purpose:</strong> Dyeing</td>
-              <td></td>
-            </tr>
-          </table>
-  
-          <table>
-            <thead>
-              <tr>
-                <th>PO #</th>
-                <th>Description</th>
-                <th>Design #</th>
-                <th>UOM</th>
-                <th>Qty Required</th>
-                <th>Shrinkage</th>
-                <th>Total Qty</th>
-                <th>Rate</th>
-                <th>Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${ogpData.vIssuanceTransactionDetailsList
-                .map(
-                  (item) => `
-                <tr>
-                  <td>${item.poId}</td>
-                  <td>${item.fabricName}</td>
-                  <td>${item.fabricCount}</td>
-                  <td>${item.uomName}</td>
-                  <td>${item.issuanceQuantity}</td>
-                  <td>-</td>
-                  <td>${item.issuanceQuantity}</td>
-                  <td>${item.rate}</td>
-                  <td>${item.totalAfterTax}</td>
-                </tr>
-              `
-                )
-                .join('')}
-            </tbody>
-          </table>
-        </body>
-      </html>
-    `);
+  //   doc.write(`
+  //     <html>
+  //       <head>
+  //         <title>Outward Gate Pass</title>
+  //         <style>
+  //           body { font-family: Arial, sans-serif; }
+  //           table { width: 100%; border-collapse: collapse; }
+  //           th, td { padding: 8px; border: 1px solid black; text-align: left; }
+  //           .header { margin-bottom: 20px; }
+  //           .header td { border: none; padding: 5px 0; }
+  //         </style>
+  //       </head>
+  //       <body>
+  //         <h2>Elaf</h2>
+  //         <h3>OUTWARD GATE PASS</h3>
 
-    doc.close();
-    newWindow.print();
-  };
+  //         <table class="header">
+  //           <tr>
+  //             <td><strong>OGP #:</strong> ${ogpData.vIssuanceTransaction.ogpNumber}</td>
+  //             <td><strong>Process:</strong> ${ogpData.vIssuanceTransaction.processTypeName}</td>
+  //           </tr>
+  //           <tr>
+  //             <td><strong>OGP Date:</strong> ${new Date(ogpData.vIssuanceTransaction.ogpDate).toLocaleDateString()}</td>
+  //             <td><strong>Stage:</strong> Work in Process</td>
+  //           </tr>
+  //           <tr>
+  //             <td><strong>Vendor Name:</strong> ${ogpData.vIssuanceTransaction.vendorName}</td>
+  //             <td><strong>Vendor Contact:</strong> TBD</td>
+  //           </tr>
+  //           <tr>
+  //             <td><strong>Purpose:</strong> Dyeing</td>
+  //             <td></td>
+  //           </tr>
+  //         </table>
+
+  //         <table>
+  //           <thead>
+  //             <tr>
+  //               <th>PO #</th>
+  //               <th>Description</th>
+  //               <th>Design #</th>
+  //               <th>UOM</th>
+  //               <th>Qty Required</th>
+  //               <th>Shrinkage</th>
+  //               <th>Total Qty</th>
+  //               <th>Rate</th>
+  //               <th>Amount</th>
+  //             </tr>
+  //           </thead>
+  //           <tbody>
+  //             ${ogpData.vIssuanceTransactionDetailsList
+  //               .map(
+  //                 (item) => `
+  //               <tr>
+  //                 <td>${item.poId}</td>
+  //                 <td>${item.fabricName}</td>
+  //                 <td>${item.fabricCount}</td>
+  //                 <td>${item.uomName}</td>
+  //                 <td>${item.issuanceQuantity}</td>
+  //                 <td>-</td>
+  //                 <td>${item.issuanceQuantity}</td>
+  //                 <td>${item.rate}</td>
+  //                 <td>${item.totalAfterTax}</td>
+  //               </tr>
+  //             `
+  //               )
+  //               .join('')}
+  //           </tbody>
+  //         </table>
+  //       </body>
+  //     </html>
+  //   `);
+
+  //   doc.close();
+  //   newWindow.print();
+  // };
 
   const handlePrintOgp = async (rowData) => {
     try {
@@ -728,7 +787,11 @@ const DyeingIssuance = ({ rowData }) => {
       console.error('Error fetching OGP data:', error);
     }
   };
-
+  const [issId, setIssId] = useState(null);
+  const handleViewOGP = (data) => {
+    setValue('2');
+    setIssId(data.issuanceId);
+  };
   const issuanceColumns = [
     {
       field: 'id',
@@ -749,6 +812,13 @@ const DyeingIssuance = ({ rowData }) => {
     {
       field: 'dispatchedQuantity',
       headerName: 'Dispatch'
+    },
+    {
+      field: 'remingingQuantity',
+      headerName: 'Remaining',
+      valueGetter: (params, row) => {
+        return row.issuanceQuantity - row.dispatchedQuantity;
+      }
     },
     {
       field: 'issuanceDate',
@@ -797,16 +867,19 @@ const DyeingIssuance = ({ rowData }) => {
               size="small"
               color="primary"
               onClick={() => handleClickOpen(params.row)}
+              disabled={
+                params.row.issuanceQuantity === params.row.dispatchedQuantity
+              }
             >
               Generate OGP
             </Button>
-            {/* <Button
+            <Button
               size="small"
               color="primary"
-              onClick={() => handleClickOpen2(params.row)}
+              onClick={() => handleViewOGP(params.row)}
             >
-              OGP
-            </Button> */}
+              OGP Report
+            </Button>
             {/* <Button
               size="small"
               color="primary"
@@ -955,7 +1028,7 @@ const DyeingIssuance = ({ rowData }) => {
               // helperText={formErrors.collectionName}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={1.5}>
             <TextField
               label="Shrinkage"
               fullWidth
@@ -970,7 +1043,7 @@ const DyeingIssuance = ({ rowData }) => {
               // helperText={formErrors.collectionName}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={1.5}>
             <TextField
               label="Wastage"
               fullWidth
@@ -999,6 +1072,7 @@ const DyeingIssuance = ({ rowData }) => {
               // helperText={formErrors.brandId}
             ></TextField>
           </Grid>
+
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -1069,13 +1143,29 @@ const DyeingIssuance = ({ rowData }) => {
               // helperText={formErrors.brandId}
             ></TextField>
           </Grid>
-          <Grid item xs={12} textAlign="right">
+          <Grid item xs={3} textAlign="right">
             <Typography
               variant="overline"
               sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
             >
               Balance : {formData.balance}
             </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Remarks"
+              fullWidth
+              size="small"
+              multiline
+              maxRows={3}
+              name="remarks"
+              onChange={handleChange}
+              value={formData.remarks}
+              required
+              // disabled={isEdit}
+              // error={!!formErrors.collectionName}
+              // helperText={formErrors.collectionName}
+            />
           </Grid>
           <Grid item xs={12}>
             <DataGrid
@@ -1095,7 +1185,15 @@ const DyeingIssuance = ({ rowData }) => {
           </Grid>
 
           <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-            <Button variant="contained" size="small" onClick={handleSave}>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              // disabled={handleDisabled()}
+              disabled={poDetails.every(
+                (po) => po.quantity <= po.assignQuantity
+              )}
+            >
               Save
             </Button>
           </Grid>
@@ -1219,7 +1317,7 @@ const DyeingIssuance = ({ rowData }) => {
                         <DyeingIssuanceView
                           iss={iss}
                           handleClose={handleClose}
-                          refetchIssuanceData={refetchIssuanceData}
+                          refetchData={refetchIssuanceData}
                         />
                       </DialogContent>
                     </Dialog>
@@ -1272,7 +1370,7 @@ const DyeingIssuance = ({ rowData }) => {
                 </Grid>
               </TabPanel>
               <TabPanel value="2">
-                <OGPView po={formData.poId} />
+                <OGPView po={formData.poId} issId={issId} />
               </TabPanel>
             </TabContext>
           </Box>

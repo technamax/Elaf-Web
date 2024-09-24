@@ -1177,6 +1177,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
               </TextField> */}
                 <Autocomplete
                   fullWidth
+                  disabled={lock}
                   options={Fabrications}
                   getOptionLabel={(option) => option.lookUpName}
                   value={
@@ -1740,6 +1741,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
             <ReuseableDataGrid
               iColumns={columns}
               initialRows={rows}
+              disableDelete={formData.productionStatus === 3}
+              disableEdit={formData.productionStatus === 3}
               setInitialData={setInitialData}
               deleteApi={deleteApi}
               deleteBy="planningId"

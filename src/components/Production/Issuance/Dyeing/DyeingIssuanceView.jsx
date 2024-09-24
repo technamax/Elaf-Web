@@ -1,29 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, TextField, Typography, Button, MenuItem } from '@mui/material';
 import { useGetIssuanceDetailByPoIdQuery } from 'api/store/Apis/productionApi';
-import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
+import {
+  useGetLookUpListQuery,
+  useGetDriverInfoQuery,
+  useGetTruckInfoQuery
+} from 'api/store/Apis/lookupApi';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
 import { useUser } from 'context/User';
 import axios from 'axios';
 
-const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
+const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
   const { user } = useUser();
   const [formData, setFormData] = useState({
     poId: iss.poId,
     issuanceId: iss.issuanceId,
-    processTypeId: iss.processTypeId,
+    rejectionId: iss.rejectionId || null,
+    processTypeId: iss.processTypeId || 1223,
     dispatchedQuantity: '',
     dispatchFrom: '',
     destination: '',
-    isRejectedOGP: 'N',
+    isRejectedOGP: isRejected ? 'Y' : 'N',
     remarks: '',
+    truckId: '',
+    driverId: '',
     createdBy: user.empId
   });
   const { enqueueSnackbar } = useSnackbar();
   const [issuanceDetails, setIssuanceDetails] = useState([]);
   const [destinantionsList, setDestinantionsList] = useState([]);
   const [dispatchFromList, setDispatchFromList] = useState([]);
+  const [driversList, setDriversList] = useState([]);
+  const [trucksList, setTrucksList] = useState([]);
   const { data: issuanceDetailsData, refetch: refetchIssuanceDetailsData } =
     useGetIssuanceDetailByPoIdQuery(
       { poId: iss.poId, issuanceId: iss.issuanceId },
@@ -33,6 +42,10 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
     );
   const { data: lookupData, refetch: refetchLookupData } =
     useGetLookUpListQuery();
+  const { data: driversData, refetch: refetchDriversData } =
+    useGetDriverInfoQuery();
+  const { data: trucksData, refetch: refetchTrucksData } =
+    useGetTruckInfoQuery();
 
   useEffect(() => {
     if (issuanceDetailsData?.result === null) {
@@ -48,6 +61,26 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
       );
     }
   }, [issuanceDetailsData, refetchIssuanceDetailsData]);
+  useEffect(() => {
+    if (driversData) {
+      setDriversList(
+        driversData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [driversData, refetchDriversData]);
+  useEffect(() => {
+    if (trucksData) {
+      setTrucksList(
+        trucksData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [trucksData, refetchTrucksData]);
   useEffect(() => {
     if (lookupData) {
       setDestinantionsList(
@@ -119,7 +152,7 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
         `http://100.42.177.77:83/api/Issuance/GenerateOGP`,
         formData
       );
-      refetchIssuanceData();
+      refetchData();
       if (!response.data.success) {
         enqueueSnackbar(`${response.data.message} !`, {
           variant: 'error',
@@ -194,17 +227,22 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
         <Grid item xs={12} md={3}>
           <TextField
             size="small"
+            type={!iss.issuanceDate ? 'Date' : null}
             // type="date"
             label="Issuance Date"
             name="issuanceDate"
-            value={new Date(iss.issuanceDate).toLocaleDateString('en-GB', {
-              day: 'numeric',
-              month: 'short',
-              year: '2-digit'
-            })}
+            value={
+              iss.issuanceDate
+                ? new Date(iss.issuanceDate).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: '2-digit'
+                  })
+                : formData.issuanceDate
+            }
             // onChange={handleChange}
             fullWidth
-            disabled
+            disabled={iss.issuanceDate}
             // error={!!formErrors.launchDate}
             // helperText={formErrors.launchDate}
             InputLabelProps={{
@@ -219,20 +257,21 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
         <Grid item xs={12} md={3}>
           <TextField
             size="small"
-            // type="date"
+            type={!iss.issuanceDate ? 'Date' : null}
             label="ExpectedReturn Date"
             name="expectedReturnDate"
-            value={new Date(iss.expectedReturnDate).toLocaleDateString(
-              'en-GB',
-              {
-                day: 'numeric',
-                month: 'short',
-                year: '2-digit'
-              }
-            )}
+            value={
+              iss.expectedReturnDate
+                ? new Date(iss.expectedReturnDate).toLocaleDateString('en-GB', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: '2-digit'
+                  })
+                : formData.expectedReturnDate
+            }
             // onChange={handleChange}
             fullWidth
-            disabled
+            disabled={iss.expectedReturnDate}
             // error={!!formErrors.expectedReturnDate}
             // helperText={formErrors.expectedReturnDate}
             InputLabelProps={{
@@ -263,35 +302,6 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
             ))}
           </TextField>
         </Grid>
-        <Grid item xs={12} md={1.5}>
-          <TextField
-            fullWidth
-            disabled
-            // select
-            label="Issuance Quantity"
-            name="issuanceQuantity"
-            value={iss.issuanceQuantity}
-            // onChange={handleChange}
-            size="small"
-            // error={!!formErrors.brandId}
-            // helperText={formErrors.brandId}
-          ></TextField>
-        </Grid>
-        <Grid item xs={12} md={1.5}>
-          <TextField
-            fullWidth
-            // disabled
-            // select
-            type="Number"
-            label="DispatchedQuantity"
-            name="dispatchedQuantity"
-            value={formData.dispatchedQuantity}
-            onChange={handleChange}
-            size="small"
-            // error={!!formErrors.brandId}
-            // helperText={formErrors.brandId}
-          ></TextField>
-        </Grid>
         <Grid item xs={12} md={3}>
           <TextField
             fullWidth
@@ -311,6 +321,44 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
             ))}
           </TextField>
         </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            select
+            label="Drivers"
+            name="driverId"
+            value={formData.driverId}
+            onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          >
+            {driversList.map((option) => (
+              <MenuItem key={option.driverId} value={option.driverId}>
+                {option.driverName}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            select
+            label="Trucks"
+            name="truckId"
+            value={formData.truckId}
+            onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          >
+            {trucksList.map((option) => (
+              <MenuItem key={option.truckId} value={option.truckId}>
+                {option.truckNumber}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
 
         <Grid item xs={12} md={3}>
           <TextField
@@ -320,6 +368,50 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
             label="Remarks"
             name="remarks"
             value={formData.remarks}
+            onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          ></TextField>
+        </Grid>
+
+        <Grid item xs={12} md={1.5}>
+          <TextField
+            fullWidth
+            disabled
+            // select
+            label="Issuance Quantity"
+            name="issuanceQuantity"
+            value={iss.issuanceQuantity || iss.rejectedQty}
+            // onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          ></TextField>
+        </Grid>
+        <Grid item xs={12} md={1.5}>
+          <TextField
+            fullWidth
+            disabled
+            // select
+            label="Remaining Quantity"
+            name="issuanceQuantity"
+            value={iss.issuanceQuantity - iss.dispatchedQuantity}
+            // onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          ></TextField>
+        </Grid>
+        <Grid item xs={12} md={1.5}>
+          <TextField
+            fullWidth
+            // disabled
+            // select
+            type="Number"
+            label="DispatchedQuantity"
+            name="dispatchedQuantity"
+            value={formData.dispatchedQuantity}
             onChange={handleChange}
             size="small"
             // error={!!formErrors.brandId}
@@ -349,7 +441,7 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchIssuanceData }) => {
             variant="contained"
             size="small"
             onClick={handleOgp}
-            disabled={iss.status === 9}
+            // disabled={iss.status === 9}
           >
             Generate OGP
           </Button>

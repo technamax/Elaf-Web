@@ -38,7 +38,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import * as React from 'react';
 import { useUser } from 'context/User';
 
-const ViewProductionBatch = () => {
+const ViewProductionBatch = ({ handleChangeTabs }) => {
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
   const [initialFormData, setInitialFormData] = useState({});
@@ -119,6 +119,7 @@ const ViewProductionBatch = () => {
   //   }
   // }, [collectionData, refetch]);
   useEffect(() => {
+    refetch();
     if (collectionData) {
       setInitialRows(
         collectionData.result.map((row, index) => ({
@@ -127,7 +128,7 @@ const ViewProductionBatch = () => {
         }))
       );
     }
-  }, [collectionData, refetch]);
+  }, [collectionData, refetch, handleChangeTabs]);
   useEffect(() => {
     if (productionBatchDetailsData) {
       setBatchDetailsRows(
@@ -335,7 +336,7 @@ const ViewProductionBatch = () => {
       // flex: 1
     },
     {
-      field: 'status',
+      field: 'statusName',
       headerName: 'statusName'
       // flex: 1
     },

@@ -81,6 +81,7 @@ const DyeingPO = () => {
     shrinkage: '',
     wastage: '',
     locationId: '',
+    remarks: '',
 
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -196,12 +197,23 @@ const DyeingPO = () => {
   const assignedQuantity = fabrics
     .reduce((sum, row) => sum + (row.quantity ?? 0), 0)
     .toFixed(2);
+  const pQuantity = fabrics
+    .reduce((sum, row) => sum + (row.prevoiusPoQty ?? 0), 0)
+    .toFixed(2);
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...formData,
+      overallQty: Quantity
+      // remainingQuantity:
+      //   (prevFormData.overallQty - assignedQuantity).toFixed(2) || 0
+    }));
+  }, [setFabrics, fabrics]);
   useEffect(() => {
     setFormData((prevFormData) => ({
       ...formData,
       overallQty: Quantity,
       remainingQuantity:
-        (prevFormData.overallQty - assignedQuantity).toFixed(2) || 0
+        (prevFormData.overallQty - pQuantity - assignedQuantity).toFixed(2) || 0
     }));
   }, [setFabrics, fabrics]);
   console.log('initialRows', initialRows);
@@ -326,6 +338,7 @@ const DyeingPO = () => {
         setFabrics([]);
         refetchDyeingPoData();
         setRowSelectionModel([]);
+        refetchcolumnsData();
         setIsEdit(false);
       } else {
         // Show an error snackbar if the save operation was not successful
@@ -565,6 +578,13 @@ const DyeingPO = () => {
       }
     },
     {
+      field: 'remaining',
+      headerName: 'Remaining Qty',
+      valueGetter: (params, row) => {
+        return (row.availableQty - row.prevoiusPoQty).toLocaleString();
+      }
+    },
+    {
       field: 'quantity',
       headerName: 'Assigned Qty',
       // flex: 1,
@@ -575,7 +595,7 @@ const DyeingPO = () => {
           variant="outlined"
           size="small"
           // fullWidth
-          sx={{ mt: 1, width: '100%' }}
+          sx={{ mt: 1, width: '50px' }}
           value={params.row.quantity || ''}
           onChange={(event) =>
             handleCellEdit({
@@ -603,7 +623,7 @@ const DyeingPO = () => {
           variant="outlined"
           size="small"
           // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
           value={params.row.rate || ''}
           onChange={(event) =>
             handleCellEdit({
@@ -631,7 +651,7 @@ const DyeingPO = () => {
           variant="outlined"
           size="small"
           // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
           value={params.row.tax || ''}
           onChange={(event) =>
             handleCellEdit({
@@ -656,7 +676,7 @@ const DyeingPO = () => {
     //       variant="outlined"
     //       size="small"
     //       // fullWidth
-    //       sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+    //       sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
     //       value={params.row.totalBeforeTax || ''}
     //       onChange={(event) =>
     //         handleCellEdit({
@@ -681,7 +701,7 @@ const DyeingPO = () => {
     //       variant="outlined"
     //       size="small"
     //       // fullWidth
-    //       sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+    //       sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
     //       value={params.row.totalAfterTax || ''}
     //       onChange={(event) =>
     //         handleCellEdit({
@@ -708,7 +728,7 @@ const DyeingPO = () => {
           <SmallTextField
             variant="outlined"
             size="small"
-            sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+            sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
             value={formattedTotalBeforeTax} // Display formatted total
             onChange={(event) => {
               // Remove thousand separators before converting to number
@@ -737,7 +757,7 @@ const DyeingPO = () => {
           <SmallTextField
             variant="outlined"
             size="small"
-            sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+            sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
             value={formattedTotalAfterTax} // Display formatted total
             onChange={(event) => {
               // Remove thousand separators before converting to number
@@ -933,7 +953,7 @@ const DyeingPO = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={1.5}>
             <TextField
               label="Shrinkage"
               fullWidth
@@ -947,7 +967,7 @@ const DyeingPO = () => {
               // helperText={formErrors.collectionName}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={1.5}>
             <TextField
               label="Wastage"
               fullWidth
@@ -986,29 +1006,45 @@ const DyeingPO = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={6} textAlign="right">
+          <Grid item xs={12} md={3}>
+            <TextField
+              label="Remarks"
+              fullWidth
+              size="small"
+              name="remarks"
+              onChange={handleChange}
+              value={formData.remarks}
+              required
+              // disabled={isEdit}
+              // error={!!formErrors.collectionName}
+              // helperText={formErrors.collectionName}
+            />
+          </Grid>
+          <Grid item xs={12} textAlign="right">
             <Typography
               variant="overline"
               sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
             >
-              Assign Quantity : {formData.pxQty}
+              Assign Quantity : {formData.pxQty} | planned Quantity :{' '}
+              {formData.overallQty} | Remaining Quantity :{' '}
+              {formData.remainingQuantity}
             </Typography>
-          </Grid>
-          <Grid item xs={3} textAlign="right">
-            <Typography
+            {/* </Grid>
+          <Grid item xs={3} textAlign="right"> */}
+            {/* <Typography
               variant="overline"
               sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
             >
               planned Quantity : {formData.overallQty}
-            </Typography>
-          </Grid>
-          <Grid item xs={3} textAlign="right">
-            <Typography
+            </Typography> */}
+            {/* </Grid>
+          <Grid item xs={3} textAlign="right"> */}
+            {/* <Typography
               variant="overline"
               sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
             >
               Remaining Quantity : {formData.remainingQuantity}
-            </Typography>
+            </Typography> */}
           </Grid>
           <Grid item xs={12}>
             <div style={{ height: 400, width: '100%' }}>
@@ -1019,6 +1055,10 @@ const DyeingPO = () => {
                 apiRef={apiRef}
                 disableRowSelectionOnClick
                 checkboxSelection
+                isRowSelectable={(params) =>
+                  params.row.prevoiusPoQty < params.row.availableQty &&
+                  params.row.prevoiusPoQty !== params.row.availableQty
+                }
                 onRowSelectionModelChange={handleRowSelectionModelChange}
                 rowSelectionModel={rowSelectionModel}
               />
@@ -1026,7 +1066,14 @@ const DyeingPO = () => {
           </Grid>
 
           <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-            <Button variant="contained" size="small" onClick={handleSave}>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              disabled={fabrics.every(
+                (item) => item.prevoiusPoQty >= item.availableQty
+              )}
+            >
               Save
             </Button>
           </Grid>

@@ -119,8 +119,18 @@ export const productionApi = createApi({
       query: () => `Receiving/GetDyeingPoList?AppId=1`
     }),
     getReceivingHeader: builder.query({
-      query: ({ issuanceId, processTypename }) =>
-        `Receiving/GetReceivingHeader?issuanceId=${issuanceId}&processTypename=${processTypename}`
+      query: ({ poId, processTypename, status }) =>
+        `Receiving/GetReceivingHeader?poId=${poId}&processTypename=${processTypename}&status=${status}`
+    }),
+    getInspectionForGRNHeader: builder.query({
+      query: () => `GRN/GetInspectionForGRNHeader?appId=1`
+    }),
+    GetInspectionForGRNDetailbyInspectionId: builder.query({
+      query: (inspectionId) =>
+        `GRN/GetInspectionForGRNDetailbyInspectionId?inspectionId=${inspectionId}`
+    }),
+    getRejectionByPoId: builder.query({
+      query: (poId) => `GRN/GetRejectionByPoId?PoId=${poId}`
     })
   })
 });
@@ -157,5 +167,8 @@ export const {
   useGetInspectionDetailsQuery,
   useGetIssuanceOGPByIdQuery,
   useGetDyeingPoListQuery,
-  useGetReceivingHeaderQuery
+  useGetReceivingHeaderQuery,
+  useGetInspectionForGRNHeaderQuery,
+  useGetInspectionForGRNDetailbyInspectionIdQuery,
+  useGetRejectionByPoIdQuery
 } = productionApi;

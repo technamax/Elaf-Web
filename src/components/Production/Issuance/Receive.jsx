@@ -23,6 +23,7 @@ const SmallTextField = styled(TextField)(({ theme }) => ({
 const Receive = ({
   fabrics,
   setFabrics,
+  initialFormData,
   stockId,
   handleClose,
   refetchStockData
@@ -30,7 +31,11 @@ const Receive = ({
   const { user } = useUser();
   const { enqueueSnackbar } = useSnackbar();
   const [rowSelectionModel, setRowSelectionModel] = React.useState([]);
-  const [formData, setFormData] = React.useState({ stockId: stockId });
+  const [formData, setFormData] = React.useState({
+    stockId: stockId,
+    itpId: initialFormData.itpId,
+    productionId: initialFormData.productionId
+  });
   console.log('receiveFormData', formData);
   const [formErrors, setFormErrors] = useState({});
 
@@ -39,6 +44,7 @@ const Receive = ({
   const fFabrics = fabrics.filter((row) => row.itpQuantity > 0);
   console.log('fabrics', fabrics);
   console.log('fFabrics', fFabrics);
+  console.log('initialFormData', initialFormData);
 
   const handleCellEdit = (params) => {
     const { id, field, value } = params;

@@ -79,9 +79,9 @@ const DyeingReceiving = () => {
     });
   const { data: receivingData, refetch: refetchReceivingData } =
     useGetReceivingHeaderQuery(
-      { issuanceId: issId, processTypename: 'Dyeing' },
+      { poId: formData.poId, processTypename: 'Dyeing', status: 8 },
       {
-        skip: !issId // Skip the query if no collection is selected
+        skip: !formData.poId // Skip the query if no collection is selected
       }
     );
 
@@ -220,9 +220,9 @@ const DyeingReceiving = () => {
     // setShowUpperDiv(true);
     setOpen2(false);
   };
-  // const handleViews = async (data) => {
-  //   setIssId(data.issuanceId);
-  // };
+  const handleViews = async (data) => {
+    setIssId(data.issuanceId);
+  };
   const columns = [
     {
       field: 'id',
@@ -246,14 +246,48 @@ const DyeingReceiving = () => {
       headerName: 'Total',
       valueGetter: (params) => {
         return params.toLocaleString();
+      },
+      renderCell: (params) => {
+        // const chipColor = 'primary.dark';
+
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor: 'primary.dark',
+              // chipColor === 'primary' || chipColor === 'default'
+              //   ? undefined
+              //   : chipColor,
+              color: 'white'
+              // chipColor === 'primary' || chipColor === 'default'
+              //   ? undefined
+              //   : 'white'
+            }}
+            // color="primary"
+            // {
+            //   chipColor === 'green'
+            //   // ? 'primary'
+            //   // : chipColor === 'default'
+            //   //   ? 'default'
+            //   //   : undefined
+            // }
+          />
+        );
+      }
+    },
+    {
+      field: 'dispatchedQuantity',
+      headerName: 'Dispatched',
+      valueGetter: (params) => {
+        return params.toLocaleString();
       }
     },
     {
       field: 'receivedQty',
-      headerName: 'Received',
-      valueGetter: (params, row) => {
-        return params - row.shortageQty;
-      }
+      headerName: 'Received'
+      // valueGetter: (params, row) => {
+      //   return params - row.shortageQty;
+      // }
     },
     {
       field: 'issuanceDate',
@@ -323,6 +357,7 @@ const DyeingReceiving = () => {
               size="small"
               color="primary"
               onClick={() => handleClickOpen(params.row)}
+              disabled={params.row.status !== 9}
             >
               Generate IGP
             </Button>
@@ -333,13 +368,13 @@ const DyeingReceiving = () => {
             >
               IGP
             </Button> */}
-            {/* <Button
+            <Button
               size="small"
               color="primary"
               onClick={() => handleViews(params.row)}
             >
-              Get Receivings
-            </Button> */}
+              View Receivings
+            </Button>
           </ButtonGroup>
         </div>
       )
@@ -493,6 +528,9 @@ const DyeingReceiving = () => {
             </Button>
           </Grid>
           <Grid item xs={12}>
+            <Typography variant="h3">Issuances</Typography>
+          </Grid>
+          <Grid item xs={12}>
             <ReuseableDataGrid
               initialRows={initialRows}
               iColumns={columns}
@@ -588,6 +626,9 @@ const DyeingReceiving = () => {
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
+          <Grid item xs={12}>
+            <Typography variant="h3">Receivings</Typography>
+          </Grid>
           <Grid item xs={12}>
             <ReuseableDataGrid
               initialRows={receivingList}
