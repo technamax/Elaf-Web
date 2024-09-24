@@ -16,7 +16,7 @@ import {
   IconButton
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-
+import StatusChip from '../../../components/StatusChip';
 import MainCard from 'ui-component/cards/MainCard';
 
 import { Card, CardHeader, Avatar } from '@mui/material';
@@ -265,9 +265,16 @@ const IssuanceView = () => {
     //   field: 'completedDate',
     //   headerName: 'Completed Date'
     // },
+    // {
+    //   field: 'statusName',
+    //   headerName: 'Status'
+    // },
     {
       field: 'statusName',
-      headerName: 'Status'
+      headerName: 'Status',
+      renderCell: (params) => {
+        return <StatusChip status={params.value} />;
+      }
     },
     {
       field: 'action',
