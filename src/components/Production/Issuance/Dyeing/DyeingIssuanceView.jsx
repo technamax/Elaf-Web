@@ -147,6 +147,20 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
     }
   ];
   const handleOgp = async () => {
+    if (
+      formData.dispatchedQuantity >
+      iss.issuanceQuantity - iss.dispatchedQuantity
+    ) {
+      enqueueSnackbar(
+        'Error: DisPatched quantity cannot be greater than issuance quantity!',
+        {
+          variant: 'error',
+          autoHideDuration: 5000
+        }
+      );
+      return; // Stop further execution
+    }
+
     try {
       const response = await axios.post(
         `http://100.42.177.77:83/api/Issuance/GenerateOGP`,

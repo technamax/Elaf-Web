@@ -24,7 +24,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import CloseIcon from '@mui/icons-material/Close';
-
+import StatusChip from 'components/StatusChip';
 import '../../../../assets/scss/style.scss';
 import SSRSReport from '../../../../views/DetailedReports/Reports';
 import {
@@ -850,7 +850,10 @@ const DyeingIssuance = ({ rowData }) => {
     },
     {
       field: 'statusName',
-      headerName: 'Status'
+      headerName: 'Status',
+      renderCell: (params) => {
+        return <StatusChip label={params.value} status={params.value} />;
+      }
     },
     {
       field: 'Actions',
@@ -1251,25 +1254,6 @@ const DyeingIssuance = ({ rowData }) => {
                   width="Inherit"
                   // sx={{ paddingY: 2, paddingX: 2 }}
                 >
-                  {/* <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Issuance"
-              name="issuanceId"
-              value={formData.issuanceId}
-              onChange={handleChange}
-              size="small"
-              // error={!!formErrors.brandId}
-              // helperText={formErrors.brandId}
-            >
-              {issuanceList.map((option) => (
-                <MenuItem key={option.issuanceId} value={option.issuanceId}>
-                  {option.issuanceId}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid> */}
                   <Grid item xs={12}>
                     <ReuseableDataGrid
                       initialRows={issuanceList}

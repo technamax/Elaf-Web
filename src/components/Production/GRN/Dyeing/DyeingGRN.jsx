@@ -23,7 +23,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import '../../../../assets/scss/style.scss';
 // import ReceivingDetails from './ReceivingDetails';
 import {
-  useGetDyeingPoListQuery,
+  useGetDyeingPoHeaderListQuery,
   useGetIssuanceListQuery,
   useGetReceivingHeaderQuery,
   useGetInspectionForGRNHeaderQuery
@@ -72,8 +72,14 @@ const DyeingGRN = () => {
   // const [triggerSearch, setTriggerSearch] = useState(false);
 
   // Hook to fetch the data, and it's controlled by triggerSearch state
-  const { data, error, isLoading, refetch } =
-    useGetInspectionForGRNHeaderQuery();
+  const { data, error, isLoading, refetch } = useGetInspectionForGRNHeaderQuery(
+    formData.poId,
+    {
+      skip: !formData.poId // Skip the query if no collection is selected
+    }
+  );
+  const { data: poData, refetch: refetchPoData } =
+    useGetDyeingPoHeaderListQuery();
   // const { data: issuanceData, refetch: refetchIssuanceData } =
   //   useGetIssuanceListQuery(formData.poId, {
   //     skip: !formData.poId // Skip the query if no collection is selected
@@ -96,6 +102,16 @@ const DyeingGRN = () => {
       );
     }
   }, [data, refetch]);
+  useEffect(() => {
+    if (poData) {
+      setPolist(
+        poData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [poData, refetchPoData]);
   // useEffect(() => {
   //   if (receivingData) {
   //     setReceivingList(
@@ -107,7 +123,7 @@ const DyeingGRN = () => {
   //   }
   // }, [receivingData, refetchReceivingData]);
 
-  console.log('initialRows', initialRows);
+  console.log('polist', polist);
   // useEffect(() => {
   //   if (issuanceData) {
   //     setIssuanceList(
@@ -254,6 +270,14 @@ const DyeingGRN = () => {
       field: 'processTypeName',
       headerName: 'Process'
     },
+    {
+      field: 'rate',
+      headerName: 'Rate'
+    },
+    {
+      field: 'gradeAQty',
+      headerName: 'GradeA'
+    },
     // {
     //   field: 'expectedReturnDate',
     //   headerName: 'Expected Return Date',
@@ -310,6 +334,7 @@ const DyeingGRN = () => {
               size="small"
               color="primary"
               onClick={() => handleClickOpen(params.row)}
+              disabled={params.row.status === 3}
             >
               Receive
             </Button>
@@ -332,111 +357,7 @@ const DyeingGRN = () => {
       )
     }
   ];
-  // const receivingColumns = [
-  //   { field: 'id', headerName: 'Sr #' },
-  //   { field: 'collectionName', headerName: 'Collection Name' },
-  //   { field: 'poName', headerName: 'PO' },
-  //   {
-  //     field: 'ogpNumber',
-  //     headerName: 'OGP Number',
-  //     renderCell: (params) => {
-  //       <span style={{ fontWeight: 'bolder' }}>{params.value}</span>;
-  //     }
-  //   },
-  //   { field: 'igpNumber', headerName: 'IGP Number' },
-  //   {
-  //     field: 'igpDate',
-  //     headerName: 'IGP Date',
-  //     valueGetter: (params) => {
-  //       const date = new Date(params);
-  //       return date.toLocaleDateString('en-GB', {
-  //         day: 'numeric',
-  //         month: 'short',
-  //         year: '2-digit'
-  //       });
-  //     }
-  //   },
-  //   {
-  //     field: 'receivingDate',
-  //     headerName: 'Receiving Date',
-  //     valueGetter: (params) => {
-  //       const date = new Date(params);
-  //       return date.toLocaleDateString('en-GB', {
-  //         day: 'numeric',
-  //         month: 'short',
-  //         year: '2-digit'
-  //       });
-  //     }
-  //   },
 
-  //   { field: 'receivedQty', headerName: 'Received' },
-  //   { field: 'processTypename', headerName: 'Process Type' },
-  //   {
-  //     field: 'statusName',
-  //     headerName: 'Status',
-  //     renderCell: (params) => {
-  //       const chipColor = 'primary.dark';
-  //       if (params.value === null) {
-  //         return;
-  //       } else {
-  //         return (
-  //           <Chip
-  //             label={params.value}
-  //             sx={{
-  //               backgroundColor:
-  //                 chipColor === 'primary' || chipColor === 'default'
-  //                   ? undefined
-  //                   : chipColor,
-  //               color:
-  //                 chipColor === 'primary' || chipColor === 'default'
-  //                   ? undefined
-  //                   : 'white'
-  //             }}
-  //             color={
-  //               chipColor === 'primary'
-  //                 ? 'primary'
-  //                 : chipColor === 'default'
-  //                   ? 'default'
-  //                   : undefined
-  //             }
-  //           />
-  //         );
-  //       }
-  //     }
-  //   },
-  //   {
-  //     field: 'Actions',
-  //     headerName: 'Actions',
-  //     renderCell: (params) => (
-  //       <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-  //         <ButtonGroup variant="text" size="small" sx={{ mt: 1 }}>
-  //           {/* <Button
-  //             size="small"
-  //             color="primary"
-  //             onClick={() => handleClickOpen(params.row)}
-  //             disabled={params.row.status === 4}
-  //           >
-  //             Inspection
-  //           </Button>
-  //           <Button
-  //             size="small"
-  //             color="primary"
-  //             onClick={() => handleClickOpen2(params.row)}
-  //           >
-  //             View
-  //           </Button> */}
-  //           <Button
-  //             size="small"
-  //             color="primary"
-  //             onClick={() => handleClickOpen2(params.row)}
-  //           >
-  //             IGP
-  //           </Button>
-  //         </ButtonGroup>
-  //       </div>
-  //     )
-  //   }
-  // ];
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
       <Card variant="outlined">
@@ -468,7 +389,7 @@ const DyeingGRN = () => {
             >
               {polist.map((option) => (
                 <MenuItem key={option.poId} value={option.poId}>
-                  {option.poName}
+                  {option.poIdName}
                 </MenuItem>
               ))}
             </TextField>

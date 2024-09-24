@@ -20,6 +20,7 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
 import { useUser } from 'context/User';
 import axios from 'axios';
+import StatusChip from 'components/StatusChip';
 import SSRSReport from '../../../../views/DetailedReports/Reports';
 
 const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
@@ -130,7 +131,7 @@ const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
     },
     {
       field: 'issuanceDate',
-      headerName: 'Issuance Date',
+      headerName: 'Issued On',
       valueGetter: (params) => {
         const date = new Date(params);
         return date.toLocaleDateString('en-GB', {
@@ -142,7 +143,7 @@ const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
     },
     {
       field: 'expectedReturnDate',
-      headerName: 'Expected Return Date',
+      headerName: 'Expected Return',
       valueGetter: (params) => {
         const date = new Date(params);
         return date.toLocaleDateString('en-GB', {
@@ -158,7 +159,10 @@ const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
     // },
     {
       field: 'statusName',
-      headerName: 'Status'
+      headerName: 'Status',
+      renderCell: (params) => {
+        return <StatusChip label={params.value} status={params.value} />;
+      }
     },
     {
       field: 'Actions',
@@ -252,18 +256,20 @@ const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
             Generate OGP
           </Button>
         </Grid> */}
-        <Grid item xs={3} textAlign="right">
+        <Grid item xs={12} textAlign="">
           <Typography
-            variant="overline"
+            variant="subtitle2"
             sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
           >
-            Issuance Quantity : {issuanceDetails[0].issuanceQuantity}
+            Issuance ID : {issuanceDetails[0]?.issuanceId || 0} | OGP Number :{' '}
+            {issuanceDetails[0]?.ogpNumber || 0} | Issuance Quantity :{' '}
+            {issuanceDetails[0]?.issuanceQuantity || 0} Meters
           </Typography>
         </Grid>
       </Grid>
       <Grid
         container
-        spacing={2}
+        // spacing={2}
         width="Inherit"
         // sx={{ paddingY: 2, paddingX: 2 }}
       >

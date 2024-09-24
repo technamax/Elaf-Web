@@ -7,6 +7,7 @@ import { useUser } from 'context/User';
 import axios from 'axios';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
+
 const SmallTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-input': {
     fontSize: '0.875rem', // Adjust font size
@@ -19,11 +20,15 @@ const SmallTextField = styled(TextField)(({ theme }) => ({
 }));
 
 const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
-  const [formData, setFormData] = useState({ receivingId: 0, ...iss });
+  const { user } = useUser();
+  const [formData, setFormData] = useState({
+    receivingId: 0,
+    createdBy: user.empId,
+    ...iss
+  });
   const apiRef = useGridApiRef();
 
   const { enqueueSnackbar } = useSnackbar();
-  const { user } = useUser();
   const [issuanceDetails, setIssuanceDetails] = useState([]);
   const { data: issuanceDetailsData, refetch: refetchIssuanceDetailsData } =
     useGetIssuanceDetailsByIssuanceIdQuery(iss.issuanceId, {

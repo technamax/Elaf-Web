@@ -29,7 +29,9 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
       grnNumber: '',
       ...iss,
       createdBy: user.empId,
-      remarks: ''
+      remarks: '',
+      totalQuantity: iss.gradeAQty,
+      totalValue: iss.gradeAQty * iss.rate
     }
   });
   const { enqueueSnackbar } = useSnackbar();

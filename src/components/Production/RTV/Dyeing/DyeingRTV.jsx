@@ -248,7 +248,7 @@ const DyeingRTV = () => {
               color="primary"
               onClick={() => handleClickOpen(params.row)}
             >
-              Receive
+              RTV
             </Button>
             {/* <Button
               size="small"

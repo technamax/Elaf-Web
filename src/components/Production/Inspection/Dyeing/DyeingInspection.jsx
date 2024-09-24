@@ -40,7 +40,13 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
       setReceiveDetails(
         receiveDetailsData.result.map((row, index) => ({
           id: index + 1,
-          ...row
+          ...row,
+          gradeAQty: 0,
+          gradeBQty: 0,
+          gradeCPQty: 0,
+          others1Qty: 0,
+          rejectedQty: 0,
+          remarks: ''
         }))
       );
     }

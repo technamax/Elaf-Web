@@ -37,6 +37,7 @@ import {
   IconButton
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import InspectionView from 'components/Production/Inspection/Dyeing/InspectionView';
 
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
@@ -124,7 +125,7 @@ const Inspection = () => {
           {
             params: {
               poId: formData.poId,
-              status: 4,
+              status: 8,
               processTypename: 'Dyeing' // assuming you want to use a fixed status of 7
             }
           }
@@ -244,7 +245,7 @@ const Inspection = () => {
       field: 'statusName',
       headerName: 'Status',
       renderCell: (params) => {
-        return <StatusChip status={params.value} />;
+        return <StatusChip label={params.value} status={params.value} />;
       }
     },
 
@@ -476,7 +477,7 @@ const Inspection = () => {
               <Card variant="outlined">
                 <CardHeader
                   className="css-4rfrnx-MuiCardHeader-root"
-                  title="Inspection"
+                  title="Receivings"
                   titleTypographyProps={{ style: { color: 'white' } }}
                 ></CardHeader>
                 <Grid
@@ -630,6 +631,7 @@ const Inspection = () => {
                   </Grid>
                 </Grid>
               </Card>
+              <InspectionView formData={formData} />
             </Box>
             {/* <DyeingReceiving rowData={rowData} /> */}
           </TabPanel>

@@ -679,40 +679,40 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       field: 'planningProcessTypeName',
       headerName: 'Process Type',
 
-      ...baseColumnOptions,
-      renderCell: (params) => {
-        const chipColor =
-          params.value === 'MultiHead'
-            ? 'primary.dark'
-            : params.value === 'Schiffili'
-              ? theme.palette.grey[900]
-              : params.value === 'Dyeing'
-                ? 'success.dark'
-                : 'default';
+      ...baseColumnOptions
+      // renderCell: (params) => {
+      //   const chipColor =
+      //     params.value === 'MultiHead'
+      //       ? 'primary.dark'
+      //       : params.value === 'Schiffili'
+      //         ? theme.palette.grey[900]
+      //         : params.value === 'Dyeing'
+      //           ? 'success.dark'
+      //           : 'default';
 
-        return (
-          <Chip
-            label={params.value}
-            sx={{
-              backgroundColor:
-                chipColor === 'primary' || chipColor === 'default'
-                  ? undefined
-                  : chipColor,
-              color:
-                chipColor === 'primary' || chipColor === 'default'
-                  ? undefined
-                  : 'white'
-            }}
-            color={
-              chipColor === 'primary'
-                ? 'primary'
-                : chipColor === 'default'
-                  ? 'default'
-                  : undefined
-            }
-          />
-        );
-      }
+      //   return (
+      //     <Chip
+      //       label={params.value}
+      //       sx={{
+      //         backgroundColor:
+      //           chipColor === 'primary' || chipColor === 'default'
+      //             ? undefined
+      //             : chipColor,
+      //         color:
+      //           chipColor === 'primary' || chipColor === 'default'
+      //             ? undefined
+      //             : 'white'
+      //       }}
+      //       color={
+      //         chipColor === 'primary'
+      //           ? 'primary'
+      //           : chipColor === 'default'
+      //             ? 'default'
+      //             : undefined
+      //       }
+      //     />
+      //   );
+      // }
     },
     {
       field: 'color',

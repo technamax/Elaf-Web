@@ -12,17 +12,18 @@ const statusColors = {
   Received: '#33CCCC', // Teal
   Issued: '#FF9900', // Orange
   Cancelled: '#666666', // Dark Gray
-  null: '#FFFFFF' // White (null-status)
+  null: '#FFFFFF'
+  // White (null-status)
 };
 
-const StatusChip = ({ status }) => {
+const StatusChip = ({ status, label }) => {
   if (!status) return null; // Handle null or undefined status
 
   const chipColor = statusColors[status] || '#FFFFFF'; // Default to white if status not found
 
   return (
     <Chip
-      label={status}
+      label={label}
       sx={{
         backgroundColor: chipColor,
         color: chipColor === '#FFFFFF' ? 'black' : 'white' // Make sure text is visible on light backgrounds

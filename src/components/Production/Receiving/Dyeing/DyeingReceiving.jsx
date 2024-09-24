@@ -19,13 +19,13 @@ import {
   Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-
+// import StatusChip from '../../../../components/StatusChip';
 import '../../../../assets/scss/style.scss';
 import ReceivingDetails from './ReceivingDetails';
 import {
   useGetDyeingPoListQuery,
   useGetIssuanceListQuery,
-  useGetReceivingHeaderQuery
+  useViewReceivingsQuery
 } from 'api/store/Apis/productionApi';
 import {
   useGetSubMenuListQuery,
@@ -66,7 +66,7 @@ const DyeingReceiving = () => {
 
   const [initialRows, setInitialRows] = useState([]);
   const [polist, setPolist] = useState([]);
-  const [issId, setIssId] = useState([]);
+  const [issId, setIssId] = useState(null);
   const [issuanceList, setIssuanceList] = useState([]);
   const [receivingList, setReceivingList] = useState([]);
   const [triggerSearch, setTriggerSearch] = useState(false);
@@ -78,13 +78,13 @@ const DyeingReceiving = () => {
       skip: !formData.poId // Skip the query if no collection is selected
     });
   const { data: receivingData, refetch: refetchReceivingData } =
-    useGetReceivingHeaderQuery(
-      { poId: formData.poId, processTypename: 'Dyeing', status: 8 },
+    useViewReceivingsQuery(
+      { issuanceId: issId, processTypename: 'Dyeing' },
       {
-        skip: !formData.poId // Skip the query if no collection is selected
+        skip: !issId // Skip the query if no collection is selected
       }
     );
-
+  console.log('receivingData', receivingData);
   useEffect(() => {
     if (data) {
       setPolist(
@@ -106,7 +106,7 @@ const DyeingReceiving = () => {
     }
   }, [receivingData, refetchReceivingData]);
 
-  console.log('initialRows', initialRows);
+  console.log('issId', issId);
   useEffect(() => {
     if (issuanceData) {
       setIssuanceList(
@@ -222,6 +222,7 @@ const DyeingReceiving = () => {
   };
   const handleViews = async (data) => {
     setIssId(data.issuanceId);
+    refetchReceivingData();
   };
   const columns = [
     {
@@ -280,11 +281,19 @@ const DyeingReceiving = () => {
       headerName: 'Dispatched',
       valueGetter: (params) => {
         return params.toLocaleString();
+      },
+      renderCell: (params) => {
+        return (
+          <StatusChip label={params.row.dispatchedQuantity} status="Issued" />
+        );
       }
     },
     {
       field: 'receivedQty',
-      headerName: 'Received'
+      headerName: 'Received',
+      renderCell: (params) => {
+        return <StatusChip label={params.row.receivedQty} status="Received" />;
+      }
       // valueGetter: (params, row) => {
       //   return params - row.shortageQty;
       // }
@@ -303,7 +312,7 @@ const DyeingReceiving = () => {
     },
     {
       field: 'expectedReturnDate',
-      headerName: 'Expected Return Date',
+      headerName: 'Expected Return',
       valueGetter: (params) => {
         const date = new Date(params);
         return date.toLocaleDateString('en-GB', {
@@ -313,46 +322,16 @@ const DyeingReceiving = () => {
         });
       }
     },
-    {
-      field: 'statusName',
-      headerName: 'Status',
-      renderCell: (params) => {
-        return <StatusChip status={params.value} />;
-      }
-    },
-    // {
-    //   field: 'fabricCount',
-    //   headerName: 'Fabrics'
-    // },
     // {
     //   field: 'statusName',
     //   headerName: 'Status',
     //   renderCell: (params) => {
-    //     const chipColor = 'primary.dark';
-
-    //     return (
-    //       <Chip
-    //         label={params.value}
-    //         sx={{
-    //           backgroundColor:
-    //             chipColor === 'primary' || chipColor === 'default'
-    //               ? undefined
-    //               : chipColor,
-    //           color:
-    //             chipColor === 'primary' || chipColor === 'default'
-    //               ? undefined
-    //               : 'white'
-    //         }}
-    //         color={
-    //           chipColor === 'primary'
-    //             ? 'primary'
-    //             : chipColor === 'default'
-    //               ? 'default'
-    //               : undefined
-    //         }
-    //       />
-    //     );
+    //     return <StatusChip status={params.value} />;
     //   }
+    // },
+    // {
+    //   field: 'fabricCount',
+    //   headerName: 'Fabrics'
     // },
     {
       field: 'Actions',
@@ -364,7 +343,10 @@ const DyeingReceiving = () => {
               size="small"
               color="primary"
               onClick={() => handleClickOpen(params.row)}
-              disabled={params.row.status !== 9}
+              disabled={
+                params.row.status !== 9 ||
+                params.row.dispatchedQuantity === params.row.receivedQty
+              }
             >
               Generate IGP
             </Button>
@@ -463,7 +445,7 @@ const DyeingReceiving = () => {
       field: 'statusName',
       headerName: 'Status',
       renderCell: (params) => {
-        return <StatusChip status={params.value} />;
+        return <StatusChip label={params.value} status={params.value} />;
       }
     },
     {
@@ -507,7 +489,7 @@ const DyeingReceiving = () => {
           // avatar={
           // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
           // }
-          title="Receiving"
+          title="Pending Receivables"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid
@@ -541,9 +523,9 @@ const DyeingReceiving = () => {
               Search
             </Button>
           </Grid>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <Typography variant="h3">Issuances</Typography>
-          </Grid>
+          </Grid> */}
           <Grid item xs={12}>
             <ReuseableDataGrid
               initialRows={initialRows}
@@ -631,7 +613,7 @@ const DyeingReceiving = () => {
           // avatar={
           // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
           // }
-          title="View All"
+          title="View Receivings"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid
@@ -640,9 +622,9 @@ const DyeingReceiving = () => {
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
-          <Grid item xs={12}>
-            <Typography variant="h3">Receivings</Typography>
-          </Grid>
+          {/* <Grid item xs={12}>
+            <Typography variant="h3"></Typography>
+          </Grid> */}
           <Grid item xs={12}>
             <ReuseableDataGrid
               initialRows={receivingList}
