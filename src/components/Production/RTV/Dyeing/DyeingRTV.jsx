@@ -286,7 +286,7 @@ const DyeingRTV = () => {
           // avatar={
           // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
           // }
-          title="Receiving"
+          title="Return To Vendor"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid
@@ -349,7 +349,7 @@ const DyeingRTV = () => {
                   fontWeight={2}
                   fontStyle={'normal'}
                 >
-                  {'View Details'}
+                  {'Rejection OGP'}
                 </Typography>
                 <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
                   <CloseIcon />
