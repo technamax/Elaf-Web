@@ -41,7 +41,7 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
 import SSRSReport from '../../../../views/DetailedReports/Reports';
 import ReceiveGRN from './ReceiveGRN';
-
+import StatusChip from '../../../../components/StatusChip';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
@@ -272,11 +272,17 @@ const DyeingGRN = () => {
     },
     {
       field: 'rate',
-      headerName: 'Rate'
+      headerName: 'Rate',
+      renderCell: (params) => {
+        return <StatusChip label={params.row.rate} status="Pending" />;
+      }
     },
     {
       field: 'gradeAQty',
-      headerName: 'GradeA'
+      headerName: 'GradeA',
+      renderCell: (params) => {
+        return <StatusChip label={params.row.gradeAQty} status="Received" />;
+      }
     },
     // {
     //   field: 'expectedReturnDate',
@@ -298,30 +304,7 @@ const DyeingGRN = () => {
       field: 'statusName',
       headerName: 'Status',
       renderCell: (params) => {
-        const chipColor = 'primary.dark';
-
-        return (
-          <Chip
-            label={params.value}
-            sx={{
-              backgroundColor:
-                chipColor === 'primary' || chipColor === 'default'
-                  ? undefined
-                  : chipColor,
-              color:
-                chipColor === 'primary' || chipColor === 'default'
-                  ? undefined
-                  : 'white'
-            }}
-            color={
-              chipColor === 'primary'
-                ? 'primary'
-                : chipColor === 'default'
-                  ? 'default'
-                  : undefined
-            }
-          />
-        );
+        return <StatusChip label={params.value} status={params.value} />;
       }
     },
     {
@@ -366,7 +349,7 @@ const DyeingGRN = () => {
           // avatar={
           // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
           // }
-          title="Receiving"
+          title="GRN"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid

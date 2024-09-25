@@ -19,7 +19,7 @@ import {
   Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-
+import StatusChip from '../../../../components/StatusChip';
 import '../../../../assets/scss/style.scss';
 // import ReceivingDetails from './ReceivingDetails';
 import {
@@ -185,11 +185,17 @@ const DyeingRTV = () => {
     },
     {
       field: 'receivedQty',
-      headerName: 'Received'
+      headerName: 'Received',
+      renderCell: (params) => {
+        return <StatusChip label={params.row.receivedQty} status="Received" />;
+      }
     },
     {
       field: 'rejectedQty',
-      headerName: 'Rejected'
+      headerName: 'Rejected',
+      renderCell: (params) => {
+        return <StatusChip label={params.row.rejectedQty} status="Rejected" />;
+      }
     },
     {
       field: 'rejectionReason',
@@ -211,31 +217,34 @@ const DyeingRTV = () => {
       field: 'actionTaken',
       headerName: 'Status',
       renderCell: (params) => {
-        const chipColor = 'primary.dark';
-
-        return (
-          <Chip
-            label={params.value}
-            sx={{
-              backgroundColor:
-                chipColor === 'primary' || chipColor === 'default'
-                  ? undefined
-                  : chipColor,
-              color:
-                chipColor === 'primary' || chipColor === 'default'
-                  ? undefined
-                  : 'white'
-            }}
-            color={
-              chipColor === 'primary'
-                ? 'primary'
-                : chipColor === 'default'
-                  ? 'default'
-                  : undefined
-            }
-          />
-        );
+        return <StatusChip label={params.row.actionTaken} status="Rejected" />;
       }
+      // renderCell: (params) => {
+      //   const chipColor = 'primary.dark';
+
+      //   return (
+      //     <Chip
+      //       label={params.value}
+      //       sx={{
+      //         backgroundColor:
+      //           chipColor === 'primary' || chipColor === 'default'
+      //             ? undefined
+      //             : chipColor,
+      //         color:
+      //           chipColor === 'primary' || chipColor === 'default'
+      //             ? undefined
+      //             : 'white'
+      //       }}
+      //       color={
+      //         chipColor === 'primary'
+      //           ? 'primary'
+      //           : chipColor === 'default'
+      //             ? 'default'
+      //             : undefined
+      //       }
+      //     />
+      //   );
+      // }
     },
     {
       field: 'Actions',

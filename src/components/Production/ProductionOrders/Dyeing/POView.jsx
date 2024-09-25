@@ -5,7 +5,7 @@ import {
   useDyeingPoAssignTermDetailsByPoIdQuery
 } from 'api/store/Apis/productionApi';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
-
+import StatusChip from '../../../../components/StatusChip';
 const POView = ({ vId }) => {
   const [poDetails, setPoDetails] = useState([]);
   const [assignedTerms, setAssignedTerms] = useState([]);
@@ -143,6 +143,7 @@ const POView = ({ vId }) => {
     {
       field: 'planningQty',
       headerName: 'Planned Qty',
+
       // valueGetter: (params) => {
       //   return params.toLocaleString();
       // },

@@ -24,7 +24,7 @@ import {
   ButtonGroup
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-
+import StatusChip from '../../../components/StatusChip';
 import MainCard from 'ui-component/cards/MainCard';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -413,7 +413,10 @@ const FabricReceiving = () => {
     },
     {
       field: 'statusDesc',
-      headerName: 'Status'
+      headerName: 'Status',
+      renderCell: (params) => {
+        return <StatusChip label={params.row.statusDesc} status="Received" />;
+      }
     },
     {
       field: 'View',

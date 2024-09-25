@@ -18,7 +18,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 
 import MainCard from 'ui-component/cards/MainCard';
-
+import StatusChip from '../../../components/StatusChip';
 import { Card, CardHeader, Avatar } from '@mui/material';
 import '../../../assets/scss/style.scss';
 
@@ -136,11 +136,20 @@ const IssuanceView = () => {
   const [productionList, setProductionList] = useState([]);
 
   console.log('processesList', processesList);
+  // useEffect(() => {
+  //   if (lookUpStatusData) {
+  //     setProcessesList(lookUpStatusData.result);
+  //   }
+  // }, [lookUpStatusData]);
   useEffect(() => {
     if (lookUpStatusData) {
-      setProcessesList(lookUpStatusData.result);
+      const filteredProcesses = lookUpStatusData.result.filter(
+        (process) => process.statusId === 2
+      );
+      setProcessesList(filteredProcesses);
     }
   }, [lookUpStatusData]);
+
   useEffect(() => {
     if (fabricDetailData) {
       setViewRows(
@@ -267,7 +276,10 @@ const IssuanceView = () => {
     // },
     {
       field: 'statusName',
-      headerName: 'Status'
+      headerName: 'Status',
+      renderCell: (params) => {
+        return <StatusChip label={params.row.statusName} status="In Process" />;
+      }
     },
     {
       field: 'action',
@@ -307,23 +319,23 @@ const IssuanceView = () => {
       valueGetter: (params) => {
         return params.toLocaleString();
       }
-    },
-    {
-      field: 'rate',
-      headerName: 'Rate'
-    },
-    {
-      field: 'tax',
-      headerName: 'Tax'
-    },
-    {
-      field: 'totalBeforeTax',
-      headerName: 'Total Before Tax'
-    },
-    {
-      field: 'totalAfterTax',
-      headerName: 'Total After Tax'
     }
+    // {
+    //   field: 'rate',
+    //   headerName: 'Rate'
+    // },
+    // {
+    //   field: 'tax',
+    //   headerName: 'Tax'
+    // },
+    // {
+    //   field: 'totalBeforeTax',
+    //   headerName: 'Total Before Tax'
+    // },
+    // {
+    //   field: 'totalAfterTax',
+    //   headerName: 'Total After Tax'
+    // }
   ];
 
   return (

@@ -26,7 +26,7 @@ import {
 } from 'api/store/Apis/productionApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
-
+import StatusChip from '../../../components/StatusChip';
 import Dialog from '@mui/material/Dialog';
 import CloseIcon from '@mui/icons-material/Close';
 import DyeingPrintingAssignVendor from 'components/DyeingPrintingAssignVendor';
@@ -278,11 +278,11 @@ const ViewProductionBatch = ({ handleChangeTabs }) => {
       headerName: 'Sr#'
       // flex: 1
     },
-    {
-      field: 'productionId',
-      headerName: 'Production Id'
-      // flex: 1
-    },
+    // {
+    //   field: 'productionId',
+    //   headerName: 'Production Id'
+    //   // flex: 1
+    // },
 
     {
       field: 'designNo',
@@ -337,7 +337,11 @@ const ViewProductionBatch = ({ handleChangeTabs }) => {
     },
     {
       field: 'statusName',
-      headerName: 'statusName'
+      headerName: 'Status Name',
+      renderCell: (params) => {
+        return <StatusChip label={params.row.statusName} status="In Process" />;
+      }
+
       // flex: 1
     },
     {

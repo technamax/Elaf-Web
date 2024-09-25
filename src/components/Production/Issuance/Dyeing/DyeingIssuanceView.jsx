@@ -10,7 +10,7 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
 import { useUser } from 'context/User';
 import axios from 'axios';
-
+import StatusChip from '../../../../components/StatusChip';
 const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
   const { user } = useUser();
   const [formData, setFormData] = useState({
@@ -128,7 +128,13 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
     },
     {
       field: 'issuanceQuantity',
-      headerName: 'Issuance Quantity'
+      headerName: 'Issuance Quantity',
+      renderCell: (params) => {
+        return (
+          <StatusChip label={params.row.issuanceQuantity} status="Issued" />
+        );
+      }
+
       // valueGetter: (params) => {
       //   return params.toLocaleString();
       // }
@@ -140,11 +146,11 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
     {
       field: 'uomName',
       headerName: 'UOM'
-    },
-    {
-      field: 'vendorName',
-      headerName: 'Fabric'
     }
+    // {
+    //   field: 'vendorName',
+    //   headerName: 'Fabric'
+    // }
   ];
   const handleOgp = async () => {
     if (

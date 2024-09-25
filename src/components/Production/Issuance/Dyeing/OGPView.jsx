@@ -12,7 +12,7 @@ import {
   DialogTitle,
   IconButton
 } from '@mui/material';
-
+import StatusChip from '../../../../components/StatusChip';
 import CloseIcon from '@mui/icons-material/Close';
 import { useGetIssuanceOGPByIdQuery } from 'api/store/Apis/productionApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
@@ -20,7 +20,7 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
 import { useUser } from 'context/User';
 import axios from 'axios';
-import StatusChip from 'components/StatusChip';
+// import StatusChip from 'components/StatusChip';
 import SSRSReport from '../../../../views/DetailedReports/Reports';
 
 const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
@@ -127,7 +127,12 @@ const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
     // },
     {
       field: 'dispatchedQuantity',
-      headerName: 'Dispatch'
+      headerName: 'Dispatch',
+      renderCell: (params) => {
+        return (
+          <StatusChip label={params.row.dispatchedQuantity} status="Issued" />
+        );
+      }
     },
     {
       field: 'issuanceDate',
