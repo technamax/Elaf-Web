@@ -945,13 +945,13 @@ const DyeingIssuance = ({ rowData }) => {
             >
               View OGP
             </Button>
-            {/* <Button
+            <Button
               size="small"
               color="primary"
-              onClick={() => handlePrintOgp(params.row)}
+              onClick={() => handleClickOpen2(params.row)}
             >
-              Print OGP
-            </Button> */}
+              View Issuance
+            </Button>
           </ButtonGroup>
         </div>
       )
@@ -1367,7 +1367,7 @@ const DyeingIssuance = ({ rowData }) => {
                         />
                       </DialogContent>
                     </Dialog>
-                    {/* <Dialog
+                    <Dialog
                       open={open2}
                       onClose={handleClose2}
                       fullWidth
@@ -1394,7 +1394,7 @@ const DyeingIssuance = ({ rowData }) => {
                           fontWeight={2}
                           fontStyle={'normal'}
                         >
-                          {'Create OGP'}
+                          {'Issuance Report'}
                         </Typography>
                         <IconButton
                           onClick={handleClose2}
@@ -1405,13 +1405,10 @@ const DyeingIssuance = ({ rowData }) => {
                       </DialogTitle>
                       <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                        <SSRSReport
-                          rId={13}
-                          paramIssuanceId={iss.issuanceId}
-                          ogpNumber={iss.ogpNumber}
-                        />
+
+                        <SSRSReport rId={15} paramIssuanceId={iss.issuanceId} />
                       </DialogContent>
-                    </Dialog> */}
+                    </Dialog>
                   </Grid>
                 </Grid>
               </TabPanel>

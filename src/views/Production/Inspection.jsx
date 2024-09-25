@@ -483,7 +483,7 @@ const Inspection = () => {
               <Card variant="outlined">
                 <CardHeader
                   className="css-4rfrnx-MuiCardHeader-root"
-                  title="Receivings"
+                  title="Pending Inspections"
                   titleTypographyProps={{ style: { color: 'white' } }}
                 ></CardHeader>
                 <Grid

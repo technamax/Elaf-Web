@@ -73,6 +73,13 @@ const SSRSReport = ({ rId, paramIssuanceId, OGPNumber, ogpNumber }) => {
         iframe.src = newUrl;
       }
     }
+    // if (paramIssuanceId) {
+    //   const iframe = iframeRef.current;
+    //   if (iframe && selectedReportUrl) {
+    //     const newUrl = `${selectedReportUrl}&ParamIssuanceId=${paramIssuanceId || ''}`;
+    //     iframe.src = newUrl;
+    //   }
+    // }
   }, [selectedReportUrl, paramIssuanceId, OGPNumber, ogpNumber]);
 
   return (

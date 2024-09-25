@@ -366,7 +366,7 @@ const DyeingRTV = () => {
                 />
               </DialogContent>
             </Dialog>
-            <Dialog open={open2} onClose={handleClose2} fullWidth maxWidth="xl">
+            {/* <Dialog open={open2} onClose={handleClose2} fullWidth maxWidth="xl">
               <DialogTitle
                 sx={{
                   backgroundColor: '#A11F23',
@@ -397,8 +397,8 @@ const DyeingRTV = () => {
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
                 {/* <SSRSReport rId={14} OGPNumber={iss.igpNumber} /> */}
-              </DialogContent>
-            </Dialog>
+            {/* </DialogContent> */}
+            {/* </Dialog> */}
           </Grid>
         </Grid>
       </Card>
