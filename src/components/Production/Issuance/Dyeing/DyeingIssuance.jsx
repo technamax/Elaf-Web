@@ -16,7 +16,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 
@@ -559,6 +560,9 @@ const DyeingIssuance = ({ rowData }) => {
       headerName: 'Total Qty',
       valueGetter: (params) => {
         return params.toLocaleString();
+      },
+      renderCell: (params) => {
+        return <StatusChip label={params.row.quantity} status="Completed" />;
       }
     },
     {
@@ -566,13 +570,38 @@ const DyeingIssuance = ({ rowData }) => {
       headerName: 'Assigned Quantity',
       valueGetter: (params) => {
         return params.toLocaleString();
+      },
+      renderCell: (params) => {
+        return <StatusChip label={params.row.quantity} status="Issued" />;
       }
     },
+    // {
+    //   field: 'remaining',
+    //   headerName: 'Remaining',
+    //   valueGetter: (params, row) => {
+    //     return row.quantity - row.assignQuantity;
+    //   }
+    // },
     {
       field: 'remaining',
-      headerName: 'Remaining',
+      headerName: 'Remaining Qty',
       valueGetter: (params, row) => {
-        return row.quantity - row.assignQuantity;
+        const remainingQty = row.quantity - row.assignQuantity;
+        return remainingQty.toLocaleString();
+      },
+      renderCell: (params) => {
+        const remainingQty = params.row.quantity - params.row.assignQuantity;
+        // const chipColor = remainingQty < 0 ? '#FF0000' : '#33CCCC'; // Red for negative, green otherwise
+
+        return (
+          <Chip
+            label={remainingQty.toLocaleString()}
+            sx={{
+              backgroundColor: '#FF0000', // Set to red
+              color: '#FFFFFF' // White text for visibility
+            }}
+          />
+        );
       }
     },
     {
@@ -813,17 +842,50 @@ const DyeingIssuance = ({ rowData }) => {
     },
     {
       field: 'issuanceQuantity',
-      headerName: 'Issuance'
+      headerName: 'Issuance',
+      renderCell: (params) => {
+        return (
+          <StatusChip label={params.row.issuanceQuantity} status="Received" />
+        );
+      }
     },
     {
       field: 'dispatchedQuantity',
-      headerName: 'Dispatch'
+      headerName: 'Dispatch',
+      renderCell: (params) => {
+        return (
+          <StatusChip label={params.row.issuanceQuantity} status="Issued" />
+        );
+      }
     },
+    // {
+    //   field: 'remingingQuantity',
+    //   headerName: 'Remaining',
+    //   valueGetter: (params, row) => {
+    //     return row.issuanceQuantity - row.dispatchedQuantity;
+    //   }
+    // },
     {
-      field: 'remingingQuantity',
-      headerName: 'Remaining',
+      field: 'remaining',
+      headerName: 'Remaining Qty',
       valueGetter: (params, row) => {
-        return row.issuanceQuantity - row.dispatchedQuantity;
+        const remainingQty = row.issuanceQuantity - row.dispatchedQuantity;
+        return remainingQty.toLocaleString();
+      },
+      renderCell: (params) => {
+        const remainingQty =
+          params.row.issuanceQuantity - params.row.dispatchedQuantity;
+        // const chipColor = remainingQty < 0 ? '#FF0000' : '#33CCCC'; // Red for negative, green otherwise
+
+        return (
+          <Chip
+            label={remainingQty.toLocaleString()}
+            sx={{
+              backgroundColor: '#FF0000', // Set to red
+              color: '#FFFFFF' // White text for visibility
+            }}
+          />
+        );
       }
     },
     {
@@ -887,15 +949,15 @@ const DyeingIssuance = ({ rowData }) => {
               color="primary"
               onClick={() => handleViewOGP(params.row)}
             >
-              OGP Report
+              View OGP
             </Button>
-            {/* <Button
+            <Button
               size="small"
               color="primary"
-              onClick={() => handlePrintOgp(params.row)}
+              onClick={() => handleClickOpen2(params.row)}
             >
-              Print OGP
-            </Button> */}
+              View Issuance
+            </Button>
           </ButtonGroup>
         </div>
       )
@@ -1330,7 +1392,7 @@ const DyeingIssuance = ({ rowData }) => {
                         />
                       </DialogContent>
                     </Dialog>
-                    {/* <Dialog
+                    <Dialog
                       open={open2}
                       onClose={handleClose2}
                       fullWidth
@@ -1357,7 +1419,7 @@ const DyeingIssuance = ({ rowData }) => {
                           fontWeight={2}
                           fontStyle={'normal'}
                         >
-                          {'Create OGP'}
+                          {'Issuance Report'}
                         </Typography>
                         <IconButton
                           onClick={handleClose2}
@@ -1368,13 +1430,10 @@ const DyeingIssuance = ({ rowData }) => {
                       </DialogTitle>
                       <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                        <SSRSReport
-                          rId={13}
-                          paramIssuanceId={iss.issuanceId}
-                          ogpNumber={iss.ogpNumber}
-                        />
+
+                        <SSRSReport rId={15} paramIssuanceId={iss.issuanceId} />
                       </DialogContent>
-                    </Dialog> */}
+                    </Dialog>
                   </Grid>
                 </Grid>
               </TabPanel>

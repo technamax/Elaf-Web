@@ -13,7 +13,7 @@ import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useUser } from 'context/User';
 import DyeingGRN from 'components/Production/GRN/Dyeing/DyeingGRN';
-
+import StatusChip from '../../components/StatusChip';
 const GRN = () => {
   const location = useLocation();
   const rowData = location.state?.data;

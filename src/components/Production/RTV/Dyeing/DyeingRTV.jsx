@@ -19,7 +19,7 @@ import {
   Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-
+import StatusChip from '../../../../components/StatusChip';
 import '../../../../assets/scss/style.scss';
 // import ReceivingDetails from './ReceivingDetails';
 import {
@@ -185,11 +185,17 @@ const DyeingRTV = () => {
     },
     {
       field: 'receivedQty',
-      headerName: 'Received'
+      headerName: 'Received',
+      renderCell: (params) => {
+        return <StatusChip label={params.row.receivedQty} status="Received" />;
+      }
     },
     {
       field: 'rejectedQty',
-      headerName: 'Rejected'
+      headerName: 'Rejected',
+      renderCell: (params) => {
+        return <StatusChip label={params.row.rejectedQty} status="Rejected" />;
+      }
     },
     {
       field: 'rejectionReason',
@@ -211,31 +217,34 @@ const DyeingRTV = () => {
       field: 'actionTaken',
       headerName: 'Status',
       renderCell: (params) => {
-        const chipColor = 'primary.dark';
-
-        return (
-          <Chip
-            label={params.value}
-            sx={{
-              backgroundColor:
-                chipColor === 'primary' || chipColor === 'default'
-                  ? undefined
-                  : chipColor,
-              color:
-                chipColor === 'primary' || chipColor === 'default'
-                  ? undefined
-                  : 'white'
-            }}
-            color={
-              chipColor === 'primary'
-                ? 'primary'
-                : chipColor === 'default'
-                  ? 'default'
-                  : undefined
-            }
-          />
-        );
+        return <StatusChip label={params.row.actionTaken} status="Rejected" />;
       }
+      // renderCell: (params) => {
+      //   const chipColor = 'primary.dark';
+
+      //   return (
+      //     <Chip
+      //       label={params.value}
+      //       sx={{
+      //         backgroundColor:
+      //           chipColor === 'primary' || chipColor === 'default'
+      //             ? undefined
+      //             : chipColor,
+      //         color:
+      //           chipColor === 'primary' || chipColor === 'default'
+      //             ? undefined
+      //             : 'white'
+      //       }}
+      //       color={
+      //         chipColor === 'primary'
+      //           ? 'primary'
+      //           : chipColor === 'default'
+      //             ? 'default'
+      //             : undefined
+      //       }
+      //     />
+      //   );
+      // }
     },
     {
       field: 'Actions',
@@ -277,7 +286,7 @@ const DyeingRTV = () => {
           // avatar={
           // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
           // }
-          title="Receiving"
+          title="Return To Vendor"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid
@@ -340,7 +349,7 @@ const DyeingRTV = () => {
                   fontWeight={2}
                   fontStyle={'normal'}
                 >
-                  {'View Details'}
+                  {'Rejection OGP'}
                 </Typography>
                 <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
                   <CloseIcon />
@@ -357,7 +366,7 @@ const DyeingRTV = () => {
                 />
               </DialogContent>
             </Dialog>
-            <Dialog open={open2} onClose={handleClose2} fullWidth maxWidth="xl">
+            {/* <Dialog open={open2} onClose={handleClose2} fullWidth maxWidth="xl">
               <DialogTitle
                 sx={{
                   backgroundColor: '#A11F23',
@@ -388,8 +397,8 @@ const DyeingRTV = () => {
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
                 {/* <SSRSReport rId={14} OGPNumber={iss.igpNumber} /> */}
-              </DialogContent>
-            </Dialog>
+            {/* </DialogContent> */}
+            {/* </Dialog> */}
           </Grid>
         </Grid>
       </Card>

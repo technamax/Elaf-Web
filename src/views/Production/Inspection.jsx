@@ -238,7 +238,13 @@ const Inspection = () => {
       }
     },
 
-    { field: 'receivedQty', headerName: 'Received' },
+    {
+      field: 'receivedQty',
+      headerName: 'Received',
+      renderCell: (params) => {
+        return <StatusChip label={params.row.receivedQty} status="Received" />;
+      }
+    },
     { field: 'processTypename', headerName: 'Process Type' },
 
     {
@@ -296,13 +302,13 @@ const Inspection = () => {
             >
               Inspection
             </Button>
-            <Button
+            {/* <Button
               size="small"
               color="primary"
               onClick={() => handleClickOpen2(params.row)}
             >
               View
-            </Button>
+            </Button> */}
           </ButtonGroup>
         </div>
       )
@@ -477,7 +483,7 @@ const Inspection = () => {
               <Card variant="outlined">
                 <CardHeader
                   className="css-4rfrnx-MuiCardHeader-root"
-                  title="Receivings"
+                  title="Pending Inspections"
                   titleTypographyProps={{ style: { color: 'white' } }}
                 ></CardHeader>
                 <Grid

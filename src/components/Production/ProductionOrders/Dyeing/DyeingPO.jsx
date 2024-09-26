@@ -13,7 +13,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  IconButton
+  IconButton,
+  Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -22,7 +23,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import { Card, CardHeader, Avatar } from '@mui/material';
 import '../../../../assets/scss/style.scss';
 import { useNavigate } from 'react-router-dom';
-
+import StatusChip from '../../../../components/StatusChip';
 import {
   useGetProductionBatchForProcessingQuery,
   useGetFabricForProductionByProductionIdQuery,
@@ -472,7 +473,10 @@ const DyeingPO = () => {
     },
     {
       field: 'statusName',
-      headerName: 'Status'
+      headerName: 'Status',
+      renderCell: (params) => {
+        return <StatusChip label={params.row.statusName} status="Pending" />;
+      }
     },
     {
       field: 'Actions',
@@ -568,6 +572,11 @@ const DyeingPO = () => {
       headerName: 'Planned Qty',
       valueGetter: (params) => {
         return params.toLocaleString();
+      },
+      renderCell: (params) => {
+        return (
+          <StatusChip label={params.row.availableQty} status="Inspected" />
+        );
       }
     },
     {
@@ -575,15 +584,43 @@ const DyeingPO = () => {
       headerName: 'Prevoius PO.Qty',
       valueGetter: (params) => {
         return params.toLocaleString();
+      },
+      renderCell: (params) => {
+        return (
+          <StatusChip label={params.row.prevoiusPoQty} status="Received" />
+        );
       }
     },
+    // {
+    //   field: 'remaining',
+    //   headerName: 'Remaining Qty',
+    //   valueGetter: (params, row) => {
+    //     return (row.availableQty - row.prevoiusPoQty).toLocaleString();
+    //   }
+    // },
     {
       field: 'remaining',
       headerName: 'Remaining Qty',
       valueGetter: (params, row) => {
-        return (row.availableQty - row.prevoiusPoQty).toLocaleString();
+        const remainingQty = row.availableQty - row.prevoiusPoQty;
+        return remainingQty.toLocaleString();
+      },
+      renderCell: (params) => {
+        const remainingQty = params.row.availableQty - params.row.prevoiusPoQty;
+        // const chipColor = remainingQty < 0 ? '#FF0000' : '#00FF00'; // Red for negative, green otherwise
+
+        return (
+          <Chip
+            label={remainingQty.toLocaleString()}
+            sx={{
+              backgroundColor: '#FF0000', // Set to red
+              color: '#FFFFFF' // White text for visibility
+            }}
+          />
+        );
       }
     },
+
     {
       field: 'quantity',
       headerName: 'Assigned Qty',
@@ -1025,9 +1062,30 @@ const DyeingPO = () => {
               variant="overline"
               sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
             >
-              Assign Quantity : {formData.pxQty} | planned Quantity :{' '}
-              {formData.overallQty} | Remaining Quantity :{' '}
-              {formData.remainingQuantity}
+              Assign Quantity{' '}
+              <Chip
+                label={formData.pxQty}
+                sx={{
+                  backgroundColor: '#008000', // Assigned Qty color
+                  color: '#FFFFFF' // White text
+                }}
+              />
+              | planned Quantity{' '}
+              <Chip
+                label={formData.overallQty}
+                sx={{
+                  backgroundColor: '#0000FF', // Planned Qty color
+                  color: '#FFFFFF' // White text
+                }}
+              />{' '}
+              | Remaining Quantity{' '}
+              <Chip
+                label={formData.remainingQuantity}
+                sx={{
+                  backgroundColor: '#FF0000', // Set to red
+                  color: '#FFFFFF' // White text for visibility
+                }}
+              />
             </Typography>
             {/* </Grid>
           <Grid item xs={3} textAlign="right"> */}

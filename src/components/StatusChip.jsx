@@ -3,12 +3,12 @@ import { Chip } from '@mui/material';
 
 const statusColors = {
   Draft: '#CCCCCC', // Gray
-  'In Process': '#FFCC00', // Yellow
+  'In Process': '#FFD700', // golden
   Completed: '#008000', // Green
   Inspected: '#0000FF', // Blue
   Approved: '#00FF00', // Light Green
   Rejected: '#FF0000', // Red
-  Pending: '#FFCC00', // Yellow
+  Pending: '#f7672c ', // Yellow
   Received: '#33CCCC', // Teal
   Issued: '#FF9900', // Orange
   Cancelled: '#666666', // Dark Gray
