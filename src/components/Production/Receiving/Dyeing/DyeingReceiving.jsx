@@ -25,7 +25,9 @@ import ReceivingDetails from './ReceivingDetails';
 import {
   useGetDyeingPoListQuery,
   useGetIssuanceListQuery,
-  useViewReceivingsQuery
+  useViewReceivingsQuery,
+  useGetProductionBatchForProcessingQuery,
+  useGetDyeingPoHeaderByProductionIdQuery
 } from 'api/store/Apis/productionApi';
 import {
   useGetSubMenuListQuery,
@@ -53,6 +55,7 @@ const DyeingReceiving = () => {
   const [formData, setFormData] = useState({
     issuanceId: '',
     poId: '',
+    productionId: '',
     ogpNumber: '',
     // termCondDesc: '',
     // enabled: '',
@@ -72,7 +75,13 @@ const DyeingReceiving = () => {
   const [triggerSearch, setTriggerSearch] = useState(false);
 
   // Hook to fetch the data, and it's controlled by triggerSearch state
-  const { data, error, isLoading, refetch } = useGetDyeingPoListQuery();
+  // const { data, error, isLoading, refetch } = useGetDyeingPoListQuery();
+  const { data, error, isLoading, refetch } =
+    useGetDyeingPoHeaderByProductionIdQuery(formData.productionId, {
+      skip: !formData.productionId
+    });
+  const { data: productionBatchData, refetch: refetchProductionBatchData } =
+    useGetProductionBatchForProcessingQuery();
   const { data: issuanceData, refetch: refetchIssuanceData } =
     useGetIssuanceListQuery(formData.poId, {
       skip: !formData.poId // Skip the query if no collection is selected
@@ -85,6 +94,18 @@ const DyeingReceiving = () => {
       }
     );
   console.log('receivingData', receivingData);
+  const [productions, setProductions] = useState([]);
+  useEffect(() => {
+    if (productionBatchData) {
+      setProductions(
+        productionBatchData.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+    }
+  }, [productionBatchData, refetchProductionBatchData]);
+
   useEffect(() => {
     if (data) {
       setPolist(
@@ -162,41 +183,85 @@ const DyeingReceiving = () => {
       handleSearch();
     }
   };
-  const handleSearch = async () => {
-    console.log('formData', formData);
-    try {
-      // Make the API call
-      const response = await axios.get(
-        `http://100.42.177.77:83/api/Receiving/GetIssuanceByPoIdAndOGPNumber?poId=${formData.poId}&issuanceId=${formData.issuanceId}`
-      );
-      console.log('Save response:', response.data);
+  // const handleSearch = async () => {
+  //   console.log('formData', formData);
+  //   try {
+  //     // Make the API call
+  //     const response = await axios.get(
+  //       `http://100.42.177.77:83/api/Receiving/GetIssuanceByPoIdAndOGPNumber?poId=${formData.poId}&issuanceId=${formData.issuanceId}`
+  //     );
+  //     console.log('Save response:', response.data);
 
-      if (!response.data.success) {
-        enqueueSnackbar(`${response.data.message} !`, {
+  //     if (!response.data.success) {
+  //       enqueueSnackbar(`${response.data.message} !`, {
+  //         variant: 'error',
+  //         autoHideDuration: 5000
+  //       });
+  //       console.log('response.message', response.data.message);
+  //     } else {
+  //       enqueueSnackbar(`${response.data.message} !`, {
+  //         variant: 'success',
+  //         autoHideDuration: 5000
+  //       });
+  //       setInitialRows(
+  //         response.data.result.map((row, index) => ({
+  //           id: index + 1,
+  //           ...row
+  //         }))
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.error('Error saving data:', error);
+  //     enqueueSnackbar('FAILED: Unable to start Process', {
+  //       variant: 'error',
+  //       autoHideDuration: 5000
+  //     });
+  //   }
+  // };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Make the API call
+        const response = await axios.get(
+          `http://100.42.177.77:83/api/Receiving/GetIssuanceByPoIdAndOGPNumber?poId=${formData.poId}&issuanceId=${formData.issuanceId}`
+        );
+        console.log('Save response:', response.data);
+
+        if (!response.data.success) {
+          enqueueSnackbar(`${response.data.message} !`, {
+            variant: 'error',
+            autoHideDuration: 5000
+          });
+          console.log('response.message', response.data.message);
+        } else {
+          enqueueSnackbar(`${response.data.message} !`, {
+            variant: 'success',
+            autoHideDuration: 5000
+          });
+          setInitialRows(
+            response.data.result.map((row, index) => ({
+              id: index + 1,
+              ...row
+            }))
+          );
+        }
+      } catch (error) {
+        console.error('Error saving data:', error);
+        enqueueSnackbar('FAILED: Unable to start Process', {
           variant: 'error',
           autoHideDuration: 5000
         });
-        console.log('response.message', response.data.message);
-      } else {
-        enqueueSnackbar(`${response.data.message} !`, {
-          variant: 'success',
-          autoHideDuration: 5000
-        });
-        setInitialRows(
-          response.data.result.map((row, index) => ({
-            id: index + 1,
-            ...row
-          }))
-        );
       }
-    } catch (error) {
-      console.error('Error saving data:', error);
-      enqueueSnackbar('FAILED: Unable to start Process', {
-        variant: 'error',
-        autoHideDuration: 5000
-      });
-    }
-  };
+    };
+
+    fetchData(); // Call the async function inside the effect
+
+    // Optional cleanup if necessary
+    return () => {
+      // No async logic here
+    };
+  }, [formData.issuanceId]);
+
   console.log('formData', formData);
 
   const [open, setOpen] = React.useState(false);
@@ -232,7 +297,7 @@ const DyeingReceiving = () => {
     },
     {
       field: 'issuanceId',
-      headerName: 'issuance#'
+      headerName: 'Issuance#'
     },
     // {
     //   field: 'ogpNumber',
@@ -502,6 +567,25 @@ const DyeingReceiving = () => {
             <TextField
               fullWidth
               select
+              label="Production"
+              name="productionId"
+              value={formData.productionId}
+              onChange={handleChange}
+              size="small"
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            >
+              {productions.map((option) => (
+                <MenuItem key={option.productionId} value={option.productionId}>
+                  {option.collectionName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
               label="PO#"
               name="poId"
               value={formData.poId}
@@ -512,17 +596,17 @@ const DyeingReceiving = () => {
             >
               {polist.map((option) => (
                 <MenuItem key={option.poId} value={option.poId}>
-                  {option.poName}
+                  {option.poIdName}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
 
-          <Grid item xs={12} md={3} sx={{ mt: 0.5 }}>
+          {/* <Grid item xs={12} md={3} sx={{ mt: 0.5 }}>
             <Button variant="contained" size="small" onClick={handleSearch}>
               Search
             </Button>
-          </Grid>
+          </Grid> */}
           {/* <Grid item xs={12}>
             <Typography variant="h3">Issuances</Typography>
           </Grid> */}

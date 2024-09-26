@@ -27,7 +27,9 @@ import {
   useGetIssuanceListQuery,
   useGetReceivingHeaderQuery,
   useGetRejectionByPoIdQuery,
-  useGetDyeingPoHeaderListQuery
+  useGetDyeingPoHeaderListQuery,
+  useGetProductionBatchForProcessingQuery,
+  useGetDyeingPoHeaderByProductionIdQuery
 } from 'api/store/Apis/productionApi';
 import {
   useGetSubMenuListQuery,
@@ -55,6 +57,7 @@ const DyeingRTV = () => {
   const [formData, setFormData] = useState({
     issuanceId: '',
     poId: '',
+    productionId: '',
     ogpNumber: '',
     // termCondDesc: '',
     // enabled: '',
@@ -81,7 +84,14 @@ const DyeingRTV = () => {
     }
   );
   const { data: poData, refetch: refetchPoData } =
-    useGetDyeingPoHeaderListQuery();
+    useGetDyeingPoHeaderListQuery(formData.productionId, {
+      skip: !formData.productionId
+    });
+  // const { data: poData, refetch: refetchPoData } =
+  //   useGetDyeingPoHeaderListQuery();
+  const { data: productionBatchData, refetch: refetchProductionBatchData } =
+    useGetProductionBatchForProcessingQuery();
+
   // const { data: issuanceData, refetch: refetchIssuanceData } =
   //   useGetIssuanceListQuery(formData.poId, {
   //     skip: !formData.poId // Skip the query if no collection is selected
@@ -93,6 +103,17 @@ const DyeingRTV = () => {
   //       skip: !issId // Skip the query if no collection is selected
   //     }
   //   );
+  const [productions, setProductions] = useState([]);
+  useEffect(() => {
+    if (productionBatchData) {
+      setProductions(
+        productionBatchData.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+    }
+  }, [productionBatchData, refetchProductionBatchData]);
 
   useEffect(() => {
     if (data) {
@@ -295,6 +316,25 @@ const DyeingRTV = () => {
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Production"
+              name="productionId"
+              value={formData.productionId}
+              onChange={handleChange}
+              size="small"
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            >
+              {productions.map((option) => (
+                <MenuItem key={option.productionId} value={option.productionId}>
+                  {option.collectionName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth

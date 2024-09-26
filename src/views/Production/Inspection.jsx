@@ -13,7 +13,10 @@ import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   useGetInspectionDetailsQuery,
-  useGetDyeingPoListQuery
+  useGetDyeingPoListQuery,
+  useGetDyeingPoHeaderByProductionIdQuery,
+  useGetProductionBatchForProcessingQuery,
+  useGetReceivingHeaderQuery
 } from 'api/store/Apis/productionApi';
 // import { useUser } from 'context/User';
 import DyeingInspection from '../../components/Production/Inspection/Dyeing/DyeingInspection';
@@ -72,6 +75,7 @@ const Inspection = () => {
   const [formData, setFormData] = useState({
     issuanceId: '',
     poId: '',
+    productionId: '',
     appId: user.appId,
     createdOn: new Date().toISOString(),
     createdBy: user.empId,
@@ -79,11 +83,44 @@ const Inspection = () => {
     LastUpdatedBy: user.empId
   });
   const [polist, setPolist] = useState([]);
-  const { data, error, isLoading, refetch } = useGetDyeingPoListQuery();
-
+  // const { data, error, isLoading, refetch } = useGetDyeingPoListQuery();
+  const { data, error, isLoading, refetch } =
+    useGetDyeingPoHeaderByProductionIdQuery(formData.productionId, {
+      skip: !formData.productionId // Skip the query if no collection is selected
+    });
+  const { data: productionBatchData, refetch: refetchProductionBatchData } =
+    useGetProductionBatchForProcessingQuery();
+  const { data: receivingData, refetch: refetchReceivingData } =
+    useGetReceivingHeaderQuery(
+      { poId: formData.poId, status: 8, processTypename: 'Dyeing' },
+      {
+        skip: !formData.poId
+      }
+    );
   const [initialRows, setInitialRows] = useState([]);
   const [triggerSearch, setTriggerSearch] = useState(false);
   console.log('initialRows', initialRows);
+  const [productions, setProductions] = useState([]);
+  useEffect(() => {
+    if (receivingData) {
+      setInitialRows(
+        receivingData.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+    }
+  }, [receivingData, refetchReceivingData]);
+  useEffect(() => {
+    if (productionBatchData) {
+      setProductions(
+        productionBatchData.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+    }
+  }, [productionBatchData, refetchProductionBatchData]);
 
   useEffect(() => {
     if (data) {
@@ -117,50 +154,6 @@ const Inspection = () => {
     }
   };
 
-  const handleSearch = async () => {
-    if (formData.poId) {
-      try {
-        const response = await axios.get(
-          `http://100.42.177.77:83/api/Receiving/GetReceivingHeader`,
-          {
-            params: {
-              poId: formData.poId,
-              status: 8,
-              processTypename: 'Dyeing' // assuming you want to use a fixed status of 7
-            }
-          }
-        );
-
-        console.log('API response:', response.data);
-
-        const resultArray = response.data.result;
-
-        if (Array.isArray(resultArray)) {
-          const dataWithIds = resultArray.map((row, index) => ({
-            ...row,
-            id: index + 1
-          }));
-
-          setInitialRows(dataWithIds);
-
-          enqueueSnackbar('Data fetched successfully!', { variant: 'success' });
-        } else {
-          throw new Error('Unexpected data format');
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        enqueueSnackbar('Failed to fetch data!', { variant: 'error' });
-      }
-    } else {
-      enqueueSnackbar('Please enter an issuance ID!', { variant: 'warning' });
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
   const [open2, setOpen2] = React.useState(false);
   const [rData, setRData] = useState({});
   const [inpectionDetails, setInpectionDetails] = useState({});
@@ -254,40 +247,6 @@ const Inspection = () => {
         return <StatusChip label={params.value} status={params.value} />;
       }
     },
-
-    // {
-    //   field: 'statusName',
-    //   headerName: 'Status',
-    //   renderCell: (params) => {
-    //     const chipColor = '#33CCCC';
-    //     if (params.value === null) {
-    //       return;
-    //     } else {
-    //       return (
-    //         <Chip
-    //           label={params.value}
-    //           sx={{
-    //             backgroundColor:
-    //               chipColor === 'primary' || chipColor === 'default'
-    //                 ? undefined
-    //                 : chipColor,
-    //             color:
-    //               chipColor === 'primary' || chipColor === 'default'
-    //                 ? undefined
-    //                 : 'white'
-    //           }}
-    //           color={
-    //             chipColor === 'primary'
-    //               ? 'primary'
-    //               : chipColor === 'default'
-    //                 ? 'default'
-    //                 : undefined
-    //           }
-    //         />
-    //       );
-    //     }
-    //   }
-    // },
     {
       field: 'Actions',
       headerName: 'Actions',
@@ -496,6 +455,29 @@ const Inspection = () => {
                     <TextField
                       fullWidth
                       select
+                      label="Production"
+                      name="productionId"
+                      value={formData.productionId}
+                      onChange={handleChange}
+                      size="small"
+                      // error={!!formErrors.brandId}
+                      // helperText={formErrors.brandId}
+                    >
+                      {productions.map((option) => (
+                        <MenuItem
+                          key={option.productionId}
+                          value={option.productionId}
+                        >
+                          {option.collectionName}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </Grid>
+
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      fullWidth
+                      select
                       label="PO#"
                       name="poId"
                       value={formData.poId}
@@ -506,36 +488,10 @@ const Inspection = () => {
                     >
                       {polist.map((option) => (
                         <MenuItem key={option.poId} value={option.poId}>
-                          {option.poName}
+                          {option.poIdName}
                         </MenuItem>
                       ))}
                     </TextField>
-                  </Grid>
-                  {/* <Grid item xs={12} md={3}>
-                    <TextField
-                      label="Enter Issuance Number"
-                      type="number"
-                      fullWidth
-                      size="small"
-                      name="issuanceId"
-                      onChange={handleChange}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          handleSearch();
-                        }
-                      }}
-                      value={formData.issuanceId}
-                      required
-                    />
-                  </Grid> */}
-                  <Grid item xs={12} md={3} sx={{ mt: 0.5 }}>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      onClick={handleSearch}
-                    >
-                      Search
-                    </Button>
                   </Grid>
                   <Grid item xs={12}>
                     <ReuseableDataGrid
@@ -584,7 +540,7 @@ const Inspection = () => {
                         <DyeingInspection
                           rData={rData}
                           handleClose={handleClose}
-                          refetch={handleSearch}
+                          refetch={refetchReceivingData}
                           // refetchIssuanceData={refetchIssuanceData}
                         />
                       </DialogContent>
