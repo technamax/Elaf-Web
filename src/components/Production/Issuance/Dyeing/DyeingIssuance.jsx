@@ -30,6 +30,8 @@ import SSRSReport from '../../../../views/DetailedReports/Reports';
 import {
   useGetDyeingPoHeaderListbyPoIdQuery,
   useGetDyeingPoHeaderListQuery,
+  useGetProductionBatchForProcessingQuery,
+  useGetDyeingPoHeaderByProductionIdQuery,
   useGetFabricForProductionByProductionIdQuery,
   useGetVendorsByFabricIDQuery,
   useGetProductionPODesignByFabricAndProductionIdQuery,
@@ -127,7 +129,13 @@ const DyeingIssuance = ({ rowData }) => {
   };
 
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
-    useGetDyeingPoHeaderListQuery();
+    useGetProductionBatchForProcessingQuery();
+  // const { data: dyeingPOData, refetch: refetchDyeingPOData } =
+  //   useGetDyeingPoHeaderListQuery();
+  const { data: dyeingPOData, refetch: refetchDyeingPOData } =
+    useGetDyeingPoHeaderByProductionIdQuery(formData.productionId, {
+      skip: !formData.productionId
+    });
   const { data: poHeaderData, refetch: refetchPoHeaderData } =
     useGetDyeingPoHeaderListbyPoIdQuery(formData.poId, {
       skip: !formData.poId // Skip the query if no collection is selected
@@ -186,13 +194,13 @@ const DyeingIssuance = ({ rowData }) => {
     }));
   }, [rowData, poDetails, poHeaderData, formData.remainingQuantity]);
 
-  const [productions, setProductions] = useState([]);
+  const [dyeingPOs, setDyeingPOs] = useState([]);
   useEffect(() => {
     if (poHeaderData) {
       setFormData({
         ...formData,
         shrinkage: poHeaderData.result[0].shrinkage,
-        productionId: poHeaderData.result[0].productionId,
+        // productionId: poHeaderData.result[0].productionId,
         productionHeaderId: poHeaderData.result[0].productionHeaderId,
         issuanceDate: poHeaderData.result[0].issuanceDate,
         expectedReturnDate: poHeaderData.result[0].expectedReturnDate,
@@ -215,20 +223,18 @@ const DyeingIssuance = ({ rowData }) => {
       // );
     }
   }, [poHeaderData, refetchPoHeaderData]);
-  // useEffect(() => {
-  //   if (issuanceOGPData?.result === null) {
-  //     setIssuanceOGPList([]);
-  //     return;
-  //   }
-  //   if (issuanceOGPData) {
-  //     setIssuanceOGPList(
-  //       issuanceOGPData.result.map((row, index) => ({
-  //         id: index + 1,
-  //         ...row
-  //       }))
-  //     );
-  //   }
-  // }, [issuanceOGPData, refetchIssuanceOGPData]);
+  const [productions, setProductions] = useState([]);
+  useEffect(() => {
+    if (productionBatchData) {
+      setProductions(
+        productionBatchData.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+    }
+  }, [productionBatchData, refetchProductionBatchData]);
+
   useEffect(() => {
     if (poDetailsData?.result === null) {
       setPoDetails([]);
@@ -305,28 +311,28 @@ const DyeingIssuance = ({ rowData }) => {
   //   }
   // }, [locationsData]);
   useEffect(() => {
-    if (productionBatchData) {
-      setProductions(
-        productionBatchData.result.map((row, index) => ({
+    if (dyeingPOData) {
+      setDyeingPOs(
+        dyeingPOData.result.map((row, index) => ({
           id: index,
           ...row
         }))
       );
     }
-  }, [productionBatchData, refetchProductionBatchData]);
+  }, [dyeingPOData, refetchDyeingPOData]);
 
   console.log('quantities', quantities);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name === 'poId') {
-      const selectedPO = productions.find((po) => po.poId === parseInt(value));
+      const selectedPO = dyeingPOs.find((po) => po.poId === parseInt(value));
 
       setFormData({
         ...formData,
         poId: value,
         shrinkage: selectedPO ? selectedPO.shrinkage : '',
-        productionId: selectedPO ? selectedPO.productionId : '',
+        // productionId: selectedPO ? selectedPO.productionId : '',
         issuanceDate: selectedPO ? selectedPO.issuanceDate : null,
         expectedReturnDate: selectedPO ? selectedPO.expectedReturnDate : '',
         fabricId: selectedPO ? selectedPO.fabricId : '',
@@ -436,7 +442,7 @@ const DyeingIssuance = ({ rowData }) => {
       // flex: 1
     }
   ];
-  console.log('productions', productions);
+  console.log('dyeingPOs', dyeingPOs);
 
   // const handleCellEdit = React.useCallback(
   //   (params) => {
@@ -918,6 +924,25 @@ const DyeingIssuance = ({ rowData }) => {
               fullWidth
               select
               label="Production"
+              name="productionId"
+              value={formData.productionId}
+              onChange={handleChange}
+              size="small"
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            >
+              {productions.map((option) => (
+                <MenuItem key={option.productionId} value={option.productionId}>
+                  {option.collectionName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="PO#"
               name="poId"
               value={formData.poId}
               onChange={handleChange}
@@ -925,7 +950,7 @@ const DyeingIssuance = ({ rowData }) => {
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             >
-              {productions.map((option) => (
+              {dyeingPOs.map((option) => (
                 <MenuItem key={option.poId} value={option.poId}>
                   {option.poIdName}
                 </MenuItem>
