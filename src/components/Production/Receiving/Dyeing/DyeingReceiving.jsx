@@ -223,7 +223,7 @@ const DyeingReceiving = () => {
       try {
         // Make the API call
         const response = await axios.get(
-          `http://100.42.177.77:83/api/Receiving/GetIssuanceByPoIdAndOGPNumber?poId=${formData.poId}&issuanceId=${formData.issuanceId}`
+          `http://100.42.177.77:83/api/Receiving/GetIssuanceByPoIdAndOGPNumber?poId=${formData.poId}`
         );
         console.log('Save response:', response.data);
 
@@ -260,7 +260,7 @@ const DyeingReceiving = () => {
     return () => {
       // No async logic here
     };
-  }, [formData.issuanceId]);
+  }, [formData.poId]);
 
   console.log('formData', formData);
 

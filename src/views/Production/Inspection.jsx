@@ -105,7 +105,7 @@ const Inspection = () => {
     if (receivingData) {
       setInitialRows(
         receivingData.result.map((row, index) => ({
-          id: index,
+          id: index + 1,
           ...row
         }))
       );

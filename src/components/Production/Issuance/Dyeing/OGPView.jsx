@@ -317,8 +317,12 @@ const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
 
               <SSRSReport
                 rId={13}
-                paramIssuanceId={iss.issuanceId}
-                ogpNumber={iss.ogpNumber}
+                ogpView={{
+                  paramIssuanceId: iss.issuanceId,
+                  ogpNumber: iss.ogpNumber
+                }}
+                // paramIssuanceId={iss.issuanceId}
+                // ogpNumber={iss.ogpNumber}
               />
             </DialogContent>
           </Dialog>

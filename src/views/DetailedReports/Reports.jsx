@@ -9,7 +9,15 @@ import {
   CardHeader
 } from '@mui/material';
 
-const SSRSReport = ({ rId, paramIssuanceId, OGPNumber, ogpNumber }) => {
+const SSRSReport = ({
+  rId,
+  DyeingIssuance,
+  ogpView,
+  paramIssuanceId,
+  OGPNumber,
+  ogpNumber,
+  issuanceOgp
+}) => {
   const [reports, setReports] = useState([]);
   const [selectedReportUrl, setSelectedReportUrl] = useState('');
   const [selectedReport, setSelectedReport] = useState('');
@@ -59,10 +67,10 @@ const SSRSReport = ({ rId, paramIssuanceId, OGPNumber, ogpNumber }) => {
   };
 
   useEffect(() => {
-    if (paramIssuanceId) {
+    if (ogpView) {
       const iframe = iframeRef.current;
       if (iframe && selectedReportUrl) {
-        const newUrl = `${selectedReportUrl}&ParamIssuanceId=${paramIssuanceId || ''}&ParamOGP=${ogpNumber || ''}`;
+        const newUrl = `${selectedReportUrl}&ParamIssuanceId=${ogpView?.paramIssuanceId || ''}&ParamOGP=${ogpView?.ogpNumber || ''}`;
         iframe.src = newUrl;
       }
     }
@@ -73,13 +81,13 @@ const SSRSReport = ({ rId, paramIssuanceId, OGPNumber, ogpNumber }) => {
         iframe.src = newUrl;
       }
     }
-    // if (paramIssuanceId) {
-    //   const iframe = iframeRef.current;
-    //   if (iframe && selectedReportUrl) {
-    //     const newUrl = `${selectedReportUrl}&ParamIssuanceId=${paramIssuanceId || ''}`;
-    //     iframe.src = newUrl;
-    //   }
-    // }
+    if (DyeingIssuance) {
+      const iframe = iframeRef.current;
+      if (iframe && selectedReportUrl) {
+        const newUrl = `${selectedReportUrl}&ParamIssuanceId=${DyeingIssuance?.paramIssuanceId || ''}`;
+        iframe.src = newUrl;
+      }
+    }
   }, [selectedReportUrl, paramIssuanceId, OGPNumber, ogpNumber]);
 
   return (

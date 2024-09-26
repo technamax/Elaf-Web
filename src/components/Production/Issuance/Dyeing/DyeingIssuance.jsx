@@ -1431,7 +1431,10 @@ const DyeingIssuance = ({ rowData }) => {
                       <DialogContent>
                         <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
 
-                        <SSRSReport rId={15} paramIssuanceId={iss.issuanceId} />
+                        <SSRSReport
+                          rId={15}
+                          DyeingIssuance={{ paramIssuanceId: iss.issuanceId }}
+                        />
                       </DialogContent>
                     </Dialog>
                   </Grid>

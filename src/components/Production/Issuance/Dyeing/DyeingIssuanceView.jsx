@@ -239,8 +239,8 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
             fullWidth
             disabled
             label="Process Type"
-            name="processTypename"
-            value={iss.processTypename}
+            name="processTypeName"
+            value={iss.processTypeName}
             size="small"
           ></TextField>
         </Grid>
