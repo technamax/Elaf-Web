@@ -200,7 +200,7 @@ const ReuseableDataGrid = ({
   return (
     <Box
       sx={{
-        height: height ? height : 'auto',
+        height: 'auto', // Let the box adjust based on content
         width: 'inherit',
         '& .actions': {
           color: 'text.secondary'
@@ -213,27 +213,25 @@ const ReuseableDataGrid = ({
         }
       }}
     >
-      {/* <div ref={componentRef}> */}
       <DataGrid
         rows={initialRows}
         columns={columns}
-        // rowLength={100}
         apiRef={apiRef}
         ref={componentRef}
         autosizeOnMount
+        autoPageSize
         onRowDoubleClick={onRowDoubleClick}
         checkboxSelection={checkboxSelection}
         getCellClassName={getCellClassName}
         onRowSelectionModelChange={onRowSelectionModelChange}
         onStateChange={handleStateChange}
+        autoHeight={false} // Disable autoHeight to let the grid control height
         slots={{ toolbar: EditToolbar }}
         sx={{
-          overflow: 'auto', // Ensure scrolling is not affected by styles
+          height: 600, // Ensure a fixed height so that DataGrid can scroll within
           '& .MuiDataGrid-root': {
-            overflow: 'auto'
+            overflow: 'auto' // Enable scroll only for DataGrid
           },
-
-          /////////////////
           '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
           '& .css-1kyxv1r-MuiDataGrid-root': {
             color: 'white',
@@ -252,7 +250,9 @@ const ReuseableDataGrid = ({
           '& .MuiDataGrid-sortIcon': {
             color: 'white'
           },
-          '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+          '& .css-ptiqhd-MuiSvgIcon-root': {
+            color: 'white'
+          },
           '& .MuiDataGrid-row': {
             '&.total-summary-row': {
               backgroundColor: 'darkgray'
@@ -263,7 +263,8 @@ const ReuseableDataGrid = ({
           params.id === 'TOTAL_SUMMARY' ? 'total-summary-row' : ''
         }
       />
-      {/* </div> */}
+
+      {/* Dialog for delete confirmation */}
       <Dialog
         open={open}
         onClose={handleClose}

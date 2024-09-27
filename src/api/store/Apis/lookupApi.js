@@ -11,7 +11,8 @@ export const lookupApi = createApi({
       query: () => `Common/GetStatusLookUp?appId=1`
     }),
     getShrinkageWastageList: builder.query({
-      query: () => `Configurations/GetShrinkageWastageList?appId=1`
+      query: (vendorID) =>
+        `Configurations/GetShrinkageWastageList?vendorID=${vendorID}`
     }),
     getWareHouseLocations: builder.query({
       query: () => `Common/GetLocationsbyAppId?appId=1`
