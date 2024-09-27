@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField, Typography, Button } from '@mui/material';
+import { Grid, TextField, Typography, Button, MenuItem } from '@mui/material';
 import { useGetIssuanceDetailsByIssuanceIdQuery } from 'api/store/Apis/productionApi';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
@@ -7,6 +7,7 @@ import { useUser } from 'context/User';
 import axios from 'axios';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
+import { useGetWareHouseLocationsQuery } from 'api/store/Apis/lookupApi';
 
 const SmallTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-input': {
@@ -23,6 +24,7 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
   const { user } = useUser();
   const [formData, setFormData] = useState({
     receivingId: 0,
+    locationId: '',
     createdBy: user.empId,
     ...iss
   });
@@ -30,10 +32,24 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const [issuanceDetails, setIssuanceDetails] = useState([]);
+  const { data: locationsData, refetch: refetchLocationsData } =
+    useGetWareHouseLocationsQuery();
   const { data: issuanceDetailsData, refetch: refetchIssuanceDetailsData } =
     useGetIssuanceDetailsByIssuanceIdQuery(iss.issuanceId, {
       skip: !iss.issuanceId
     });
+
+  const [locationsList, setLocationsList] = useState([]);
+  useEffect(() => {
+    if (locationsData) {
+      setLocationsList(
+        locationsData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [locationsData]);
 
   useEffect(() => {
     if (issuanceDetailsData?.result === null) {
@@ -51,6 +67,10 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
   }, [issuanceDetailsData, refetchIssuanceDetailsData]);
 
   console.log('iss', iss);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
   const handleCellEdit = (params) => {
     const { id, field, value } = params;
@@ -112,11 +132,15 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
       headerName: 'Color'
     },
     {
+      field: 'designNo',
+      headerName: 'Design'
+    },
+    {
       field: 'fabricName',
       headerName: 'Fabric'
     },
     {
-      field: 'dispatchedQuantity',
+      field: 'issuanceQuantity',
       headerName: 'Quantity',
       valueGetter: (params) => {
         return params.toLocaleString();
@@ -476,6 +500,31 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
                   {option.vendorName}
                 </MenuItem>
               ))} */}
+          </TextField>
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            select
+            label="Select Location"
+            name="locationId"
+            value={formData.locationId}
+            onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          >
+            {locationsList.map((option) => (
+              <MenuItem key={option.locationId} value={option.locationId}>
+                {option.section +
+                  '.' +
+                  option.aisle +
+                  '.' +
+                  option.rack +
+                  '.' +
+                  option.bin}
+              </MenuItem>
+            ))}
           </TextField>
         </Grid>
       </Grid>

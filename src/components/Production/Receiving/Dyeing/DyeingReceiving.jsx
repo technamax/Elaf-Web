@@ -218,42 +218,42 @@ const DyeingReceiving = () => {
   //     });
   //   }
   // };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Make the API call
-        const response = await axios.get(
-          `http://100.42.177.77:83/api/Receiving/GetIssuanceByPoIdAndOGPNumber?poId=${formData.poId}`
-        );
-        console.log('Save response:', response.data);
+  const fetchData = async () => {
+    try {
+      // Make the API call
+      const response = await axios.get(
+        `http://100.42.177.77:83/api/Receiving/GetIssuanceByPoIdAndOGPNumber?poId=${formData.poId}`
+      );
+      console.log('Save response:', response.data);
 
-        if (!response.data.success) {
-          enqueueSnackbar(`${response.data.message} !`, {
-            variant: 'error',
-            autoHideDuration: 5000
-          });
-          console.log('response.message', response.data.message);
-        } else {
-          enqueueSnackbar(`${response.data.message} !`, {
-            variant: 'success',
-            autoHideDuration: 5000
-          });
-          setInitialRows(
-            response.data.result.map((row, index) => ({
-              id: index + 1,
-              ...row
-            }))
-          );
-        }
-      } catch (error) {
-        console.error('Error saving data:', error);
-        enqueueSnackbar('FAILED: Unable to start Process', {
+      if (!response.data.success) {
+        enqueueSnackbar(`${response.data.message} !`, {
           variant: 'error',
           autoHideDuration: 5000
         });
+        console.log('response.message', response.data.message);
+      } else {
+        enqueueSnackbar(`${response.data.message} !`, {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+        setInitialRows(
+          response.data.result.map((row, index) => ({
+            id: index + 1,
+            ...row
+          }))
+        );
       }
-    };
+    } catch (error) {
+      console.error('Error saving data:', error);
+      enqueueSnackbar('FAILED: Unable to start Process', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+    }
+  };
 
+  useEffect(() => {
     fetchData(); // Call the async function inside the effect
 
     // Optional cleanup if necessary
@@ -299,10 +299,6 @@ const DyeingReceiving = () => {
       field: 'issuanceId',
       headerName: 'Issuance#'
     },
-    // {
-    //   field: 'ogpNumber',
-    //   headerName: 'OGP#'
-    // },
     {
       field: 'vendorName',
       headerName: 'Vendor'
@@ -314,29 +310,13 @@ const DyeingReceiving = () => {
         return params.toLocaleString();
       },
       renderCell: (params) => {
-        // const chipColor = 'primary.dark';
-
         return (
           <Chip
             label={params.value}
             sx={{
               backgroundColor: 'primary.dark',
-              // chipColor === 'primary' || chipColor === 'default'
-              //   ? undefined
-              //   : chipColor,
               color: 'white'
-              // chipColor === 'primary' || chipColor === 'default'
-              //   ? undefined
-              //   : 'white'
             }}
-            // color="primary"
-            // {
-            //   chipColor === 'green'
-            //   // ? 'primary'
-            //   // : chipColor === 'default'
-            //   //   ? 'default'
-            //   //   : undefined
-            // }
           />
         );
       }
@@ -359,9 +339,6 @@ const DyeingReceiving = () => {
       renderCell: (params) => {
         return <StatusChip label={params.row.receivedQty} status="Received" />;
       }
-      // valueGetter: (params, row) => {
-      //   return params - row.shortageQty;
-      // }
     },
     {
       field: 'issuanceDate',
@@ -387,17 +364,6 @@ const DyeingReceiving = () => {
         });
       }
     },
-    // {
-    //   field: 'statusName',
-    //   headerName: 'Status',
-    //   renderCell: (params) => {
-    //     return <StatusChip status={params.value} />;
-    //   }
-    // },
-    // {
-    //   field: 'fabricCount',
-    //   headerName: 'Fabrics'
-    // },
     {
       field: 'Actions',
       headerName: 'Actions',
@@ -415,19 +381,19 @@ const DyeingReceiving = () => {
             >
               Generate IGP
             </Button>
-            {/* <Button
-              size="small"
-              color="primary"
-              onClick={() => handleClickOpen2(params.row)}
-            >
-              IGP
-            </Button> */}
             <Button
               size="small"
               color="primary"
               onClick={() => handleViews(params.row)}
             >
               View Receivings
+            </Button>
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => handleClickOpen2(params.row)}
+            >
+              Receiving Report
             </Button>
           </ButtonGroup>
         </div>
@@ -650,7 +616,7 @@ const DyeingReceiving = () => {
                 <ReceivingDetails
                   iss={iss}
                   handleClose={handleClose}
-                  refetchIssuanceData={refetch}
+                  refetchIssuanceData={fetchData}
                   // refetchIssuanceData={refetchIssuanceData}
                 />
               </DialogContent>
@@ -685,7 +651,10 @@ const DyeingReceiving = () => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                <SSRSReport rId={14} OGPNumber={iss.igpNumber} />
+                <SSRSReport
+                  rId={16}
+                  receiving={{ paramIssuanceId: iss.issuanceId }}
+                />
               </DialogContent>
             </Dialog>
           </Grid>

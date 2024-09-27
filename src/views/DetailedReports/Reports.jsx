@@ -13,6 +13,7 @@ const SSRSReport = ({
   rId,
   DyeingIssuance,
   ogpView,
+  receiving,
   paramIssuanceId,
   OGPNumber,
   ogpNumber,
@@ -85,6 +86,13 @@ const SSRSReport = ({
       const iframe = iframeRef.current;
       if (iframe && selectedReportUrl) {
         const newUrl = `${selectedReportUrl}&ParamIssuanceId=${DyeingIssuance?.paramIssuanceId || ''}`;
+        iframe.src = newUrl;
+      }
+    }
+    if (receiving) {
+      const iframe = iframeRef.current;
+      if (iframe && selectedReportUrl) {
+        const newUrl = `${selectedReportUrl}&ParamIssuanceId=${receiving?.paramIssuanceId || ''}`;
         iframe.src = newUrl;
       }
     }
