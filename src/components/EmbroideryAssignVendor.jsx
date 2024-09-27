@@ -403,9 +403,7 @@ const EmbroideryAssignVendor = ({
     };
 
     const calculateCostPerComponent = () => {
-      const totalAmount =
-        parseFloat(String(debouncedFormData.totalAmount).replace(/,/g, '')) ||
-        0;
+      const totalAmount = parseFloat(debouncedFormData.totalAmount) || 0;
 
       const requiredPcs = parseFloat(debouncedFormData.requiredPcs) || 0;
       return (totalAmount / requiredPcs).toFixed(2);
@@ -421,14 +419,12 @@ const EmbroideryAssignVendor = ({
       sequenceAmount: calculateSequence(),
       solvingInMeters: calculateInMeters(),
       solvingAmount: calculateSolvingAmount(),
-      totalAmount:
-        // calculateTotalAmount(),
-        formatNumberWithCommas(totalAmount),
+      totalAmount: calculateTotalAmount(),
+      // formatNumberWithCommas(totalAmount),
 
-      costPerComponent:
-        // calculateCostPerComponent()
+      costPerComponent: calculateCostPerComponent()
 
-        formatNumberWithCommas(costPerComponent)
+      // formatNumberWithCommas(costPerComponent)
     }));
   }, [
     debouncedFormData.threadAmount,
@@ -1681,9 +1677,10 @@ const EmbroideryAssignVendor = ({
               // type="number"
               // type="text"
               size="small"
-              disabled={!formData.remainingPcs && !formData.remainingQty}
+              // disabled={!formData.remainingPcs && !formData.remainingQty}
+              disabled
               name="totalAmount"
-              value={formData.totalAmount}
+              value={formatNumberWithCommas(formData.totalAmount)}
               onChange={handleChange}
               InputLabelProps={{
                 sx: {
@@ -1697,12 +1694,13 @@ const EmbroideryAssignVendor = ({
             <TextField
               label="Cost Per Component"
               fullWidth
-              type="number"
+              // type="number"
               size="small"
               name="costPerComponent"
-              value={formData.costPerComponent}
+              value={formatNumberWithCommas(formData.costPerComponent)}
               onChange={handleChange}
-              disabled={!formData.remainingPcs && !formData.remainingQty}
+              disabled
+              // disabled={!formData.remainingPcs && !formData.remainingQty}
               InputLabelProps={{
                 sx: {
                   // set the color of the label when not shrinked

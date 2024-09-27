@@ -109,7 +109,9 @@ const ShrinkageWastageConfiguration = () => {
   const { data: categoriesData, refetch: refetchCategoriesdata } =
     useGetCategoriesListQuery();
   const { data: shrinkageWastageData, refetch: refetchShrinkageWastageData } =
-    useGetShrinkageWastageListQuery();
+    useGetShrinkageWastageListQuery(formData.vendorId, {
+      skip: !formData.vendorId
+    });
   const { data: termsConditionsData, refetch: refetchTermsConditionsData } =
     useGetTermsConditionsListQuery(formData.categoryId, {
       skip: !formData.categoryId // Skip the query if no collection is selected
@@ -238,7 +240,7 @@ const ShrinkageWastageConfiguration = () => {
       // flex: 1
     },
     {
-      field: 'entityName',
+      field: 'fabricName',
       headerName: 'Name'
       // flex: 1
     },
@@ -646,6 +648,7 @@ const ShrinkageWastageConfiguration = () => {
             <ReuseableDataGrid
               initialRows={initialRows}
               iColumns={columns}
+              // height={300}
               // disableDelete={true}
               setInitialData={setInitialData}
               setIsEdit={setIsEdit}
