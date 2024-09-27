@@ -36,7 +36,7 @@ import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined
 import { useUser } from 'context/User';
 import AssignUserRole from 'components/Users/AssignUserRole';
 
-export default function Application() {
+export default function Users() {
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
   console.log('initialData', initialData);

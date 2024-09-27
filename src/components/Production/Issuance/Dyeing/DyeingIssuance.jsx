@@ -1223,7 +1223,7 @@ const DyeingIssuance = ({ rowData }) => {
             <TextField
               fullWidth
               // select
-              label="Stock InHAnd"
+              label="Stock In HAnd"
               name="stockInHandQty"
               value={formatNumber(formData.stockInHandQty)}
               onChange={handleChange}
@@ -1233,15 +1233,7 @@ const DyeingIssuance = ({ rowData }) => {
               // helperText={formErrors.brandId}
             ></TextField>
           </Grid>
-          <Grid item xs={3} textAlign="right">
-            <Typography
-              variant="overline"
-              sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
-            >
-              Balance : {formData.balance}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={9}>
             <TextField
               label="Remarks"
               fullWidth
@@ -1256,6 +1248,14 @@ const DyeingIssuance = ({ rowData }) => {
               // error={!!formErrors.collectionName}
               // helperText={formErrors.collectionName}
             />
+          </Grid>
+          <Grid item xs={3} textAlign="right">
+            <Typography
+              variant="overline"
+              sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
+            >
+              Balance : {formData.balance}
+            </Typography>
           </Grid>
           <Grid item xs={12}>
             <DataGrid

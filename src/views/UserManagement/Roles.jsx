@@ -14,7 +14,7 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import * as React from 'react';
 import { useUser } from 'context/User';
 
-export default function Application() {
+export default function Roles() {
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);

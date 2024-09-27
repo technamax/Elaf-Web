@@ -17,6 +17,8 @@ import MainCard from 'ui-component/cards/MainCard';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
+import GroupRoundedIcon from '@mui/icons-material/GroupRounded';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import {} from '@mui/material';
 import '../../assets/scss/style.scss';
 
@@ -24,6 +26,8 @@ import { useGetMainMenuListQuery } from 'api/store/Apis/userManagementApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import SubMenu from './SubMenu';
+import Roles from './Roles';
+import Users from './Users';
 
 //////
 import * as React from 'react';
@@ -214,6 +218,36 @@ export default function Application() {
                   }
                 })}
               />
+              <Tab
+                icon={<AssignmentIndIcon />}
+                label="Roles"
+                value="3"
+                sx={(theme) => ({
+                  '& .MuiTouchRipple-child': {
+                    backgroundColor: `${theme.palette.primary.main} !important`
+                  }
+                })}
+              />
+              <Tab
+                icon={<GroupRoundedIcon />}
+                label="Users"
+                value="4"
+                sx={(theme) => ({
+                  '& .MuiTouchRipple-child': {
+                    backgroundColor: `${theme.palette.primary.main} !important`
+                  }
+                })}
+              />
+              <Tab
+                icon={<AssignmentIndIcon />}
+                label="Assign Menus"
+                value="5"
+                sx={(theme) => ({
+                  '& .MuiTouchRipple-child': {
+                    backgroundColor: `${theme.palette.primary.main} !important`
+                  }
+                })}
+              />
             </TabList>
           </Box>
           <TabPanel value="1">
@@ -328,6 +362,13 @@ export default function Application() {
           <TabPanel value="2">
             <SubMenu />
           </TabPanel>
+          <TabPanel value="3">
+            <Roles />
+          </TabPanel>
+          <TabPanel value="4">
+            <Users />
+          </TabPanel>
+          <TabPanel value="5">{/* <Assign /> */}</TabPanel>
         </TabContext>
       </Box>
     </MainCard>
