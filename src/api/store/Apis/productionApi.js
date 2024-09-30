@@ -139,6 +139,10 @@ export const productionApi = createApi({
     getDyeingPoHeaderByProductionId: builder.query({
       query: (productionId) =>
         `PO/GetDyeingPoHeaderByProductionId?appId=1&productionId=${productionId}`
+    }),
+    getDyeingPoHeaderbyProductionIdAndStatus: builder.query({
+      query: ({ productionId, status }) =>
+        `PO/GetDyeingPoHeaderbyProductionIdAndStatus?appId=1&productionId=${productionId}&status=${status}`
     })
   })
 });
@@ -180,5 +184,6 @@ export const {
   useGetInspectionForGRNHeaderQuery,
   useGetInspectionForGRNDetailbyInspectionIdQuery,
   useGetRejectionByPoIdQuery,
-  useGetDyeingPoHeaderByProductionIdQuery
+  useGetDyeingPoHeaderByProductionIdQuery,
+  useGetDyeingPoHeaderbyProductionIdAndStatusQuery
 } = productionApi;
