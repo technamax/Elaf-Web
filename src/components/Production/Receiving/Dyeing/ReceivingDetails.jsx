@@ -58,10 +58,13 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
     }
     if (issuanceDetailsData) {
       setIssuanceDetails(
-        issuanceDetailsData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
+        issuanceDetailsData.result
+          .filter((row) => row.lastReceivedQty < row.issuanceQuantity)
+          .map((row, index) => ({
+            id: index + 1,
+            receivedQty: 0,
+            ...row
+          }))
       );
     }
   }, [issuanceDetailsData, refetchIssuanceDetailsData]);
@@ -155,7 +158,7 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
       field: 'lastReceivedQty',
       headerName: 'Overall Received',
       valueGetter: (params, row) => {
-        return params - row.shortageQty;
+        return (params - row.shortageQty).toLocaleString();
       }
     },
     {
@@ -326,19 +329,30 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
   });
   const [disable, setdisable] = useState(false);
   useEffect(() => {
-    for (let detail of issuanceDetails) {
-      if (detail.issuanceQuantity === detail.lastReceivedQty) {
-        setdisable(true);
-        // enqueueSnackbar(
-        //   'Error: Received quantity cannot be greater than issuance quantity!',
-        //   {
-        //     variant: 'error',
-        //     autoHideDuration: 5000
-        //   }
-        // );
-      }
-    }
+    // for (let detail of issuanceDetails) {
+    //   if (detail.issuanceQuantity === detail.lastReceivedQty) {
+    //     setdisable(true);
+    //     // enqueueSnackbar(
+    //     //   'Error: Received quantity cannot be greater than issuance quantity!',
+    //     //   {
+    //     //     variant: 'error',
+    //     //     autoHideDuration: 5000
+    //     //   }
+    //     // );
+    //   }
+    // }
+    setdisable(
+      issuanceDetails.every(
+        (detail) => detail.issuanceQuantity === detail.lastReceivedQty
+      )
+    );
   }, [issuanceDetails, setIssuanceDetails]);
+  console.log('newpayload', {
+    ...formData,
+    receivingTransactionsDetailsModelList: issuanceDetails.filter(
+      (detail) => detail.receivedQty !== 0
+    )
+  });
   const handleIGP = async () => {
     for (let detail of issuanceDetails) {
       if (
@@ -374,7 +388,12 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
     try {
       const response = await axios.post(
         'http://100.42.177.77:83/api/Receiving/SaveReceiving',
-        formData
+        {
+          ...formData,
+          receivingTransactionsDetailsModelList: issuanceDetails.filter(
+            (detail) => detail.receivedQty !== 0
+          )
+        }
       );
       refetchIssuanceData();
       if (!response.data.success) {
@@ -490,6 +509,26 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
             label="Vendor"
             name="vendorId"
             value={iss.vendorName}
+            // onChange={handleChange}
+            size="small"
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
+          >
+            {/* {vendorsList.map((option) => (
+                <MenuItem key={option.vendorId} value={option.vendorId}>
+                  {option.vendorName}
+                </MenuItem>
+              ))} */}
+          </TextField>{' '}
+        </Grid>
+        <Grid item xs={12} md={3}>
+          <TextField
+            fullWidth
+            disabled
+            // select
+            label="Dispatched"
+            name="dispatchedQuantity"
+            value={iss.dispatchedQuantity.toLocaleString()}
             // onChange={handleChange}
             size="small"
             // error={!!formErrors.brandId}
