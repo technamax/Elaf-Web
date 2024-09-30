@@ -130,7 +130,10 @@ const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
       headerName: 'Dispatch',
       renderCell: (params) => {
         return (
-          <StatusChip label={params.row.dispatchedQuantity} status="Issued" />
+          <StatusChip
+            label={params.row.dispatchedQuantity.toLocaleString()}
+            status="Issued"
+          />
         );
       }
     },
@@ -266,9 +269,9 @@ const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
             variant="subtitle2"
             sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
           >
-            Issuance ID : {issuanceDetails[0]?.issuanceId || 0} | OGP Number :{' '}
-            {issuanceDetails[0]?.ogpNumber || 0} | Issuance Quantity :{' '}
-            {issuanceDetails[0]?.issuanceQuantity || 0} Meters
+            Issuance ID : {issuanceDetails[0]?.issuanceId || 0} | Issuance
+            Quantity :{' '}
+            {issuanceDetails[0]?.issuanceQuantity.toLocaleString() || 0} Meters
           </Typography>
         </Grid>
       </Grid>

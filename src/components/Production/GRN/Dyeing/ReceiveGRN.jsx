@@ -192,33 +192,40 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
       field: 'rejectedQty',
       headerName: 'Rejected',
       renderCell: (params) => {
-        const chipColor = 'error.dark';
-        if (params.value === 0) {
-          return;
-        } else {
-          return (
-            <Chip
-              label={params.value}
-              sx={{
-                backgroundColor:
-                  chipColor === 'primary' || chipColor === 'default'
-                    ? undefined
-                    : chipColor,
-                color:
-                  chipColor === 'primary' || chipColor === 'default'
-                    ? undefined
-                    : 'white'
-              }}
-              color={
-                chipColor === 'primary'
-                  ? 'primary'
-                  : chipColor === 'default'
-                    ? 'default'
-                    : undefined
-              }
-            />
-          );
-        }
+        // const chipColor = 'error.dark';
+        // if (params.value === 0) {
+        //   return;
+        // } else {
+        return (
+          // <Chip
+          //   label={params.value}
+          //   sx={{
+          //     backgroundColor:
+          //       chipColor === 'primary' || chipColor === 'default'
+          //         ? undefined
+          //         : chipColor,
+          //     color:
+          //       chipColor === 'primary' || chipColor === 'default'
+          //         ? undefined
+          //         : 'white'
+          //   }}
+          //   color={
+          //     chipColor === 'primary'
+          //       ? 'primary'
+          //       : chipColor === 'default'
+          //         ? 'default'
+          //         : undefined
+          //   }
+          // />
+          <Chip
+            label={params.value.toLocaleString()}
+            sx={{
+              backgroundColor: '#FF0000', // Set to red
+              color: '#FFFFFF' // White text for visibility
+            }}
+          />
+        );
+        // }
       }
     },
     {

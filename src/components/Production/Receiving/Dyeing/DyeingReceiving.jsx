@@ -312,7 +312,7 @@ const DyeingReceiving = () => {
       renderCell: (params) => {
         return (
           <Chip
-            label={params.value}
+            label={params.value.toLocaleString()}
             sx={{
               backgroundColor: 'primary.dark',
               color: 'white'
@@ -329,7 +329,10 @@ const DyeingReceiving = () => {
       },
       renderCell: (params) => {
         return (
-          <StatusChip label={params.row.dispatchedQuantity} status="Issued" />
+          <StatusChip
+            label={params.row.dispatchedQuantity.toLocaleString()}
+            status="Issued"
+          />
         );
       }
     },
@@ -337,7 +340,12 @@ const DyeingReceiving = () => {
       field: 'receivedQty',
       headerName: 'Received',
       renderCell: (params) => {
-        return <StatusChip label={params.row.receivedQty} status="Received" />;
+        return (
+          <StatusChip
+            label={params.row.receivedQty.toLocaleString()}
+            status="Received"
+          />
+        );
       }
     },
     {

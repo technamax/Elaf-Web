@@ -153,7 +153,7 @@ const POView = ({ vId }) => {
             {params.value}
           </span>
         ) : (
-          params.value
+          params.value.toLocaleString()
         )
     },
     {
@@ -168,7 +168,7 @@ const POView = ({ vId }) => {
             {params.value}
           </span>
         ) : (
-          params.value
+          params.value.toLocaleString()
         )
     },
     {
@@ -219,11 +219,11 @@ const POView = ({ vId }) => {
     {
       field: 'termCondDesc',
       headerName: 'Terms and Conditions'
-    },
-    {
-      field: 'processType',
-      headerName: 'Process Type'
     }
+    // {
+    //   field: 'processType',
+    //   headerName: 'Process Type'
+    // }
   ];
 
   console.log('assignedTerms', assignedTerms);

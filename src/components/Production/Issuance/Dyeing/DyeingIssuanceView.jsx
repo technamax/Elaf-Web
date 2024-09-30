@@ -131,7 +131,7 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
       headerName: 'Issuance Quantity',
       renderCell: (params) => {
         return (
-          <StatusChip label={params.row.issuanceQuantity} status="Issued" />
+          <StatusChip label={params.value.toLocaleString()} status="Issued" />
         );
       }
 
@@ -402,7 +402,10 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
             // select
             label="Issuance Quantity"
             name="issuanceQuantity"
-            value={iss.issuanceQuantity || iss.rejectedQty}
+            value={
+              iss.issuanceQuantity.toLocaleString() ||
+              iss.rejectedQty.toLocaleString()
+            }
             // onChange={handleChange}
             size="small"
             // error={!!formErrors.brandId}

@@ -344,6 +344,16 @@ const DyeingIssuance = ({ rowData }) => {
         vendorName: selectedPO ? selectedPO.vendorName : '',
         wastage: selectedPO ? selectedPO.wastage : ''
       });
+    } else if (name === 'productionId') {
+      const selectedPO = dyeingPOs.find(
+        (po) => po.productionId === parseInt(value)
+      );
+      setPoDetails([]);
+      setFormData({
+        ...formData,
+        productionId: value,
+        poId: ''
+      });
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -562,7 +572,12 @@ const DyeingIssuance = ({ rowData }) => {
         return params.toLocaleString();
       },
       renderCell: (params) => {
-        return <StatusChip label={params.row.quantity} status="Completed" />;
+        return (
+          <StatusChip
+            label={params.row.quantity.toLocaleString()}
+            status="Completed"
+          />
+        );
       }
     },
     {
@@ -572,7 +587,12 @@ const DyeingIssuance = ({ rowData }) => {
         return params.toLocaleString();
       },
       renderCell: (params) => {
-        return <StatusChip label={params.row.quantity} status="Issued" />;
+        return (
+          <StatusChip
+            label={params.row.quantity.toLocaleString()}
+            status="Issued"
+          />
+        );
       }
     },
     // {
@@ -721,87 +741,6 @@ const DyeingIssuance = ({ rowData }) => {
     return new Intl.NumberFormat().format(value);
   };
 
-  // const printOgp = (ogpData) => {
-  //   const newWindow = window.open('', '', 'width=800,height=600');
-  //   const doc = newWindow.document;
-
-  //   doc.write(`
-  //     <html>
-  //       <head>
-  //         <title>Outward Gate Pass</title>
-  //         <style>
-  //           body { font-family: Arial, sans-serif; }
-  //           table { width: 100%; border-collapse: collapse; }
-  //           th, td { padding: 8px; border: 1px solid black; text-align: left; }
-  //           .header { margin-bottom: 20px; }
-  //           .header td { border: none; padding: 5px 0; }
-  //         </style>
-  //       </head>
-  //       <body>
-  //         <h2>Elaf</h2>
-  //         <h3>OUTWARD GATE PASS</h3>
-
-  //         <table class="header">
-  //           <tr>
-  //             <td><strong>OGP #:</strong> ${ogpData.vIssuanceTransaction.ogpNumber}</td>
-  //             <td><strong>Process:</strong> ${ogpData.vIssuanceTransaction.processTypeName}</td>
-  //           </tr>
-  //           <tr>
-  //             <td><strong>OGP Date:</strong> ${new Date(ogpData.vIssuanceTransaction.ogpDate).toLocaleDateString()}</td>
-  //             <td><strong>Stage:</strong> Work in Process</td>
-  //           </tr>
-  //           <tr>
-  //             <td><strong>Vendor Name:</strong> ${ogpData.vIssuanceTransaction.vendorName}</td>
-  //             <td><strong>Vendor Contact:</strong> TBD</td>
-  //           </tr>
-  //           <tr>
-  //             <td><strong>Purpose:</strong> Dyeing</td>
-  //             <td></td>
-  //           </tr>
-  //         </table>
-
-  //         <table>
-  //           <thead>
-  //             <tr>
-  //               <th>PO #</th>
-  //               <th>Description</th>
-  //               <th>Design #</th>
-  //               <th>UOM</th>
-  //               <th>Qty Required</th>
-  //               <th>Shrinkage</th>
-  //               <th>Total Qty</th>
-  //               <th>Rate</th>
-  //               <th>Amount</th>
-  //             </tr>
-  //           </thead>
-  //           <tbody>
-  //             ${ogpData.vIssuanceTransactionDetailsList
-  //               .map(
-  //                 (item) => `
-  //               <tr>
-  //                 <td>${item.poId}</td>
-  //                 <td>${item.fabricName}</td>
-  //                 <td>${item.fabricCount}</td>
-  //                 <td>${item.uomName}</td>
-  //                 <td>${item.issuanceQuantity}</td>
-  //                 <td>-</td>
-  //                 <td>${item.issuanceQuantity}</td>
-  //                 <td>${item.rate}</td>
-  //                 <td>${item.totalAfterTax}</td>
-  //               </tr>
-  //             `
-  //               )
-  //               .join('')}
-  //           </tbody>
-  //         </table>
-  //       </body>
-  //     </html>
-  //   `);
-
-  //   doc.close();
-  //   newWindow.print();
-  // };
-
   const handlePrintOgp = async (rowData) => {
     try {
       const response = await axios.get(
@@ -845,7 +784,10 @@ const DyeingIssuance = ({ rowData }) => {
       headerName: 'Issuance',
       renderCell: (params) => {
         return (
-          <StatusChip label={params.row.issuanceQuantity} status="Received" />
+          <StatusChip
+            label={params.row.issuanceQuantity.toLocaleString()}
+            status="Received"
+          />
         );
       }
     },
@@ -854,7 +796,10 @@ const DyeingIssuance = ({ rowData }) => {
       headerName: 'Dispatch',
       renderCell: (params) => {
         return (
-          <StatusChip label={params.row.issuanceQuantity} status="Issued" />
+          <StatusChip
+            label={params.row.issuanceQuantity.toLocaleString()}
+            status="Issued"
+          />
         );
       }
     },
@@ -1274,7 +1219,7 @@ const DyeingIssuance = ({ rowData }) => {
             />
           </Grid>
 
-          <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
+          <Grid item xs={12} textAlign="right">
             <Button
               variant="contained"
               size="small"
@@ -1346,6 +1291,7 @@ const DyeingIssuance = ({ rowData }) => {
                       initialRows={issuanceList}
                       iColumns={issuanceColumns}
                       hideAction
+                      height
                       refetchIssuanceData={refetchIssuanceData}
                     />
                     <Dialog
@@ -1374,7 +1320,7 @@ const DyeingIssuance = ({ rowData }) => {
                           fontWeight={2}
                           fontStyle={'normal'}
                         >
-                          {'View Issuance Details'}
+                          {'Generate OGP'}
                         </Typography>
                         <IconButton
                           onClick={handleClose}

@@ -228,7 +228,7 @@ const ReuseableDataGrid = ({
         autoHeight={false} // Disable autoHeight to let the grid control height
         slots={{ toolbar: EditToolbar }}
         sx={{
-          height: 600, // Ensure a fixed height so that DataGrid can scroll within
+          height: height ? 'auto' : 600, // Ensure a fixed height so that DataGrid can scroll within
           '& .MuiDataGrid-root': {
             overflow: 'auto' // Enable scroll only for DataGrid
           },

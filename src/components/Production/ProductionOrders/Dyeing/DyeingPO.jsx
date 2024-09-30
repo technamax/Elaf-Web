@@ -30,7 +30,8 @@ import {
   useGetVendorsByFabricIDQuery,
   useGetProductionPODesignByFabricAndProductionIdQuery,
   useGetDyeingPoHeaderListQuery,
-  useDyeingPoAssignTermDetailsByPoIdQuery
+  useDyeingPoAssignTermDetailsByPoIdQuery,
+  useGetDyeingPoHeaderbyProductionIdAndStatusQuery
 } from 'api/store/Apis/productionApi';
 import {
   useGetWareHouseLocationsQuery,
@@ -81,6 +82,8 @@ const DyeingPO = () => {
     vendorId: '',
     shrinkage: '',
     wastage: '',
+    rate: '',
+    tax: '',
     locationId: '',
     remarks: '',
 
@@ -105,7 +108,13 @@ const DyeingPO = () => {
   const [fabricsList, setFabricsList] = useState([]);
   const [vendorsList, setVendorsList] = useState([]);
   const [locationsList, setLocationsList] = useState([]);
-
+  const { data: poHeaderData, refetch: refetchPoHeaderData } =
+    useGetDyeingPoHeaderbyProductionIdAndStatusQuery(
+      { productionId: formData.productionId, status: 7 },
+      {
+        skip: !formData.productionId // Skip the query if no collection is selected
+      }
+    );
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
     useGetProductionBatchForProcessingQuery();
   const { data: dyeingPoData, refetch: refetchDyeingPoData } =
@@ -130,16 +139,26 @@ const DyeingPO = () => {
   // const { data: subMenuData, refetch } = useGetSubMenuListQuery();
   const [productions, setProductions] = useState([]);
 
+  // useEffect(() => {
+  //   if (dyeingPoData) {
+  //     setInitialRows(
+  //       dyeingPoData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [dyeingPoData, refetchDyeingPoData]);
   useEffect(() => {
-    if (dyeingPoData) {
+    if (poHeaderData) {
       setInitialRows(
-        dyeingPoData.result.map((row, index) => ({
+        poHeaderData.result.map((row, index) => ({
           id: index + 1,
           ...row
         }))
       );
     }
-  }, [dyeingPoData, refetchDyeingPoData]);
+  }, [poHeaderData, refetchPoHeaderData]);
 
   useEffect(() => {
     if (fabricsData) {
@@ -240,7 +259,7 @@ const DyeingPO = () => {
       setFormData({
         ...formData,
         fabricId: value,
-        pxQty: selectedFabric ? selectedFabric.pxQty : '',
+        pxQty: selectedFabric ? selectedFabric.pxQty : 0,
         vendorId: '',
         shrinkage: '',
         wastage: ''
@@ -533,15 +552,34 @@ const DyeingPO = () => {
             };
 
             // Recalculate the totalBeforeTax when rate or quantity is updated
-            if (field === 'rate' || field === 'quantity') {
-              updatedRow.totalBeforeTax = updatedRow.rate * updatedRow.quantity;
+            // if (field === 'rate' || field === 'quantity') {
+            //   updatedRow.totalBeforeTax = updatedRow.rate * updatedRow.quantity;
+            // }
+            if (field === 'quantity') {
+              updatedRow.totalBeforeTax = formData.rate * updatedRow.quantity;
+              updatedRow.totalAfterTax =
+                updatedRow.totalBeforeTax +
+                updatedRow.totalBeforeTax * (formData.tax / 100);
             }
 
             // Optionally, update totalAfterTax if it's a function of totalBeforeTax and tax
-            if (field === 'tax' || field === 'rate' || field === 'quantity') {
-              updatedRow.totalAfterTax =
-                updatedRow.totalBeforeTax +
-                updatedRow.totalBeforeTax * (updatedRow.tax / 100);
+            // if (field === 'tax' || field === 'rate' || field === 'quantity') {
+            //   updatedRow.totalAfterTax =
+            //     updatedRow.totalBeforeTax +
+            //     updatedRow.totalBeforeTax * (updatedRow.tax / 100);
+            // }
+            if (field === 'quantity' && value > 0) {
+              setRowSelectionModel((prevSelectionModel) => {
+                if (!prevSelectionModel.includes(id)) {
+                  return [...prevSelectionModel, id]; // Add the row ID to the selection model
+                }
+                return prevSelectionModel;
+              });
+            }
+            if (field === 'quantity' && (value === '' || value === 0)) {
+              setRowSelectionModel((prevSelectionModel) =>
+                prevSelectionModel.filter((selectedId) => selectedId !== id)
+              );
             }
 
             return updatedRow;
@@ -575,7 +613,10 @@ const DyeingPO = () => {
       },
       renderCell: (params) => {
         return (
-          <StatusChip label={params.row.availableQty} status="Inspected" />
+          <StatusChip
+            label={params.row.availableQty.toLocaleString()}
+            status="Inspected"
+          />
         );
       }
     },
@@ -587,7 +628,10 @@ const DyeingPO = () => {
       },
       renderCell: (params) => {
         return (
-          <StatusChip label={params.row.prevoiusPoQty} status="Received" />
+          <StatusChip
+            label={params.row.prevoiusPoQty.toLocaleString()}
+            status="Received"
+          />
         );
       }
     },
@@ -648,62 +692,62 @@ const DyeingPO = () => {
         />
       )
     },
-    {
-      field: 'rate',
-      headerName: 'Rate',
-      // width: 'auto',
+    // {
+    //   field: 'rate',
+    //   headerName: 'Rate',
+    //   // width: 'auto',
 
-      // flex: 1,
+    //   // flex: 1,
 
-      renderCell: (params) => (
-        <SmallTextField
-          variant="outlined"
-          size="small"
-          // fullWidth
-          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
-          value={params.row.rate || ''}
-          onChange={(event) =>
-            handleCellEdit({
-              id: params.id,
-              field: 'rate',
-              value: Number(event.target.value)
-            })
-          }
-          type="number"
-          InputProps={{
-            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-          }}
-        />
-      )
-    },
-    {
-      field: 'tax',
-      headerName: 'Tax',
-      // width: 'auto',
+    //   renderCell: (params) => (
+    //     <SmallTextField
+    //       variant="outlined"
+    //       size="small"
+    //       // fullWidth
+    //       sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
+    //       value={params.row.rate || ''}
+    //       onChange={(event) =>
+    //         handleCellEdit({
+    //           id: params.id,
+    //           field: 'rate',
+    //           value: Number(event.target.value)
+    //         })
+    //       }
+    //       type="number"
+    //       InputProps={{
+    //         style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+    //       }}
+    //     />
+    //   )
+    // },
+    // {
+    //   field: 'tax',
+    //   headerName: 'Tax',
+    //   // width: 'auto',
 
-      // flex: 1,
+    //   // flex: 1,
 
-      renderCell: (params) => (
-        <SmallTextField
-          variant="outlined"
-          size="small"
-          // fullWidth
-          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
-          value={params.row.tax || ''}
-          onChange={(event) =>
-            handleCellEdit({
-              id: params.id,
-              field: 'tax',
-              value: Number(event.target.value)
-            })
-          }
-          type="number"
-          InputProps={{
-            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-          }}
-        />
-      )
-    },
+    //   renderCell: (params) => (
+    //     <SmallTextField
+    //       variant="outlined"
+    //       size="small"
+    //       // fullWidth
+    //       sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
+    //       value={params.row.tax || ''}
+    //       onChange={(event) =>
+    //         handleCellEdit({
+    //           id: params.id,
+    //           field: 'tax',
+    //           value: Number(event.target.value)
+    //         })
+    //       }
+    //       type="number"
+    //       InputProps={{
+    //         style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+    //       }}
+    //     />
+    //   )
+    // },
     // {
     //   field: 'totalBeforeTax',
     //   headerName: 'Total',
@@ -1018,6 +1062,34 @@ const DyeingPO = () => {
               // helperText={formErrors.collectionName}
             />
           </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Rate"
+              fullWidth
+              size="small"
+              name="rate"
+              onChange={handleChange}
+              value={formData.rate}
+              required
+              // disabled={isEdit}
+              // error={!!formErrors.collectionName}
+              // helperText={formErrors.collectionName}
+            />
+          </Grid>
+          <Grid item xs={12} md={1.5}>
+            <TextField
+              label="Tax"
+              fullWidth
+              size="small"
+              name="tax"
+              onChange={handleChange}
+              value={formData.tax}
+              required
+              // disabled={isEdit}
+              // error={!!formErrors.collectionName}
+              // helperText={formErrors.collectionName}
+            />
+          </Grid>
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -1123,7 +1195,7 @@ const DyeingPO = () => {
             </div>
           </Grid>
 
-          <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
+          <Grid item xs={12} textAlign="right">
             <Button
               variant="contained"
               size="small"

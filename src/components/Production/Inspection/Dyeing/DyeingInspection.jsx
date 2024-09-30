@@ -83,7 +83,7 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
             inspectionId: 0,
             inspectiondetId: 0,
             expectedQty: Number(expectedQty), // Add expectedQty to the row
-            shortageQty: Number(shortageQty),
+            shortageQty: shortageQty,
             appId: user.appId,
             createdOn: new Date().toISOString(),
             createdBy: user.empId,
@@ -92,9 +92,23 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
           };
 
           // Recalculate the amount when rate or quantity is updated
-          // if (field === 'rate' || field === 'quantity') {
-          //   updatedRow.amount = updatedRow.rate * updatedRow.quantity;
-          // }
+          if (
+            field === 'gradeAQty' ||
+            field === 'gradeBQty' ||
+            field === 'gradeCPQty' ||
+            field === 'rejectedQty' ||
+            field === 'others1Qty'
+          ) {
+            updatedRow.shortageQty = Math.max(
+              updatedRow.receivedQty -
+                ((updatedRow.gradeAQty || 0) +
+                  (updatedRow.gradeBQty || 0) +
+                  (updatedRow.gradeCPQty || 0) +
+                  (updatedRow.rejectedQty || 0) +
+                  (updatedRow.others1Qty || 0)),
+              0
+            );
+          }
 
           // // Optionally, update amountAfterTax if it's a function of amount and tax
           // if (field === 'tax' || field === 'rate' || field === 'quantity') {
@@ -326,6 +340,22 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
         } else {
           return 0;
         }
+      },
+      valueSetter: (value, row) => {
+        const expected = row.expectedQty;
+        const received = row.receivedQty;
+        const shortageQty =
+          row.receivedQty -
+          ((row.gradeAQty || 0) +
+            (row.gradeBQty || 0) +
+            (row.gradeCPQty || 0) +
+            (row.rejectedQty || 0) +
+            (row.others1Qty || 0));
+        if (shortageQty > 0) {
+          return shortageQty.toLocaleString();
+        } else {
+          return 0;
+        }
       }
     },
     {
@@ -398,6 +428,7 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
         (detail.gradeAQty || 0) +
           (detail.gradeBQty || 0) +
           (detail.gradeCPQty || 0) +
+          (detail.rejectedQty || 0) +
           (detail.others1Qty || 0)
       ) {
         enqueueSnackbar(
