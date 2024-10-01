@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, TextField, Typography, Button, MenuItem } from '@mui/material';
-import { useGetIssuanceDetailByPoIdQuery } from 'api/store/Apis/productionApi';
+import {
+  useGetIssuanceDetailByPoIdQuery,
+  useGetRejectionDetailsByIssuanceIdQuery
+} from 'api/store/Apis/productionApi';
 import {
   useGetLookUpListQuery,
   useGetDriverInfoQuery,
@@ -40,27 +43,51 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
         skip: !iss.poId || !iss.issuanceId
       }
     );
+  const { data: rejectionDetailsData, refetch: refetchRejectionDetailsData } =
+    useGetRejectionDetailsByIssuanceIdQuery(iss.issuanceId, {
+      skip: !iss.issuanceId
+    });
   const { data: lookupData, refetch: refetchLookupData } =
     useGetLookUpListQuery();
   const { data: driversData, refetch: refetchDriversData } =
     useGetDriverInfoQuery();
   const { data: trucksData, refetch: refetchTrucksData } =
     useGetTruckInfoQuery();
-
+  console.log('rejectionDetailsData', rejectionDetailsData);
   useEffect(() => {
-    if (issuanceDetailsData?.result === null) {
-      setIssuanceDetails([]);
-      return;
+    if (isRejected) {
+      if (rejectionDetailsData?.result === null) {
+        setIssuanceDetails([]);
+        return;
+      }
+      if (rejectionDetailsData) {
+        setIssuanceDetails(
+          rejectionDetailsData.result.map((row, index) => ({
+            id: index + 1,
+            ...row
+          }))
+        );
+      }
+    } else {
+      if (issuanceDetailsData?.result === null) {
+        setIssuanceDetails([]);
+        return;
+      }
+      if (issuanceDetailsData) {
+        setIssuanceDetails(
+          issuanceDetailsData.result.map((row, index) => ({
+            id: index + 1,
+            ...row
+          }))
+        );
+      }
     }
-    if (issuanceDetailsData) {
-      setIssuanceDetails(
-        issuanceDetailsData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [issuanceDetailsData, refetchIssuanceDetailsData]);
+  }, [
+    issuanceDetailsData,
+    refetchIssuanceDetailsData,
+    rejectionDetailsData,
+    refetchRejectionDetailsData
+  ]);
   useEffect(() => {
     if (driversData) {
       setDriversList(
@@ -100,7 +127,7 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
 
   console.log('iss', iss);
   console.log('formData', formData);
-  console.log('destinantionsList', destinantionsList);
+  console.log('issuanceDetails', issuanceDetails);
   console.log('dispatchFromList', dispatchFromList);
 
   const handleChange = (e) => {
@@ -118,35 +145,35 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
       headerName: 'Fabric'
     },
 
-    // {
-    //   field: 'baseColor',
-    //   headerName: 'Base Color'
-    // },
+    {
+      field: 'designNo',
+      headerName: 'Design'
+    },
     {
       field: 'colorName',
       headerName: 'Color'
     },
     {
-      field: 'issuanceQuantity',
-      headerName: 'Issuance Quantity',
+      field: 'rejectedQty',
+      headerName: 'Rejected Quantity',
       renderCell: (params) => {
         return (
-          <StatusChip label={params.value.toLocaleString()} status="Issued" />
+          <StatusChip label={params.value.toLocaleString()} status="Rejected" />
         );
       }
 
       // valueGetter: (params) => {
       //   return params.toLocaleString();
       // }
-    },
-    {
-      field: 'rate',
-      headerName: 'Rate'
-    },
-    {
-      field: 'uomName',
-      headerName: 'UOM'
     }
+    // {
+    //   field: 'rate',
+    //   headerName: 'Rate'
+    // },
+    // {
+    //   field: 'uomName',
+    //   headerName: 'UOM'
+    // }
     // {
     //   field: 'vendorName',
     //   headerName: 'Fabric'
@@ -403,8 +430,8 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
             label="Issuance Quantity"
             name="issuanceQuantity"
             value={
-              iss.issuanceQuantity.toLocaleString() ||
-              iss.rejectedQty.toLocaleString()
+              iss.issuanceQuantity?.toLocaleString() ||
+              iss.rejectedQty?.toLocaleString()
             }
             // onChange={handleChange}
             size="small"

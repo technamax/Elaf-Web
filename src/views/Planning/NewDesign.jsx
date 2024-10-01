@@ -301,7 +301,7 @@ const NewDesign = () => {
         designId: 0,
         designNo: '',
         designerName: '',
-        poPcs: '',
+        // poPcs: '',
         dateOfPlanning: '',
         colorId: '',
         createdOn: new Date().toISOString(),

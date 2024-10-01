@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, TextField, Typography, Button } from '@mui/material';
-import { useGetReceivingDetailsForInspectionQuery } from 'api/store/Apis/productionApi';
+import {
+  useGetReceivingDetailsForInspectionQuery,
+  useGetReceivingHeaderQuery
+} from 'api/store/Apis/productionApi';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
 import { useUser } from 'context/User';
@@ -26,6 +29,13 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
   const [receiveDetails, setReceiveDetails] = useState([]);
+  const { data: receivingData, refetch: refetchReceivingData } =
+    useGetReceivingHeaderQuery(
+      { poId: formData.poId, processTypename: 'Dyeing', status: 4 },
+      {
+        skip: !formData.poId // Skip the query if no collection is selected
+      }
+    );
   const { data: receiveDetailsData, refetch: refetchReceiveDetailsData } =
     useGetReceivingDetailsForInspectionQuery(rData.receivingId, {
       skip: !rData.receivingId
@@ -459,6 +469,7 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
         });
       }
       refetch();
+      refetchReceivingData();
       console.log('Save response:', response.data);
       handleClose();
     } catch (error) {

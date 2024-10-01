@@ -14,9 +14,12 @@ const SSRSReport = ({
   DyeingIssuance,
   ogpView,
   receiving,
+  inspection,
+  igpReport,
   paramIssuanceId,
   OGPNumber,
   ogpNumber,
+  paramRejectionId,
   issuanceOgp
 }) => {
   const [reports, setReports] = useState([]);
@@ -93,6 +96,27 @@ const SSRSReport = ({
       const iframe = iframeRef.current;
       if (iframe && selectedReportUrl) {
         const newUrl = `${selectedReportUrl}&ParamIssuanceId=${receiving?.paramIssuanceId || ''}`;
+        iframe.src = newUrl;
+      }
+    }
+    if (inspection) {
+      const iframe = iframeRef.current;
+      if (iframe && selectedReportUrl) {
+        const newUrl = `${selectedReportUrl}&ParamInspectionId=${inspection?.ParamInspectionId || ''}`;
+        iframe.src = newUrl;
+      }
+    }
+    if (igpReport) {
+      const iframe = iframeRef.current;
+      if (iframe && selectedReportUrl) {
+        const newUrl = `${selectedReportUrl}&ParamIGPNumber=${igpReport?.ParamIGPNumber || ''}`;
+        iframe.src = newUrl;
+      }
+    }
+    if (paramRejectionId > 0) {
+      const iframe = iframeRef.current;
+      if (iframe && selectedReportUrl) {
+        const newUrl = `${selectedReportUrl}&paramRejectionId=${paramRejectionId || ''}`;
         iframe.src = newUrl;
       }
     }

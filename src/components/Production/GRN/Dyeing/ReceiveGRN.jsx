@@ -182,7 +182,10 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
     },
     {
       field: 'bGradetotal',
-      headerName: 'BGradeTotal'
+      headerName: 'BGradeTotal',
+      renderCell: (params) => {
+        return params.row.bGradetotal.toLocaleString();
+      }
     },
     {
       field: 'gradeCPQty',

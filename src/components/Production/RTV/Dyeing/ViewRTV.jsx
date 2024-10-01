@@ -17,7 +17,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import {
   useGetReceivingHeaderQuery,
-  useGetInspectionHeaderQuery
+  useGetRejectionByPoIdQuery
 } from 'api/store/Apis/productionApi';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
@@ -39,32 +39,32 @@ const SmallTextField = styled(TextField)(({ theme }) => ({
   minHeight: '30px' // Set minimum height to ensure it's usable
 }));
 
-const InspectionView = ({ formData, refetch }) => {
+const ViewRTV = ({ formData }) => {
   // const [formData, setFormData] = useState({ inspectionId: 0, ...rData });
   const apiRef = useGridApiRef();
 
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
-  const [receiveDetails, setReceiveDetails] = useState([]);
-  const { data: receivingData, refetch: refetchReceivingData } =
-    useGetInspectionHeaderQuery(formData.poId, {
+  const [initialRows, setInitialRows] = useState([]);
+  const { data, error, isLoading, refetch } = useGetRejectionByPoIdQuery(
+    formData.poId,
+    {
       skip: !formData.poId // Skip the query if no collection is selected
-    });
+    }
+  );
 
   useEffect(() => {
-    if (receivingData?.result === null) {
-      setReceiveDetails([]);
-      return;
-    }
-    if (receivingData) {
-      setReceiveDetails(
-        receivingData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
+    if (data) {
+      setInitialRows(
+        data.result
+          .filter((row) => row.isRejectedOgpExists === 'Y')
+          .map((row, index) => ({
+            id: index + 1,
+            ...row
+          }))
       );
     }
-  }, [receivingData, refetchReceivingData]);
+  }, [data, refetch]);
 
   // console.log('rData', rData)
   const [open, setOpen] = React.useState(false);
@@ -79,20 +79,44 @@ const InspectionView = ({ formData, refetch }) => {
   };
   console.log('iss', iss);
   const receivingColumns = [
-    { field: 'id', headerName: 'Sr #' },
-    { field: 'collectionName', headerName: 'Collection Name' },
-    { field: 'poName', headerName: 'PO' },
+    {
+      field: 'id',
+      headerName: 'Sr#'
+      // flex: 1
+    },
+    {
+      field: 'rtvNo',
+      headerName: 'RTV#'
+    },
+    {
+      field: 'fabricName',
+      headerName: 'Fabric'
+    },
+    {
+      field: 'vendorName',
+      headerName: 'Vendor'
+    },
     // {
-    //   field: 'ogpNumber',
-    //   headerName: 'OGP Number',
+    //   field: 'receivedQty',
+    //   headerName: 'Received',
     //   renderCell: (params) => {
-    //     <span style={{ fontWeight: 'bolder' }}>{params.value}</span>;
+    //     return <StatusChip label={params.row.receivedQty} status="Received" />;
     //   }
     // },
-    { field: 'igpNumber', headerName: 'IGP Number' },
     {
-      field: 'igpDate',
-      headerName: 'IGP Date',
+      field: 'rejectedQty',
+      headerName: 'Rejected',
+      renderCell: (params) => {
+        return <StatusChip label={params.row.rejectedQty} status="Rejected" />;
+      }
+    },
+    {
+      field: 'rejectionReason',
+      headerName: 'Reason'
+    },
+    {
+      field: 'rejectionDate',
+      headerName: 'Rejected On',
       valueGetter: (params) => {
         const date = new Date(params);
         return date.toLocaleDateString('en-GB', {
@@ -103,92 +127,74 @@ const InspectionView = ({ formData, refetch }) => {
       }
     },
     {
-      field: 'receivingDate',
-      headerName: 'Receiving Date',
-      valueGetter: (params) => {
-        const date = new Date(params);
-        return date.toLocaleDateString('en-GB', {
-          day: 'numeric',
-          month: 'short',
-          year: '2-digit'
-        });
-      }
-    },
-
-    { field: 'receivedQty', headerName: 'Received' },
-    { field: 'processTypename', headerName: 'Process Type' },
-    // {
-    //   field: 'statusName',
-    //   headerName: 'Status',
-    //   renderCell: (params) => {
-    //     const chipColor = 'primary.dark';
-    //     if (params.value === null) {
-    //       return;
-    //     } else {
-    //       return (
-    //         <Chip
-    //           label={params.value}
-    //           sx={{
-    //             backgroundColor:
-    //               chipColor === 'primary' || chipColor === 'default'
-    //                 ? undefined
-    //                 : chipColor,
-    //             color:
-    //               chipColor === 'primary' || chipColor === 'default'
-    //                 ? undefined
-    //                 : 'white'
-    //           }}
-    //           color={
-    //             chipColor === 'primary'
-    //               ? 'primary'
-    //               : chipColor === 'default'
-    //                 ? 'default'
-    //                 : undefined
-    //           }
-    //         />
-    //       );
-    //     }
-    //   }
-    // },
-    {
-      field: 'statusName',
+      field: 'rejectionStatusName',
       headerName: 'Status',
       renderCell: (params) => {
-        return <StatusChip label={params.value} status={params.value} />;
+        return (
+          <StatusChip
+            label={params.row.rejectionStatusName}
+            status="Completed"
+          />
+        );
       }
-    },
-    {
-      field: 'Actions',
-      headerName: 'Actions',
-      renderCell: (params) => (
-        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-          <ButtonGroup variant="text" size="small" sx={{ mt: 1 }}>
-            {/* <Button
-              size="small"
-              color="primary"
-              onClick={() => handleClickOpen(params.row)}
-              disabled={params.row.status === 4}
-            >
-              Inspection
-            </Button>
-            <Button
-              size="small"
-              color="primary"
-              onClick={() => handleClickOpen2(params.row)}
-            >
-              View
-            </Button> */}
-            <Button
-              size="small"
-              color="primary"
-              onClick={() => handleClickOpen(params.row)}
-            >
-              Inspection
-            </Button>
-          </ButtonGroup>
-        </div>
-      )
+      // renderCell: (params) => {
+      //   const chipColor = 'primary.dark';
+
+      //   return (
+      //     <Chip
+      //       label={params.value}
+      //       sx={{
+      //         backgroundColor:
+      //           chipColor === 'primary' || chipColor === 'default'
+      //             ? undefined
+      //             : chipColor,
+      //         color:
+      //           chipColor === 'primary' || chipColor === 'default'
+      //             ? undefined
+      //             : 'white'
+      //       }}
+      //       color={
+      //         chipColor === 'primary'
+      //           ? 'primary'
+      //           : chipColor === 'default'
+      //             ? 'default'
+      //             : undefined
+      //       }
+      //     />
+      //   );
+      // }
     }
+    // {
+    //   field: 'Actions',
+    //   headerName: 'Actions',
+    //   renderCell: (params) => (
+    //     <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+    //       <ButtonGroup variant="text" size="small" sx={{ mt: 1 }}>
+    //         {/* <Button
+    //           size="small"
+    //           color="primary"
+    //           onClick={() => handleClickOpen(params.row)}
+    //         >
+    //           RTV
+    //         </Button> */}
+    //         {/* <Button
+    //           size="small"
+    //           color="primary"
+    //           onClick={() => handleClickOpen2(params.row)}
+    //         >
+    //           IGP
+    //         </Button> */}
+    //         <Button
+    //           size="small"
+    //           color="primary"
+    //           onClick={() => handleViews(params.row)}
+    //         >
+    //           repo
+    //         </Button>
+    //       </ButtonGroup>
+    //     </div>
+    //   )
+    // }
   ];
 
   return (
@@ -198,7 +204,7 @@ const InspectionView = ({ formData, refetch }) => {
         // avatar={
         // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
         // }
-        title="Completed Inspections"
+        title="View Completed RTV"
         titleTypographyProps={{ style: { color: 'white' } }}
       ></CardHeader>
       <Grid
@@ -207,12 +213,9 @@ const InspectionView = ({ formData, refetch }) => {
         width="Inherit"
         sx={{ paddingY: 2, paddingX: 2 }}
       >
-        {/* <Grid item xs={12}>
-          <Typography variant="h3">Completed Inspections</Typography>
-        </Grid> */}
         <Grid item xs={12}>
           <ReuseableDataGrid
-            initialRows={receiveDetails}
+            initialRows={initialRows}
             iColumns={receivingColumns}
             // height
             hideAction
@@ -247,10 +250,10 @@ const InspectionView = ({ formData, refetch }) => {
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-              <SSRSReport
+              {/* <SSRSReport
                 rId={17}
                 inspection={{ ParamInspectionId: iss.inspectionId }}
-              />
+              /> */}
             </DialogContent>
           </Dialog>
         </Grid>
@@ -259,4 +262,4 @@ const InspectionView = ({ formData, refetch }) => {
   );
 };
 
-export default InspectionView;
+export default ViewRTV;

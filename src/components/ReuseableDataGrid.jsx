@@ -196,11 +196,16 @@ const ReuseableDataGrid = ({
     }
     return {};
   };
-
+  const [paginationModel, setPaginationModel] = React.useState({
+    pageSize: 10,
+    page: 0
+  });
   return (
     <Box
       sx={{
-        height: 'auto', // Let the box adjust based on content
+        height: height ? height : 'auto',
+        // maxHeight: 500,
+        // overflow: 'auto',
         width: 'inherit',
         '& .actions': {
           color: 'text.secondary'
@@ -213,25 +218,31 @@ const ReuseableDataGrid = ({
         }
       }}
     >
+      {/* <div ref={componentRef}> */}
       <DataGrid
         rows={initialRows}
         columns={columns}
+        // rowLength={10}
         apiRef={apiRef}
         ref={componentRef}
         autosizeOnMount
-        autoPageSize
-        onRowDoubleClick={onRowDoubleClick}
         checkboxSelection={checkboxSelection}
         getCellClassName={getCellClassName}
         onRowSelectionModelChange={onRowSelectionModelChange}
         onStateChange={handleStateChange}
-        autoHeight={false} // Disable autoHeight to let the grid control height
+        autoHeight
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
         slots={{ toolbar: EditToolbar }}
         sx={{
-          height: height ? 'auto' : 600, // Ensure a fixed height so that DataGrid can scroll within
+          maxHeight: 720,
+          height: 720,
+          // overflow: 'auto', // Ensure scrolling is not affected by styles
           '& .MuiDataGrid-root': {
-            overflow: 'auto' // Enable scroll only for DataGrid
+            overflow: 'auto'
           },
+
+          /////////////////
           '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
           '& .css-1kyxv1r-MuiDataGrid-root': {
             color: 'white',
@@ -250,9 +261,7 @@ const ReuseableDataGrid = ({
           '& .MuiDataGrid-sortIcon': {
             color: 'white'
           },
-          '& .css-ptiqhd-MuiSvgIcon-root': {
-            color: 'white'
-          },
+          '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
           '& .MuiDataGrid-row': {
             '&.total-summary-row': {
               backgroundColor: 'darkgray'
@@ -263,8 +272,7 @@ const ReuseableDataGrid = ({
           params.id === 'TOTAL_SUMMARY' ? 'total-summary-row' : ''
         }
       />
-
-      {/* Dialog for delete confirmation */}
+      {/* </div> */}
       <Dialog
         open={open}
         onClose={handleClose}

@@ -182,6 +182,10 @@ const Inspection = () => {
     setRData(data);
     setOpen(true);
   };
+  const handleView = async (data) => {
+    setRData(data);
+    // setOpen(true);
+  };
   const handleClose = () => {
     setOpen(false);
   };
@@ -261,13 +265,13 @@ const Inspection = () => {
             >
               Inspection
             </Button>
-            {/* <Button
+            <Button
               size="small"
               color="primary"
-              onClick={() => handleClickOpen2(params.row)}
+              onClick={() => handleView(params.row)}
             >
               View
-            </Button> */}
+            </Button>
           </ButtonGroup>
         </div>
       )
@@ -497,6 +501,7 @@ const Inspection = () => {
                     <ReuseableDataGrid
                       initialRows={initialRows}
                       iColumns={columns}
+                      height
                       hideAction
                     />
 

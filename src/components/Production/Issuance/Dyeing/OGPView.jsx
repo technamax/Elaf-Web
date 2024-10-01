@@ -121,10 +121,14 @@ const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
       field: 'vendorName',
       headerName: 'Vendor'
     },
-    // {
-    //   field: 'issuanceQuantity',
-    //   headerName: 'Issuance'
-    // },
+    {
+      field: 'isRejectedOGP',
+      headerName: 'IsRejected'
+    },
+    {
+      field: 'createdByName',
+      headerName: 'Created By'
+    },
     {
       field: 'dispatchedQuantity',
       headerName: 'Dispatch',
@@ -319,11 +323,12 @@ const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
               <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
 
               <SSRSReport
-                rId={13}
+                rId={iss.isRejectedOGP === 'Y' ? 19 : 13}
                 ogpView={{
                   paramIssuanceId: iss.issuanceId,
                   ogpNumber: iss.ogpNumber
                 }}
+                paramRejectionId={iss.rejectionId}
                 // paramIssuanceId={iss.issuanceId}
                 // ogpNumber={iss.ogpNumber}
               />

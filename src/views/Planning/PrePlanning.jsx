@@ -21,6 +21,7 @@ import {
   inputLabelClasses,
   Chip
 } from '@mui/material';
+import StatusChip from 'components/StatusChip';
 import LoopOutlinedIcon from '@mui/icons-material/LoopOutlined';
 
 import { useGetCollectionFromPlanningHeaderQuery } from 'api/store/Apis/prePlanningHeaderApi';
@@ -86,6 +87,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     repeatsInMtr: ''
   });
   console.log('formData', formData);
+  console.log('initialData', initialData);
 
   useEffect(() => {
     setFormData({
@@ -106,6 +108,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       cuttingSize: initialData?.cuttingSize || '', // not in api
       colorId: initialData?.colorId || '',
       fabricId: initialData?.fabricId || '',
+      planningProcessTypeId: initialData?.planningProcessTypeId || '',
+      planningProcessTypeName: initialData?.planningProcessTypeName || '',
       noOfHeads: initialData?.noOfHeads || 0,
       operatingMachineId: initialData?.operatingMachineId || 0,
       repeats: initialData?.repeats || 0,
@@ -679,7 +683,11 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       field: 'planningProcessTypeName',
       headerName: 'Process Type',
 
-      ...baseColumnOptions
+      ...baseColumnOptions,
+      renderCell: (params) => {
+        return <StatusChip label={params.value} status="primaryDark" />;
+      }
+
       // renderCell: (params) => {
       //   const chipColor =
       //     params.value === 'MultiHead'
@@ -1266,6 +1274,35 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                 />
               </Grid>
               <Grid item xs={12} md={2}>
+                <TextField
+                  fullWidth
+                  select
+                  label="UOM"
+                  type="number"
+                  defaultValue=""
+                  size="small"
+                  name="uomId"
+                  value={formData.uomId}
+                  onChange={handleChange}
+                  error={!!formErrors.uomId}
+                  helperText={formErrors.uomId}
+                  required
+                  disabled={isSchiffili || lock} // Disable when isSchiffili is checked
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
+                >
+                  {uoms.map((option) => (
+                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                      {option.lookUpName}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} md={2}>
                 <Button variant="contained" size="small" onClick={handleLock}>
                   {lock ? 'Unlock' : !lock ? 'Lock' : 'Unlock'}
                 </Button>
@@ -1589,36 +1626,6 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={2}>
-                <TextField
-                  fullWidth
-                  select
-                  label="UOM"
-                  type="number"
-                  defaultValue=""
-                  size="small"
-                  name="uomId"
-                  value={formData.uomId}
-                  onChange={handleChange}
-                  error={!!formErrors.uomId}
-                  helperText={formErrors.uomId}
-                  required
-                  disabled={isSchiffili} // Disable when isSchiffili is checked
-                  InputLabelProps={{
-                    sx: {
-                      // set the color of the label when not shrinked
-                      color: 'black'
-                    }
-                  }}
-                >
-                  {uoms.map((option) => (
-                    <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                      {option.lookUpName}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </Grid>
-
               <Grid item xs={12} md={2}>
                 <TextField
                   label="Repeats in Meter"

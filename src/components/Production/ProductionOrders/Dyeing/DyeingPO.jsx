@@ -544,6 +544,8 @@ const DyeingPO = () => {
               [field]: value,
               poId: 0,
               poDetId: 0,
+              rate: formData.rate,
+              tax: formData.tax,
               appId: user.appId,
               createdOn: new Date().toISOString(),
               createdBy: user.empId,
@@ -588,7 +590,7 @@ const DyeingPO = () => {
         })
       );
     },
-    [setFabrics, user.appId, user.empId]
+    [setFabrics, user.appId, user.empId, formData.rate]
   );
 
   const designsColumns = [

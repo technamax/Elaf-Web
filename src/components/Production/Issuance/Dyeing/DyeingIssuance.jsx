@@ -797,7 +797,7 @@ const DyeingIssuance = ({ rowData }) => {
       renderCell: (params) => {
         return (
           <StatusChip
-            label={params.row.issuanceQuantity.toLocaleString()}
+            label={params.row.dispatchedQuantity.toLocaleString()}
             status="Issued"
           />
         );

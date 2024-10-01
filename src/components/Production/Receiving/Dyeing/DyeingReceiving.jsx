@@ -266,6 +266,7 @@ const DyeingReceiving = () => {
 
   const [open, setOpen] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
+  const [open3, setOpen3] = React.useState(false);
 
   const [iss, setIss] = React.useState(false);
 
@@ -277,6 +278,10 @@ const DyeingReceiving = () => {
     setOpen2(true);
     setIss(data);
   };
+  const handleClickOpen3 = async (data) => {
+    setOpen3(true);
+    setIss(data);
+  };
 
   const handleClose = () => {
     setOpen(false);
@@ -284,6 +289,10 @@ const DyeingReceiving = () => {
   const handleClose2 = () => {
     // setShowUpperDiv(true);
     setOpen2(false);
+  };
+  const handleClose3 = () => {
+    // setShowUpperDiv(true);
+    setOpen3(false);
   };
   const handleViews = async (data) => {
     setIssId(data.issuanceId);
@@ -511,7 +520,7 @@ const DyeingReceiving = () => {
             <Button
               size="small"
               color="primary"
-              onClick={() => handleClickOpen2(params.row)}
+              onClick={() => handleClickOpen3(params.row)}
             >
               IGP
             </Button>
@@ -692,6 +701,42 @@ const DyeingReceiving = () => {
               iColumns={receivingColumns}
               hideAction
             />
+            <Dialog open={open3} onClose={handleClose3} fullWidth maxWidth="xl">
+              <DialogTitle
+                sx={{
+                  backgroundColor: '#A11F23',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingX: '24px',
+                  paddingY: '4px',
+                  mb: 2.5
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="div"
+                  color="#ffffff"
+                  gutterBottom
+                  fontSize={20}
+                  fontWeight={2}
+                  fontStyle={'normal'}
+                >
+                  {'Create OGP'}
+                </Typography>
+                <IconButton onClick={handleClose3} sx={{ color: '#ffffff' }}>
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                <SSRSReport
+                  rId={14}
+                  igpReport={{ ParamIGPNumber: iss.igpNumber }}
+                />
+              </DialogContent>
+            </Dialog>
           </Grid>
         </Grid>
       </Card>

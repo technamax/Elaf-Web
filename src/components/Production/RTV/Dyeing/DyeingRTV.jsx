@@ -45,7 +45,7 @@ import { useSnackbar } from 'notistack';
 import SSRSReport from '../../../../views/DetailedReports/Reports';
 // import RTVOgp from './RTVOgp';
 import DyeingIssuanceView from 'components/Production/Issuance/Dyeing/DyeingIssuanceView';
-
+import ViewRTV from './ViewRTV';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
@@ -118,10 +118,15 @@ const DyeingRTV = () => {
   useEffect(() => {
     if (data) {
       setInitialRows(
-        data.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
+        data.result
+          .filter(
+            (row) =>
+              row.rejectionStatus === 5 && row.isRejectedOgpExists === 'N'
+          )
+          .map((row, index) => ({
+            id: index + 1,
+            ...row
+          }))
       );
     }
   }, [data, refetch]);
@@ -204,13 +209,13 @@ const DyeingRTV = () => {
       field: 'vendorName',
       headerName: 'Vendor'
     },
-    {
-      field: 'receivedQty',
-      headerName: 'Received',
-      renderCell: (params) => {
-        return <StatusChip label={params.row.receivedQty} status="Received" />;
-      }
-    },
+    // {
+    //   field: 'receivedQty',
+    //   headerName: 'Received',
+    //   renderCell: (params) => {
+    //     return <StatusChip label={params.row.receivedQty} status="Received" />;
+    //   }
+    // },
     {
       field: 'rejectedQty',
       headerName: 'Rejected',
@@ -235,10 +240,15 @@ const DyeingRTV = () => {
       }
     },
     {
-      field: 'actionTaken',
+      field: 'rejectionStatusName',
       headerName: 'Status',
       renderCell: (params) => {
-        return <StatusChip label={params.row.actionTaken} status="Rejected" />;
+        return (
+          <StatusChip
+            label={params.row.rejectionStatusName}
+            status="Completed"
+          />
+        );
       }
       // renderCell: (params) => {
       //   const chipColor = 'primary.dark';
@@ -442,30 +452,7 @@ const DyeingRTV = () => {
           </Grid>
         </Grid>
       </Card>
-      {/* <Card variant="outlined" sx={{ marginTop: 2 }}>
-        <CardHeader
-          className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={
-          // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
-          // }
-          title="View All"
-          titleTypographyProps={{ style: { color: 'white' } }}
-        ></CardHeader>
-        <Grid
-          container
-          spacing={1}
-          width="Inherit"
-          sx={{ paddingY: 2, paddingX: 2 }}
-        >
-          <Grid item xs={12}>
-            <ReuseableDataGrid
-              initialRows={receivingList}
-              iColumns={receivingColumns}
-              hideAction
-            />
-          </Grid>
-        </Grid>
-      </Card> */}
+      <ViewRTV formData={formData} />
     </Box>
   );
 };

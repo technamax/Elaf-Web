@@ -5,14 +5,16 @@ const statusColors = {
   Draft: '#CCCCCC', // Gray
   'In Process': '#FFD700', // golden
   Completed: '#008000', // Green
-  Inspected: '#0000FF', // Blue
+  Inspected: '#1e88e5', // Blue
   Approved: '#00FF00', // Light Green
   Rejected: '#FF0000', // Red
   Pending: '#f7672c ', // Yellow
   Received: '#33CCCC', // Teal
   Issued: '#FF9900', // Orange
   Cancelled: '#666666', // Dark Gray
-  null: '#FFFFFF'
+  null: '#FFFFFF',
+  primaryDark: '#1e88e5'
+
   // White (null-status)
 };
 

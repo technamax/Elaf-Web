@@ -388,14 +388,14 @@ const FabricationSelectionIssuance = () => {
         />
       )
     },
-    {
-      field: 'bxQuantity',
-      headerName: 'BX Quantity',
-      // flex: 1,
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      }
-    },
+    // {
+    //   field: 'bxQuantity',
+    //   headerName: 'BX Quantity',
+    //   // flex: 1,
+    //   valueGetter: (params) => {
+    //     return params.toLocaleString();
+    //   }
+    // },
 
     {
       field: 'uomName',
@@ -557,7 +557,7 @@ const FabricationSelectionIssuance = () => {
                 // avatar={
                 // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
                 // }
-                title="Production Process > Fabrication"
+                title="Fabric Requisitions"
                 titleTypographyProps={{ style: { color: 'white' } }}
               ></CardHeader>
               <Grid
