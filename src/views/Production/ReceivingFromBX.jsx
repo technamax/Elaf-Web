@@ -267,7 +267,7 @@ const ReceivingFromBX = () => {
     console.log('stockData', stockData);
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/BxStockReceiving/SaveBxStockReceiving',
+        'http://100.42.177.77:8091/api/BxStockReceiving/SaveBxStockReceiving',
         formData
       );
       console.log('Save response:', response.data);
@@ -311,7 +311,7 @@ const ReceivingFromBX = () => {
     setInitialFormData(data);
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/ITP/GetITPDetailsByITPId?itpId=${data.itpId}`
+        `http://100.42.177.77:8091/api/ITP/GetITPDetailsByITPId?itpId=${data.itpId}`
       );
 
       setBxStockList(

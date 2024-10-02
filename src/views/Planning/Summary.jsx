@@ -198,7 +198,7 @@ const Summary = ({
       console.log('Fetching Summary Data for ID:', planningHeaderId); // Log to verify the ID
 
       const response = await axios.get(
-        `http://100.42.177.77:83/api/PrePlanning/GetPrePlanningSummaryByBatchId?planningHeaderId=${planningHeaderId}`
+        `http://100.42.177.77:8091/api/PrePlanning/GetPrePlanningSummaryByBatchId?planningHeaderId=${planningHeaderId}`
       );
       if (response.data.success) {
         setSummaryData(response.data.result);
@@ -440,7 +440,7 @@ const Summary = ({
 
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/PrePlanning/FinalizePrePlanningBatch',
+        'http://100.42.177.77:8091/api/PrePlanning/FinalizePrePlanningBatch',
         requestBody
       );
 

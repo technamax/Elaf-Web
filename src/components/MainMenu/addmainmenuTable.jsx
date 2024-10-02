@@ -8,7 +8,7 @@
 //   const fetchData = useCallback(async () => {
 //     try {
 //       console.log("Fetching data...");
-//       const response = await axios.get('http://100.42.177.77:83/api/Menu/GetMainMenuById?id=1');
+//       const response = await axios.get('http://100.42.177.77:8091/api/Menu/GetMainMenuById?id=1');
 //       console.log("Data fetched:", response.data);
 
 //       const dataWithId = response.data.result.map((row, index) => ({
@@ -33,7 +33,7 @@
 // const fetchData2 = useCallback(async () => {
 //     try {
 //       console.log("Fetching data...");
-//       const response = await axios.get('http://100.42.177.77:83/api/Menu/GetMainMenuList');
+//       const response = await axios.get('http://100.42.177.77:8091/api/Menu/GetMainMenuList');
 //       console.log("Data fetched:", response.data);
 
 //       const dataWithId = response.data.result.map((row, index) => ({

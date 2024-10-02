@@ -204,7 +204,7 @@ const DyeingGRN = () => {
   //   try {
   //     // Make the API call
   //     const response = await axios.get(
-  //       `http://100.42.177.77:83/api/Receiving/GetIssuanceByPoIdAndOGPNumber?poId=${formData.poId}&issuanceId=${formData.issuanceId}`
+  //       `http://100.42.177.77:8091/api/Receiving/GetIssuanceByPoIdAndOGPNumber?poId=${formData.poId}&issuanceId=${formData.issuanceId}`
   //     );
   //     console.log('Save response:', response.data);
 

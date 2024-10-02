@@ -235,7 +235,7 @@ const DyeingPrintingAssignVendor = ({
         return;
       }
       const response = await axios.post(
-        'http://100.42.177.77:83/api/DyeingPrinting/SaveDyeingPrintingDetails',
+        'http://100.42.177.77:8091/api/DyeingPrinting/SaveDyeingPrintingDetails',
         formData
       );
 
@@ -342,7 +342,7 @@ const DyeingPrintingAssignVendor = ({
     // }
   ];
 
-  const deleteApi = `http://100.42.177.77:83/api/DyeingPrinting/DeleteDyeingPrintingDetailByDetId?dpIdDet=`;
+  const deleteApi = `http://100.42.177.77:8091/api/DyeingPrinting/DeleteDyeingPrintingDetailByDetId?dpIdDet=`;
   return (
     <Box
       noValidate
