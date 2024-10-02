@@ -59,7 +59,7 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
     if (issuanceDetailsData) {
       setIssuanceDetails(
         issuanceDetailsData.result
-          .filter((row) => row.lastReceivedQty < row.issuanceQuantity)
+          .filter((row) => row.lastReceivedQty < row.dispatchedQuantity)
           .map((row, index) => ({
             id: index + 1,
             receivedQty: 0,
@@ -70,6 +70,7 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
   }, [issuanceDetailsData, refetchIssuanceDetailsData]);
 
   console.log('iss', iss);
+  console.log('issuanceDetailsData', issuanceDetailsData);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -159,6 +160,16 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
       headerName: 'Overall Received',
       valueGetter: (params, row) => {
         return (params - row.shortageQty).toLocaleString();
+      }
+    },
+    {
+      field: 'remaining',
+      headerName: 'Remaining',
+      valueGetter: (params, row) => {
+        return (
+          row.issuanceQuantity -
+          (row.lastReceivedQty - row.shortageQty)
+        ).toLocaleString();
       }
     },
     {

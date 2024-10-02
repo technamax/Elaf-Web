@@ -254,6 +254,7 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
             })
           }
           type="number"
+          error={params.row.gradeAQty > params.row.recA}
           InputProps={{
             style: { fontSize: '0.875rem' } // Ensure the font size is suitable
           }}

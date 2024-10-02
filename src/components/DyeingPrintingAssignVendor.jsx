@@ -60,7 +60,7 @@ const DyeingPrintingAssignVendor = ({
     rate: '',
     unitRatePerPo: 0,
     totalExcGst: 0,
-    gst: '',
+    gst: 0,
     // GSTAmount: '',
     TotalIncludingGst: '',
 
@@ -255,7 +255,7 @@ const DyeingPrintingAssignVendor = ({
         rate: '',
         unitRatePerPo: 0,
         totalExcGst: 0,
-        gst: '',
+        gst: 0,
         // GSTAmount: '',
         TotalIncludingGst: '',
         remainingQty: initialFormData.availableQty - Quantity || '',

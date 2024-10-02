@@ -1068,6 +1068,7 @@ const DyeingPO = () => {
               fullWidth
               size="small"
               name="shrinkage"
+              disabled
               onChange={handleChange}
               value={formData.shrinkage}
               required
@@ -1082,6 +1083,7 @@ const DyeingPO = () => {
               fullWidth
               size="small"
               name="wastage"
+              disabled
               onChange={handleChange}
               value={formData.wastage}
               required
