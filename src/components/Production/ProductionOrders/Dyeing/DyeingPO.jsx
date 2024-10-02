@@ -17,7 +17,7 @@ import {
   Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-
+import SSRSReport from 'views/DetailedReports/Reports';
 import MainCard from 'ui-component/cards/MainCard';
 
 import { Card, CardHeader, Avatar } from '@mui/material';
@@ -82,8 +82,8 @@ const DyeingPO = () => {
     vendorId: '',
     shrinkage: '',
     wastage: '',
-    rate: '',
-    tax: '',
+    rate: 0,
+    tax: 0,
     locationId: '',
     remarks: '',
 
@@ -151,6 +151,7 @@ const DyeingPO = () => {
   // }, [dyeingPoData, refetchDyeingPoData]);
   useEffect(() => {
     if (poHeaderData) {
+      refetchPoHeaderData();
       setInitialRows(
         poHeaderData.result.map((row, index) => ({
           id: index + 1,
@@ -237,6 +238,7 @@ const DyeingPO = () => {
     }));
   }, [setFabrics, fabrics]);
   console.log('initialRows', initialRows);
+  console.log('poHeaderData', poHeaderData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -264,50 +266,41 @@ const DyeingPO = () => {
         shrinkage: '',
         wastage: ''
       });
-    } else {
+    }
+    // else if (name === 'rate') {
+    //   setFormData({
+    //     ...formData,
+    //     rate: value
+    //   });
+    //   setFabrics(
+    //     fabrics.map((fabric) => ({
+    //       ...fabric,
+    //       rate: value,
+    //       totalBeforeTax: value * fabric.quantity,
+    //       totalAfterTax:
+    //         fabric.totalBeforeTax + fabric.totalBeforeTax * (formData.tax / 100)
+    //     }))
+    //   );
+    // } else if (name === 'tax') {
+    //   setFormData({
+    //     ...formData,
+    //     tax: value
+    //   });
+    //   setFabrics(
+    //     fabrics.map((fabric) => ({
+    //       ...fabric,
+    //       tax: value,
+    //       totalBeforeTax: formData.rate * fabric.quantity,
+    //       totalAfterTax:
+    //         fabric.totalBeforeTax + fabric.totalBeforeTax * (value / 100)
+    //     }))
+    //   );
+    // }
+    else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
-  // const handleSave = async () => {
-  //   console.log('formData', formData);
-  //   try {
-  //     // Make the API call
-  //     const response = await axios.post(
-  //       'http://100.42.177.77:83/api/PO/SavePOHeader',
-  //       formData
-  //     );
-
-  //     console.log('Save response:', response.data);
-
-  //     setFormData((prevFormData) => ({
-  //       poId: 0,
-  //       productionId: '',
-  //       issuanceDate: '',
-  //       expectedReturnDate: '',
-  //       fabricId: '',
-  //       processTypeId: 1223,
-  //       vendorId: '',
-  //       shrinkage: '',
-  //       wastage: '',
-  //       locationId: '',
-
-  //       appId: user.appId,
-  //       createdOn: new Date().toISOString(),
-  //       createdBy: user.empId,
-  //       lastUpdatedOn: new Date().toISOString(),
-  //       LastUpdatedBy: user.empId
-  //     }));
-  //     setFabrics([]);
-  //     refetchDyeingPoData();
-  //     setRowSelectionModel([]);
-  //     // refetchFabricsData();
-  //     setIsEdit(false);
-  //     // setAccordionExpanded(false);
-  //   } catch (error) {
-  //     console.error('Error saving data:', error);
-  //   }
-  // };
   const handleSave = async () => {
     if (rowSelectionModel.length === 0) {
       // Show a snackbar warning if no rows are selected
@@ -323,11 +316,12 @@ const DyeingPO = () => {
       // Make the API call
       const response = await axios.post(
         'http://100.42.177.77:83/api/PO/SavePOHeader',
-        formData
+        { ...formData }
       );
 
       console.log('Save response:', response.data);
-
+      refetchDyeingPoData();
+      refetchPoHeaderData();
       // Check for success
       if (response.data.success) {
         // Show a success snackbar if the save operation was successful
@@ -339,8 +333,9 @@ const DyeingPO = () => {
 
         // Reset formData and related states
         setFormData({
-          poId: 0,
-          productionId: '',
+          // poId: 0,
+          // productionId: '',
+          ...formData,
           issuanceDate: '',
           expectedReturnDate: '',
           fabricId: '',
@@ -357,6 +352,7 @@ const DyeingPO = () => {
         });
         setFabrics([]);
         refetchDyeingPoData();
+        refetchPoHeaderData();
         setRowSelectionModel([]);
         refetchcolumnsData();
         setIsEdit(false);
@@ -426,6 +422,16 @@ const DyeingPO = () => {
   };
   const handleIssuanceClick = (rowData) => {
     navigate('/Production/Issuance', { state: { data: rowData, tab: 1 } });
+  };
+  const [open3, setOpen3] = React.useState(false);
+
+  const [iss, setIss] = React.useState(false);
+  const handleClickOpen3 = async (data) => {
+    setIss(data);
+    setOpen3(true);
+  };
+  const handleClose3 = () => {
+    setOpen3(false);
   };
   const columns = [
     {
@@ -525,12 +531,32 @@ const DyeingPO = () => {
             >
               Issuance
             </Button>
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => handleClickOpen3(params.row)}
+            >
+              PO Report
+            </Button>
           </ButtonGroup>
         </div>
       )
     }
   ];
-
+  useEffect(() => {
+    // setFormData({...formdata, })
+    setFabrics(
+      fabrics.map((fabric) => ({
+        ...fabric,
+        rate: formData.rate,
+        tax: formData.tax,
+        totalBeforeTax: formData.rate * fabric.quantity,
+        totalAfterTax:
+          formData.rate * fabric.quantity +
+          formData.rate * fabric.quantity * (formData.tax / 100)
+      }))
+    );
+  }, [formData.rate, formData.tax]);
   const handleCellEdit = React.useCallback(
     (params) => {
       const { id, field, value } = params;
@@ -544,8 +570,8 @@ const DyeingPO = () => {
               [field]: value,
               poId: 0,
               poDetId: 0,
-              rate: formData.rate,
-              tax: formData.tax,
+              // rate: formData.rate,
+              // tax: formData.tax,
               appId: user.appId,
               createdOn: new Date().toISOString(),
               createdBy: user.empId,
@@ -558,10 +584,10 @@ const DyeingPO = () => {
             //   updatedRow.totalBeforeTax = updatedRow.rate * updatedRow.quantity;
             // }
             if (field === 'quantity') {
-              updatedRow.totalBeforeTax = formData.rate * updatedRow.quantity;
+              updatedRow.totalBeforeTax = updatedRow.rate * updatedRow.quantity;
               updatedRow.totalAfterTax =
                 updatedRow.totalBeforeTax +
-                updatedRow.totalBeforeTax * (formData.tax / 100);
+                updatedRow.totalBeforeTax * (updatedRow.tax / 100);
             }
 
             // Optionally, update totalAfterTax if it's a function of totalBeforeTax and tax
@@ -1067,6 +1093,7 @@ const DyeingPO = () => {
           <Grid item xs={12} md={1.5}>
             <TextField
               label="Rate"
+              type="number"
               fullWidth
               size="small"
               name="rate"
@@ -1082,6 +1109,7 @@ const DyeingPO = () => {
             <TextField
               label="Tax"
               fullWidth
+              type="number"
               size="small"
               name="tax"
               onChange={handleChange}
@@ -1310,6 +1338,39 @@ const DyeingPO = () => {
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
                 <POView vId={vId} />
+              </DialogContent>
+            </Dialog>
+            <Dialog open={open3} onClose={handleClose3} fullWidth maxWidth="xl">
+              <DialogTitle
+                sx={{
+                  backgroundColor: '#A11F23',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingX: '24px',
+                  paddingY: '4px',
+                  mb: 2.5
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="div"
+                  color="#ffffff"
+                  gutterBottom
+                  fontSize={20}
+                  fontWeight={2}
+                  fontStyle={'normal'}
+                >
+                  {'Inspection'}
+                </Typography>
+                <IconButton onClick={handleClose3} sx={{ color: '#ffffff' }}>
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                <SSRSReport rId={20} PO={{ ParamPoIdName: iss.poIdName }} />
               </DialogContent>
             </Dialog>
           </Grid>

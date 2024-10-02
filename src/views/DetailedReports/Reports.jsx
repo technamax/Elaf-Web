@@ -18,6 +18,8 @@ const SSRSReport = ({
   igpReport,
   paramIssuanceId,
   OGPNumber,
+  PO,
+  GRN,
   ogpNumber,
   paramRejectionId,
   issuanceOgp
@@ -120,7 +122,56 @@ const SSRSReport = ({
         iframe.src = newUrl;
       }
     }
+    if (PO) {
+      const iframe = iframeRef.current;
+      if (iframe && selectedReportUrl) {
+        const newUrl = `${selectedReportUrl}&ParamPoIdName=${PO?.ParamPoIdName || ''}`;
+        iframe.src = newUrl;
+      }
+    }
+    if (GRN) {
+      const iframe = iframeRef.current;
+      if (iframe && selectedReportUrl) {
+        const newUrl = `${selectedReportUrl}&ParamInspectionId=${GRN?.ParamInspectionId || ''}`;
+        iframe.src = newUrl;
+      }
+    }
   }, [selectedReportUrl, paramIssuanceId, OGPNumber, ogpNumber]);
+  // useEffect(() => {
+  //   const iframe = iframeRef.current;
+
+  //   if (iframe && selectedReportUrl) {
+  //     // Create a mapping of parameter names to values
+  //     const paramMap = {
+  //       ParamIssuanceId:
+  //         ogpView?.paramIssuanceId ||
+  //         DyeingIssuance?.paramIssuanceId ||
+  //         receiving?.paramIssuanceId,
+  //       ParamOGP: ogpView?.ogpNumber,
+  //       ParamIGPNumber: OGPNumber || igpReport?.ParamIGPNumber,
+  //       ParamInspectionId: inspection?.ParamInspectionId,
+  //       paramRejectionId: paramRejectionId > 0 ? paramRejectionId : undefined
+  //     };
+
+  //     // Construct the URL with the available parameters
+  //     const queryParams = Object.entries(paramMap)
+  //       .filter(([key, value]) => value !== undefined) // include defined parameters
+  //       .map(([key, value]) => `${key}=${value}`)
+  //       .join('&');
+
+  //     const newUrl = `${selectedReportUrl}${queryParams ? '?' + queryParams : ''}`;
+  //     iframe.src = newUrl;
+  //   }
+  // }, [
+  //   selectedReportUrl,
+  //   ogpView,
+  //   OGPNumber,
+  //   DyeingIssuance,
+  //   receiving,
+  //   inspection,
+  //   igpReport,
+  //   paramRejectionId
+  // ]);
 
   return (
     <Card variant="outlined">

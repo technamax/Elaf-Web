@@ -260,6 +260,17 @@ const DyeingGRN = () => {
   const handleViews = async (data) => {
     setIssId(data.issuanceId);
   };
+  const [open3, setOpen3] = React.useState(false);
+
+  // const [iss, setIss] = React.useState(false);
+  const handleClickOpen3 = async (data) => {
+    setIss(data);
+    setOpen3(true);
+  };
+  const handleClose3 = () => {
+    setOpen3(false);
+  };
+
   const columns = [
     {
       field: 'id',
@@ -354,6 +365,13 @@ const DyeingGRN = () => {
               onClick={() => handleViews(params.row)}
             >
               POST
+            </Button>
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => handleClickOpen3(params.row)}
+            >
+              GRN Report
             </Button>
           </ButtonGroup>
         </div>
@@ -499,6 +517,42 @@ const DyeingGRN = () => {
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
                 <SSRSReport rId={14} OGPNumber={iss.igpNumber} />
+              </DialogContent>
+            </Dialog>
+            <Dialog open={open3} onClose={handleClose3} fullWidth maxWidth="xl">
+              <DialogTitle
+                sx={{
+                  backgroundColor: '#A11F23',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingX: '24px',
+                  paddingY: '4px',
+                  mb: 2.5
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="div"
+                  color="#ffffff"
+                  gutterBottom
+                  fontSize={20}
+                  fontWeight={2}
+                  fontStyle={'normal'}
+                >
+                  {'Inspection'}
+                </Typography>
+                <IconButton onClick={handleClose3} sx={{ color: '#ffffff' }}>
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                <SSRSReport
+                  rId={18}
+                  GRN={{ ParamInspectionId: iss.inspectionId }}
+                />
               </DialogContent>
             </Dialog>
           </Grid>
