@@ -312,7 +312,12 @@ const DyeingGRN = () => {
       field: 'gradeAQty',
       headerName: 'GradeA',
       renderCell: (params) => {
-        return <StatusChip label={params.row.gradeAQty} status="Received" />;
+        return (
+          <StatusChip
+            label={params.row.gradeAQty.toLocaleString()}
+            status="Received"
+          />
+        );
       }
     },
     // {

@@ -73,105 +73,53 @@ const SSRSReport = ({
   };
 
   useEffect(() => {
-    if (ogpView) {
-      const iframe = iframeRef.current;
-      if (iframe && selectedReportUrl) {
-        const newUrl = `${selectedReportUrl}&ParamIssuanceId=${ogpView?.paramIssuanceId || ''}&ParamOGP=${ogpView?.ogpNumber || ''}`;
-        iframe.src = newUrl;
-      }
-    }
-    if (OGPNumber) {
-      const iframe = iframeRef.current;
-      if (iframe && selectedReportUrl) {
-        const newUrl = `${selectedReportUrl}&ParamIGPNumber=${OGPNumber || ''}`;
-        iframe.src = newUrl;
-      }
-    }
-    if (DyeingIssuance) {
-      const iframe = iframeRef.current;
-      if (iframe && selectedReportUrl) {
-        const newUrl = `${selectedReportUrl}&ParamIssuanceId=${DyeingIssuance?.paramIssuanceId || ''}`;
-        iframe.src = newUrl;
-      }
-    }
-    if (receiving) {
-      const iframe = iframeRef.current;
-      if (iframe && selectedReportUrl) {
-        const newUrl = `${selectedReportUrl}&ParamIssuanceId=${receiving?.paramIssuanceId || ''}`;
-        iframe.src = newUrl;
-      }
-    }
-    if (inspection) {
-      const iframe = iframeRef.current;
-      if (iframe && selectedReportUrl) {
-        const newUrl = `${selectedReportUrl}&ParamInspectionId=${inspection?.ParamInspectionId || ''}`;
-        iframe.src = newUrl;
-      }
-    }
-    if (igpReport) {
-      const iframe = iframeRef.current;
-      if (iframe && selectedReportUrl) {
-        const newUrl = `${selectedReportUrl}&ParamIGPNumber=${igpReport?.ParamIGPNumber || ''}`;
-        iframe.src = newUrl;
-      }
-    }
+    const iframe = iframeRef.current;
     if (paramRejectionId > 0) {
       const iframe = iframeRef.current;
       if (iframe && selectedReportUrl) {
         const newUrl = `${selectedReportUrl}&paramRejectionId=${paramRejectionId || ''}`;
         iframe.src = newUrl;
       }
+      return;
     }
-    if (PO) {
-      const iframe = iframeRef.current;
-      if (iframe && selectedReportUrl) {
-        const newUrl = `${selectedReportUrl}&ParamPoIdName=${PO?.ParamPoIdName || ''}`;
-        iframe.src = newUrl;
-      }
+    if (iframe && selectedReportUrl) {
+      const paramMap = {
+        ParamIssuanceId:
+          ogpView?.paramIssuanceId ||
+          DyeingIssuance?.paramIssuanceId ||
+          receiving?.paramIssuanceId,
+        ParamOGP: ogpView?.ogpNumber,
+        ParamIGPNumber: OGPNumber || igpReport?.ParamIGPNumber,
+        ParamInspectionId: inspection?.ParamInspectionId,
+        paramRejectionId: paramRejectionId > 0 ? paramRejectionId : undefined,
+        ParamPoIdName: PO?.ParamPoIdName,
+        ParamGRNInspectionId: GRN?.ParamInspectionId
+      };
+
+      // Construct the URL with the available parameters
+      const queryParams = Object.entries(paramMap)
+        .filter(([key, value]) => value !== undefined && value !== '') // Exclude undefined or empty parameters
+        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+        .join('&');
+
+      const newUrl = `${selectedReportUrl}${queryParams ? '&' + queryParams : ''}`;
+
+      // Set the iframe source
+      console.log('Generated iframe URL:', newUrl);
+      iframe.src = newUrl;
     }
-    if (GRN) {
-      const iframe = iframeRef.current;
-      if (iframe && selectedReportUrl) {
-        const newUrl = `${selectedReportUrl}&ParamInspectionId=${GRN?.ParamInspectionId || ''}`;
-        iframe.src = newUrl;
-      }
-    }
-  }, [selectedReportUrl, paramIssuanceId, OGPNumber, ogpNumber]);
-  // useEffect(() => {
-  //   const iframe = iframeRef.current;
-
-  //   if (iframe && selectedReportUrl) {
-  //     // Create a mapping of parameter names to values
-  //     const paramMap = {
-  //       ParamIssuanceId:
-  //         ogpView?.paramIssuanceId ||
-  //         DyeingIssuance?.paramIssuanceId ||
-  //         receiving?.paramIssuanceId,
-  //       ParamOGP: ogpView?.ogpNumber,
-  //       ParamIGPNumber: OGPNumber || igpReport?.ParamIGPNumber,
-  //       ParamInspectionId: inspection?.ParamInspectionId,
-  //       paramRejectionId: paramRejectionId > 0 ? paramRejectionId : undefined
-  //     };
-
-  //     // Construct the URL with the available parameters
-  //     const queryParams = Object.entries(paramMap)
-  //       .filter(([key, value]) => value !== undefined) // include defined parameters
-  //       .map(([key, value]) => `${key}=${value}`)
-  //       .join('&');
-
-  //     const newUrl = `${selectedReportUrl}${queryParams ? '?' + queryParams : ''}`;
-  //     iframe.src = newUrl;
-  //   }
-  // }, [
-  //   selectedReportUrl,
-  //   ogpView,
-  //   OGPNumber,
-  //   DyeingIssuance,
-  //   receiving,
-  //   inspection,
-  //   igpReport,
-  //   paramRejectionId
-  // ]);
+  }, [
+    selectedReportUrl,
+    ogpView,
+    OGPNumber,
+    DyeingIssuance,
+    receiving,
+    inspection,
+    igpReport,
+    paramRejectionId,
+    PO,
+    GRN
+  ]);
 
   return (
     <Card variant="outlined">
@@ -245,3 +193,71 @@ const SSRSReport = ({
 };
 
 export default SSRSReport;
+
+// useEffect(() => {
+//   if (ogpView) {
+//     const iframe = iframeRef.current;
+//     if (iframe && selectedReportUrl) {
+//       const newUrl = `${selectedReportUrl}&ParamIssuanceId=${ogpView?.paramIssuanceId || ''}&ParamOGP=${ogpView?.ogpNumber || ''}`;
+//       iframe.src = newUrl;
+//     }
+//   }
+//   if (OGPNumber) {
+//     const iframe = iframeRef.current;
+//     if (iframe && selectedReportUrl) {
+//       const newUrl = `${selectedReportUrl}&ParamIGPNumber=${OGPNumber || ''}`;
+//       iframe.src = newUrl;
+//     }
+//   }
+//   if (DyeingIssuance) {
+//     const iframe = iframeRef.current;
+//     if (iframe && selectedReportUrl) {
+//       const newUrl = `${selectedReportUrl}&ParamIssuanceId=${DyeingIssuance?.paramIssuanceId || ''}`;
+//       iframe.src = newUrl;
+//     }
+//   }
+//   if (receiving) {
+//     const iframe = iframeRef.current;
+//     if (iframe && selectedReportUrl) {
+//       const newUrl = `${selectedReportUrl}&ParamIssuanceId=${receiving?.paramIssuanceId || ''}`;
+//       iframe.src = newUrl;
+//       console.log('Generated iframe URL1:', newUrl);
+//     }
+//   }
+//   if (inspection) {
+//     const iframe = iframeRef.current;
+//     if (iframe && selectedReportUrl) {
+//       const newUrl = `${selectedReportUrl}&ParamInspectionId=${inspection?.ParamInspectionId || ''}`;
+//       iframe.src = newUrl;
+//       console.log('Generated iframe URL1:', newUrl);
+//     }
+//   }
+//   if (igpReport) {
+//     const iframe = iframeRef.current;
+//     if (iframe && selectedReportUrl) {
+//       const newUrl = `${selectedReportUrl}&ParamIGPNumber=${igpReport?.ParamIGPNumber || ''}`;
+//       iframe.src = newUrl;
+//     }
+//   }
+//   if (paramRejectionId > 0) {
+//     const iframe = iframeRef.current;
+//     if (iframe && selectedReportUrl) {
+//       const newUrl = `${selectedReportUrl}&paramRejectionId=${paramRejectionId || ''}`;
+//       iframe.src = newUrl;
+//     }
+//   }
+//   if (PO) {
+//     const iframe = iframeRef.current;
+//     if (iframe && selectedReportUrl) {
+//       const newUrl = `${selectedReportUrl}&ParamPoIdName=${PO?.ParamPoIdName || ''}`;
+//       iframe.src = newUrl;
+//     }
+//   }
+//   if (GRN) {
+//     const iframe = iframeRef.current;
+//     if (iframe && selectedReportUrl) {
+//       const newUrl = `${selectedReportUrl}&ParamInspectionId=${GRN?.ParamInspectionId || ''}`;
+//       iframe.src = newUrl;
+//     }
+//   }
+// }, [selectedReportUrl, paramIssuanceId, OGPNumber, ogpNumber]);

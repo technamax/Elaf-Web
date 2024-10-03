@@ -115,7 +115,17 @@ const InspectionView = ({ formData, refetch }) => {
       }
     },
 
-    { field: 'receivedQty', headerName: 'Received' },
+    {
+      field: 'receivedQty',
+      headerName: 'Received',
+      valueGetter: (params) => {
+        if (params) {
+          return Number(params.toFixed(2)).toLocaleString();
+        } else {
+          return '0';
+        }
+      }
+    },
     { field: 'processTypename', headerName: 'Process Type' },
     // {
     //   field: 'statusName',

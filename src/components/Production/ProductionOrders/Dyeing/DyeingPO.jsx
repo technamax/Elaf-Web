@@ -1168,7 +1168,7 @@ const DyeingPO = () => {
             >
               Assign Quantity{' '}
               <Chip
-                label={formData.pxQty}
+                label={formData.pxQty?.toLocaleString()}
                 sx={{
                   backgroundColor: '#008000', // Assigned Qty color
                   color: '#FFFFFF' // White text
@@ -1176,7 +1176,7 @@ const DyeingPO = () => {
               />
               | planned Quantity{' '}
               <Chip
-                label={formData.overallQty}
+                label={Number(formData.overallQty)?.toLocaleString()}
                 sx={{
                   backgroundColor: '#0000FF', // Planned Qty color
                   color: '#FFFFFF' // White text
@@ -1184,7 +1184,7 @@ const DyeingPO = () => {
               />{' '}
               | Remaining Quantity{' '}
               <Chip
-                label={formData.remainingQuantity}
+                label={formData.remainingQuantity?.toLocaleString()}
                 sx={{
                   backgroundColor: '#FF0000', // Set to red
                   color: '#FFFFFF' // White text for visibility

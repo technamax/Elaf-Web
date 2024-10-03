@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField, Typography, Button } from '@mui/material';
+import { Grid, TextField, Typography, Button, Box } from '@mui/material';
 import {
   useGetReceivingDetailsForInspectionQuery,
   useGetReceivingHeaderQuery
@@ -11,6 +11,8 @@ import axios from 'axios';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
 import { getValue } from '@mui/system';
+import Receive from './../../Issuance/Receive';
+
 const SmallTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-input': {
     fontSize: '0.875rem', // Adjust font size
@@ -164,18 +166,7 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
       headerName: 'Quantity Issued',
       valueGetter: (params) => {
         if (params) {
-          return params.toLocaleString();
-        } else {
-          return '0';
-        }
-      }
-    },
-    {
-      field: 'receivedQty',
-      headerName: 'Received',
-      valueGetter: (params) => {
-        if (params) {
-          return params.toLocaleString();
+          return Number(params.toFixed(2)).toLocaleString();
         } else {
           return '0';
         }
@@ -186,51 +177,23 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
       headerName: 'Expected',
       valueGetter: (value, row) => {
         return (
-          ((row.issuanceQuantity * 100) / (100 + row.shrinkage + row.wastage))
+          Number(
+            (
+              (row.issuanceQuantity * 100) /
+              (100 + row.shrinkage + row.wastage)
+            ).toFixed(2)
+          )
             // .toFixed(2)
             .toLocaleString()
         );
       }
     },
     {
-      field: 'recA',
-      headerName: 'Rec. GradeA',
+      field: 'receivedQty',
+      headerName: 'Received',
       valueGetter: (params) => {
         if (params) {
-          return params.toLocaleString();
-        } else {
-          return '0';
-        }
-      }
-    },
-    {
-      field: 'recB',
-      headerName: 'Rec. GradeB ',
-      valueGetter: (params) => {
-        if (params) {
-          return params.toLocaleString();
-        } else {
-          return '0';
-        }
-      }
-    },
-    {
-      field: 'recCp',
-      headerName: 'Rec. GradeCP',
-      valueGetter: (params) => {
-        if (params) {
-          return params.toLocaleString();
-        } else {
-          return '0';
-        }
-      }
-    },
-    {
-      field: 'recOthers1',
-      headerName: 'Rec. Others',
-      valueGetter: (params) => {
-        if (params) {
-          return params.toLocaleString();
+          return Number(params.toFixed(2)).toLocaleString();
         } else {
           return '0';
         }
@@ -422,7 +385,106 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
       )
     }
   ];
-
+  const columnsView = [
+    {
+      field: 'id',
+      headerName: 'Sr#'
+    },
+    {
+      field: 'designNo',
+      headerName: 'Design'
+    },
+    {
+      field: 'colorName',
+      headerName: 'Color'
+    },
+    {
+      field: 'fabricName',
+      headerName: 'Fabric'
+    },
+    {
+      field: 'issuanceQuantity',
+      headerName: 'Quantity Issued',
+      valueGetter: (params) => {
+        if (params) {
+          return Number(params.toFixed(2)).toLocaleString();
+        } else {
+          return '0';
+        }
+      }
+    },
+    {
+      field: 'receivedQty',
+      headerName: 'Received',
+      valueGetter: (params) => {
+        if (params) {
+          return Number(params.toFixed(2)).toLocaleString();
+        } else {
+          return '0';
+        }
+      }
+    },
+    {
+      field: 'expectedQty',
+      headerName: 'Expected',
+      valueGetter: (value, row) => {
+        return (
+          Number(
+            (
+              (row.issuanceQuantity * 100) /
+              (100 + row.shrinkage + row.wastage)
+            ).toFixed(2)
+          )
+            // .toFixed(2)
+            .toLocaleString()
+        );
+      }
+    },
+    {
+      field: 'recA',
+      headerName: 'Grade A',
+      valueGetter: (params) => {
+        if (params) {
+          return params.toLocaleString();
+        } else {
+          return '0';
+        }
+      }
+    },
+    {
+      field: 'recB',
+      headerName: 'Grade B ',
+      valueGetter: (params) => {
+        if (params) {
+          return params.toLocaleString();
+        } else {
+          return '0';
+        }
+      }
+    },
+    {
+      field: 'recCp',
+      headerName: 'Grade CP',
+      valueGetter: (params) => {
+        if (params) {
+          return params.toLocaleString();
+        } else {
+          return '0';
+        }
+      }
+    },
+    {
+      field: 'recOthers1',
+      headerName: 'Others',
+      valueGetter: (params) => {
+        if (params) {
+          return params.toLocaleString();
+        } else {
+          return '0';
+        }
+      }
+    }
+  ];
   const fetchData = () => {
     apiRef.current.autosizeColumns({
       includeHeaders: true,
@@ -560,7 +622,23 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
         </Grid>
 
         <Grid item xs={12}>
-          <div style={{ height: 400, width: '100%' }}>
+          <Box
+            sx={{
+              height: 'auto',
+              // maxHeight: 500,
+              // overflow: 'auto',
+              width: 'inherit',
+              '& .actions': {
+                color: 'text.secondary'
+              },
+              '& .textPrimary': {
+                color: 'text.primary'
+              },
+              '& .bold': {
+                fontWeight: 600
+              }
+            }}
+          >
             <DataGrid
               rows={receiveDetails}
               columns={columns}
@@ -570,7 +648,7 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
               // onRowSelectionModelChange={handleRowSelectionModelChange}
               // rowSelectionModel={rowSelectionModel}
             />
-          </div>
+          </Box>
         </Grid>
         <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
           <Button
@@ -581,6 +659,24 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
           >
             Save
           </Button>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography variant="h2">Received</Typography>
+        </Grid>
+
+        <Grid item xs={12}>
+          {/* <div style={{ height: 400, width: '100%' }}> */}
+          <ReuseableDataGrid
+            initialRows={receiveDetails}
+            iColumns={columnsView}
+            hideAction
+            // apiRef={apiRef}
+            // disableRowSelectionOnClick
+            // checkboxSelection
+            // onRowSelectionModelChange={handleRowSelectionModelChange}
+            // rowSelectionModel={rowSelectionModel}
+          />
+          {/* </div> */}
         </Grid>
       </Grid>
     </div>

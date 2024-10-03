@@ -1199,7 +1199,7 @@ const DyeingIssuance = ({ rowData }) => {
               variant="overline"
               sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
             >
-              Balance : {formData.balance}
+              Balance : {formData.balance?.toLocaleString()}
             </Typography>
           </Grid>
           <Grid item xs={12}>

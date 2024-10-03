@@ -454,7 +454,18 @@ const DyeingReceiving = () => {
       }
     },
 
-    { field: 'receivedQty', headerName: 'Received' },
+    {
+      field: 'receivedQty',
+      headerName: 'Received',
+      renderCell: (params) => {
+        return (
+          <StatusChip
+            label={params.row.receivedQty.toLocaleString()}
+            status="Received"
+          />
+        );
+      }
+    },
     { field: 'processTypename', headerName: 'Process Type' },
     // {
     //   field: 'statusName',
