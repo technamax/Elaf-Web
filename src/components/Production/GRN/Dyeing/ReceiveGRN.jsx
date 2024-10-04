@@ -133,6 +133,40 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
   useEffect(() => {
     setFormData({ ...formData, grnDetailsList: [...calRows] });
   }, [GRNList]);
+  const gradeASum = calRows
+    .reduce((sum, row) => sum + (row.gradeAQty ?? 0), 0)
+    .toFixed(2);
+  const overallTotal = calRows
+    .reduce((sum, row) => sum + (row.total ?? 0), 0)
+    .toFixed(2);
+  const bGradeSum = calRows
+    .reduce((sum, row) => sum + (row.gradeBQty ?? 0), 0)
+    .toFixed(2);
+  const cpGradeSum = calRows
+    .reduce((sum, row) => sum + (row.gradeCPQty ?? 0), 0)
+    .toFixed(2);
+  const rejectedSum = calRows
+    .reduce((sum, row) => sum + (row.rejectedQty ?? 0), 0)
+    .toFixed(2);
+  const shortageSum = calRows
+    .reduce((sum, row) => sum + (row.shortageQty ?? 0), 0)
+    .toFixed(2);
+  const bGradeTotal = calRows
+    .reduce((sum, row) => sum + (row.bGradetotal ?? 0), 0)
+    .toFixed(2);
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      grnDetailsList: [...calRows],
+      gradeASum: gradeASum,
+      overallTotal: overallTotal,
+      bGradeSum: bGradeSum,
+      cpGradeSum: cpGradeSum,
+      rejectedSum: rejectedSum,
+      bGradeTotal: bGradeTotal,
+      shortageSum: shortageSum
+    });
+  }, [GRNList, setGRNList]);
   console.log('formData', formData);
   const columns = [
     {
@@ -392,7 +426,91 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
             hideAction
           />
         </Grid>
-        <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
+        <Grid item xs={12} md={2.5} sx={{}}>
+          <Typography
+            variant="overline"
+            sx={{
+              display: 'block',
+              fontWeight: 'bold',
+              fontSize: 13,
+              justifyContent: 'space-between',
+              display: 'flex'
+            }}
+          >
+            OverAll Total :
+            <Chip
+              label={Number(formData.overallTotal)?.toLocaleString()}
+              sx={{
+                backgroundColor: '#0000FF', // Planned Qty color
+                color: '#FFFFFF' // White text
+              }}
+            />{' '}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} md={2.5}>
+          <Typography
+            variant="overline"
+            sx={{
+              display: 'block',
+              fontWeight: 'bold',
+              fontSize: 13,
+              justifyContent: 'space-between',
+              display: 'flex'
+            }}
+          >
+            Grade B Total :
+            <Chip
+              label={Number(formData.bGradeTotal)?.toLocaleString()}
+              sx={{
+                backgroundColor: '#0000FF', // Planned Qty color
+                color: '#FFFFFF' // White text
+              }}
+            />
+          </Typography>
+        </Grid>
+        <Grid item xs={12} md={2.5}>
+          <Typography
+            variant="overline"
+            sx={{
+              display: 'block',
+              fontWeight: 'bold',
+              fontSize: 13,
+              justifyContent: 'space-between',
+              display: 'flex'
+            }}
+          >
+            Shortage Quantity :
+            <Chip
+              label={Number(formData.shortageSum)?.toLocaleString()}
+              sx={{
+                backgroundColor: '#0000FF', // Planned Qty color
+                color: '#FFFFFF' // White text
+              }}
+            />
+          </Typography>
+        </Grid>
+        <Grid item xs={12} md={2.5}>
+          <Typography
+            variant="overline"
+            sx={{
+              display: 'block',
+              fontWeight: 'bold',
+              fontSize: 13,
+              justifyContent: 'space-between',
+              display: 'flex'
+            }}
+          >
+            Grade A Quantity :
+            <Chip
+              label={formData.gradeASum?.toLocaleString()}
+              sx={{
+                backgroundColor: '#008000', // Assigned Qty color
+                color: '#FFFFFF' // White text
+              }}
+            />
+          </Typography>
+        </Grid>
+        <Grid item xs={2} textAlign="right">
           <Button
             variant="contained"
             size="small"
@@ -401,6 +519,69 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
           >
             Save
           </Button>
+        </Grid>
+        <Grid item xs={12} md={2.5}>
+          <Typography
+            variant="overline"
+            sx={{
+              display: 'block',
+              fontWeight: 'bold',
+              fontSize: 13,
+              justifyContent: 'space-between',
+              display: 'flex'
+            }}
+          >
+            Grade B Quantity :
+            <Chip
+              label={formData.bGradeSum?.toLocaleString()}
+              sx={{
+                backgroundColor: '#FF0000', // Set to red
+                color: '#FFFFFF' // White text for visibility
+              }}
+            />{' '}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} md={2.5}>
+          <Typography
+            variant="overline"
+            sx={{
+              display: 'block',
+              fontWeight: 'bold',
+              fontSize: 13,
+              justifyContent: 'space-between',
+              display: 'flex'
+            }}
+          >
+            Grade Cp Quantity :
+            <Chip
+              label={formData.cpGradeSum?.toLocaleString()}
+              sx={{
+                backgroundColor: '#FF0000', // Set to red
+                color: '#FFFFFF' // White text for visibility
+              }}
+            />
+          </Typography>
+        </Grid>
+        <Grid item xs={12} md={2.5}>
+          <Typography
+            variant="overline"
+            sx={{
+              display: 'block',
+              fontWeight: 'bold',
+              fontSize: 13,
+              justifyContent: 'space-between',
+              display: 'flex'
+            }}
+          >
+            Rejected Quantity :
+            <Chip
+              label={formData.rejectedSum?.toLocaleString()}
+              sx={{
+                backgroundColor: '#FF0000', // Set to red
+                color: '#FFFFFF' // White text for visibility
+              }}
+            />
+          </Typography>
         </Grid>
       </Grid>
     </div>

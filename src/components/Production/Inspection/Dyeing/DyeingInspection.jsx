@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Grid, TextField, Typography, Button, Box } from '@mui/material';
 import {
   useGetReceivingDetailsForInspectionQuery,
-  useGetReceivingHeaderQuery
+  useGetReceivingHeaderQuery,
+  useGetInspectionHeaderQuery
 } from 'api/store/Apis/productionApi';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
@@ -41,6 +42,10 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
   const { data: receiveDetailsData, refetch: refetchReceiveDetailsData } =
     useGetReceivingDetailsForInspectionQuery(rData.receivingId, {
       skip: !rData.receivingId
+    });
+  const { data: inspectionData, refetch: refetchInspectionData } =
+    useGetInspectionHeaderQuery(rData.poId, {
+      skip: !rData.poId // Skip the query if no collection is selected
     });
 
   useEffect(() => {
@@ -532,6 +537,7 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
         });
       }
       refetch();
+      refetchInspectionData();
       refetchReceivingData();
       console.log('Save response:', response.data);
       handleClose();

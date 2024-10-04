@@ -150,6 +150,10 @@ export const productionApi = createApi({
     getRejectionDetailsByIssuanceId: builder.query({
       query: (issuanceId) =>
         `GRN/GetRejectionDetailsByIssuanceId?issuanceId=${issuanceId}`
+    }),
+    getPOSummaryByProcessTypeId: builder.query({
+      query: (processTypeId) =>
+        `PO/GetPOSummaryByProcessTypeId?appId=1&processTypeId=${processTypeId}`
     })
   })
 });
@@ -194,5 +198,6 @@ export const {
   useGetDyeingPoHeaderByProductionIdQuery,
   useGetDyeingPoHeaderbyProductionIdAndStatusQuery,
   useGetInspectionHeaderQuery,
-  useGetRejectionDetailsByIssuanceIdQuery
+  useGetRejectionDetailsByIssuanceIdQuery,
+  useGetPOSummaryByProcessTypeIdQuery
 } = productionApi;

@@ -90,7 +90,7 @@ const DyeingIssuance = ({ rowData }) => {
     issuanceId: 0,
     poId: rowData?.poId || 0,
     productionId: rowData?.productionId || '',
-    issuanceDate: rowData?.issuanceDate || null,
+    issuanceDate: '',
     expectedReturnDate: rowData?.expectedReturnDate || '',
     processTypeId: 1223,
     fabricId: rowData?.fabricId || '',
@@ -203,7 +203,7 @@ const DyeingIssuance = ({ rowData }) => {
         shrinkage: poHeaderData.result[0].shrinkage,
         // productionId: poHeaderData.result[0].productionId,
         productionHeaderId: poHeaderData.result[0].productionHeaderId,
-        issuanceDate: poHeaderData.result[0].issuanceDate,
+        // issuanceDate: poHeaderData.result[0].issuanceDate,
         expectedReturnDate: poHeaderData.result[0].expectedReturnDate,
         fabricId: poHeaderData.result[0].fabricId,
         vendorId: poHeaderData.result[0].vendorId,
@@ -334,7 +334,7 @@ const DyeingIssuance = ({ rowData }) => {
         poId: value,
         shrinkage: selectedPO ? selectedPO.shrinkage : '',
         // productionId: selectedPO ? selectedPO.productionId : '',
-        issuanceDate: selectedPO ? selectedPO.issuanceDate : null,
+        // issuanceDate: selectedPO ? selectedPO.issuanceDate : null,
         expectedReturnDate: selectedPO ? selectedPO.expectedReturnDate : '',
         fabricId: selectedPO ? selectedPO.fabricId : '',
         vendorId: selectedPO ? selectedPO.vendorId : '',
@@ -884,7 +884,7 @@ const DyeingIssuance = ({ rowData }) => {
               color="primary"
               onClick={() => handleClickOpen(params.row)}
               disabled={
-                params.row.issuanceQuantity === params.row.dispatchedQuantity
+                params.row.issuanceQuantity <= params.row.dispatchedQuantity
               }
             >
               Generate OGP
@@ -967,21 +967,22 @@ const DyeingIssuance = ({ rowData }) => {
           <Grid item xs={12} md={3}>
             <TextField
               size="small"
-              // type="date"
+              type="date"
               label="Issuance Date"
-              disabled
+              // disabled
               name="issuanceDate"
               value={
-                !formData.issuanceDate
-                  ? null
-                  : new Date(formData.issuanceDate).toLocaleDateString(
-                      'en-GB',
-                      {
-                        day: 'numeric',
-                        month: 'short',
-                        year: '2-digit'
-                      }
-                    )
+                formData.issuanceDate
+                // !formData.issuanceDate
+                //   ? null
+                //   : new Date(formData.issuanceDate).toLocaleDateString(
+                //       'en-GB',
+                //       {
+                //         day: 'numeric',
+                //         month: 'short',
+                //         year: '2-digit'
+                //       }
+                //     )
               }
               onChange={handleChange}
               fullWidth
@@ -1001,10 +1002,10 @@ const DyeingIssuance = ({ rowData }) => {
               size="small"
               disabled
               // type="date"
-              label="Planning Date"
+              label="Expected Return"
               name="expectedReturnDate"
               value={
-                !formData.issuanceDate
+                !formData.expectedReturnDate
                   ? null
                   : new Date(formData.expectedReturnDate).toLocaleDateString(
                       'en-GB',

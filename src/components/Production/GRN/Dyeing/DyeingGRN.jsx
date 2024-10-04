@@ -314,7 +314,7 @@ const DyeingGRN = () => {
       renderCell: (params) => {
         return (
           <StatusChip
-            label={params.row.gradeAQty.toLocaleString()}
+            label={params.row.gradeAQty?.toLocaleString()}
             status="Received"
           />
         );
@@ -475,7 +475,7 @@ const DyeingGRN = () => {
                   fontWeight={2}
                   fontStyle={'normal'}
                 >
-                  {'View Details'}
+                  {'GRN Details'}
                 </Typography>
                 <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
                   <CloseIcon />
