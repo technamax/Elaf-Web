@@ -154,11 +154,14 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
       headerName: 'Color'
     },
     {
-      field: 'rejectedQty',
-      headerName: 'Rejected Quantity',
+      field: isRejected ? 'rejectedQty' : 'issuanceQuantity',
+      headerName: isRejected ? 'Rejected Quantity' : 'Issued Quantity',
       renderCell: (params) => {
         return (
-          <StatusChip label={params.value.toLocaleString()} status="Rejected" />
+          <StatusChip
+            label={params.value.toLocaleString()}
+            status={isRejected ? 'Rejected' : 'Issued'}
+          />
         );
       }
 
@@ -182,7 +185,8 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
   const handleOgp = async () => {
     if (
       formData.dispatchedQuantity >
-      iss.issuanceQuantity - iss.dispatchedQuantity
+        iss.issuanceQuantity - iss.dispatchedQuantity ||
+      formData.dispatchedQuantity > iss.rejectedQty
     ) {
       enqueueSnackbar(
         'Error: DisPatched quantity cannot be greater than issuance quantity!',
@@ -446,7 +450,9 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
             // select
             label="Remaining Quantity"
             name="issuanceQuantity"
-            value={iss.issuanceQuantity - iss.dispatchedQuantity}
+            value={
+              iss.issuanceQuantity || iss.rejectedQty - iss.dispatchedQuantity
+            }
             // onChange={handleChange}
             size="small"
             // error={!!formErrors.brandId}

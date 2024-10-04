@@ -31,6 +31,7 @@ import AddTermsAndConditions from 'components/Production/TermsAndConditions/AddT
 import AssignTermsAndConditions from 'components/Production/TermsAndConditions/AssignTermsAndConditions';
 // import SubMenu from './SubMenu';
 import DyeingPO from 'components/Production/ProductionOrders/Dyeing/DyeingPO';
+import POSummary from 'components/Production/ProductionOrders/POSummary';
 
 //////
 import * as React from 'react';
@@ -216,6 +217,16 @@ const POGeneration = () => {
                   }
                 })}
               />
+              <Tab
+                icon={<AssignmentOutlinedIcon />}
+                label="Summary"
+                value="6"
+                sx={(theme) => ({
+                  '& .MuiTouchRipple-child': {
+                    backgroundColor: `${theme.palette.primary.main} !important`
+                  }
+                })}
+              />
             </TabList>
           </Box>
 
@@ -226,6 +237,9 @@ const POGeneration = () => {
           <TabPanel value="3">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="4">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="5">{/* <AssignTermsAndConditions /> */}</TabPanel>
+          <TabPanel value="6">
+            <POSummary />
+          </TabPanel>
         </TabContext>
       </Box>
     </MainCard>

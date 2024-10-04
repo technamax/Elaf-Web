@@ -74,7 +74,7 @@ const DyeingPO = () => {
   const [formData, setFormData] = useState({
     poId: 0,
     productionId: '',
-    issuanceDate: '',
+    issuanceDate: new Date().toISOString().slice(0, 10),
     expectedReturnDate: '',
     processTypeId: 1223,
     fabricId: '',
@@ -988,7 +988,7 @@ const DyeingPO = () => {
             <TextField
               size="small"
               type="date"
-              label="Issuance Date"
+              label="PO Date"
               name="issuanceDate"
               value={formData.issuanceDate}
               onChange={handleChange}
@@ -1008,7 +1008,7 @@ const DyeingPO = () => {
             <TextField
               size="small"
               type="date"
-              label="Planning Date"
+              label="Expected Return"
               name="expectedReturnDate"
               value={formData.expectedReturnDate}
               onChange={handleChange}

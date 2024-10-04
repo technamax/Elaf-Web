@@ -19,48 +19,39 @@ import {
   Chip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import StatusChip from '../../../../components/StatusChip';
-import '../../../../assets/scss/style.scss';
+
+import '../../../assets/scss/style.scss';
 // import ReceivingDetails from './ReceivingDetails';
 import {
-  useGetDyeingPoListQuery,
-  useGetIssuanceListQuery,
-  useGetReceivingHeaderQuery,
-  useGetRejectionByPoIdQuery,
   useGetDyeingPoHeaderListQuery,
   useGetProductionBatchForProcessingQuery,
-  useGetDyeingPoHeaderByProductionIdQuery
+  useGetIssuanceListQuery,
+  useGetReceivingHeaderQuery,
+  useGetInspectionForGRNHeaderQuery,
+  useGetPOSummaryByProcessTypeIdQuery
 } from 'api/store/Apis/productionApi';
-import {
-  useGetSubMenuListQuery,
-  useGetMainMenuListQuery
-} from 'api/store/Apis/userManagementApi';
-import {
-  useGetCategoriesListQuery,
-  useGetTermsConditionsListQuery
-} from 'api/store/Apis/termsAndConditionsApi';
+import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
+
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
-import SSRSReport from '../../../../views/DetailedReports/Reports';
-// import RTVOgp from './RTVOgp';
-import DyeingIssuanceView from 'components/Production/Issuance/Dyeing/DyeingIssuanceView';
-import ViewRTV from './ViewRTV';
+// import SSRSReport from '../../../../../views/DetailedReports/Reports';
+import SSRSReport from '../../../views/DetailedReports/Reports';
+// import ReceiveGRN from './ReceiveGRN';
+import StatusChip from '../../StatusChip';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
 
-const DyeingRTV = () => {
+const POSummary = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const { user } = useUser();
   const [formData, setFormData] = useState({
     issuanceId: '',
     poId: '',
-    productionId: '',
+    processTypeId: '',
     ogpNumber: '',
-    // termCondDesc: '',
-    // enabled: '',
 
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -72,67 +63,46 @@ const DyeingRTV = () => {
   const [initialRows, setInitialRows] = useState([]);
   const [polist, setPolist] = useState([]);
   const [issId, setIssId] = useState([]);
-  // const [issuanceList, setIssuanceList] = useState([]);
-  // const [receivingList, setReceivingList] = useState([]);
-  // const [triggerSearch, setTriggerSearch] = useState(false);
 
-  // Hook to fetch the data, and it's controlled by triggerSearch state
-  const { data, error, isLoading, refetch } = useGetRejectionByPoIdQuery(
+  const { data, error, isLoading, refetch } = useGetInspectionForGRNHeaderQuery(
     formData.poId,
     {
       skip: !formData.poId // Skip the query if no collection is selected
     }
   );
-  const { data: poData, refetch: refetchPoData } =
-    useGetDyeingPoHeaderListQuery(formData.productionId, {
-      skip: !formData.productionId
-    });
-  // const { data: poData, refetch: refetchPoData } =
-  //   useGetDyeingPoHeaderListQuery();
-  const { data: productionBatchData, refetch: refetchProductionBatchData } =
-    useGetProductionBatchForProcessingQuery();
+  const { data: lookUpData, refetch: refetchlookUpData } =
+    useGetLookUpListQuery();
 
-  // const { data: issuanceData, refetch: refetchIssuanceData } =
-  //   useGetIssuanceListQuery(formData.poId, {
-  //     skip: !formData.poId // Skip the query if no collection is selected
-  //   });
-  // const { data: receivingData, refetch: refetchReceivingData } =
-  //   useGetReceivingHeaderQuery(
-  //     { issuanceId: issId, processTypename: 'Dyeing' },
-  //     {
-  //       skip: !issId // Skip the query if no collection is selected
-  //     }
-  //   );
+  const { data: poData, refetch: refetchPoData } =
+    useGetPOSummaryByProcessTypeIdQuery(formData.processTypeId, {
+      skip: !formData.processTypeId
+    });
+
   const [productions, setProductions] = useState([]);
   useEffect(() => {
-    if (productionBatchData) {
+    if (lookUpData) {
       setProductions(
-        productionBatchData.result.map((row, index) => ({
+        lookUpData.result[0].productionProcessList.map((row, index) => ({
           id: index,
           ...row
         }))
       );
     }
-  }, [productionBatchData, refetchProductionBatchData]);
+  }, [lookUpData]);
 
   useEffect(() => {
     if (data) {
       setInitialRows(
-        data.result
-          .filter(
-            (row) =>
-              row.rejectionStatus === 5 && row.isRejectedOgpExists === 'N'
-          )
-          .map((row, index) => ({
-            id: index + 1,
-            ...row
-          }))
+        data.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
       );
     }
   }, [data, refetch]);
   useEffect(() => {
     if (poData) {
-      setPolist(
+      setInitialRows(
         poData.result.map((row, index) => ({
           id: index + 1,
           ...row
@@ -141,28 +111,13 @@ const DyeingRTV = () => {
     }
   }, [poData, refetchPoData]);
 
+  console.log('polist', polist);
+
   console.log('initialRows', initialRows);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'poId') {
-      const selectedPO = polist.find(
-        (collection) => collection.poId === parseInt(value)
-      );
-
-      setFormData({
-        ...formData,
-        poId: value,
-        issuanceId: selectedPO ? selectedPO.issuanceId : ''
-        // ogpNumber: selectedPO ? selectedPO.ogpNumber : '',
-        // issuanceName: selectedPO
-        //   ? `ISS-${selectedPO.issuanceId}-${selectedPO.issuanceQuantity}`
-        //   : ''
-        // wastage: selectedPO ? selectedPO.wastage : ''
-      });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    setFormData({ ...formData, [name]: value });
   };
 
   console.log('formData', formData);
@@ -185,12 +140,21 @@ const DyeingRTV = () => {
     setOpen(false);
   };
   const handleClose2 = () => {
-    // setShowUpperDiv(true);
     setOpen2(false);
   };
   const handleViews = async (data) => {
-    setIssId(data.issuanceId);
+    // setIssId(data.issuanceId);
   };
+  const [open3, setOpen3] = React.useState(false);
+
+  const handleClickOpen3 = async (data) => {
+    setIss(data);
+    setOpen3(true);
+  };
+  const handleClose3 = () => {
+    setOpen3(false);
+  };
+
   const columns = [
     {
       field: 'id',
@@ -198,8 +162,12 @@ const DyeingRTV = () => {
       // flex: 1
     },
     {
-      field: 'rtvNo',
-      headerName: 'RTV#'
+      field: 'poIdName',
+      headerName: 'PO#'
+    },
+    {
+      field: 'collectionName',
+      headerName: 'Production'
     },
     {
       field: 'fabricName',
@@ -209,27 +177,9 @@ const DyeingRTV = () => {
       field: 'vendorName',
       headerName: 'Vendor'
     },
-    // {
-    //   field: 'receivedQty',
-    //   headerName: 'Received',
-    //   renderCell: (params) => {
-    //     return <StatusChip label={params.row.receivedQty} status="Received" />;
-    //   }
-    // },
     {
-      field: 'rejectedQty',
-      headerName: 'Rejected',
-      renderCell: (params) => {
-        return <StatusChip label={params.row.rejectedQty} status="Rejected" />;
-      }
-    },
-    {
-      field: 'rejectionReason',
-      headerName: 'Reason'
-    },
-    {
-      field: 'rejectionDate',
-      headerName: 'Rejected On',
+      field: 'issuanceDate',
+      headerName: 'PO Date',
       valueGetter: (params) => {
         const date = new Date(params);
         return date.toLocaleDateString('en-GB', {
@@ -240,15 +190,38 @@ const DyeingRTV = () => {
       }
     },
     {
-      field: 'rejectionStatusName',
+      field: 'expectedReturnDate',
+      headerName: 'Expected Return',
+      valueGetter: (params) => {
+        const date = new Date(params);
+        return date.toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: '2-digit'
+        });
+      }
+    },
+    {
+      field: 'processTypeName',
+      headerName: 'Process'
+    },
+    // {
+    //   field: 'expectedReturnDate',
+    //   headerName: 'Expected Return Date',
+    //   valueGetter: (params) => {
+    //     const date = new Date(params);
+    //     return date.toLocaleDateString('en-GB', {
+    //       day: 'numeric',
+    //       month: 'short',
+    //       year: '2-digit'
+    //     });
+    //   }
+    // },
+    {
+      field: 'statusName',
       headerName: 'Status',
       renderCell: (params) => {
-        return (
-          <StatusChip
-            label={params.row.rejectionStatusName}
-            status="Completed"
-          />
-        );
+        return <StatusChip label={params.value} status={params.value} />;
       }
     },
     {
@@ -257,13 +230,14 @@ const DyeingRTV = () => {
       renderCell: (params) => (
         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
           <ButtonGroup variant="text" size="small" sx={{ mt: 1 }}>
-            <Button
+            {/* <Button
               size="small"
               color="primary"
               onClick={() => handleClickOpen(params.row)}
+              disabled={params.row.status === 3}
             >
-              OGP
-            </Button>
+              Receive
+            </Button> */}
             {/* <Button
               size="small"
               color="primary"
@@ -271,27 +245,32 @@ const DyeingRTV = () => {
             >
               IGP
             </Button> */}
-            {/* <Button
+            <Button
               size="small"
               color="primary"
               onClick={() => handleViews(params.row)}
             >
-              POST
+              PO Close
+            </Button>
+            {/* <Button
+              size="small"
+              color="primary"
+              onClick={() => handleClickOpen3(params.row)}
+            >
+              GRN Report
             </Button> */}
           </ButtonGroup>
         </div>
       )
     }
   ];
+
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
       <Card variant="outlined">
         <CardHeader
           className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={
-          // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
-          // }
-          title="Return To Vendor"
+          title="PO Summary"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid
@@ -304,21 +283,22 @@ const DyeingRTV = () => {
             <TextField
               fullWidth
               select
-              label="Production"
-              name="productionId"
-              value={formData.productionId}
+              label="Process Type"
+              name="processTypeId"
+              value={formData.processTypeId}
               onChange={handleChange}
               size="small"
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             >
               {productions.map((option) => (
-                <MenuItem key={option.productionId} value={option.productionId}>
-                  {option.collectionName}
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
+          {/* 
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -337,12 +317,6 @@ const DyeingRTV = () => {
                 </MenuItem>
               ))}
             </TextField>
-          </Grid>
-
-          {/* <Grid item xs={12} md={3} sx={{ mt: 0.5 }}>
-            <Button variant="contained" size="small" onClick={handleSearch}>
-              Search
-            </Button>
           </Grid> */}
           <Grid item xs={12}>
             <ReuseableDataGrid
@@ -373,7 +347,7 @@ const DyeingRTV = () => {
                   fontWeight={2}
                   fontStyle={'normal'}
                 >
-                  {'Rejection OGP'}
+                  {'GRN Details'}
                 </Typography>
                 <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
                   <CloseIcon />
@@ -381,16 +355,15 @@ const DyeingRTV = () => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                <DyeingIssuanceView
+                {/* <ReceiveGRN
                   iss={iss}
                   handleClose={handleClose}
                   refetchData={refetch}
-                  isRejected
                   // refetchIssuanceData={refetchIssuanceData}
-                />
+                /> */}
               </DialogContent>
             </Dialog>
-            {/* <Dialog open={open2} onClose={handleClose2} fullWidth maxWidth="xl">
+            <Dialog open={open2} onClose={handleClose2} fullWidth maxWidth="xl">
               <DialogTitle
                 sx={{
                   backgroundColor: '#A11F23',
@@ -420,15 +393,50 @@ const DyeingRTV = () => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                {/* <SSRSReport rId={14} OGPNumber={iss.igpNumber} /> */}
-            {/* </DialogContent> */}
-            {/* </Dialog> */}
+                <SSRSReport rId={14} OGPNumber={iss.igpNumber} />
+              </DialogContent>
+            </Dialog>
+            <Dialog open={open3} onClose={handleClose3} fullWidth maxWidth="xl">
+              <DialogTitle
+                sx={{
+                  backgroundColor: '#A11F23',
+                  color: '#ffffff',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingX: '24px',
+                  paddingY: '4px',
+                  mb: 2.5
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  component="div"
+                  color="#ffffff"
+                  gutterBottom
+                  fontSize={20}
+                  fontWeight={2}
+                  fontStyle={'normal'}
+                >
+                  {'Inspection'}
+                </Typography>
+                <IconButton onClick={handleClose3} sx={{ color: '#ffffff' }}>
+                  <CloseIcon />
+                </IconButton>
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
+                <SSRSReport
+                  rId={18}
+                  GRN={{ ParamInspectionId: iss.inspectionId }}
+                />
+              </DialogContent>
+            </Dialog>
           </Grid>
         </Grid>
       </Card>
-      <ViewRTV formData={formData} />
     </Box>
   );
 };
 
-export default DyeingRTV;
+export default POSummary;
