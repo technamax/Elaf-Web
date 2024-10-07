@@ -40,10 +40,10 @@ import { useUser } from 'context/User';
 
 const ViewProductionBatch = ({ handleChangeTabs }) => {
   const { user } = useUser();
-  const [initialData, setInitialData] = useState([]);
+  // const [initialData, setInitialData] = useState([]);
   const [initialFormData, setInitialFormData] = useState({});
   console.log('initialFormData', initialFormData);
-  const [isEdit, setIsEdit] = useState(false);
+  // const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({
     // tcId: 0,
     // categoryId: '',
@@ -80,16 +80,16 @@ const ViewProductionBatch = ({ handleChangeTabs }) => {
       remarks: initialFormData?.remarks || ''
     });
   }, [initialFormData, setInitialFormData]);
-  const options = [
-    {
-      value: 'Yes',
-      label: 'Yes'
-    },
-    {
-      value: 'No',
-      label: 'No'
-    }
-  ];
+  // const options = [
+  //   {
+  //     value: 'Yes',
+  //     label: 'Yes'
+  //   },
+  //   {
+  //     value: 'No',
+  //     label: 'No'
+  //   }
+  // ];
 
   const [initialRows, setInitialRows] = useState([]);
   const [batchDetailsRows, setBatchDetailsRows] = useState([]);
@@ -119,7 +119,7 @@ const ViewProductionBatch = ({ handleChangeTabs }) => {
   //   }
   // }, [collectionData, refetch]);
   useEffect(() => {
-    refetch();
+    // refetch();
     if (collectionData) {
       setInitialRows(
         collectionData.result.map((row, index) => ({
@@ -160,36 +160,36 @@ const ViewProductionBatch = ({ handleChangeTabs }) => {
     }
   };
 
-  const handleSave = async () => {
-    console.log('formData', formData);
-    try {
-      // Make the API call
-      const response = await axios.post(
-        'http://100.42.177.77:83/api/TermsConditions/SaveTermsConditions',
-        formData
-      );
+  // const handleSave = async () => {
+  //   console.log('formData', formData);
+  //   try {
+  //     // Make the API call
+  //     const response = await axios.post(
+  //       'http://100.42.177.77:83/api/TermsConditions/SaveTermsConditions',
+  //       formData
+  //     );
 
-      console.log('Save response:', response.data);
+  //     console.log('Save response:', response.data);
 
-      setFormData((prevFormData) => ({
-        tcId: 0,
-        categoryId: '',
-        termCondDesc: '',
-        enabled: '',
-        appId: user.appId,
-        createdOn: new Date().toISOString(),
-        createdBy: user.empId,
-        lastUpdatedOn: new Date().toISOString(),
-        LastUpdatedBy: user.empId
-      }));
+  //     setFormData((prevFormData) => ({
+  //       tcId: 0,
+  //       categoryId: '',
+  //       termCondDesc: '',
+  //       enabled: '',
+  //       appId: user.appId,
+  //       createdOn: new Date().toISOString(),
+  //       createdBy: user.empId,
+  //       lastUpdatedOn: new Date().toISOString(),
+  //       LastUpdatedBy: user.empId
+  //     }));
 
-      refetch();
-      setIsEdit(false);
-      // setAccordionExpanded(false);
-    } catch (error) {
-      console.error('Error saving data:', error);
-    }
-  };
+  //     refetch();
+  //     // setIsEdit(false);
+  //     // setAccordionExpanded(false);
+  //   } catch (error) {
+  //     console.error('Error saving data:', error);
+  //   }
+  // };
   console.log('formData', formData);
 
   const [open, setOpen] = React.useState(false);
@@ -251,11 +251,11 @@ const ViewProductionBatch = ({ handleChangeTabs }) => {
       headerName: 'Remarks'
       // flex: 1
     },
-    {
-      field: 'statusName',
-      headerName: 'Status'
-      // flex: 1
-    },
+    // {
+    //   field: 'statusName',
+    //   headerName: 'Status'
+    //   // flex: 1
+    // },
     {
       field: 'View',
       headerName: 'View Details',
@@ -385,7 +385,7 @@ const ViewProductionBatch = ({ handleChangeTabs }) => {
               iColumns={columns}
               // disableDelete={true}
               // setInitialData={setInitialData}
-              setIsEdit={setIsEdit}
+              // setIsEdit={setIsEdit}
               hideAction={true}
             />
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
@@ -506,7 +506,7 @@ const ViewProductionBatch = ({ handleChangeTabs }) => {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={12} md={4}>
+                  {/* <Grid item xs={12} md={4}>
                     <TextField
                       label="Status"
                       fullWidth
@@ -520,7 +520,7 @@ const ViewProductionBatch = ({ handleChangeTabs }) => {
                       // error={!!formErrors.collectionName}
                       // helperText={formErrors.collectionName}
                     />
-                  </Grid>
+                  </Grid> */}
                   <Grid item xs={12}>
                     <ReuseableDataGrid
                       initialRows={batchDetailsRows}

@@ -75,7 +75,7 @@ const FabricReceiving = () => {
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
   const apiRef = useGridApiRef();
   const [isEdit, setIsEdit] = useState(false);
-  const [processType, setProcessType] = useState([]);
+  // const [processType, setProcessType] = useState([]);
   const [vendor, setVendor] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [itps, setItps] = useState([]);
@@ -155,15 +155,15 @@ const FabricReceiving = () => {
     setAccordionExpanded(!accordionExpanded);
   };
 
-  const { data: lookupData } = useGetLookUpListQuery();
-  useEffect(() => {
-    if (lookupData) {
-      const data = lookupData.result[0];
+  // const { data: lookupData } = useGetLookUpListQuery();
+  // useEffect(() => {
+  //   if (lookupData) {
+  //     const data = lookupData.result[0];
 
-      setProcessType(data.productionProcessList);
-      setVendor(data.vendorList);
-    }
-  }, [lookupData]);
+  //     setProcessType(data.productionProcessList);
+  //     setVendor(data.vendorList);
+  //   }
+  // }, [lookupData]);
   const [fabric, setFabric] = useState([]);
 
   const { data: fabricData } = useGetFabricForProductionByCollectionIdQuery(

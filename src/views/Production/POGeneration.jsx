@@ -32,6 +32,7 @@ import AssignTermsAndConditions from 'components/Production/TermsAndConditions/A
 // import SubMenu from './SubMenu';
 import DyeingPO from 'components/Production/ProductionOrders/Dyeing/DyeingPO';
 import POSummary from 'components/Production/ProductionOrders/POSummary';
+import PrintingPO from 'components/Production/ProductionOrders/Printing/PrintingPO';
 
 //////
 import * as React from 'react';
@@ -39,104 +40,95 @@ import { useUser } from 'context/User';
 
 const POGeneration = () => {
   const { user } = useUser();
-  const [initialData, setInitialData] = useState([]);
-  const [isEdit, setIsEdit] = useState(false);
-  const [formData, setFormData] = useState({
-    categoryId: 0,
-    description: '',
-    enabled: '',
+  // const [initialData, setInitialData] = useState([]);
+  // const [isEdit, setIsEdit] = useState(false);
+  // const [formData, setFormData] = useState({
+  //   categoryId: 0,
+  //   description: '',
+  //   enabled: '',
 
-    appId: user.appId,
-    createdOn: new Date().toISOString(),
-    createdBy: user.empId,
-    lastUpdatedOn: new Date().toISOString(),
-    lastUpdatedBy: user.empId
-  });
-  const options = [
-    {
-      value: 'Yes',
-      label: 'Yes'
-    },
-    {
-      value: 'No',
-      label: 'No'
-    }
-  ];
+  //   appId: user.appId,
+  //   createdOn: new Date().toISOString(),
+  //   createdBy: user.empId,
+  //   lastUpdatedOn: new Date().toISOString(),
+  //   lastUpdatedBy: user.empId
+  // });
+
   const [value, setValue] = useState('1');
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
   };
   // console.log('initialData', initialData);
-  useEffect(() => {
-    setFormData({
-      categoryId: initialData?.categoryId || 0,
-      description: initialData?.description || '',
-      enabled: initialData?.enabled || '',
-      appId: initialData?.appId || user.appId,
-      createdOn: initialData?.createdOn || new Date().toISOString(),
-      createdBy: initialData?.createdBy || user.empId,
-      lastUpdatedOn: new Date().toISOString(),
-      lastUpdatedBy: user.empId
-    });
-  }, [initialData]);
-  const [initialRows, setInitialRows] = useState([]);
-  const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
-  const handleAccordionToggle = (event, isExpanded) => {
-    setAccordionExpanded(!accordionExpanded);
-  };
+  // useEffect(() => {
+  //   setFormData({
+  //     categoryId: initialData?.categoryId || 0,
+  //     description: initialData?.description || '',
+  //     enabled: initialData?.enabled || '',
+  //     appId: initialData?.appId || user.appId,
+  //     createdOn: initialData?.createdOn || new Date().toISOString(),
+  //     createdBy: initialData?.createdBy || user.empId,
+  //     lastUpdatedOn: new Date().toISOString(),
+  //     lastUpdatedBy: user.empId
+  //   });
+  // }, [initialData]);
+  // const [initialRows, setInitialRows] = useState([]);
+  // const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
+  // const handleAccordionToggle = (event, isExpanded) => {
+  //   setAccordionExpanded(!accordionExpanded);
+  // };
 
-  const { data: categoriesData, refetch } = useGetCategoriesListQuery();
+  // const { data: categoriesData, refetch } = useGetCategoriesListQuery();
 
-  useEffect(() => {
-    if (categoriesData) {
-      setInitialRows(
-        categoriesData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [categoriesData, refetch]);
+  // useEffect(() => {
+  //   if (categoriesData) {
+  //     setInitialRows(
+  //       categoriesData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [categoriesData, refetch]);
 
-  console.log('initialRows', initialRows);
+  // console.log('initialRows', initialRows);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
 
-    setFormData({ ...formData, [name]: value });
-  };
+  //   setFormData({ ...formData, [name]: value });
+  // };
 
-  const handleSave = async () => {
-    console.log('formData', formData);
-    try {
-      // Make the API call
-      const response = await axios.post(
-        'http://100.42.177.77:83/api/TermsConditions/SaveCategory',
-        formData
-      );
+  // const handleSave = async () => {
+  //   console.log('formData', formData);
+  //   try {
+  //     // Make the API call
+  //     const response = await axios.post(
+  //       'http://100.42.177.77:83/api/TermsConditions/SaveCategory',
+  //       formData
+  //     );
 
-      console.log('Save response:', response.data);
+  //     console.log('Save response:', response.data);
 
-      setFormData((prevFormData) => ({
-        categoryId: 0,
-        description: '',
-        enabled: '',
+  //     setFormData((prevFormData) => ({
+  //       categoryId: 0,
+  //       description: '',
+  //       enabled: '',
 
-        appId: user.appId,
-        createdOn: new Date().toISOString(),
-        createdBy: user.empId,
-        lastUpdatedOn: new Date().toISOString(),
-        lastUpdatedBy: user.empId
-      }));
+  //       appId: user.appId,
+  //       createdOn: new Date().toISOString(),
+  //       createdBy: user.empId,
+  //       lastUpdatedOn: new Date().toISOString(),
+  //       lastUpdatedBy: user.empId
+  //     }));
 
-      refetch();
-      setIsEdit(false);
-      // setAccordionExpanded(false);
-    } catch (error) {
-      console.error('Error saving data:', error);
-    }
-  };
-  console.log('formData', formData);
+  //     refetch();
+  //     setIsEdit(false);
+  //     // setAccordionExpanded(false);
+  //   } catch (error) {
+  //     console.error('Error saving data:', error);
+  //   }
+  // };
+  // console.log('formData', formData);
 
   return (
     <MainCard
@@ -179,7 +171,7 @@ const POGeneration = () => {
               />
               <Tab
                 icon={<AssignmentOutlinedIcon />}
-                label="Embroidery PO"
+                label="Printing PO"
                 value="2"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
@@ -233,7 +225,9 @@ const POGeneration = () => {
           <TabPanel value="1">
             <DyeingPO />
           </TabPanel>
-          <TabPanel value="2">{/* <AssignTermsAndConditions /> */}</TabPanel>
+          <TabPanel value="2">
+            <PrintingPO />
+          </TabPanel>
           <TabPanel value="3">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="4">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="5">{/* <AssignTermsAndConditions /> */}</TabPanel>

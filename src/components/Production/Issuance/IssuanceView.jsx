@@ -87,23 +87,23 @@ const IssuanceView = () => {
       productionHeaderId: initialFormData?.productionHeaderId || ''
     });
   }, [initialFormData, setInitialFormData]);
-  const options = [
-    {
-      value: 'Yes',
-      label: 'Yes'
-    },
-    {
-      value: 'No',
-      label: 'No'
-    }
-  ];
+  // const options = [
+  //   {
+  //     value: 'Yes',
+  //     label: 'Yes'
+  //   },
+  //   {
+  //     value: 'No',
+  //     label: 'No'
+  //   }
+  // ];
   // console.log('initialData', initialData);
 
   const [initialRows, setInitialRows] = useState([]);
-  const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
-  const handleAccordionToggle = (event, isExpanded) => {
-    setAccordionExpanded(!accordionExpanded);
-  };
+  // const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
+  // const handleAccordionToggle = (event, isExpanded) => {
+  //   setAccordionExpanded(!accordionExpanded);
+  // };
   const { data: productionProcessData, refetch: refetchProductionProcessData } =
     useGetProductionProcessByProductionIdQuery(
       { productionId: formData.productionId, status: formData.status },
@@ -112,8 +112,8 @@ const IssuanceView = () => {
         // skip: !formData.status
       }
     );
-  const { data: categoriesData, refetch: refetchCategoriesdata } =
-    useGetCategoriesListQuery();
+  // const { data: categoriesData, refetch: refetchCategoriesdata } =
+  //   useGetCategoriesListQuery();
   const { data: lookUpData } = useGetLookUpListQuery();
   const { data: lookUpStatusData } = useGetStatusLookUpQuery();
   const { data: fabricDetailData, refetch: refetchFabricDetailData } =
@@ -130,7 +130,7 @@ const IssuanceView = () => {
     useGetProductionProcessListQuery();
 
   // const { data: subMenuData, refetch } = useGetSubMenuListQuery();
-  const [categories, setCategories] = useState([]);
+  // const [categories, setCategories] = useState([]);
   const [viewRows, setViewRows] = useState([]);
   const [processesList, setProcessesList] = useState([]);
   const [productionList, setProductionList] = useState([]);
@@ -203,16 +203,16 @@ const IssuanceView = () => {
       );
     }
   }, [productionProcessData, refetchProductionProcessData]);
-  useEffect(() => {
-    if (categoriesData) {
-      setCategories(
-        categoriesData.result.map((row, index) => ({
-          id: index,
-          ...row
-        }))
-      );
-    }
-  }, [categoriesData, refetchCategoriesdata]);
+  // useEffect(() => {
+  //   if (categoriesData) {
+  //     setCategories(
+  //       categoriesData.result.map((row, index) => ({
+  //         id: index,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [categoriesData, refetchCategoriesdata]);
 
   console.log('initialRows', initialRows);
 

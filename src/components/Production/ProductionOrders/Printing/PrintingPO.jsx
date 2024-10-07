@@ -40,8 +40,10 @@ import {
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
-import AssignTerms from './AssignTerms';
-import POView from './POView';
+// import AssignTerms from './AssignTerms';
+import AssignTerms from '../Dyeing/AssignTerms';
+import POView from '../Dyeing/POView';
+// import POView from './POView';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
@@ -59,7 +61,7 @@ const SmallTextField = styled(TextField)(({ theme }) => ({
   minHeight: '30px' // Set minimum height to ensure it's usable
 }));
 
-const DyeingPO = () => {
+const PrintingPO = () => {
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
   const apiRef = useGridApiRef();
   const { enqueueSnackbar } = useSnackbar();
@@ -67,8 +69,8 @@ const DyeingPO = () => {
 
   const [fabrics, setFabrics] = useState([]);
   const { user } = useUser();
-  const [initialData, setInitialData] = useState([]);
-  const [isEdit, setIsEdit] = useState(false);
+  // const [initialData, setInitialData] = useState([]);
+  // const [isEdit, setIsEdit] = useState(false);
   const [savedRowIds, setSavedRowIds] = useState(new Set());
 
   const [formData, setFormData] = useState({
@@ -76,7 +78,7 @@ const DyeingPO = () => {
     productionId: '',
     issuanceDate: new Date().toISOString().slice(0, 10),
     expectedReturnDate: '',
-    processTypeId: '',
+    processTypeId: 1224,
     fabricId: '',
     pxQty: 0,
     vendorId: '',
@@ -93,23 +95,11 @@ const DyeingPO = () => {
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: user.empId
   });
-  const options = [
-    {
-      value: 'Yes',
-      label: 'Yes'
-    },
-    {
-      value: 'No',
-      label: 'No'
-    }
-  ];
 
   const [initialRows, setInitialRows] = useState([]);
   const [fabricsList, setFabricsList] = useState([]);
   const [vendorsList, setVendorsList] = useState([]);
   const [locationsList, setLocationsList] = useState([]);
-  const { data: lookUpData, refetch: refetchlookUpData } =
-    useGetLookUpListQuery();
   const { data: poHeaderData, refetch: refetchPoHeaderData } =
     useGetDyeingPoHeaderbyProductionIdAndStatusQuery(
       { productionId: formData.productionId, status: 7 },
@@ -139,20 +129,6 @@ const DyeingPO = () => {
       }
     );
   // const { data: subMenuData, refetch } = useGetSubMenuListQuery();
-  const [processTypes, setProcessTypes] = useState([]);
-  useEffect(() => {
-    if (lookUpData) {
-      setProcessTypes(
-        lookUpData.result[0].productionProcessList
-          .filter((item) => item.lookUpId === 1223 || item.lookUpId === 1224)
-          .map((row, index) => ({
-            id: index,
-            ...row
-          }))
-      );
-    }
-  }, [lookUpData]);
-
   const [productions, setProductions] = useState([]);
 
   // useEffect(() => {
@@ -282,37 +258,7 @@ const DyeingPO = () => {
         shrinkage: '',
         wastage: ''
       });
-    }
-    // else if (name === 'rate') {
-    //   setFormData({
-    //     ...formData,
-    //     rate: value
-    //   });
-    //   setFabrics(
-    //     fabrics.map((fabric) => ({
-    //       ...fabric,
-    //       rate: value,
-    //       totalBeforeTax: value * fabric.quantity,
-    //       totalAfterTax:
-    //         fabric.totalBeforeTax + fabric.totalBeforeTax * (formData.tax / 100)
-    //     }))
-    //   );
-    // } else if (name === 'tax') {
-    //   setFormData({
-    //     ...formData,
-    //     tax: value
-    //   });
-    //   setFabrics(
-    //     fabrics.map((fabric) => ({
-    //       ...fabric,
-    //       tax: value,
-    //       totalBeforeTax: formData.rate * fabric.quantity,
-    //       totalAfterTax:
-    //         fabric.totalBeforeTax + fabric.totalBeforeTax * (value / 100)
-    //     }))
-    //   );
-    // }
-    else {
+    } else {
       setFormData({ ...formData, [name]: value });
     }
   };
@@ -355,7 +301,7 @@ const DyeingPO = () => {
           issuanceDate: '',
           expectedReturnDate: '',
           fabricId: '',
-          processTypeId: '',
+          processTypeId: 1223,
           vendorId: '',
           shrinkage: '',
           wastage: '',
@@ -394,46 +340,18 @@ const DyeingPO = () => {
   const [vId, setVId] = React.useState(false);
 
   const handleClickOpen = async (data) => {
-    // setInitialFormData(data);
-    // try {
-    //   const response = await axios.get(
-    //     `http://100.42.177.77:83/api/TermsConditions/GetTermsByVendorId?vendorId=${data.vendorId}`
-    //   );
-    //   if (!response.data.success) {
-    //     enqueueSnackbar(`${response.data.message} !`, {
-    //       variant: 'error',
-    //       autoHideDuration: 5000
-    //     });
-    //     console.log('response.message', response.data.message);
-    //     return;
-    //   }
     setVId(data);
-    //     response.data.result.map((row, index) => ({
-    //       id: index + 1,
-    //       ...row
-    //     }))
-    //   );
-    // } catch (error) {
-    //   console.error('Error fetching ITP:', error);
-    // }
     setOpen(true);
   };
   const handleClickOpen2 = async (data) => {
     setOpen2(true);
     setVId(data);
-    // const { data: assignedTermsData, refetch: refetchAssignedTermsData } =
-    //   useDyeingPoAssignTermDetailsByPoIdQuery(data.poId, {
-    //     skip: !data.poId // Skip the query if no collection is selected
-    //   });
-    // refetchAssignedTermsData();
   };
   console.log('terms condition', vId);
   const handleClose = () => {
-    // setShowUpperDiv(true);
     setOpen(false);
   };
   const handleClose2 = () => {
-    // setShowUpperDiv(true);
     setOpen2(false);
   };
   const handleIssuanceClick = (rowData) => {
@@ -453,34 +371,14 @@ const DyeingPO = () => {
     {
       field: 'id',
       headerName: 'Sr#'
-      // flex: 1
     },
     {
       field: 'poIdName',
       headerName: 'PO ID'
-      // flex: 1
     },
     {
       field: 'collectionName',
       headerName: 'Collection Name'
-    },
-    {
-      field: 'processTypeName',
-      headerName: 'Process',
-      renderCell: (params) => {
-        // const remainingQty = params.row.availableQty - params.row.prevoiusPoQty;
-        // const chipColor = remainingQty < 0 ? '#FF0000' : '#00FF00'; // Red for negative, green otherwise
-
-        return (
-          <Chip
-            label={params.row.processTypeName}
-            sx={{
-              backgroundColor: '#1e88e5', // Set to red
-              color: '#FFFFFF' // White text for visibility
-            }}
-          />
-        );
-      }
     },
     {
       field: 'fabricName',
@@ -578,7 +476,6 @@ const DyeingPO = () => {
     }
   ];
   useEffect(() => {
-    // setFormData({...formdata, })
     setFabrics(
       fabrics.map((fabric) => ({
         ...fabric,
@@ -604,19 +501,12 @@ const DyeingPO = () => {
               [field]: value,
               poId: 0,
               poDetId: 0,
-              // rate: formData.rate,
-              // tax: formData.tax,
               appId: user.appId,
               createdOn: new Date().toISOString(),
               createdBy: user.empId,
               lastUpdatedOn: new Date().toISOString(),
               lastUpdatedBy: user.empId
             };
-
-            // Recalculate the totalBeforeTax when rate or quantity is updated
-            // if (field === 'rate' || field === 'quantity') {
-            //   updatedRow.totalBeforeTax = updatedRow.rate * updatedRow.quantity;
-            // }
             if (field === 'quantity') {
               updatedRow.totalBeforeTax = updatedRow.rate * updatedRow.quantity;
               updatedRow.totalAfterTax =
@@ -624,12 +514,6 @@ const DyeingPO = () => {
                 updatedRow.totalBeforeTax * (updatedRow.tax / 100);
             }
 
-            // Optionally, update totalAfterTax if it's a function of totalBeforeTax and tax
-            // if (field === 'tax' || field === 'rate' || field === 'quantity') {
-            //   updatedRow.totalAfterTax =
-            //     updatedRow.totalBeforeTax +
-            //     updatedRow.totalBeforeTax * (updatedRow.tax / 100);
-            // }
             if (field === 'quantity' && value > 0) {
               setRowSelectionModel((prevSelectionModel) => {
                 if (!prevSelectionModel.includes(id)) {
@@ -697,13 +581,6 @@ const DyeingPO = () => {
         );
       }
     },
-    // {
-    //   field: 'remaining',
-    //   headerName: 'Remaining Qty',
-    //   valueGetter: (params, row) => {
-    //     return (row.availableQty - row.prevoiusPoQty).toLocaleString();
-    //   }
-    // },
     {
       field: 'remaining',
       headerName: 'Remaining Qty',
@@ -754,113 +631,6 @@ const DyeingPO = () => {
         />
       )
     },
-    // {
-    //   field: 'rate',
-    //   headerName: 'Rate',
-    //   // width: 'auto',
-
-    //   // flex: 1,
-
-    //   renderCell: (params) => (
-    //     <SmallTextField
-    //       variant="outlined"
-    //       size="small"
-    //       // fullWidth
-    //       sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
-    //       value={params.row.rate || ''}
-    //       onChange={(event) =>
-    //         handleCellEdit({
-    //           id: params.id,
-    //           field: 'rate',
-    //           value: Number(event.target.value)
-    //         })
-    //       }
-    //       type="number"
-    //       InputProps={{
-    //         style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-    //       }}
-    //     />
-    //   )
-    // },
-    // {
-    //   field: 'tax',
-    //   headerName: 'Tax',
-    //   // width: 'auto',
-
-    //   // flex: 1,
-
-    //   renderCell: (params) => (
-    //     <SmallTextField
-    //       variant="outlined"
-    //       size="small"
-    //       // fullWidth
-    //       sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
-    //       value={params.row.tax || ''}
-    //       onChange={(event) =>
-    //         handleCellEdit({
-    //           id: params.id,
-    //           field: 'tax',
-    //           value: Number(event.target.value)
-    //         })
-    //       }
-    //       type="number"
-    //       InputProps={{
-    //         style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-    //       }}
-    //     />
-    //   )
-    // },
-    // {
-    //   field: 'totalBeforeTax',
-    //   headerName: 'Total',
-
-    //   renderCell: (params) => (
-    //     <SmallTextField
-    //       variant="outlined"
-    //       size="small"
-    //       // fullWidth
-    //       sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
-    //       value={params.row.totalBeforeTax || ''}
-    //       onChange={(event) =>
-    //         handleCellEdit({
-    //           id: params.id,
-    //           field: 'totalBeforeTax',
-    //           value: Number(event.target.value)
-    //         })
-    //       }
-    //       type="number"
-    //       InputProps={{
-    //         style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-    //       }}
-    //     />
-    //   )
-    // },
-    // {
-    //   field: 'totalAfterTax',
-    //   headerName: 'Total After Tax',
-
-    //   renderCell: (params) => (
-    //     <SmallTextField
-    //       variant="outlined"
-    //       size="small"
-    //       // fullWidth
-    //       sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
-    //       value={params.row.totalAfterTax || ''}
-    //       onChange={(event) =>
-    //         handleCellEdit({
-    //           id: params.id,
-    //           field: 'totalAfterTax',
-    //           value: Number(event.target.value)
-    //         })
-    //       }
-    //       type="number"
-    //       InputProps={{
-    //         style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-    //       }}
-    //     />
-    //   )
-    // }
-
     {
       field: 'totalBeforeTax',
       headerName: 'Total',
@@ -990,7 +760,7 @@ const DyeingPO = () => {
           // avatar={
           // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
           // }
-          title="Dyeing Production Order"
+          title="Printing Production Order"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid
@@ -1014,25 +784,6 @@ const DyeingPO = () => {
               {productions.map((option) => (
                 <MenuItem key={option.productionId} value={option.productionId}>
                   {option.collectionName}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-          <Grid item xs={12} md={3}>
-            <TextField
-              fullWidth
-              select
-              label="Process Type"
-              name="processTypeId"
-              value={formData.processTypeId}
-              onChange={handleChange}
-              size="small"
-              // error={!!formErrors.brandId}
-              // helperText={formErrors.brandId}
-            >
-              {processTypes.map((option) => (
-                <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                  {option.lookUpName}
                 </MenuItem>
               ))}
             </TextField>
@@ -1262,7 +1013,7 @@ const DyeingPO = () => {
             </Typography> */}
           </Grid>
           <Grid item xs={12}>
-            <div style={{ height: 'auto', width: '100%' }}>
+            <div style={{ height: 400, width: '100%' }}>
               <DataGrid
                 rows={fabrics}
                 columns={designsColumns}
@@ -1313,7 +1064,7 @@ const DyeingPO = () => {
               initialRows={initialRows}
               iColumns={columns}
               pageSize={10} // Adjust based on your needs
-              setInitialData={setInitialData}
+              // setInitialData={setInitialData}
               hideAction
             />
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
@@ -1435,4 +1186,4 @@ const DyeingPO = () => {
   );
 };
 
-export default DyeingPO;
+export default PrintingPO;

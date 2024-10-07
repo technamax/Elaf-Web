@@ -17,6 +17,7 @@ const SSRSReport = ({
   inspection,
   igpReport,
   paramIssuanceId,
+  POSummary,
   OGPNumber,
   PO,
   GRN,
@@ -93,7 +94,8 @@ const SSRSReport = ({
         ParamInspectionId: inspection?.ParamInspectionId,
         paramRejectionId: paramRejectionId > 0 ? paramRejectionId : undefined,
         ParamPoIdName: PO?.ParamPoIdName,
-        ParamGRNInspectionId: GRN?.ParamInspectionId
+        ParamGRNInspectionId: GRN?.ParamInspectionId,
+        DsPoList: POSummary?.dsPoList
       };
 
       // Construct the URL with the available parameters

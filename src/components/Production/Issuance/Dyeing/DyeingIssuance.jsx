@@ -92,7 +92,8 @@ const DyeingIssuance = ({ rowData }) => {
     productionId: rowData?.productionId || '',
     issuanceDate: '',
     expectedReturnDate: rowData?.expectedReturnDate || '',
-    processTypeId: 1223,
+    processTypeId: '',
+    processTypeName: '',
     fabricId: rowData?.fabricId || '',
     fabricName: rowData?.fabricName || '',
     vendorId: rowData?.vendorId || '',
@@ -333,7 +334,8 @@ const DyeingIssuance = ({ rowData }) => {
         ...formData,
         poId: value,
         shrinkage: selectedPO ? selectedPO.shrinkage : '',
-        // productionId: selectedPO ? selectedPO.productionId : '',
+        processTypeId: selectedPO ? selectedPO.processTypeId : '',
+        processTypeName: selectedPO ? selectedPO.processTypeName : '',
         // issuanceDate: selectedPO ? selectedPO.issuanceDate : null,
         expectedReturnDate: selectedPO ? selectedPO.expectedReturnDate : '',
         fabricId: selectedPO ? selectedPO.fabricId : '',
@@ -1028,6 +1030,26 @@ const DyeingIssuance = ({ rowData }) => {
                 }
               }}
             />
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              disabled
+              // select
+              label="Process"
+              name="processTypeName"
+              value={formData.processTypeName}
+              onChange={handleChange}
+              size="small"
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            >
+              {/* {fabricsList.map((option) => (
+                <MenuItem key={option.fabricId} value={option.fabricId}>
+                  {option.fabricName}
+                </MenuItem>
+              ))} */}
+            </TextField>
           </Grid>
           <Grid item xs={12} md={3}>
             <TextField

@@ -252,13 +252,13 @@ const POSummary = () => {
             >
               PO Close
             </Button>
-            {/* <Button
+            <Button
               size="small"
               color="primary"
               onClick={() => handleClickOpen3(params.row)}
             >
-              GRN Report
-            </Button> */}
+              PO Report
+            </Button>
           </ButtonGroup>
         </div>
       )
@@ -418,7 +418,7 @@ const POSummary = () => {
                   fontWeight={2}
                   fontStyle={'normal'}
                 >
-                  {'Inspection'}
+                  {'PO Report'}
                 </Typography>
                 <IconButton onClick={handleClose3} sx={{ color: '#ffffff' }}>
                   <CloseIcon />
@@ -426,10 +426,7 @@ const POSummary = () => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                <SSRSReport
-                  rId={18}
-                  GRN={{ ParamInspectionId: iss.inspectionId }}
-                />
+                <SSRSReport rId={21} POSummary={{ dsPoList: iss.poId }} />
               </DialogContent>
             </Dialog>
           </Grid>
