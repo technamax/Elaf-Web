@@ -75,7 +75,7 @@ const DyeingIssuance = ({ rowData }) => {
   const { user } = useUser();
   // const [initialRows, setInitialRows] = useState([]);
   const [poDetails, setPoDetails] = useState([]);
-  const [quantities, setQuantities] = useState([]);
+  // const [quantities, setQuantities] = useState([]);
   const [savedRows, setSavedRows] = useState([]); // New state for tracking saved rows
 
   const Quantity = poDetails
@@ -85,7 +85,7 @@ const DyeingIssuance = ({ rowData }) => {
   const totalAssign = poDetails
     .reduce((sum, row) => sum + (row.issuanceQuantity ?? 0), 0)
     .toFixed(2);
-  console.log('quantities', quantities);
+  // console.log('quantities', quantities);
   const [formData, setFormData] = useState({
     issuanceId: 0,
     poId: rowData?.poId || 0,
@@ -162,13 +162,13 @@ const DyeingIssuance = ({ rowData }) => {
   //   useGetVendorsByFabricIDQuery(formData.fabricId, {
   //     skip: !formData.fabricId // Skip the query if no collection is selected
   //   });
-  const { data: quantityData, refetch: refetchquantityData } =
-    useGetProductionFabricDetailByProductionIdandStatusQuery(
-      { productionId: formData.productionId, fabricId: formData.fabricId },
-      {
-        skip: !formData.fabricId || !formData.productionId // Skip the query if no collection is selected
-      }
-    );
+  // const { data: quantityData, refetch: refetchquantityData } =
+  //   useGetProductionFabricDetailByProductionIdandStatusQuery(
+  //     { productionId: formData.productionId, fabricId: formData.fabricId },
+  //     {
+  //       skip: !formData.fabricId || !formData.productionId // Skip the query if no collection is selected
+  //     }
+  //   );
   // const { data: issuanceOGPData, refetch: refetchIssuanceOGPData } =
   //   useGetIssuanceOGPByIdQuery(
   //     { poId: formData.poId, issuanceId: formData.issuanceId },
@@ -281,17 +281,17 @@ const DyeingIssuance = ({ rowData }) => {
   //     );
   //   }
   // }, [fabricsData, refetchFabricsData]);
-  useEffect(() => {
-    if (quantityData) {
-      setQuantities(
-        quantityData.result[0]
-        // .map((row, index) => ({
-        //   id: index + 1,
-        //   ...row
-        // }))
-      );
-    }
-  }, [quantityData, refetchquantityData]);
+  // useEffect(() => {
+  //   if (quantityData) {
+  //     setQuantities(
+  //       quantityData.result[0]
+  //       // .map((row, index) => ({
+  //       //   id: index + 1,
+  //       //   ...row
+  //       // }))
+  //     );
+  //   }
+  // }, [quantityData, refetchquantityData]);
   // useEffect(() => {
   //   if (vendorsData) {
   //     setVendorsList(
@@ -323,7 +323,7 @@ const DyeingIssuance = ({ rowData }) => {
     }
   }, [dyeingPOData, refetchDyeingPOData]);
 
-  console.log('quantities', quantities);
+  // console.log('quantities', quantities);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

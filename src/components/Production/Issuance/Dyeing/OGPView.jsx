@@ -39,8 +39,8 @@ const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
   });
   const { enqueueSnackbar } = useSnackbar();
   const [issuanceDetails, setIssuanceDetails] = useState([]);
-  const [destinantionsList, setDestinantionsList] = useState([]);
-  const [dispatchFromList, setDispatchFromList] = useState([]);
+  // const [destinantionsList, setDestinantionsList] = useState([]);
+  // const [dispatchFromList, setDispatchFromList] = useState([]);
   const { data: issuanceDetailsData, refetch: refetchIssuanceDetailsData } =
     useGetIssuanceOGPByIdQuery(
       { poId: formData?.poId, issuanceId: formData?.issuanceId },
@@ -48,8 +48,8 @@ const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
         skip: !formData?.poId || !formData?.issuanceId
       }
     );
-  const { data: lookupData, refetch: refetchLookupData } =
-    useGetLookUpListQuery();
+  // const { data: lookupData, refetch: refetchLookupData } =
+  //   useGetLookUpListQuery();
 
   useEffect(() => {
     if (issuanceDetailsData?.result === null) {
@@ -65,27 +65,27 @@ const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
       );
     }
   }, [issuanceDetailsData, refetchIssuanceDetailsData]);
-  useEffect(() => {
-    if (lookupData) {
-      setDestinantionsList(
-        lookupData.result[0].destination.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-      setDispatchFromList(
-        lookupData.result[0].dispatchFrom.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [lookupData, refetchIssuanceDetailsData]);
+  // useEffect(() => {
+  //   if (lookupData) {
+  //     setDestinantionsList(
+  //       lookupData.result[0].destination.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //     setDispatchFromList(
+  //       lookupData.result[0].dispatchFrom.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [lookupData, refetchIssuanceDetailsData]);
 
   // console.log('iss', iss);
   console.log('formData', formData);
-  console.log('destinantionsList', destinantionsList);
-  console.log('dispatchFromList', dispatchFromList);
+  // console.log('destinantionsList', destinantionsList);
+  // console.log('dispatchFromList', dispatchFromList);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

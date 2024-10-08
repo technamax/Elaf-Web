@@ -151,8 +151,8 @@ const FabricationSelectionIssuance = () => {
       setProcessType(filteredProcessType);
     }
   }, [lookupData]);
-  const { data: collectionData, refetch } =
-    useGetCollectionListFromPlanningHeaderQuery();
+  // const { data: collectionData, refetch } =
+  //   useGetCollectionListFromPlanningHeaderQuery();
 
   const [collectionList, setCollectionList] = useState([]);
   const {
@@ -181,19 +181,19 @@ const FabricationSelectionIssuance = () => {
   //For View Collection dropdown
   const { data: ProductionProcessList, refetch: refetchProductionProcessList } =
     useGetProductionProcessListQuery();
-  const [productioncollectionList, setProductionCollectionList] = useState([]);
-  useEffect(() => {
-    if (ProductionProcessList) {
-      const data = ProductionProcessList.result[0];
+  // const [productioncollectionList, setProductionCollectionList] = useState([]);
+  // useEffect(() => {
+  //   if (ProductionProcessList) {
+  //     const data = ProductionProcessList.result[0];
 
-      setProductionCollectionList(
-        ProductionProcessList.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [ProductionProcessList, refetchProductionProcessList]);
+  //     setProductionCollectionList(
+  //       ProductionProcessList.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [ProductionProcessList, refetchProductionProcessList]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

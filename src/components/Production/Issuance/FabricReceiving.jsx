@@ -164,25 +164,25 @@ const FabricReceiving = () => {
   //     setVendor(data.vendorList);
   //   }
   // }, [lookupData]);
-  const [fabric, setFabric] = useState([]);
+  // const [fabric, setFabric] = useState([]);
 
-  const { data: fabricData } = useGetFabricForProductionByCollectionIdQuery(
-    formData.collectionId,
-    {
-      skip: !formData.collectionId // Skip the query if no collection is selected
-    }
-  );
+  // const { data: fabricData } = useGetFabricForProductionByCollectionIdQuery(
+  //   formData.collectionId,
+  //   {
+  //     skip: !formData.collectionId // Skip the query if no collection is selected
+  //   }
+  // );
   const { data: stockData, refetch: refetchStockData } =
     useGetStockReceivingByProductionHeaderIdQuery(formData.productionHeaderId, {
       skip: !formData.productionHeaderId // Skip the query if no collection is selected
     });
-  useEffect(() => {
-    if (fabricData) {
-      const data = fabricData.result;
+  // useEffect(() => {
+  //   if (fabricData) {
+  //     const data = fabricData.result;
 
-      setFabric(data);
-    }
-  }, [fabricData]);
+  //     setFabric(data);
+  //   }
+  // }, [fabricData]);
 
   const { data: ProductionProcessList } = useGetProductionProcessListQuery();
   const [productioncollectionList, setProductionCollectionList] = useState([]);

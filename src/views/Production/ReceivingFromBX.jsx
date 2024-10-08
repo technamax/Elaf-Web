@@ -92,29 +92,29 @@ const ReceivingFromBX = () => {
       productionId: initialFormData?.productionId || ''
     });
   }, [initialFormData, setInitialFormData]);
-  const options = [
-    {
-      value: 'Yes',
-      label: 'Yes'
-    },
-    {
-      value: 'No',
-      label: 'No'
-    }
-  ];
+  // const options = [
+  //   {
+  //     value: 'Yes',
+  //     label: 'Yes'
+  //   },
+  //   {
+  //     value: 'No',
+  //     label: 'No'
+  //   }
+  // ];
 
   const [initialRows, setInitialRows] = useState([]);
-  const [batchDetailsRows, setBatchDetailsRows] = useState([]);
+  // const [batchDetailsRows, setBatchDetailsRows] = useState([]);
 
-  const { data: stockData, refetch: refetchStockData } =
-    useGetBxStockHeaderListQuery();
-  const { data: stockDetailsData, refetch: refetchStockDetailsData } =
-    useGetBxStockHeaderDetailListQuery();
+  // const { data: stockData, refetch: refetchStockData } =
+  //   useGetBxStockHeaderListQuery();
+  // const { data: stockDetailsData, refetch: refetchStockDetailsData } =
+  //   useGetBxStockHeaderDetailListQuery();
 
-  const { data: collectionData, refetch } =
-    useGetProductionBatchForProcessingQuery();
-  const { data: productionData, refetch: refetchProductionData } =
-    useGetProductionProcessListQuery();
+  // const { data: collectionData, refetch } =
+  //   useGetProductionBatchForProcessingQuery();
+  // const { data: productionData, refetch: refetchProductionData } =
+  //   useGetProductionProcessListQuery();
 
   const { data: bxStockData, refetch: refetchBxStockData } =
     useGetVBxStockReceivingListQuery(formData.productionId, {
@@ -132,21 +132,21 @@ const ReceivingFromBX = () => {
   );
   const { data: statusData } = useGetStatusLookUpQuery();
 
-  const [collectionList, setCollectionList] = useState([]);
-  const [productionList, setProductionList] = useState([]);
+  // const [collectionList, setCollectionList] = useState([]);
+  // const [productionList, setProductionList] = useState([]);
   const [bxStockList, setBxStockList] = useState([]);
   const [statusList, setStatusList] = useState([]);
   const [fabricDetails, setfabricDetails] = useState([]);
-  useEffect(() => {
-    if (collectionData) {
-      setCollectionList(
-        collectionData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [collectionData, refetch]);
+  // useEffect(() => {
+  //   if (collectionData) {
+  //     setCollectionList(
+  //       collectionData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [collectionData, refetch]);
   useEffect(() => {
     if (itpData) {
       setInitialRows(
@@ -156,7 +156,7 @@ const ReceivingFromBX = () => {
         }))
       );
     }
-  }, [itpData, refetch]);
+  }, [itpData]);
   useEffect(() => {
     if (statusData) {
       setStatusList(
@@ -167,16 +167,16 @@ const ReceivingFromBX = () => {
       );
     }
   }, [statusData]);
-  useEffect(() => {
-    if (productionData) {
-      setProductionList(
-        productionData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [productionData, refetchProductionData]);
+  // useEffect(() => {
+  //   if (productionData) {
+  //     setProductionList(
+  //       productionData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [productionData, refetchProductionData]);
   useEffect(() => {
     if (bxStockData) {
       // refetchBxStockData();
@@ -197,74 +197,74 @@ const ReceivingFromBX = () => {
         }))
       );
     }
-  }, [fabricData, refetch]);
-  useEffect(() => {
-    if (stockData) {
-      setInitialRows(
-        stockData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [stockData, refetchStockData]);
-  useEffect(() => {
-    if (stockDetailsData) {
-      setBatchDetailsRows(
-        stockDetailsData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-    const details = batchDetailsRows.map((det) => ({
-      stockDetId: 0,
-      stockId: 0,
-      barcode: det.barcode,
-      productName: det.productName,
-      quantity: det.quantity,
-      uom: det.uom,
-      remarks: det.remarks
-    }));
-    setFormData({ ...formData, bxStockReceivingDetails: details });
-  }, [stockDetailsData, refetchStockDetailsData, formData.collectionId]);
+  }, [fabricData]);
+  // useEffect(() => {
+  //   if (stockData) {
+  //     setInitialRows(
+  //       stockData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [stockData, refetchStockData]);
+  // useEffect(() => {
+  //   if (stockDetailsData) {
+  //     setBatchDetailsRows(
+  //       stockDetailsData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  //   const details = batchDetailsRows.map((det) => ({
+  //     stockDetId: 0,
+  //     stockId: 0,
+  //     barcode: det.barcode,
+  //     productName: det.productName,
+  //     quantity: det.quantity,
+  //     uom: det.uom,
+  //     remarks: det.remarks
+  //   }));
+  //   setFormData({ ...formData, bxStockReceivingDetails: details });
+  // }, [stockDetailsData, refetchStockDetailsData, formData.collectionId]);
   console.log('initialRows', initialRows);
   console.log('fabricDetails', fabricDetails);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'collectionId') {
-      const selectedCollection = collectionList.find(
-        (collection) => collection.collectionId === parseInt(value)
-      );
+    // if (name === 'collectionId') {
+    //   const selectedCollection = collectionList.find(
+    //     (collection) => collection.collectionId === parseInt(value)
+    //   );
 
-      setFormData({
-        ...formData,
-        collectionId: value,
-        productionId: selectedCollection ? selectedCollection.productionId : ''
-        // orderNumber: selectedCollection ? selectedCollection.orderNumber : ''
-        // status: selectedCollection ? selectedCollection.batchStatus : ''
-      });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    //   setFormData({
+    //     ...formData,
+    //     collectionId: value,
+    //     productionId: selectedCollection ? selectedCollection.productionId : ''
+    //     // orderNumber: selectedCollection ? selectedCollection.orderNumber : ''
+    //     // status: selectedCollection ? selectedCollection.batchStatus : ''
+    //   });
+    // } else {
+    setFormData({ ...formData, [name]: value });
+    // }
   };
 
-  const handleFetch = async () => {
-    console.log('stockData', stockData);
-    refetchStockData();
+  // const handleFetch = async () => {
+  //   console.log('stockData', stockData);
+  //   refetchStockData();
 
-    if (stockData) {
-      setInitialRows(
-        stockData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  };
+  //   if (stockData) {
+  //     setInitialRows(
+  //       stockData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // };
   const handleSave = async () => {
-    console.log('stockData', stockData);
+    // console.log('stockData', stockData);
     try {
       const response = await axios.post(
         'http://100.42.177.77:83/api/BxStockReceiving/SaveBxStockReceiving',
@@ -515,11 +515,11 @@ const ReceivingFromBX = () => {
           width="Inherit"
           sx={{ paddingY: 2, paddingX: 2 }}
         >
-          <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
+          {/* <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
             <Button variant="contained" size="small" onClick={handleFetch}>
               Fetch
             </Button>
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} md={3}>
             <TextField
               label="Status"
@@ -641,14 +641,14 @@ const ReceivingFromBX = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12}>
+                  {/* <Grid item xs={12}>
                     <ReuseableDataGrid
                       initialRows={batchDetailsRows}
                       iColumns={detailsColumns}
                       hideAction
                     />
-                  </Grid>
-                  <Grid item xs={12} md={3}>
+                  </Grid> */}
+                  {/* <Grid item xs={12} md={3}>
                     <TextField
                       label="Collection"
                       fullWidth
@@ -670,7 +670,7 @@ const ReceivingFromBX = () => {
                         </MenuItem>
                       ))}
                     </TextField>
-                  </Grid>
+                  </Grid> */}
                   <Grid item xs={9} textAlign="right" sx={{ mt: 2 }}>
                     <Button
                       variant="contained"
@@ -726,7 +726,7 @@ const ReceivingFromBX = () => {
                   width="Inherit"
                   sx={{ paddingY: 2, paddingX: 2 }}
                 >
-                  <Grid item xs={12} md={3}>
+                  {/* <Grid item xs={12} md={3}>
                     <TextField
                       label="Production"
                       fullWidth
@@ -748,7 +748,7 @@ const ReceivingFromBX = () => {
                         </MenuItem>
                       ))}
                     </TextField>
-                  </Grid>
+                  </Grid> */}
                   <Grid item xs={12} md={4}>
                     <TextField
                       size="small"

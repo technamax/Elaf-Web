@@ -119,8 +119,8 @@ const DyeingPO = () => {
     );
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
     useGetProductionBatchForProcessingQuery();
-  const { data: dyeingPoData, refetch: refetchDyeingPoData } =
-    useGetDyeingPoHeaderListQuery();
+  // const { data: dyeingPoData, refetch: refetchDyeingPoData } =
+  //   useGetDyeingPoHeaderListQuery();
   const { data: locationsData, refetch: refetchLocationsData } =
     useGetWareHouseLocationsQuery();
   const { data: fabricsData, refetch: refetchFabricsData } =
@@ -167,7 +167,7 @@ const DyeingPO = () => {
   // }, [dyeingPoData, refetchDyeingPoData]);
   useEffect(() => {
     if (poHeaderData) {
-      refetchPoHeaderData();
+      // refetchPoHeaderData();
       setInitialRows(
         poHeaderData.result.map((row, index) => ({
           id: index + 1,
@@ -336,8 +336,8 @@ const DyeingPO = () => {
       );
 
       console.log('Save response:', response.data);
-      refetchDyeingPoData();
-      refetchPoHeaderData();
+      // refetchDyeingPoData();
+      // refetchPoHeaderData();
       // Check for success
       if (response.data.success) {
         // Show a success snackbar if the save operation was successful
@@ -367,7 +367,7 @@ const DyeingPO = () => {
           lastUpdatedBy: user.empId
         });
         setFabrics([]);
-        refetchDyeingPoData();
+        // refetchDyeingPoData();
         refetchPoHeaderData();
         setRowSelectionModel([]);
         refetchcolumnsData();

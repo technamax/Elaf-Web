@@ -70,7 +70,7 @@ const DyeingReceiving = () => {
   const [initialRows, setInitialRows] = useState([]);
   const [polist, setPolist] = useState([]);
   const [issId, setIssId] = useState(null);
-  const [issuanceList, setIssuanceList] = useState([]);
+  // const [issuanceList, setIssuanceList] = useState([]);
   const [receivingList, setReceivingList] = useState([]);
   const [triggerSearch, setTriggerSearch] = useState(false);
 
@@ -82,10 +82,10 @@ const DyeingReceiving = () => {
     });
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
     useGetProductionBatchForProcessingQuery();
-  const { data: issuanceData, refetch: refetchIssuanceData } =
-    useGetIssuanceListQuery(formData.poId, {
-      skip: !formData.poId // Skip the query if no collection is selected
-    });
+  // const { data: issuanceData, refetch: refetchIssuanceData } =
+  //   useGetIssuanceListQuery(formData.poId, {
+  //     skip: !formData.poId // Skip the query if no collection is selected
+  //   });
   const { data: receivingData, refetch: refetchReceivingData } =
     useViewReceivingsQuery(
       { issuanceId: issId, processTypename: 'Dyeing' },
@@ -128,16 +128,16 @@ const DyeingReceiving = () => {
   }, [receivingData, refetchReceivingData]);
 
   console.log('issId', issId);
-  useEffect(() => {
-    if (issuanceData) {
-      setIssuanceList(
-        issuanceData.result.map((row, index) => ({
-          id: index,
-          ...row
-        }))
-      );
-    }
-  }, [issuanceData, refetchIssuanceData]);
+  // useEffect(() => {
+  //   if (issuanceData) {
+  //     setIssuanceList(
+  //       issuanceData.result.map((row, index) => ({
+  //         id: index,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [issuanceData, refetchIssuanceData]);
 
   console.log('initialRows', initialRows);
 

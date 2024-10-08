@@ -103,7 +103,7 @@ const InspectionView = ({ formData, refetch }) => {
       }
     },
     {
-      field: 'receivingDate',
+      field: 'inspectionDate',
       headerName: 'Receiving Date',
       valueGetter: (params) => {
         const date = new Date(params);
@@ -126,7 +126,7 @@ const InspectionView = ({ formData, refetch }) => {
         }
       }
     },
-    { field: 'processTypename', headerName: 'Process Type' },
+    { field: 'processTypeName', headerName: 'Process Type' },
     // {
     //   field: 'statusName',
     //   headerName: 'Status',

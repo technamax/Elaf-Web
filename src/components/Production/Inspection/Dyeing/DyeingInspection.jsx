@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField, Typography, Button, Box } from '@mui/material';
+import { Grid, TextField, Typography, Button, Box, Chip } from '@mui/material';
 import {
   useGetReceivingDetailsForInspectionQuery,
   useGetReceivingHeaderQuery,
@@ -148,7 +148,10 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
   }, [receiveDetails, setReceiveDetails]);
   console.log('formData', formData);
   console.log('receiveDetails', receiveDetails);
-
+  const Quantity = receiveDetails
+    .reduce((sum, row) => sum + (row.gradeAQty ?? 0), 0)
+    .toFixed(2);
+  console.log('Quantity', Quantity);
   const columns = [
     {
       field: 'id',
@@ -615,6 +618,21 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
               }
             }}
           />
+        </Grid>
+        <Grid item xs={12} textAlign="right">
+          <Typography
+            variant="subtitle1"
+            sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
+          >
+            GradeA Sum{' '}
+            <Chip
+              label={Quantity.toLocaleString()}
+              sx={{
+                backgroundColor: '#90caf9', // Assigned Qty color
+                color: '#FFFFFF' // White text
+              }}
+            />
+          </Typography>
         </Grid>
       </Grid>
       <Grid

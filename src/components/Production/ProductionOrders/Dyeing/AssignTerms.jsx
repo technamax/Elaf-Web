@@ -27,7 +27,7 @@ const AssignTerms = ({ vId, handleClose }) => {
   });
 
   const { data: categoriesData } = useGetCategoriesListQuery();
-  const { data: assignedTermsData, refetch: refetchAssignedTermsData } =
+  const { refetch: refetchAssignedTermsData } =
     useDyeingPoAssignTermDetailsByPoIdQuery(vId.poId, {
       skip: !vId.poId // Skip the query if no collection is selected
     });

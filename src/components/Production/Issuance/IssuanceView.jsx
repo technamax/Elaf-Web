@@ -48,8 +48,8 @@ import { useUser } from 'context/User';
 
 const IssuanceView = () => {
   const { user } = useUser();
-  const [initialData, setInitialData] = useState([]);
-  const [isEdit, setIsEdit] = useState(false);
+  // const [initialData, setInitialData] = useState([]);
+  // const [isEdit, setIsEdit] = useState(false);
   const [initialFormData, setInitialFormData] = useState({});
 
   const [formData, setFormData] = useState({
@@ -114,7 +114,7 @@ const IssuanceView = () => {
     );
   // const { data: categoriesData, refetch: refetchCategoriesdata } =
   //   useGetCategoriesListQuery();
-  const { data: lookUpData } = useGetLookUpListQuery();
+  // const { data: lookUpData } = useGetLookUpListQuery();
   const { data: lookUpStatusData } = useGetStatusLookUpQuery();
   const { data: fabricDetailData, refetch: refetchFabricDetailData } =
     useGetProductionFabricDetailListQuery(
