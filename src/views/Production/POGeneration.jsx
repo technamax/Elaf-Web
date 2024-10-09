@@ -31,7 +31,7 @@ import AddTermsAndConditions from 'components/Production/TermsAndConditions/AddT
 import AssignTermsAndConditions from 'components/Production/TermsAndConditions/AssignTermsAndConditions';
 // import SubMenu from './SubMenu';
 import DyeingPO from 'components/Production/ProductionOrders/Dyeing/DyeingPO';
-import POSummary from 'components/Production/ProductionOrders/POSummary';
+import POSummary from 'components/Production/ProductionOrders/Summary/POSummary';
 import PrintingPO from 'components/Production/ProductionOrders/Printing/PrintingPO';
 
 //////

@@ -154,6 +154,9 @@ export const productionApi = createApi({
     getPOSummaryByProcessTypeId: builder.query({
       query: (processTypeId) =>
         `PO/GetPOSummaryByProcessTypeId?appId=1&processTypeId=${processTypeId}`
+    }),
+    POShortfallDetails: builder.query({
+      query: (poId) => `PO/POShortfallDetails?poId=${poId}`
     })
   })
 });
@@ -199,5 +202,6 @@ export const {
   useGetDyeingPoHeaderbyProductionIdAndStatusQuery,
   useGetInspectionHeaderQuery,
   useGetRejectionDetailsByIssuanceIdQuery,
-  useGetPOSummaryByProcessTypeIdQuery
+  useGetPOSummaryByProcessTypeIdQuery,
+  usePOShortfallDetailsQuery
 } = productionApi;

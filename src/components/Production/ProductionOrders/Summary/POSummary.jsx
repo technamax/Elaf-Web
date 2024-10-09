@@ -20,7 +20,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-import '../../../assets/scss/style.scss';
+import '../../../../assets/scss/style.scss';
 // import ReceivingDetails from './ReceivingDetails';
 import {
   useGetDyeingPoHeaderListQuery,
@@ -28,7 +28,8 @@ import {
   useGetIssuanceListQuery,
   useGetReceivingHeaderQuery,
   useGetInspectionForGRNHeaderQuery,
-  useGetPOSummaryByProcessTypeIdQuery
+  useGetPOSummaryByProcessTypeIdQuery,
+  usePOShortfallDetailsQuery
 } from 'api/store/Apis/productionApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 
@@ -36,12 +37,13 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
 // import SSRSReport from '../../../../../views/DetailedReports/Reports';
-import SSRSReport from '../../../views/DetailedReports/Reports';
+import SSRSReport from '../../../../views/DetailedReports/Reports';
 // import ReceiveGRN from './ReceiveGRN';
-import StatusChip from '../../StatusChip';
+import StatusChip from '../../../StatusChip';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
+import POClose from './POClose';
 
 const POSummary = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -62,20 +64,25 @@ const POSummary = () => {
 
   const [initialRows, setInitialRows] = useState([]);
   const [polist, setPolist] = useState([]);
-  const [issId, setIssId] = useState([]);
+  const [shortfall, setShortfall] = useState([]);
+  const [iss, setIss] = React.useState(false);
 
-  const { data, error, isLoading, refetch } = useGetInspectionForGRNHeaderQuery(
-    formData.poId,
-    {
-      skip: !formData.poId // Skip the query if no collection is selected
-    }
-  );
+  // const { data, error, isLoading, refetch } = useGetInspectionForGRNHeaderQuery(
+  //   formData.poId,
+  //   {
+  //     skip: !formData.poId // Skip the query if no collection is selected
+  //   }
+  // );
   const { data: lookUpData, refetch: refetchlookUpData } =
     useGetLookUpListQuery();
 
   const { data: poData, refetch: refetchPoData } =
     useGetPOSummaryByProcessTypeIdQuery(formData.processTypeId, {
       skip: !formData.processTypeId
+    });
+  const { data: shortfallData, refetch: refetchShortfallData } =
+    usePOShortfallDetailsQuery(iss.poId, {
+      skip: !iss?.poId
     });
 
   const [productions, setProductions] = useState([]);
@@ -91,15 +98,15 @@ const POSummary = () => {
   }, [lookUpData]);
 
   useEffect(() => {
-    if (data) {
-      setInitialRows(
-        data.result.map((row, index) => ({
+    if (shortfallData) {
+      setShortfall(
+        shortfallData.result.map((row, index) => ({
           id: index + 1,
           ...row
         }))
       );
     }
-  }, [data, refetch]);
+  }, [shortfallData, refetchShortfallData]);
   useEffect(() => {
     if (poData) {
       setInitialRows(
@@ -112,6 +119,8 @@ const POSummary = () => {
   }, [poData, refetchPoData]);
 
   console.log('polist', polist);
+  console.log('iss', iss);
+  console.log('shortfall', shortfall);
 
   console.log('initialRows', initialRows);
 
@@ -124,8 +133,6 @@ const POSummary = () => {
 
   const [open, setOpen] = React.useState(false);
   const [open2, setOpen2] = React.useState(false);
-
-  const [iss, setIss] = React.useState(false);
 
   const handleClickOpen = async (data) => {
     setIss(data);
@@ -144,6 +151,7 @@ const POSummary = () => {
   };
   const handleViews = async (data) => {
     // setIssId(data.issuanceId);
+    setIss(data);
   };
   const [open3, setOpen3] = React.useState(false);
 
@@ -248,7 +256,8 @@ const POSummary = () => {
             <Button
               size="small"
               color="primary"
-              onClick={() => handleViews(params.row)}
+              onClick={() => handleClickOpen(params.row)}
+              disabled={params.row.status === 3}
             >
               PO Close
             </Button>
@@ -347,7 +356,7 @@ const POSummary = () => {
                   fontWeight={2}
                   fontStyle={'normal'}
                 >
-                  {'GRN Details'}
+                  {'PO Close'}
                 </Typography>
                 <IconButton onClick={handleClose} sx={{ color: '#ffffff' }}>
                   <CloseIcon />
@@ -355,12 +364,13 @@ const POSummary = () => {
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-slide-description"></DialogContentText>
-                {/* <ReceiveGRN
-                  iss={iss}
+                <POClose
+                  rData={iss}
                   handleClose={handleClose}
-                  refetchData={refetch}
+                  refetch={refetchPoData}
+                  shortage={shortfall}
                   // refetchIssuanceData={refetchIssuanceData}
-                /> */}
+                />
               </DialogContent>
             </Dialog>
             <Dialog open={open2} onClose={handleClose2} fullWidth maxWidth="xl">
