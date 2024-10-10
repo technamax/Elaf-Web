@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const collectionApi = createApi({
   reducerPath: 'collectionApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://100.42.177.77:83/api/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://100.42.177.77:81/api/' }),
   endpoints: (builder) => ({
     getCollectionList: builder.query({
       query: () => 'CollectionRegistration/GetCollectionList?appId=1'

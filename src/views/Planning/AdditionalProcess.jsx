@@ -373,7 +373,7 @@ const AdditionalProcess = ({ initialValues }) => {
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:83/api/AdditionalProcess/SaveAdditionalProcess',
+        'http://100.42.177.77:81/api/AdditionalProcess/SaveAdditionalProcess',
         formData
       );
 
@@ -566,7 +566,7 @@ const AdditionalProcess = ({ initialValues }) => {
       )
     }
   ];
-  const deleteApi = `http://100.42.177.77:83/api/AdditionalProcess/DeleteAdditionalProcess?adId=`;
+  const deleteApi = `http://100.42.177.77:81/api/AdditionalProcess/DeleteAdditionalProcess?adId=`;
 
   return (
     <>

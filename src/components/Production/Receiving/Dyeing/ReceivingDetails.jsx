@@ -398,7 +398,7 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
     }
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/Receiving/SaveReceiving',
+        'http://100.42.177.77:81/api/Receiving/SaveReceiving',
         {
           ...formData,
           receivingTransactionsDetailsModelList: issuanceDetails.filter(
