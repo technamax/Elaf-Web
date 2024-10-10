@@ -157,6 +157,9 @@ export const productionApi = createApi({
     }),
     POShortfallDetails: builder.query({
       query: (poId) => `PO/POShortfallDetails?poId=${poId}`
+    }),
+    getDebitNoteInfoByPoId: builder.query({
+      query: (poId) => `PO/GetDebitNoteInfoByPoId?poId=${poId}`
     })
   })
 });
@@ -203,5 +206,6 @@ export const {
   useGetInspectionHeaderQuery,
   useGetRejectionDetailsByIssuanceIdQuery,
   useGetPOSummaryByProcessTypeIdQuery,
-  usePOShortfallDetailsQuery
+  usePOShortfallDetailsQuery,
+  useGetDebitNoteInfoByPoIdQuery
 } = productionApi;

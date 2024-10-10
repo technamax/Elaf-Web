@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField, Typography, Button, Box, Chip } from '@mui/material';
 import {
-  useGetReceivingDetailsForInspectionQuery,
+  Grid,
+  TextField,
+  Typography,
+  Button,
+  Box,
+  Chip,
+  ButtonGroup
+} from '@mui/material';
+import {
+  useGetDebitNoteInfoByPoIdQuery,
   useGetReceivingHeaderQuery,
   useGetInspectionHeaderQuery
 } from 'api/store/Apis/productionApi';
@@ -31,43 +39,50 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useUser();
-  const [receiveDetails, setReceiveDetails] = useState([]);
-  const { data: receivingData, refetch: refetchReceivingData } =
-    useGetReceivingHeaderQuery(
-      { poId: formData.poId, processTypename: 'Dyeing', status: 4 },
-      {
-        skip: !formData.poId // Skip the query if no collection is selected
-      }
-    );
-  const { data: receiveDetailsData, refetch: refetchReceiveDetailsData } =
-    useGetReceivingDetailsForInspectionQuery(rData.receivingId, {
-      skip: !rData.receivingId
+  const [debitNote, setDebitNote] = useState([]);
+  // const { data: receivingData, refetch: refetchReceivingData } =
+  //   useGetReceivingHeaderQuery(
+  //     { poId: formData.poId, processTypename: 'Dyeing', status: 4 },
+  //     {
+  //       skip: !formData.poId // Skip the query if no collection is selected
+  //     }
+  //   );
+  const { data: debitNoteData, refetch: refetchDebitNoteData } =
+    useGetDebitNoteInfoByPoIdQuery(rData.poId, {
+      skip: !rData.poId
     });
-  const { data: inspectionData, refetch: refetchInspectionData } =
-    useGetInspectionHeaderQuery(rData.poId, {
-      skip: !rData.poId // Skip the query if no collection is selected
-    });
+  // const { data: inspectionData, refetch: refetchInspectionData } =
+  //   useGetInspectionHeaderQuery(rData.poId, {
+  //     skip: !rData.poId // Skip the query if no collection is selected
+  //   });
 
   useEffect(() => {
-    if (receiveDetailsData?.result === null) {
-      setReceiveDetails([]);
+    if (debitNoteData?.result === null) {
+      setDebitNote([]);
       return;
     }
-    if (receiveDetailsData) {
-      setReceiveDetails(
-        receiveDetailsData.result.map((row, index) => ({
+    if (debitNoteData) {
+      setDebitNote(
+        debitNoteData.result.map((row, index) => ({
           id: index + 1,
           ...row,
-          gradeAQty: 0,
-          gradeBQty: 0,
-          gradeCPQty: 0,
-          others1Qty: 0,
-          rejectedQty: 0,
-          remarks: ''
+          dnId: 0,
+          remarks: '',
+          total: row.rate * row.shortFall,
+          appId: user.appId,
+          createdOn: new Date().toISOString(),
+          createdBy: user.empId,
+          lastUpdatedOn: new Date().toISOString(),
+          lastUpdatedBy: user.empId
+          // gradeBQty: 0,
+          // gradeCPQty: 0,
+          // others1Qty: 0,
+          // rejectedQty: 0,
+          // remarks: ''
         }))
       );
     }
-  }, [receiveDetailsData, refetchReceiveDetailsData]);
+  }, [debitNoteData, refetchDebitNoteData]);
 
   console.log('rData', rData);
 
@@ -75,32 +90,30 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
     const { id, field, value } = params;
     console.log('Editing cell:', params); // Debugging line
 
-    setReceiveDetails((prevRows) =>
+    setDebitNote((prevRows) =>
       prevRows.map((row) => {
         if (row.id === id) {
-          const expectedQty = (
-            (row.issuanceQuantity * 100) /
-            (100 + row.shrinkage + row.wastage)
-          ).toFixed(2);
+          // const total =
+          //   (row.rate *  row.shortFall)
 
-          const shortageQty = Math.max(
-            row.receivedQty -
-              ((row.gradeAQty || 0) +
-                (row.gradeBQty || 0) +
-                (row.gradeCPQty || 0) +
-                (row.rejectedQty || 0) +
-                (row.others1Qty || 0)),
-            0
-          );
+          // const shortageQty = Math.max(
+          //   row.receivedQty -
+          //     ((row.rate || 0) +
+          //       (row.gradeBQty || 0) +
+          //       (row.gradeCPQty || 0) +
+          //       (row.rejectedQty || 0) +
+          //       (row.others1Qty || 0)),
+          //   0
+          // );
           const updatedRow = {
             ...row,
             [field]: value,
             // quantity: row.itpQuantity,
             // productName: row.fabricName,
-            inspectionId: 0,
-            inspectiondetId: 0,
-            expectedQty: Number(expectedQty), // Add expectedQty to the row
-            shortageQty: shortageQty,
+            dnId: 0,
+            // inspectiondetId: 0,
+            // expectedQty: Number(expectedQty), // Add expectedQty to the row
+            // shortageQty: shortageQty,
             appId: user.appId,
             createdOn: new Date().toISOString(),
             createdBy: user.empId,
@@ -108,24 +121,24 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
             lastUpdatedBy: user.empId
           };
 
-          // Recalculate the amount when rate or quantity is updated
-          if (
-            field === 'gradeAQty' ||
-            field === 'gradeBQty' ||
-            field === 'gradeCPQty' ||
-            field === 'rejectedQty' ||
-            field === 'others1Qty'
-          ) {
-            updatedRow.shortageQty = Math.max(
-              updatedRow.receivedQty -
-                ((updatedRow.gradeAQty || 0) +
-                  (updatedRow.gradeBQty || 0) +
-                  (updatedRow.gradeCPQty || 0) +
-                  (updatedRow.rejectedQty || 0) +
-                  (updatedRow.others1Qty || 0)),
-              0
-            );
-          }
+          // // Recalculate the amount when rate or quantity is updated
+          // if (
+          //   field === 'rate' ||
+          //   field === 'gradeBQty' ||
+          //   field === 'gradeCPQty' ||
+          //   field === 'rejectedQty' ||
+          //   field === 'others1Qty'
+          // ) {
+          //   updatedRow.shortageQty = Math.max(
+          //     updatedRow.receivedQty -
+          //       ((updatedRow.rate || 0) +
+          //         (updatedRow.gradeBQty || 0) +
+          //         (updatedRow.gradeCPQty || 0) +
+          //         (updatedRow.rejectedQty || 0) +
+          //         (updatedRow.others1Qty || 0)),
+          //     0
+          //   );
+          // }
 
           // // Optionally, update amountAfterTax if it's a function of amount and tax
           // if (field === 'tax' || field === 'rate' || field === 'quantity') {
@@ -142,24 +155,72 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
 
   React.useEffect(() => {
     setFormData({
-      ...formData,
-      inspectionTransactionsDetailsModelList: receiveDetails
+      ...debitNote[0]
+      // inspectionTransactionsDetailsModelList: debitNote
     });
-  }, [receiveDetails, setReceiveDetails]);
+  }, [debitNote, setDebitNote]);
   console.log('formData', formData);
-  console.log('receiveDetails', receiveDetails);
-  const Quantity = receiveDetails
-    .reduce((sum, row) => sum + (row.gradeAQty ?? 0), 0)
-    .toFixed(2);
+  console.log('debitNote', debitNote);
+  // const Quantity = debitNote
+  //   .reduce((sum, row) => sum + (row.rate ?? 0), 0)
+  //   .toFixed(2);
   console.log('shortage', shortage);
+  const handleSave = async (data) => {
+    console.log('rowadata', data);
+    // for (let detail of debitNote) {
+    //   if (
+    //     detail.receivedQty <
+    //     (detail.rate || 0) +
+    //       (detail.gradeBQty || 0) +
+    //       (detail.gradeCPQty || 0) +
+    //       (detail.rejectedQty || 0) +
+    //       (detail.others1Qty || 0)
+    //   ) {
+    //     enqueueSnackbar(
+    //       'Error: Received quantity cannot be greater than issuance quantity!',
+    //       {
+    //         variant: 'error',
+    //         autoHideDuration: 5000
+    //       }
+    //     );
+    //     return; // Stop further execution
+    //   }
+    // }
+    try {
+      const response = await axios.post(
+        'http://100.42.177.77:83/api/PO/SaveDebitNote',
+        data
+      );
+      if (!response.data.success) {
+        enqueueSnackbar(`${response.data.message} !`, {
+          variant: 'error',
+          autoHideDuration: 5000
+        });
+        console.log('response.message', response.data.message);
+      } else {
+        enqueueSnackbar(`${response.data.message} !`, {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+      }
+      refetchDebitNoteData();
+      refetch();
+      // refetchInspectionData();
+      // refetchReceivingData();
+      console.log('Save response:', response.data);
+      // handleClose();
+    } catch (error) {
+      console.error('Error saving data:', error);
+      enqueueSnackbar('FAILED: Unable to start Process', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+    }
+  };
   const columns = [
     {
       field: 'id',
       headerName: 'Sr#'
-    },
-    {
-      field: 'designNo',
-      headerName: 'Design'
     },
     {
       field: 'colorName',
@@ -170,8 +231,12 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
       headerName: 'Fabric'
     },
     {
-      field: 'expectedQty',
-      headerName: 'Expected',
+      field: 'uomName',
+      headerName: 'UOM'
+    },
+    {
+      field: 'shortFall',
+      headerName: 'Quantity',
       valueGetter: (params) => {
         if (params) {
           return Number(params.toFixed(2)).toLocaleString();
@@ -181,188 +246,17 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
       }
     },
     {
-      field: 'expectedQty',
-      headerName: 'Expected',
-      valueGetter: (value, row) => {
-        return (
-          Number(
-            (
-              (row.issuanceQuantity * 100) /
-              (100 + row.shrinkage + row.wastage)
-            ).toFixed(2)
-          )
-            // .toFixed(2)
-            .toLocaleString()
-        );
+      field: 'rate',
+      headerName: 'Rate'
+    },
+    {
+      field: 'total',
+      headerName: 'Total',
+      renderCell: (params) => {
+        return Number(
+          (params.row.rate * params.row.shortFall).toFixed(2)
+        ).toLocaleString();
       }
-    },
-    {
-      field: 'receivedQty',
-      headerName: 'Received',
-      valueGetter: (params) => {
-        if (params) {
-          return Number(params.toFixed(2)).toLocaleString();
-        } else {
-          return '0';
-        }
-      }
-    },
-    {
-      field: 'gradeAQty',
-      headerName: 'Grade A',
-      renderCell: (params) => (
-        <SmallTextField
-          variant="outlined"
-          size="small"
-          // fullWidth
-          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
-          value={params.row.gradeAQty || 0}
-          onChange={(event) =>
-            handleCellEdit({
-              id: params.id,
-              field: 'gradeAQty',
-              value: Number(event.target.value)
-            })
-          }
-          type="number"
-          error={params.row.gradeAQty > params.row.recA}
-          InputProps={{
-            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-          }}
-        />
-      )
-    },
-    {
-      field: 'gradeBQty',
-      headerName: 'Grade B',
-      renderCell: (params) => (
-        <SmallTextField
-          variant="outlined"
-          size="small"
-          // fullWidth
-          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
-          value={params.row.gradeBQty || 0}
-          onChange={(event) =>
-            handleCellEdit({
-              id: params.id,
-              field: 'gradeBQty',
-              value: Number(event.target.value)
-            })
-          }
-          type="number"
-          InputProps={{
-            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-          }}
-        />
-      )
-    },
-    {
-      field: 'gradeCPQty',
-      headerName: 'Cut Pc',
-      renderCell: (params) => (
-        <SmallTextField
-          variant="outlined"
-          size="small"
-          // fullWidth
-          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
-          value={params.row.gradeCPQty || 0}
-          onChange={(event) =>
-            handleCellEdit({
-              id: params.id,
-              field: 'gradeCPQty',
-              value: Number(event.target.value)
-            })
-          }
-          type="number"
-          InputProps={{
-            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-          }}
-        />
-      )
-    },
-    {
-      field: 'others1Qty',
-      headerName: 'Others',
-      renderCell: (params) => (
-        <SmallTextField
-          variant="outlined"
-          size="small"
-          // fullWidth
-          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
-          value={params.row.others1Qty || 0}
-          onChange={(event) =>
-            handleCellEdit({
-              id: params.id,
-              field: 'others1Qty',
-              value: Number(event.target.value)
-            })
-          }
-          type="number"
-          InputProps={{
-            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-          }}
-        />
-      )
-    },
-    {
-      field: 'shortageQty',
-      headerName: 'Short Stock',
-      valueGetter: (value, row) => {
-        const expected = row.expectedQty;
-        const received = row.receivedQty;
-        const shortageQty =
-          row.receivedQty -
-          ((row.gradeAQty || 0) +
-            (row.gradeBQty || 0) +
-            (row.gradeCPQty || 0) +
-            (row.rejectedQty || 0) +
-            (row.others1Qty || 0));
-        if (shortageQty > 0) {
-          return shortageQty.toLocaleString();
-        } else {
-          return 0;
-        }
-      },
-      valueSetter: (value, row) => {
-        const expected = row.expectedQty;
-        const received = row.receivedQty;
-        const shortageQty =
-          row.receivedQty -
-          ((row.gradeAQty || 0) +
-            (row.gradeBQty || 0) +
-            (row.gradeCPQty || 0) +
-            (row.rejectedQty || 0) +
-            (row.others1Qty || 0));
-        if (shortageQty > 0) {
-          return shortageQty.toLocaleString();
-        } else {
-          return 0;
-        }
-      }
-    },
-    {
-      field: 'rejectedQty',
-      headerName: 'Rejected',
-      renderCell: (params) => (
-        <SmallTextField
-          variant="outlined"
-          size="small"
-          // fullWidth
-          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
-          value={params.row.rejectedQty || 0}
-          onChange={(event) =>
-            handleCellEdit({
-              id: params.id,
-              field: 'rejectedQty',
-              value: Number(event.target.value)
-            })
-          }
-          type="number"
-          InputProps={{
-            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-          }}
-        />
-      )
     },
     {
       field: 'remarks',
@@ -390,6 +284,24 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
             style: { fontSize: '0.875rem' } // Ensure the font size is suitable
           }}
         />
+      )
+    },
+    {
+      field: 'Actions',
+      headerName: 'Actions',
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup variant="text" size="small" sx={{ mt: 1 }}>
+            <Button
+              size="small"
+              color="primary"
+              onClick={() => handleSave(params.row)}
+              disabled={params.row.dnExist === 1}
+            >
+              Debit Note
+            </Button>
+          </ButtonGroup>
+        </div>
       )
     }
   ];
@@ -448,7 +360,7 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
       field: 'short',
       headerName: 'ShortFall',
       valueGetter: (params, row) => {
-        console.log('rowparams', row);
+        // console.log('rowparams', row);
         if (row) {
           return Number(
             row.expectedQty - row.grnaQty.toFixed(2)
@@ -459,39 +371,24 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
       }
     }
   ];
+  const [disable, setDisable] = useState(null);
+  useEffect(() => {
+    setDisable(debitNote.some((db) => db.dnExist === 0));
+  }, [debitNoteData, refetchDebitNoteData, debitNote]);
   const fetchData = () => {
     apiRef.current.autosizeColumns({
       includeHeaders: true,
       includeOutliers: true
     });
   };
-  // React.useEffect(() => {
-  //   fetchData();
-  // });
-  const handleSave = async () => {
-    for (let detail of receiveDetails) {
-      if (
-        detail.receivedQty <
-        (detail.gradeAQty || 0) +
-          (detail.gradeBQty || 0) +
-          (detail.gradeCPQty || 0) +
-          (detail.rejectedQty || 0) +
-          (detail.others1Qty || 0)
-      ) {
-        enqueueSnackbar(
-          'Error: Received quantity cannot be greater than issuance quantity!',
-          {
-            variant: 'error',
-            autoHideDuration: 5000
-          }
-        );
-        return; // Stop further execution
-      }
-    }
+  React.useEffect(() => {
+    fetchData();
+  });
+  console.log('db.dnExist', debitNote[0]?.dnExist, 'disable:', disable);
+  const handleClosePO = async () => {
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/Receiving/SaveInspection',
-        formData
+        `http://100.42.177.77:83/api/PO/ClosePO?poId=${rData.poId}`
       );
       if (!response.data.success) {
         enqueueSnackbar(`${response.data.message} !`, {
@@ -506,10 +403,10 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
         });
       }
       refetch();
-      refetchInspectionData();
-      refetchReceivingData();
+      // refetchInspectionData();
+      // refetchReceivingData();
       console.log('Save response:', response.data);
-      handleClose();
+      // handleClose();
     } catch (error) {
       console.error('Error saving data:', error);
       enqueueSnackbar('FAILED: Unable to start Process', {
@@ -518,6 +415,7 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
       });
     }
   };
+
   return (
     <div>
       <Grid
@@ -564,8 +462,8 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
           <Button
             variant="contained"
             size="small"
-            onClick={handleSave}
-            // disabled={iss.status === 9}
+            onClick={handleClosePO}
+            disabled={disable}
           >
             CLose
           </Button>
@@ -640,7 +538,7 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
             }}
           >
             <DataGrid
-              rows={receiveDetails}
+              rows={debitNote}
               columns={columns}
               apiRef={apiRef}
               disableRowSelectionOnClick
@@ -677,6 +575,39 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
             // rowSelectionModel={rowSelectionModel}
           />
           {/* </div> */}
+        </Grid>
+        <Grid item xs={12}>
+          <Typography variant="h2">Details</Typography>
+        </Grid>
+
+        <Grid item xs={12}>
+          <Box
+            sx={{
+              height: 'auto',
+              // maxHeight: 500,
+              // overflow: 'auto',
+              width: 'inherit',
+              '& .actions': {
+                color: 'text.secondary'
+              },
+              '& .textPrimary': {
+                color: 'text.primary'
+              },
+              '& .bold': {
+                fontWeight: 600
+              }
+            }}
+          >
+            <DataGrid
+              rows={debitNote}
+              columns={columns}
+              apiRef={apiRef}
+              disableRowSelectionOnClick
+              // checkboxSelection
+              // onRowSelectionModelChange={handleRowSelectionModelChange}
+              // rowSelectionModel={rowSelectionModel}
+            />
+          </Box>
         </Grid>
       </Grid>
     </div>
