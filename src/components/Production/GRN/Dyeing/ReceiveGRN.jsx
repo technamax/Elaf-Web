@@ -201,7 +201,10 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
     },
     {
       field: 'total',
-      headerName: 'Total'
+      headerName: 'Total',
+      renderCell: (params) => {
+        return params.row.total.toLocaleString();
+      }
     },
     {
       field: 'gradeBQty',

@@ -75,6 +75,7 @@ const Inspection = () => {
   const [formData, setFormData] = useState({
     issuanceId: '',
     poId: '',
+    processTypeName: '',
     productionId: '',
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -92,9 +93,13 @@ const Inspection = () => {
     useGetProductionBatchForProcessingQuery();
   const { data: receivingData, refetch: refetchReceivingData } =
     useGetReceivingHeaderQuery(
-      { poId: formData.poId, status: 8, processTypename: 'Dyeing' },
       {
-        skip: !formData.poId
+        poId: formData.poId,
+        status: 8,
+        processTypename: formData.processTypeName
+      },
+      {
+        skip: !formData.poId || !formData.processTypeName
       }
     );
   const [initialRows, setInitialRows] = useState([]);
@@ -142,6 +147,7 @@ const Inspection = () => {
       setFormData({
         ...formData,
         poId: value,
+        processTypeName: selectedPO ? selectedPO.processTypeName : '',
         issuanceId: selectedPO ? selectedPO.issuanceId : ''
         // ogpNumber: selectedPO ? selectedPO.ogpNumber : '',
         // issuanceName: selectedPO

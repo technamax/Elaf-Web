@@ -70,6 +70,7 @@ const DyeingReceiving = () => {
   const [initialRows, setInitialRows] = useState([]);
   const [polist, setPolist] = useState([]);
   const [issId, setIssId] = useState(null);
+  console.log('issId', issId);
   // const [issuanceList, setIssuanceList] = useState([]);
   const [receivingList, setReceivingList] = useState([]);
   const [triggerSearch, setTriggerSearch] = useState(false);
@@ -88,7 +89,10 @@ const DyeingReceiving = () => {
   //   });
   const { data: receivingData, refetch: refetchReceivingData } =
     useViewReceivingsQuery(
-      { issuanceId: issId, processTypename: 'Dyeing' },
+      {
+        issuanceId: issId?.issuanceId,
+        processTypename: issId?.processTypeName
+      },
       {
         skip: !issId // Skip the query if no collection is selected
       }
@@ -295,7 +299,7 @@ const DyeingReceiving = () => {
     setOpen3(false);
   };
   const handleViews = async (data) => {
-    setIssId(data.issuanceId);
+    setIssId(data);
     refetchReceivingData();
   };
   const columns = [
@@ -608,7 +612,7 @@ const DyeingReceiving = () => {
             <ReuseableDataGrid
               initialRows={initialRows}
               iColumns={columns}
-              onRowDoubleClick={(params) => setIssId(params.row.issuanceId)}
+              onRowDoubleClick={(params) => setIssId(params.row)}
               hideAction
             />
 
