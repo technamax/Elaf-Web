@@ -18,7 +18,8 @@ const GRN = () => {
   const location = useLocation();
   const rowData = location.state?.data;
   const tab = location.state?.tab?.toString(); // Convert tab to string
-
+  const { user } = useUser();
+  console.log('user', user);
   console.log('rowData', rowData);
   console.log('tab', tab);
 

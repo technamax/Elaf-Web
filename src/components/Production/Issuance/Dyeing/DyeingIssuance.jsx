@@ -768,6 +768,11 @@ const DyeingIssuance = ({ rowData }) => {
     setValue('2');
     setIssId(data.issuanceId);
   };
+  const handleAudit = (data) => {
+    // setValue('2');
+    // setIssId(data.issuanceId);
+    console.log('Audit Done');
+  };
   const issuanceColumns = [
     {
       field: 'id',
@@ -905,12 +910,21 @@ const DyeingIssuance = ({ rowData }) => {
             >
               View Issuance
             </Button>
+            {user.isAuditor ? (
+              <Button
+                size="small"
+                color="primary"
+                onClick={() => handleAudit(params.row)}
+              >
+                Audit
+              </Button>
+            ) : null}
           </ButtonGroup>
         </div>
       )
     }
   ];
-
+  console.log('user', user);
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
       <Card variant="outlined">
