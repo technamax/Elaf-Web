@@ -188,7 +188,7 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
     // }
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/PO/SaveDebitNote',
+        'http://100.42.177.77:81/api/PO/SaveDebitNote',
         data
       );
       if (!response.data.success) {
@@ -388,7 +388,7 @@ const POClose = ({ rData, handleClose, refetch, shortage }) => {
   const handleClosePO = async () => {
     try {
       const response = await axios.post(
-        `http://100.42.177.77:83/api/PO/ClosePO?poId=${rData.poId}`
+        `http://100.42.177.77:81/api/PO/ClosePO?poId=${rData.poId}`
       );
       if (!response.data.success) {
         enqueueSnackbar(`${response.data.message} !`, {

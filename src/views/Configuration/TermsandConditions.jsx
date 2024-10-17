@@ -109,7 +109,7 @@ const TermsandConditions = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:83/api/TermsConditions/SaveCategory',
+        'http://100.42.177.77:81/api/TermsConditions/SaveCategory',
         formData
       );
 

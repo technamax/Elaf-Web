@@ -331,7 +331,7 @@ const DyeingPO = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:83/api/PO/SavePOHeader',
+        'http://100.42.177.77:81/api/PO/SavePOHeader',
         { ...formData }
       );
 
@@ -397,7 +397,7 @@ const DyeingPO = () => {
     // setInitialFormData(data);
     // try {
     //   const response = await axios.get(
-    //     `http://100.42.177.77:83/api/TermsConditions/GetTermsByVendorId?vendorId=${data.vendorId}`
+    //     `http://100.42.177.77:81/api/TermsConditions/GetTermsByVendorId?vendorId=${data.vendorId}`
     //   );
     //   if (!response.data.success) {
     //     enqueueSnackbar(`${response.data.message} !`, {

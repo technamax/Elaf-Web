@@ -35,7 +35,7 @@ export default function AddSubMenu({ onSaveSuccess }) {
     console.log(formData);
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/Menu/SaveSubMenu',
+        'http://100.42.177.77:81/api/Menu/SaveSubMenu',
         formData
       );
       console.log('Form data saved:', response.data);
