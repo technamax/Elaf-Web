@@ -126,6 +126,20 @@ const InspectionView = ({ formData, refetch }) => {
         }
       }
     },
+    {
+      field: 'gradeAQty',
+      headerName: 'Grade A',
+      valueGetter: (params) => {
+        if (params) {
+          return Number(params.toFixed(2)).toLocaleString();
+        } else {
+          return '0';
+        }
+      },
+      renderCell: (params) => {
+        return <StatusChip label={params.value} status="Inspected" />;
+      }
+    },
     { field: 'processTypeName', headerName: 'Process Type' },
     // {
     //   field: 'statusName',

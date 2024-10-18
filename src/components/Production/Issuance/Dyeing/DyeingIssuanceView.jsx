@@ -464,6 +464,7 @@ const DyeingIssuanceView = ({ iss, handleClose, refetchData, isRejected }) => {
             fullWidth
             // disabled
             // select
+            focused
             type="Number"
             label="DispatchedQuantity"
             name="dispatchedQuantity"

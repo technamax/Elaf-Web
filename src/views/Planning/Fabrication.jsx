@@ -40,7 +40,7 @@ import fabric from '../../assets/images/planningicons/fabric.png';
 import '../../assets/scss/style.scss';
 import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
-
+import StatusChip from '../../components/StatusChip';
 const Fabrication = ({ initialValues, setInitialValues }) => {
   const { user } = useUser();
   const [formErrors, setFormErrors] = useState({});
@@ -430,37 +430,7 @@ const Fabrication = ({ initialValues, setInitialValues }) => {
       field: 'uomName',
       headerName: 'UOM',
       renderCell: (params) => {
-        const chipColor =
-          params.value === 'Meters'
-            ? 'primary.dark'
-            : params.value === 'Yards'
-              ? theme.palette.grey[900]
-              : params.value === 'Inches'
-                ? 'success.dark'
-                : 'default';
-
-        return (
-          <Chip
-            label={params.value}
-            sx={{
-              backgroundColor:
-                chipColor === 'primary' || chipColor === 'default'
-                  ? undefined
-                  : chipColor,
-              color:
-                chipColor === 'primary' || chipColor === 'default'
-                  ? undefined
-                  : 'white'
-            }}
-            color={
-              chipColor === 'primary'
-                ? 'primary'
-                : chipColor === 'default'
-                  ? 'default'
-                  : undefined
-            }
-          />
-        );
+        return <StatusChip label={params.value} status="primaryDark" />;
       }
     },
     {
