@@ -231,17 +231,19 @@ const Summary = ({
     { field: 'fabricCount', headerName: 'Fabric Count' },
     {
       field: 'totalFabricSum',
-      headerName: 'Total Fabric Sum',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      }
+      headerName: 'Total Fabric Sum'
+      // valueGetter: (params) => {
+      //   return params.row?.totalFabricSum
+      //     ? params.row.totalFabricSum.toLocaleString()
+      //     : '';
+      // }
     },
     {
       field: 'totalFabricRequiredSum',
-      headerName: 'Total Fabric Required Sum',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      }
+      headerName: 'Total Fabric Required Sum'
+      // valueGetter: (params) => {
+      //   return params?.value ? params.value.toLocaleString() : '';
+      // }
     }
   ];
 
@@ -251,17 +253,14 @@ const Summary = ({
     { field: 'fabricCount', headerName: 'Fabric Count' },
     {
       field: 'totalExcGst',
-      headerName: 'Total Excluding GST',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      }
+      headerName: 'Total Excluding GST'
+      // valueGetter: (params) => {
+      //   return params?.value ? params.value.toLocaleString() : '';
+      // }
     },
     {
       field: 'totalIncGst',
-      headerName: 'Total Including GST',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      }
+      headerName: 'Total Including GST'
     }
   ];
 
@@ -272,20 +271,20 @@ const Summary = ({
     { field: 'assignedQtySum', headerName: 'Assigned Qty Sum' },
     {
       field: 'availableQtySum',
-      headerName: 'Available Qty Sum',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      }
+      headerName: 'Available Qty Sum'
+      // valueGetter: (params) => {
+      //   return params?.value ? params.value.toLocaleString() : '';
+      // }
     },
     { field: 'colorCount', headerName: 'Color Count' },
     { field: 'fabricCount', headerName: 'Fabric Count' },
     { field: 'outputQtySum', headerName: 'Output Qty Sum' },
     {
       field: 'totalIncGst',
-      headerName: 'Total Including GST',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      }
+      headerName: 'Total Including GST'
+      // valueGetter: (params) => {
+      //   return params?.value ? params.value.toLocaleString() : '';
+      // }
     }
   ];
 
@@ -300,9 +299,9 @@ const Summary = ({
     {
       field: 'totalAmountSum',
       headerName: 'Total Amount Sum',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      },
+      // valueGetter: (params) => {
+      //   return params?.value ? params.value.toLocaleString() : '';
+      // },
       width: 150
     }
   ];
