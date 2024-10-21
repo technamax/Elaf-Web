@@ -13,8 +13,14 @@ const statusColors = {
   Issued: '#FF9900', // Orange
   Cancelled: '#666666', // Dark Gray
   null: '#FFFFFF',
-  primaryDark: '#1e88e5'
-
+  primaryDark: '#1e88e5',
+  green: '#008000',
+  darkgreen: ' #006600',
+  lightgreen: '#66cc66',
+  navyblue: '#000080',
+  red: '#800000',
+  olive: '#808000',
+  pastelgreen: '#66cc99'
   // White (null-status)
 };
 
