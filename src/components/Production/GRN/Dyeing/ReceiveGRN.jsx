@@ -123,21 +123,32 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
     }));
   };
 
-  const calRows = GRNList.map((row) => ({
-    ...row,
-    grnId: 0,
-    grnItemId: 0,
-    total: row.gradeAQty * row.rate,
-    acceptedQty: row.gradeAQty,
-    grnaQty: row.gradeAQty,
-    grnbQty: row.gradeBQty,
-    grncpQty: row.gradeCPQty,
-    bGradetotal: row.gradeBQty * row.rate * row.bGradeRate,
-    sumGradeBAndCP: row.sumGradeBAndCP,
-    wastageOnSumGradeBAndCP: row.wastageOnSumGradeBAndCP,
-    allowedBCP: row.sumGradeBAndCP * row.wastageOnSumGradeBAndCP
-  }));
+  const calRows = GRNList.map((row) => {
+    const sumGradeBAndCP = row.sumGradeBAndCP ?? 0;
+    const wastageOnSumGradeBAndCP = row.wastageOnSumGradeBAndCP ?? 0;
+    const allowedBCP = sumGradeBAndCP * wastageOnSumGradeBAndCP;
+    const wasted = sumGradeBAndCP - allowedBCP;
+
+    return {
+      ...row,
+      grnId: 0,
+      grnItemId: 0,
+      total: (row.gradeAQty ?? 0) * (row.rate ?? 0),
+      acceptedQty: row.gradeAQty,
+      grnaQty: row.gradeAQty,
+      grnbQty: row.gradeBQty,
+      grncpQty: row.gradeCPQty,
+      bGradetotal:
+        (row.gradeBQty ?? 0) * (row.rate ?? 0) * (row.bGradeRate ?? 0),
+      sumGradeBAndCP: sumGradeBAndCP,
+      wastageOnSumGradeBAndCP: wastageOnSumGradeBAndCP,
+      allowedBCP: allowedBCP,
+      wasted: wasted
+    };
+  });
+
   console.log('calRows', calRows);
+
   useEffect(() => {
     setFormData({ ...formData, grnDetailsList: [...calRows] });
   }, [GRNList]);
@@ -153,9 +164,13 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
   const cpGradeSum = calRows
     .reduce((sum, row) => sum + (row.gradeCPQty ?? 0), 0)
     .toFixed(2);
+  // const rejectedSum = calRows
+  //   .reduce((sum, row) => sum + (row.rejectedQty ?? 0), 0)
+  //   .toFixed(2);
   const rejectedSum = calRows
-    .reduce((sum, row) => sum + (row.rejectedQty ?? 0), 0)
+    .reduce((sum, row) => sum + (row.rejectedQty ?? 0) + (row.wasted ?? 0), 0)
     .toFixed(2);
+
   const shortageSum = calRows
     .reduce((sum, row) => sum + (row.shortageQty ?? 0), 0)
     .toFixed(2);
@@ -258,6 +273,13 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
       headerName: 'Allowed B+CP',
       renderCell: (params) => {
         return <StatusChip label={params.value} status="pastelgreen" />;
+      }
+    },
+    {
+      field: 'wasted',
+      headerName: 'Wasted',
+      renderCell: (params) => {
+        return <StatusChip label={params.value} status="Amberyellow" />;
       }
     },
 
