@@ -171,7 +171,7 @@ const POGeneration = () => {
               />
               <Tab
                 icon={<AssignmentOutlinedIcon />}
-                label="Printing PO"
+                label="Embroidery PO"
                 value="2"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
@@ -225,9 +225,7 @@ const POGeneration = () => {
           <TabPanel value="1">
             <DyeingPO />
           </TabPanel>
-          <TabPanel value="2">
-            <PrintingPO />
-          </TabPanel>
+          <TabPanel value="2">{/* */}</TabPanel>
           <TabPanel value="3">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="4">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="5">{/* <AssignTermsAndConditions /> */}</TabPanel>

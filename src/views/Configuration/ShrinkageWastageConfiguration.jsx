@@ -322,33 +322,6 @@ const ShrinkageWastageConfiguration = () => {
       headerName: 'Fabric'
     },
     {
-      field: 'wastage',
-      headerName: 'Wastage',
-      // flex: 1,
-      width: 'auto',
-
-      renderCell: (params) => (
-        <SmallTextField
-          variant="outlined"
-          size="small"
-          // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.wastage || ''}
-          onChange={(event) =>
-            handleCellEdit({
-              id: params.id,
-              field: 'wastage',
-              value: Number(event.target.value)
-            })
-          }
-          type="number"
-          InputProps={{
-            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-          }}
-        />
-      )
-    },
-    {
       field: 'shrikage',
       headerName: 'Shrinkage',
       width: 'auto',
@@ -366,6 +339,33 @@ const ShrinkageWastageConfiguration = () => {
             handleCellEdit({
               id: params.id,
               field: 'shrikage',
+              value: Number(event.target.value)
+            })
+          }
+          type="number"
+          InputProps={{
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+          }}
+        />
+      )
+    },
+    {
+      field: 'wastage',
+      headerName: 'Wastage',
+      // flex: 1,
+      width: 'auto',
+
+      renderCell: (params) => (
+        <SmallTextField
+          variant="outlined"
+          size="small"
+          // fullWidth
+          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          value={params.row.wastage || ''}
+          onChange={(event) =>
+            handleCellEdit({
+              id: params.id,
+              field: 'wastage',
               value: Number(event.target.value)
             })
           }

@@ -40,7 +40,6 @@ import fabric from '../../assets/images/planningicons/fabric.png';
 import '../../assets/scss/style.scss';
 import loadingGif from '../../assets/images/loading1.svg';
 import { useUser } from 'context/User';
-import StatusChip from '../../components/StatusChip';
 const Fabrication = ({ initialValues, setInitialValues }) => {
   const { user } = useUser();
   const [formErrors, setFormErrors] = useState({});
