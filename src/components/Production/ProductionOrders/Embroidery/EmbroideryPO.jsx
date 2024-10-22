@@ -23,7 +23,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import { Card, CardHeader, Avatar } from '@mui/material';
 import '../../../../assets/scss/style.scss';
 import { useNavigate } from 'react-router-dom';
-import StatusChip from '../../../../components/StatusChip';
+import StatusChip from '../../../StatusChip';
 import {
   useGetProductionBatchForProcessingQuery,
   useGetFabricForProductionByProductionIdQuery,
@@ -31,7 +31,8 @@ import {
   useGetProductionPODesignByFabricAndProductionIdQuery,
   useGetDyeingPoHeaderListQuery,
   useDyeingPoAssignTermDetailsByPoIdQuery,
-  useGetDyeingPoHeaderbyProductionIdAndStatusQuery
+  useGetDyeingPoHeaderbyProductionIdAndStatusQuery,
+  useGetProductionBatchDetailsByProductionidQuery
 } from 'api/store/Apis/productionApi';
 import {
   useGetWareHouseLocationsQuery,
@@ -61,7 +62,7 @@ const SmallTextField = styled(TextField)(({ theme }) => ({
   minHeight: '30px' // Set minimum height to ensure it's usable
 }));
 
-const PrintingPO = () => {
+const EmbroideryPO = () => {
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
   const apiRef = useGridApiRef();
   const { enqueueSnackbar } = useSnackbar();
@@ -76,9 +77,10 @@ const PrintingPO = () => {
   const [formData, setFormData] = useState({
     poId: 0,
     productionId: '',
+    designId: '',
     issuanceDate: new Date().toISOString().slice(0, 10),
     expectedReturnDate: '',
-    processTypeId: 1224,
+    processTypeId: '',
     fabricId: '',
     pxQty: 0,
     vendorId: '',
@@ -98,6 +100,7 @@ const PrintingPO = () => {
 
   const [initialRows, setInitialRows] = useState([]);
   const [fabricsList, setFabricsList] = useState([]);
+  const [designsList, setDesignsList] = useState([]);
   const [vendorsList, setVendorsList] = useState([]);
   const [locationsList, setLocationsList] = useState([]);
   const { data: poHeaderData, refetch: refetchPoHeaderData } =
@@ -117,6 +120,10 @@ const PrintingPO = () => {
     useGetFabricForProductionByProductionIdQuery(formData.productionId, {
       skip: !formData.productionId // Skip the query if no collection is selected
     });
+  const { data: designsData, refetch: refetchDesignsData } =
+    useGetProductionBatchDetailsByProductionidQuery(formData.productionId, {
+      skip: !formData.productionId // Skip the query if no collection is selected
+    });
   const { data: vendorsData, refetch: refetchVendorsData } =
     useGetVendorsByFabricIDQuery(formData.fabricId, {
       skip: !formData.fabricId // Skip the query if no collection is selected
@@ -128,19 +135,23 @@ const PrintingPO = () => {
         skip: !formData.fabricId || !formData.productionId // Skip the query if no collection is selected
       }
     );
+  const { data: lookUpData, refetch: refetchlookUpData } =
+    useGetLookUpListQuery();
   // const { data: subMenuData, refetch } = useGetSubMenuListQuery();
   const [productions, setProductions] = useState([]);
-
-  // useEffect(() => {
-  //   if (dyeingPoData) {
-  //     setInitialRows(
-  //       dyeingPoData.result.map((row, index) => ({
-  //         id: index + 1,
-  //         ...row
-  //       }))
-  //     );
-  //   }
-  // }, [dyeingPoData, refetchDyeingPoData]);
+  const [processTypes, setProcessTypes] = useState([]);
+  useEffect(() => {
+    if (lookUpData) {
+      setProcessTypes(
+        lookUpData.result[0].productionProcessList
+          .filter((item) => item.lookUpId === 1225 || item.lookUpId === 1226)
+          .map((row, index) => ({
+            id: index,
+            ...row
+          }))
+      );
+    }
+  }, [lookUpData]);
   useEffect(() => {
     if (poHeaderData) {
       refetchPoHeaderData();
@@ -152,7 +163,16 @@ const PrintingPO = () => {
       );
     }
   }, [poHeaderData, refetchPoHeaderData]);
-
+  useEffect(() => {
+    if (designsData) {
+      setDesignsList(
+        designsData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [designsData, refetchDesignsData]);
   useEffect(() => {
     if (fabricsData) {
       setFabricsList(
@@ -301,7 +321,7 @@ const PrintingPO = () => {
           issuanceDate: '',
           expectedReturnDate: '',
           fabricId: '',
-          processTypeId: 1223,
+          processTypeId: '',
           vendorId: '',
           shrinkage: '',
           wastage: '',
@@ -760,7 +780,7 @@ const PrintingPO = () => {
           // avatar={
           // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
           // }
-          title="Printing Production Order"
+          title="Embroidery Production Order"
           titleTypographyProps={{ style: { color: 'white' } }}
         ></CardHeader>
         <Grid
@@ -784,6 +804,44 @@ const PrintingPO = () => {
               {productions.map((option) => (
                 <MenuItem key={option.productionId} value={option.productionId}>
                   {option.collectionName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Design"
+              name="designId"
+              value={formData.designId}
+              onChange={handleChange}
+              size="small"
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            >
+              {designsList.map((option) => (
+                <MenuItem key={option.designId} value={option.designId}>
+                  {option.designerName}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
+              select
+              label="Process Type"
+              name="processTypeId"
+              value={formData.processTypeId}
+              onChange={handleChange}
+              size="small"
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            >
+              {processTypes.map((option) => (
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
                 </MenuItem>
               ))}
             </TextField>
@@ -1186,4 +1244,4 @@ const PrintingPO = () => {
   );
 };
 
-export default PrintingPO;
+export default EmbroideryPO;

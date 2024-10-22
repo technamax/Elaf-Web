@@ -32,7 +32,7 @@ import AssignTermsAndConditions from 'components/Production/TermsAndConditions/A
 // import SubMenu from './SubMenu';
 import DyeingPO from 'components/Production/ProductionOrders/Dyeing/DyeingPO';
 import POSummary from 'components/Production/ProductionOrders/Summary/POSummary';
-import PrintingPO from 'components/Production/ProductionOrders/Printing/PrintingPO';
+import EmbroideryPO from 'components/Production/ProductionOrders/Embroidery/EmbroideryPO';
 
 //////
 import * as React from 'react';
@@ -171,7 +171,7 @@ const POGeneration = () => {
               />
               <Tab
                 icon={<AssignmentOutlinedIcon />}
-                label="Printing PO"
+                label="Embroidery PO"
                 value="2"
                 sx={(theme) => ({
                   '& .MuiTouchRipple-child': {
@@ -226,7 +226,7 @@ const POGeneration = () => {
             <DyeingPO />
           </TabPanel>
           <TabPanel value="2">
-            <PrintingPO />
+            <EmbroideryPO />
           </TabPanel>
           <TabPanel value="3">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="4">{/* <AssignTermsAndConditions /> */}</TabPanel>
