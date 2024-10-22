@@ -36,3 +36,4 @@ src/views/Planning/PrePlanningCreation.jsx.orig
 .gitignore.orig
 src/views/Planning/Embroidery.jsx.orig
 src/components/EmbroideryAssignVendor.jsx.orig
+dist/
