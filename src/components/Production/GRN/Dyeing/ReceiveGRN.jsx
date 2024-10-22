@@ -128,6 +128,10 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
     const wastageOnSumGradeBAndCP = row.wastageOnSumGradeBAndCP ?? 0;
     const allowedBCP = sumGradeBAndCP * wastageOnSumGradeBAndCP;
     const wasted = sumGradeBAndCP - allowedBCP;
+    const rejected =
+      row.sumGradeBAndCP -
+      row.sumGradeBAndCP * row.wastageOnSumGradeBAndCP +
+      row.rejectedQty;
 
     return {
       ...row,
@@ -138,6 +142,7 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
       grnaQty: row.gradeAQty,
       grnbQty: row.gradeBQty,
       grncpQty: row.gradeCPQty,
+      // rejectedQty: rejected,
       bGradetotal:
         (row.gradeBQty ?? 0) * (row.rate ?? 0) * (row.bGradeRate ?? 0),
       sumGradeBAndCP: sumGradeBAndCP,
@@ -332,11 +337,31 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
       headerName: 'Shortage'
     }
   ];
+  console.log('grnlist', { grn: formData.grnDetailsList });
+  console.log('updated rejectedQty', {
+    ...formData,
+    grnDetailsList: formData.grnDetailsList?.map((row) => ({
+      ...row,
+      rejectedQty:
+        row.sumGradeBAndCP -
+        row.sumGradeBAndCP * row.wastageOnSumGradeBAndCP +
+        row.rejectedQty
+    }))
+  });
   const handleSave = async () => {
     try {
       const response = await axios.post(
         `http://100.42.177.77:83/api/GRN/SaveGRN`,
-        formData
+        {
+          ...formData,
+          grnDetailsList: formData.grnDetailsList.map((row) => ({
+            ...row,
+            rejectedQty:
+              row.sumGradeBAndCP -
+              row.sumGradeBAndCP * row.wastageOnSumGradeBAndCP +
+              row.rejectedQty
+          }))
+        }
       );
       refetchData();
       if (!response.data.success) {

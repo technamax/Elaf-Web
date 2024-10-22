@@ -44,7 +44,8 @@ import {
   useGetCollectionListFromPlanningHeaderQuery,
   useGetProductionProcessListQuery,
   useGetProductionBatchForProcessingQuery,
-  useGetProductionProcessByProductionIdQuery
+  useGetProductionProcessByProductionIdQuery,
+  useGetProductionBatchlistQuery
   // useGetStatusLookUpQuery
 } from 'api/store/Apis/productionApi';
 // import {useGetLookUpStatusQuery}
@@ -158,7 +159,11 @@ const FabricationSelectionIssuance = () => {
   const {
     data: ProductionProceccBatchList,
     refetch: refetchProductionProceccBatchList
-  } = useGetProductionBatchForProcessingQuery();
+  } = useGetProductionBatchlistQuery();
+  // const {
+  //   data: ProductionProceccBatchList,
+  //   refetch: refetchProductionProceccBatchList
+  // } = useGetProductionBatchForProcessingQuery();
 
   useEffect(() => {
     if (ProductionProceccBatchList) {
@@ -170,12 +175,12 @@ const FabricationSelectionIssuance = () => {
           ...row
         }))
       );
-      if (data && data.productionId) {
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          productionId: data.productionId
-        }));
-      }
+      // if (data && data.productionId) {
+      //   setFormData((prevFormData) => ({
+      //     ...prevFormData,
+      //     productionId: data.productionId
+      //   }));
+      // }
     }
   }, [ProductionProceccBatchList, refetchProductionProceccBatchList]);
   //For View Collection dropdown
@@ -197,18 +202,18 @@ const FabricationSelectionIssuance = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'collectionId') {
+    if (name === 'productionId') {
       const selectedCollection = collectionList.find(
-        (collection) => collection.collectionId === parseInt(value)
+        (collection) => collection.productionId === parseInt(value)
       );
 
       setFormData({
         ...formData,
-        collectionId: value,
-        productionId: selectedCollection ? selectedCollection.productionId : '',
+        productionId: value,
+        collectionId: selectedCollection ? selectedCollection.collectionId : '',
         status: selectedCollection ? selectedCollection.status : ''
       });
-      GetFabricForProductionByCollectionId(1, value);
+      // GetFabricForProductionByCollectionId(1, selectedCollection.productionId);
       // } else if (name === 'viewCollectionId') {
       //   const selectedViewCollection = productioncollectionList.find(
       //     (collection) => collection.collectionId === parseInt(value)
@@ -230,11 +235,11 @@ const FabricationSelectionIssuance = () => {
     }
   };
 
-  const GetFabricForProductionByCollectionId = async (appId, collectionId) => {
+  const GetFabricForProductionByCollectionId = async (appId, productionId) => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/Production/GetFabricForProductionByCollectionId?appId=${appId}&collectionid=${collectionId}`
+        `http://100.42.177.77:83/api/Production/GetFabricForProductionByCollectionId?appId=${appId}&productionId=${productionId}`
       );
       //in 449 url this api doesnt exist
       if (response.data.success) {
@@ -254,6 +259,9 @@ const FabricationSelectionIssuance = () => {
       setIsLoading(false);
     }
   };
+  useEffect(() => {
+    GetFabricForProductionByCollectionId(1, formData.productionId);
+  }, [formData.productionId]);
   //View Datagrid
   const [initialRowsView, setInitialRowsView] = useState([]);
 
@@ -572,9 +580,9 @@ const FabricationSelectionIssuance = () => {
                     fullWidth
                     select
                     size="small"
-                    name="collectionId"
+                    name="productionId"
                     onChange={handleChange}
-                    value={formData.collectionId}
+                    value={formData.productionId}
                     required
                     disabled={isEdit}
                     InputLabelProps={{
@@ -590,10 +598,10 @@ const FabricationSelectionIssuance = () => {
                   >
                     {collectionList.map((option) => (
                       <MenuItem
-                        key={option.collectionId}
-                        value={option.collectionId}
+                        key={option.productionId}
+                        value={option.productionId}
                       >
-                        {option.collectionName}
+                        {option.collectionName}-{option.productionId}
                       </MenuItem>
                     ))}
                   </TextField>

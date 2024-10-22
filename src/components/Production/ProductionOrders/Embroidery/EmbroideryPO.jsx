@@ -24,6 +24,7 @@ import { Card, CardHeader, Avatar } from '@mui/material';
 import '../../../../assets/scss/style.scss';
 import { useNavigate } from 'react-router-dom';
 import StatusChip from '../../../StatusChip';
+import { useGetEmboideryComponentsByDesignIdQuery } from 'api/store/Apis/poApi';
 import {
   useGetProductionBatchForProcessingQuery,
   useGetFabricForProductionByProductionIdQuery,
@@ -77,17 +78,17 @@ const EmbroideryPO = () => {
   const [formData, setFormData] = useState({
     poId: 0,
     productionId: '',
-    designId: '',
+    planningHeaderId: '',
     issuanceDate: new Date().toISOString().slice(0, 10),
     expectedReturnDate: '',
     processTypeId: '',
-    fabricId: '',
-    pxQty: 0,
+    // fabricId: '',
+    // pxQty: 0,
     vendorId: '',
-    shrinkage: '',
-    wastage: '',
-    rate: 0,
-    tax: 0,
+    // shrinkage: '',
+    // wastage: '',
+    // rate: 0,
+    // tax: 0,
     locationId: '',
     remarks: '',
 
@@ -99,6 +100,7 @@ const EmbroideryPO = () => {
   });
 
   const [initialRows, setInitialRows] = useState([]);
+  const [componentsList, setComponentsLists] = useState([]);
   const [fabricsList, setFabricsList] = useState([]);
   const [designsList, setDesignsList] = useState([]);
   const [vendorsList, setVendorsList] = useState([]);
@@ -116,9 +118,9 @@ const EmbroideryPO = () => {
     useGetDyeingPoHeaderListQuery();
   const { data: locationsData, refetch: refetchLocationsData } =
     useGetWareHouseLocationsQuery();
-  const { data: fabricsData, refetch: refetchFabricsData } =
-    useGetFabricForProductionByProductionIdQuery(formData.productionId, {
-      skip: !formData.productionId // Skip the query if no collection is selected
+  const { data: componentsData, refetch: refetchComponentsData } =
+    useGetEmboideryComponentsByDesignIdQuery(formData.planningHeaderId, {
+      skip: !formData.planningHeaderId // Skip the query if no collection is selected
     });
   const { data: designsData, refetch: refetchDesignsData } =
     useGetProductionBatchDetailsByProductionidQuery(formData.productionId, {
@@ -150,6 +152,13 @@ const EmbroideryPO = () => {
             ...row
           }))
       );
+      console.log('lookUpData.result[0]', lookUpData.result[0]);
+      setVendorsList(
+        lookUpData.result[0].vendorList.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
     }
   }, [lookUpData]);
   useEffect(() => {
@@ -174,15 +183,15 @@ const EmbroideryPO = () => {
     }
   }, [designsData, refetchDesignsData]);
   useEffect(() => {
-    if (fabricsData) {
-      setFabricsList(
-        fabricsData.result.map((row, index) => ({
+    if (componentsData) {
+      setComponentsLists(
+        componentsData.result.map((row, index) => ({
           id: index + 1,
           ...row
         }))
       );
     }
-  }, [fabricsData, refetchFabricsData]);
+  }, [componentsData, refetchComponentsData]);
   useEffect(() => {
     if (columnsData) {
       setFabrics(
@@ -193,16 +202,16 @@ const EmbroideryPO = () => {
       );
     }
   }, [columnsData, refetchcolumnsData]);
-  useEffect(() => {
-    if (vendorsData) {
-      setVendorsList(
-        vendorsData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [vendorsData, refetchVendorsData]);
+  // useEffect(() => {
+  //   if (vendorsData) {
+  //     setVendorsList(
+  //       vendorsData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [vendorsData, refetchVendorsData]);
   useEffect(() => {
     if (locationsData) {
       setLocationsList(
@@ -233,77 +242,77 @@ const EmbroideryPO = () => {
   const pQuantity = fabrics
     .reduce((sum, row) => sum + (row.prevoiusPoQty ?? 0), 0)
     .toFixed(2);
-  useEffect(() => {
-    setFormData((prevFormData) => ({
-      ...formData,
-      overallQty: Quantity
-      // remainingQuantity:
-      //   (prevFormData.overallQty - assignedQuantity).toFixed(2) || 0
-    }));
-  }, [setFabrics, fabrics]);
-  useEffect(() => {
-    setFormData((prevFormData) => ({
-      ...formData,
-      overallQty: Quantity,
-      remainingQuantity:
-        (prevFormData.overallQty - pQuantity - assignedQuantity).toFixed(2) || 0
-    }));
-  }, [setFabrics, fabrics]);
+  // useEffect(() => {
+  //   setFormData((prevFormData) => ({
+  //     ...formData,
+  //     overallQty: Quantity
+  //     // remainingQuantity:
+  //     //   (prevFormData.overallQty - assignedQuantity).toFixed(2) || 0
+  //   }));
+  // }, [setFabrics, fabrics]);
+  // useEffect(() => {
+  //   setFormData((prevFormData) => ({
+  //     ...formData,
+  //     overallQty: Quantity,
+  //     remainingQuantity:
+  //       (prevFormData.overallQty - pQuantity - assignedQuantity).toFixed(2) || 0
+  //   }));
+  // }, [setFabrics, fabrics]);
   console.log('initialRows', initialRows);
   console.log('poHeaderData', poHeaderData);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'vendorId') {
-      const selectedvendor = vendorsList.find(
-        (collection) => collection.vendorId === parseInt(value)
-      );
+    // if (name === 'vendorId') {
+    //   const selectedvendor = vendorsList.find(
+    //     (collection) => collection.vendorId === parseInt(value)
+    //   );
 
-      setFormData({
-        ...formData,
-        vendorId: value,
-        shrinkage: selectedvendor ? selectedvendor.shrinkage : '',
-        wastage: selectedvendor ? selectedvendor.wastage : ''
-      });
-    } else if (name === 'fabricId') {
-      const selectedFabric = fabricsList.find(
-        (collection) => collection.fabricId === parseInt(value)
-      );
+    //   setFormData({
+    //     ...formData,
+    //     vendorId: value,
+    //     shrinkage: selectedvendor ? selectedvendor.shrinkage : '',
+    //     wastage: selectedvendor ? selectedvendor.wastage : ''
+    //   });
+    // } else if (name === 'fabricId') {
+    //   const selectedFabric = fabricsList.find(
+    //     (collection) => collection.fabricId === parseInt(value)
+    //   );
 
-      setFormData({
-        ...formData,
-        fabricId: value,
-        pxQty: selectedFabric ? selectedFabric.pxQty : 0,
-        vendorId: '',
-        shrinkage: '',
-        wastage: ''
-      });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
+    //   setFormData({
+    //     ...formData,
+    //     fabricId: value,
+    //     pxQty: selectedFabric ? selectedFabric.pxQty : 0,
+    //     vendorId: '',
+    //     shrinkage: '',
+    //     wastage: ''
+    //   });
+    // } else {
+    setFormData({ ...formData, [name]: value });
+    // }
   };
 
   const handleSave = async () => {
-    if (rowSelectionModel.length === 0) {
-      // Show a snackbar warning if no rows are selected
-      enqueueSnackbar('Please select at least one row before saving!', {
-        variant: 'warning',
-        autoHideDuration: 5000
-      });
-      return;
-    }
+    // if (rowSelectionModel.length === 0) {
+    //   // Show a snackbar warning if no rows are selected
+    //   enqueueSnackbar('Please select at least one row before saving!', {
+    //     variant: 'warning',
+    //     autoHideDuration: 5000
+    //   });
+    //   return;
+    // }
 
     console.log('formData', formData);
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:83/api/PO/SavePOHeader',
+        'http://100.42.177.77:83/api/PO/SaveEmbroideryPO',
         { ...formData }
       );
 
       console.log('Save response:', response.data);
-      refetchDyeingPoData();
-      refetchPoHeaderData();
+      // refetchDyeingPoData();
+      // refetchPoHeaderData();
       // Check for success
       if (response.data.success) {
         // Show a success snackbar if the save operation was successful
@@ -311,7 +320,7 @@ const EmbroideryPO = () => {
           variant: 'success',
           autoHideDuration: 5000
         });
-        setSavedRowIds((prev) => new Set([...prev, ...rowSelectionModel]));
+        // setSavedRowIds((prev) => new Set([...prev, ...rowSelectionModel]));
 
         // Reset formData and related states
         setFormData({
@@ -320,11 +329,11 @@ const EmbroideryPO = () => {
           ...formData,
           issuanceDate: '',
           expectedReturnDate: '',
-          fabricId: '',
+          // fabricId: '',
           processTypeId: '',
           vendorId: '',
-          shrinkage: '',
-          wastage: '',
+          // shrinkage: '',
+          // wastage: '',
           locationId: '',
           appId: user.appId,
           createdOn: new Date().toISOString(),
@@ -332,12 +341,12 @@ const EmbroideryPO = () => {
           lastUpdatedOn: new Date().toISOString(),
           lastUpdatedBy: user.empId
         });
-        setFabrics([]);
-        refetchDyeingPoData();
-        refetchPoHeaderData();
-        setRowSelectionModel([]);
-        refetchcolumnsData();
-        setIsEdit(false);
+        // setFabrics([]);
+        // refetchDyeingPoData();
+        // refetchPoHeaderData();
+        // setRowSelectionModel([]);
+        // refetchcolumnsData();
+        // setIsEdit(false);
       } else {
         // Show an error snackbar if the save operation was not successful
         enqueueSnackbar(`Save failed: ${response.data.message}`, {
@@ -508,215 +517,406 @@ const EmbroideryPO = () => {
       }))
     );
   }, [formData.rate, formData.tax]);
-  const handleCellEdit = React.useCallback(
-    (params) => {
-      const { id, field, value } = params;
-      console.log('Editing cell:', params); // Debugging line
+  // const handleCellEdit = React.useCallback(
+  //   (params) => {
+  //     const { id, field, value } = params;
+  //     console.log('Editing cell:', params); // Debugging line
 
-      setFabrics((prevRows) =>
-        prevRows.map((row) => {
-          if (row.id === id) {
-            const updatedRow = {
-              ...row,
-              [field]: value,
-              poId: 0,
-              poDetId: 0,
-              appId: user.appId,
-              createdOn: new Date().toISOString(),
-              createdBy: user.empId,
-              lastUpdatedOn: new Date().toISOString(),
-              lastUpdatedBy: user.empId
-            };
-            if (field === 'quantity') {
-              updatedRow.totalBeforeTax = updatedRow.rate * updatedRow.quantity;
-              updatedRow.totalAfterTax =
-                updatedRow.totalBeforeTax +
-                updatedRow.totalBeforeTax * (updatedRow.tax / 100);
-            }
+  //     setFabrics((prevRows) =>
+  //       prevRows.map((row) => {
+  //         if (row.id === id) {
+  //           const updatedRow = {
+  //             ...row,
+  //             [field]: value,
+  //             poId: 0,
+  //             poDetId: 0,
+  //             appId: user.appId,
+  //             createdOn: new Date().toISOString(),
+  //             createdBy: user.empId,
+  //             lastUpdatedOn: new Date().toISOString(),
+  //             lastUpdatedBy: user.empId
+  //           };
+  //           if (field === 'quantity') {
+  //             updatedRow.totalBeforeTax = updatedRow.rate * updatedRow.quantity;
+  //             updatedRow.totalAfterTax =
+  //               updatedRow.totalBeforeTax +
+  //               updatedRow.totalBeforeTax * (updatedRow.tax / 100);
+  //           }
 
-            if (field === 'quantity' && value > 0) {
-              setRowSelectionModel((prevSelectionModel) => {
-                if (!prevSelectionModel.includes(id)) {
-                  return [...prevSelectionModel, id]; // Add the row ID to the selection model
-                }
-                return prevSelectionModel;
-              });
-            }
-            if (field === 'quantity' && (value === '' || value === 0)) {
-              setRowSelectionModel((prevSelectionModel) =>
-                prevSelectionModel.filter((selectedId) => selectedId !== id)
-              );
-            }
+  //           if (field === 'quantity' && value > 0) {
+  //             setRowSelectionModel((prevSelectionModel) => {
+  //               if (!prevSelectionModel.includes(id)) {
+  //                 return [...prevSelectionModel, id]; // Add the row ID to the selection model
+  //               }
+  //               return prevSelectionModel;
+  //             });
+  //           }
+  //           if (field === 'quantity' && (value === '' || value === 0)) {
+  //             setRowSelectionModel((prevSelectionModel) =>
+  //               prevSelectionModel.filter((selectedId) => selectedId !== id)
+  //             );
+  //           }
 
-            return updatedRow;
+  //           return updatedRow;
+  //         }
+  //         return row;
+  //       })
+  //     );
+  //   },
+  //   [setFabrics, user.appId, user.empId, formData.rate]
+  // );
+
+  // const designsColumns = [
+  //   {
+  //     field: 'id',
+
+  //     headerName: 'Sr#'
+  //   },
+  //   {
+  //     field: 'designNo',
+  //     headerName: 'Design'
+  //   },
+  //   {
+  //     field: 'colorName',
+  //     headerName: 'Color'
+  //   },
+  //   {
+  //     field: 'availableQty',
+  //     headerName: 'Planned Qty',
+  //     valueGetter: (params) => {
+  //       return params.toLocaleString();
+  //     },
+  //     renderCell: (params) => {
+  //       return (
+  //         <StatusChip
+  //           label={params.row.availableQty.toLocaleString()}
+  //           status="Inspected"
+  //         />
+  //       );
+  //     }
+  //   },
+  //   {
+  //     field: 'prevoiusPoQty',
+  //     headerName: 'Prevoius PO.Qty',
+  //     valueGetter: (params) => {
+  //       return params.toLocaleString();
+  //     },
+  //     renderCell: (params) => {
+  //       return (
+  //         <StatusChip
+  //           label={params.row.prevoiusPoQty.toLocaleString()}
+  //           status="Received"
+  //         />
+  //       );
+  //     }
+  //   },
+  //   {
+  //     field: 'remaining',
+  //     headerName: 'Remaining Qty',
+  //     valueGetter: (params, row) => {
+  //       const remainingQty = row.availableQty - row.prevoiusPoQty;
+  //       return remainingQty.toLocaleString();
+  //     },
+  //     renderCell: (params) => {
+  //       const remainingQty = params.row.availableQty - params.row.prevoiusPoQty;
+  //       // const chipColor = remainingQty < 0 ? '#FF0000' : '#00FF00'; // Red for negative, green otherwise
+
+  //       return (
+  //         <Chip
+  //           label={remainingQty.toLocaleString()}
+  //           sx={{
+  //             backgroundColor: '#FF0000', // Set to red
+  //             color: '#FFFFFF' // White text for visibility
+  //           }}
+  //         />
+  //       );
+  //     }
+  //   },
+
+  //   {
+  //     field: 'quantity',
+  //     headerName: 'Assigned Qty',
+  //     // flex: 1,
+  //     // width: 'auto',
+
+  //     renderCell: (params) => (
+  //       <SmallTextField
+  //         variant="outlined"
+  //         size="small"
+  //         // fullWidth
+  //         sx={{ mt: 1, width: '50px' }}
+  //         value={params.row.quantity || ''}
+  //         onChange={(event) =>
+  //           handleCellEdit({
+  //             id: params.id,
+  //             field: 'quantity',
+  //             value: Number(event.target.value)
+  //           })
+  //         }
+  //         type="number"
+  //         InputProps={{
+  //           style: { fontSize: '0.875rem' }
+  //         }}
+  //       />
+  //     )
+  //   },
+  //   {
+  //     field: 'totalBeforeTax',
+  //     headerName: 'Total',
+  //     renderCell: (params) => {
+  //       const totalBeforeTax = params.row.totalBeforeTax || 0;
+  //       const formattedTotalBeforeTax = totalBeforeTax.toLocaleString();
+  //       return (
+  //         <SmallTextField
+  //           variant="outlined"
+  //           size="small"
+  //           sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
+  //           value={formattedTotalBeforeTax} // Display formatted total
+  //           onChange={(event) => {
+  //             // Remove thousand separators before converting to number
+  //             const numericValue = Number(event.target.value.replace(/,/g, ''));
+  //             handleCellEdit({
+  //               id: params.id,
+  //               field: 'totalBeforeTax',
+  //               value: numericValue
+  //             });
+  //           }}
+  //           type="text" // Use text type for formatted display
+  //           InputProps={{
+  //             style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+  //           }}
+  //         />
+  //       );
+  //     }
+  //   },
+  //   {
+  //     field: 'totalAfterTax',
+  //     headerName: 'Total After Tax',
+  //     renderCell: (params) => {
+  //       const totalAfterTax = params.row.totalAfterTax || 0;
+  //       const formattedTotalAfterTax = totalAfterTax.toLocaleString();
+  //       return (
+  //         <SmallTextField
+  //           variant="outlined"
+  //           size="small"
+  //           sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
+  //           value={formattedTotalAfterTax} // Display formatted total
+  //           onChange={(event) => {
+  //             // Remove thousand separators before converting to number
+  //             const numericValue = Number(event.target.value.replace(/,/g, ''));
+  //             handleCellEdit({
+  //               id: params.id,
+  //               field: 'totalAfterTax',
+  //               value: numericValue
+  //             });
+  //           }}
+  //           type="text" // Use text type for formatted display
+  //           InputProps={{
+  //             style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+  //           }}
+  //         />
+  //       );
+  //     }
+  //   }
+  // ];
+
+  // // const fetchData = React.useCallback(() => {
+  // //   apiRef.current.autosizeColumns({
+  // //     includeHeaders: true,
+  // //     includeOutliers: true
+  // //   });
+  // // }, [apiRef]);
+  // const fetchData = () => {
+  //   apiRef.current.autosizeColumns({
+  //     includeHeaders: true,
+  //     includeOutliers: true
+  //   });
+  // };
+  // React.useEffect(() => {
+  //   fetchData();
+  // });
+  const handleCellEdit = (params) => {
+    const { id, field, value } = params;
+    console.log('Editing cell:', params); // Debugging line
+
+    setComponentsLists((prevRows) =>
+      prevRows.map((row) => {
+        if (row.id === id) {
+          const updatedRow = {
+            ...row,
+            [field]: value,
+            // quantity: row.itpQuantity,
+            // productName: row.fabricName,
+            poDetId: 0,
+            poId: 0,
+            appId: user.appId,
+            createdOn: new Date().toISOString(),
+            createdBy: user.empId,
+            lastUpdatedOn: new Date().toISOString(),
+            lastUpdatedBy: user.empId
+          };
+
+          // Recalculate the amount when rate or quantity is updated
+          if (
+            field === 'rate' ||
+            field === 'stitches'
+            // field === 'gradeCPQty' ||
+            // field === 'others1Qty'
+          ) {
+            updatedRow.total = updatedRow.rate * updatedRow.stitches;
+            // (updatedRow.gradeCPQty || 0) +
+            // (updatedRow.others1Qty || 0);
           }
-          return row;
-        })
-      );
-    },
-    [setFabrics, user.appId, user.empId, formData.rate]
-  );
+          return updatedRow;
+        }
+        return row;
+      })
+    );
+  };
 
-  const designsColumns = [
+  React.useEffect(() => {
+    setFormData({
+      ...formData,
+      embroideryPoDetailsList: componentsList
+    });
+  }, [componentsList, setComponentsLists]);
+  console.log('formData', formData);
+  console.log('componentsList', componentsList);
+
+  const componentsColumns = [
     {
       field: 'id',
-
       headerName: 'Sr#'
     },
     {
-      field: 'designNo',
-      headerName: 'Design'
+      field: 'componentName',
+      headerName: 'Component'
     },
     {
-      field: 'colorName',
+      field: 'fabricName',
+      headerName: 'Fabric'
+    },
+    {
+      field: 'colourName',
       headerName: 'Color'
     },
     {
-      field: 'availableQty',
-      headerName: 'Planned Qty',
+      field: 'totalPcs',
+      headerName: 'Total PCS',
       valueGetter: (params) => {
         return params.toLocaleString();
-      },
-      renderCell: (params) => {
-        return (
-          <StatusChip
-            label={params.row.availableQty.toLocaleString()}
-            status="Inspected"
-          />
-        );
-      }
-    },
-    {
-      field: 'prevoiusPoQty',
-      headerName: 'Prevoius PO.Qty',
-      valueGetter: (params) => {
-        return params.toLocaleString();
-      },
-      renderCell: (params) => {
-        return (
-          <StatusChip
-            label={params.row.prevoiusPoQty.toLocaleString()}
-            status="Received"
-          />
-        );
-      }
-    },
-    {
-      field: 'remaining',
-      headerName: 'Remaining Qty',
-      valueGetter: (params, row) => {
-        const remainingQty = row.availableQty - row.prevoiusPoQty;
-        return remainingQty.toLocaleString();
-      },
-      renderCell: (params) => {
-        const remainingQty = params.row.availableQty - params.row.prevoiusPoQty;
-        // const chipColor = remainingQty < 0 ? '#FF0000' : '#00FF00'; // Red for negative, green otherwise
-
-        return (
-          <Chip
-            label={remainingQty.toLocaleString()}
-            sx={{
-              backgroundColor: '#FF0000', // Set to red
-              color: '#FFFFFF' // White text for visibility
-            }}
-          />
-        );
       }
     },
 
     {
-      field: 'quantity',
-      headerName: 'Assigned Qty',
-      // flex: 1,
-      // width: 'auto',
-
+      field: 'repeats',
+      headerName: 'Repeats'
+    },
+    {
+      field: 'noOfHeadsName',
+      headerName: 'No Of Headers'
+    },
+    {
+      field: 'cuttingSize',
+      headerName: 'Cutting Size'
+    },
+    {
+      field: 'itemsPerRepeat',
+      headerName: 'items PerRepeat'
+    },
+    // {
+    //   field: 'lastReceivedQty',
+    //   headerName: 'Overall Received',
+    //   valueGetter: (params, row) => {
+    //     return (params - row.shortageQty).toLocaleString();
+    //   }
+    // },
+    // {
+    //   field: 'remaining',
+    //   headerName: 'Remaining',
+    //   valueGetter: (params, row) => {
+    //     return (
+    //       row.issuanceQuantity -
+    //       (row.lastReceivedQty - row.shortageQty)
+    //     ).toLocaleString();
+    //   }
+    // },
+    {
+      field: 'stitches',
+      headerName: 'Stitches',
       renderCell: (params) => (
         <SmallTextField
           variant="outlined"
+          // disabled
           size="small"
           // fullWidth
-          sx={{ mt: 1, width: '50px' }}
-          value={params.row.quantity || ''}
+          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
+          value={params.row.stitches || 0}
           onChange={(event) =>
             handleCellEdit({
               id: params.id,
-              field: 'quantity',
+              field: 'stitches',
               value: Number(event.target.value)
             })
           }
           type="number"
           InputProps={{
-            style: { fontSize: '0.875rem' }
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
           }}
         />
       )
     },
     {
-      field: 'totalBeforeTax',
-      headerName: 'Total',
-      renderCell: (params) => {
-        const totalBeforeTax = params.row.totalBeforeTax || 0;
-        const formattedTotalBeforeTax = totalBeforeTax.toLocaleString();
-        return (
-          <SmallTextField
-            variant="outlined"
-            size="small"
-            sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
-            value={formattedTotalBeforeTax} // Display formatted total
-            onChange={(event) => {
-              // Remove thousand separators before converting to number
-              const numericValue = Number(event.target.value.replace(/,/g, ''));
-              handleCellEdit({
-                id: params.id,
-                field: 'totalBeforeTax',
-                value: numericValue
-              });
-            }}
-            type="text" // Use text type for formatted display
-            InputProps={{
-              style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-            }}
-          />
-        );
-      }
+      field: 'rate',
+      headerName: 'Rate',
+      renderCell: (params) => (
+        <SmallTextField
+          variant="outlined"
+          size="small"
+          // fullWidth
+          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
+          value={params.row.rate || 0}
+          defaultValue={10}
+          onChange={(event) =>
+            handleCellEdit({
+              id: params.id,
+              field: 'rate',
+              value: Number(event.target.value)
+            })
+          }
+          type="number"
+          InputProps={{
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+          }}
+        />
+      )
     },
     {
-      field: 'totalAfterTax',
-      headerName: 'Total After Tax',
-      renderCell: (params) => {
-        const totalAfterTax = params.row.totalAfterTax || 0;
-        const formattedTotalAfterTax = totalAfterTax.toLocaleString();
-        return (
-          <SmallTextField
-            variant="outlined"
-            size="small"
-            sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
-            value={formattedTotalAfterTax} // Display formatted total
-            onChange={(event) => {
-              // Remove thousand separators before converting to number
-              const numericValue = Number(event.target.value.replace(/,/g, ''));
-              handleCellEdit({
-                id: params.id,
-                field: 'totalAfterTax',
-                value: numericValue
-              });
-            }}
-            type="text" // Use text type for formatted display
-            InputProps={{
-              style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-            }}
-          />
-        );
-      }
+      field: 'total',
+      headerName: 'Total Amount',
+      renderCell: (params) => (
+        <SmallTextField
+          variant="outlined"
+          size="small"
+          // fullWidth
+          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
+          value={params.row.total || 0}
+          onChange={(event) =>
+            handleCellEdit({
+              id: params.id,
+              field: 'total',
+              value: Number(event.target.value)
+            })
+          }
+          type="number"
+          InputProps={{
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+          }}
+        />
+      )
     }
   ];
 
-  // const fetchData = React.useCallback(() => {
-  //   apiRef.current.autosizeColumns({
-  //     includeHeaders: true,
-  //     includeOutliers: true
-  //   });
-  // }, [apiRef]);
   const fetchData = () => {
     apiRef.current.autosizeColumns({
       includeHeaders: true,
@@ -726,51 +926,50 @@ const EmbroideryPO = () => {
   React.useEffect(() => {
     fetchData();
   });
+  // const [selectedDesigns, setSelectedDesigns] = useState([]);
 
-  const [selectedDesigns, setSelectedDesigns] = useState([]);
+  // const handleRowSelectionModelChange = React.useCallback(
+  //   (newRowSelectionModel) => {
+  //     setRowSelectionModel(newRowSelectionModel);
 
-  const handleRowSelectionModelChange = React.useCallback(
-    (newRowSelectionModel) => {
-      setRowSelectionModel(newRowSelectionModel);
+  //     const selectedDesigns = newRowSelectionModel
+  //       .map((id) => {
+  //         const rowData = apiRef.current.getRow(id);
+  //         console.log('rowData', rowData);
+  //         return rowData
+  //           ? {
+  //               ...rowData
+  //             }
+  //           : null;
+  //       })
+  //       .filter((row) => row !== null); // Filter out any null values
 
-      const selectedDesigns = newRowSelectionModel
-        .map((id) => {
-          const rowData = apiRef.current.getRow(id);
-          console.log('rowData', rowData);
-          return rowData
-            ? {
-                ...rowData
-              }
-            : null;
-        })
-        .filter((row) => row !== null); // Filter out any null values
+  //     console.log('selectedDesigns', selectedDesigns);
+  //     setSelectedDesigns(selectedDesigns);
+  //   },
+  //   [apiRef]
+  // );
 
-      console.log('selectedDesigns', selectedDesigns);
-      setSelectedDesigns(selectedDesigns);
-    },
-    [apiRef]
-  );
+  // useEffect(() => {
+  //   // Filter the fabrics to include only the selected rows
+  //   const selectedFabrics = fabrics.filter((fabric) =>
+  //     rowSelectionModel.includes(fabric.id)
+  //   );
 
-  useEffect(() => {
-    // Filter the fabrics to include only the selected rows
-    const selectedFabrics = fabrics.filter((fabric) =>
-      rowSelectionModel.includes(fabric.id)
-    );
+  //   setFormData((prevFormData) => ({
+  //     ...prevFormData,
+  //     dyeingPoDetailsList: selectedFabrics
+  //   }));
+  // }, [fabrics, rowSelectionModel]);
 
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      dyeingPoDetailsList: selectedFabrics
-    }));
-  }, [fabrics, rowSelectionModel]);
+  // console.log('fabrics', fabrics);
+  // React.useEffect(() => {
+  //   if (apiRef.current) {
+  //     console.log('API ref is ready:', apiRef.current);
+  //   }
+  // }, [apiRef]);
 
-  console.log('fabrics', fabrics);
-  React.useEffect(() => {
-    if (apiRef.current) {
-      console.log('API ref is ready:', apiRef.current);
-    }
-  }, [apiRef]);
-
-  console.log('selectedDesigns:', selectedDesigns);
+  // console.log('selectedDesigns:', selectedDesigns);
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -813,16 +1012,19 @@ const EmbroideryPO = () => {
               fullWidth
               select
               label="Design"
-              name="designId"
-              value={formData.designId}
+              name="planningHeaderId"
+              value={formData.planningHeaderId}
               onChange={handleChange}
               size="small"
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             >
               {designsList.map((option) => (
-                <MenuItem key={option.designId} value={option.designId}>
-                  {option.designerName}
+                <MenuItem
+                  key={option.planningHeaderId}
+                  value={option.planningHeaderId}
+                >
+                  {option.designNo}
                 </MenuItem>
               ))}
             </TextField>
@@ -886,7 +1088,7 @@ const EmbroideryPO = () => {
               }}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          {/* <Grid item xs={12} md={3}>
             <TextField
               fullWidth
               select
@@ -904,7 +1106,7 @@ const EmbroideryPO = () => {
                 </MenuItem>
               ))}
             </TextField>
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -918,13 +1120,13 @@ const EmbroideryPO = () => {
               // helperText={formErrors.brandId}
             >
               {vendorsList.map((option) => (
-                <MenuItem key={option.vendorId} value={option.vendorId}>
-                  {option.vendorName}
+                <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                  {option.lookUpName}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} md={1.5}>
+          {/* <Grid item xs={12} md={1.5}>
             <TextField
               label="Shrinkage"
               fullWidth
@@ -938,8 +1140,8 @@ const EmbroideryPO = () => {
               // error={!!formErrors.collectionName}
               // helperText={formErrors.collectionName}
             />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
+          </Grid> */}
+          {/* <Grid item xs={12} md={1.5}>
             <TextField
               label="Wastage"
               fullWidth
@@ -953,8 +1155,8 @@ const EmbroideryPO = () => {
               // error={!!formErrors.collectionName}
               // helperText={formErrors.collectionName}
             />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
+          </Grid> */}
+          {/* <Grid item xs={12} md={1.5}>
             <TextField
               label="Rate"
               type="number"
@@ -968,8 +1170,8 @@ const EmbroideryPO = () => {
               // error={!!formErrors.collectionName}
               // helperText={formErrors.collectionName}
             />
-          </Grid>
-          <Grid item xs={12} md={1.5}>
+          </Grid> */}
+          {/* <Grid item xs={12} md={1.5}>
             <TextField
               label="Tax"
               fullWidth
@@ -983,7 +1185,7 @@ const EmbroideryPO = () => {
               // error={!!formErrors.collectionName}
               // helperText={formErrors.collectionName}
             />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
@@ -1023,7 +1225,7 @@ const EmbroideryPO = () => {
               // helperText={formErrors.collectionName}
             />
           </Grid>
-          <Grid item xs={12} textAlign="right">
+          {/* <Grid item xs={12} textAlign="right">
             <Typography
               variant="overline"
               sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
@@ -1053,26 +1255,19 @@ const EmbroideryPO = () => {
                 }}
               />
             </Typography>
-            {/* </Grid>
-          <Grid item xs={3} textAlign="right"> */}
-            {/* <Typography
-              variant="overline"
-              sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
-            >
-              planned Quantity : {formData.overallQty}
-            </Typography> */}
-            {/* </Grid>
-          <Grid item xs={3} textAlign="right"> */}
-            {/* <Typography
-              variant="overline"
-              sx={{ display: 'block', fontWeight: 'bold', fontSize: 15 }}
-            >
-              Remaining Quantity : {formData.remainingQuantity}
-            </Typography> */}
-          </Grid>
+          </Grid> */}
           <Grid item xs={12}>
             <div style={{ height: 400, width: '100%' }}>
               <DataGrid
+                rows={componentsList}
+                columns={componentsColumns}
+                apiRef={apiRef}
+                disableRowSelectionOnClick
+                // checkboxSelection
+                // onRowSelectionModelChange={handleRowSelectionModelChange}
+                // rowSelectionModel={rowSelectionModel}
+              />
+              {/* <DataGrid
                 rows={fabrics}
                 columns={designsColumns}
                 pageSize={10} // Adjust based on your needs
@@ -1085,7 +1280,7 @@ const EmbroideryPO = () => {
                 }
                 onRowSelectionModelChange={handleRowSelectionModelChange}
                 rowSelectionModel={rowSelectionModel}
-              />
+              /> */}
             </div>
           </Grid>
 
@@ -1094,9 +1289,9 @@ const EmbroideryPO = () => {
               variant="contained"
               size="small"
               onClick={handleSave}
-              disabled={fabrics.every(
-                (item) => item.prevoiusPoQty >= item.availableQty
-              )}
+              // disabled={fabrics.every(
+              //   (item) => item.prevoiusPoQty >= item.availableQty
+              // )}
             >
               Save
             </Button>

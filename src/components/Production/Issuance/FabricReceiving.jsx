@@ -587,7 +587,7 @@ const FabricReceiving = () => {
           >
             {productioncollectionList.map((option) => (
               <MenuItem key={option.id} value={option.productionId}>
-                {option.collectionName}
+                {option.collectionName}-{option.productionHeaderId}
               </MenuItem>
             ))}
           </TextField>

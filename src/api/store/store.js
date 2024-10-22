@@ -8,6 +8,7 @@ import { userManagementApi } from './Apis/userManagementApi';
 import { dashboardApi } from './Apis/dashboardApi';
 import { productionApi } from './Apis/productionApi';
 import { termsAndConditionsApi } from './Apis/termsAndConditionsApi';
+import { poApi } from './Apis/poApi';
 import rootReducer from '../../store/reducer';
 
 const store = configureStore({
@@ -22,6 +23,7 @@ const store = configureStore({
       .concat(dashboardApi.middleware) // Include the API middleware
       .concat(productionApi.middleware)
       .concat(termsAndConditionsApi.middleware)
+      .concat(poApi.middleware)
 });
 
 export default store;
