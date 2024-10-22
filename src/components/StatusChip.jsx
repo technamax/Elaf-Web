@@ -20,7 +20,11 @@ const statusColors = {
   navyblue: '#000080',
   red: '#800000',
   olive: '#808000',
-  pastelgreen: '#66cc99'
+  pastelgreen: '#66cc99',
+  DaffodilYellow: '#FFFF31',
+  Canary: '#FFEF00',
+  Amberyellow: '#FFBF00'
+
   // White (null-status)
 };
 
