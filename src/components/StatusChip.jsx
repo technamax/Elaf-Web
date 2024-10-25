@@ -3,7 +3,7 @@ import { Chip } from '@mui/material';
 
 const statusColors = {
   Draft: '#CCCCCC', // Gray
-  'In Process': '#FFD700', // golden
+  'In Process': '#FFBF00', // golden
   Completed: '#008000', // Green
   Inspected: '#1e88e5', // Blue
   Approved: '#00FF00', // Light Green

@@ -86,9 +86,13 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
     setReceiveDetails((prevRows) =>
       prevRows.map((row) => {
         if (row.id === id) {
+          // const expectedQty = (
+          //   (row.issuanceQuantity * 100) /
+          //   (100 + row.shrinkage + row.wastage)
+          // ).toFixed(2);
           const expectedQty = (
-            (row.issuanceQuantity * 100) /
-            (100 + row.shrinkage + row.wastage)
+            (row.issuanceQuantity * (100 - row.shrinkage)) /
+            (100 + row.wastage)
           ).toFixed(2);
 
           const shortageQty = Math.max(
@@ -195,8 +199,8 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
         return (
           Number(
             (
-              (row.issuanceQuantity * 100) /
-              (100 + row.shrinkage + row.wastage)
+              (row.issuanceQuantity * (100 - row.shrinkage)) /
+              (100 + row.wastage)
             ).toFixed(2)
           )
             // .toFixed(2)
