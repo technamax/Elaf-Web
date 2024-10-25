@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField, Typography, Button, Box, Chip } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Typography,
+  Button,
+  Box,
+  Chip,
+  Stack
+} from '@mui/material';
 import {
   useGetReceivingDetailsForInspectionQuery,
   useGetReceivingHeaderQuery,
@@ -633,6 +641,22 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
               }}
             />
           </Typography>
+        </Grid>
+        <Grid item xs={12} textAlign="right">
+          <Stack direction="row" spacing={2} justifyContent="flex-end">
+            <Typography
+              variant="subtitle1"
+              sx={{ fontWeight: 'bold', fontSize: 15 }}
+            >
+              Shrinkage: {receiveDetails[0]?.shrinkage ?? 'N/A'}
+            </Typography>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontWeight: 'bold', fontSize: 15 }}
+            >
+              Wastage: {receiveDetails[0]?.wastage ?? 'N/A'}
+            </Typography>
+          </Stack>
         </Grid>
       </Grid>
       <Grid
