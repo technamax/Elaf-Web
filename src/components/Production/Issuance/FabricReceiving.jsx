@@ -89,7 +89,7 @@ const FabricReceiving = () => {
     processTypeId: 1222,
     itpId: '',
     status: 2,
-    startDate: new Date().toISOString(),
+    startDate: new Date().toISOString().slice(0, 10),
     appId: user.appId,
     createdOn: new Date().toISOString(),
     createdBy: user.empId,
@@ -622,7 +622,7 @@ const FabricReceiving = () => {
           <TextField
             size="small"
             type="date"
-            label="Start Date"
+            label="Receive Date"
             name="startDate"
             value={formData.startDate}
             onChange={handleChange}

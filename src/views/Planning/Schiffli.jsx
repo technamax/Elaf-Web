@@ -67,6 +67,8 @@ const Schiffli = ({ initialValues }) => {
     fabricId: '',
     vendorId: '',
     colorId: '', //from dying screen coming from fabricAPi
+    color: '',
+    fabric: '',
     availableQty: '',
     thaanQty: 0,
     operatingMachineId: 0,
@@ -101,6 +103,8 @@ const Schiffli = ({ initialValues }) => {
       poPcs: initialData?.poPcs || '',
       // baseColorName: initialData?.baseColorName || '',
       fabricId: initialData?.fabricId || '',
+      fabric: initialData?.fabricName || '',
+      color: initialData?.colourName || '',
       vendorId: initialData?.vendorId || '',
       colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
       availableQty: initialData?.availableQty || '',
@@ -215,6 +219,17 @@ const Schiffli = ({ initialValues }) => {
       // refetchBatches();
     }
   }, [batchData]);
+  useEffect(() => {
+    if (batchList[0]) {
+      setFormData({
+        ...formData,
+        poPcs: batchList[0].poPcs,
+        batchNo: batchList[0].batchNo,
+        planningHeaderId: batchList[0].planningHeaderId
+      });
+      setAccordionExpanded(true);
+    }
+  }, [batchList]);
   useEffect(() => {
     if (fabricData) {
       setFabrications(fabricData.result);
@@ -481,11 +496,17 @@ const Schiffli = ({ initialValues }) => {
       });
       setAccordionExpanded(true);
       setLoading(false);
-    } else if (name === 'colorId') {
-      const selectedcolor = colors.find((color) => color.colorId === value);
+    } else if (name === 'componentId') {
+      const selectedcolor = components.find(
+        (component) => component.componentId === value
+      );
       setFormData({
         ...formData,
-        colorId: value,
+        componentId: value,
+        fabricId: selectedcolor ? selectedcolor.fabricId : '',
+        fabric: selectedcolor ? selectedcolor.fabric : '',
+        color: selectedcolor ? selectedcolor.color : '',
+        colorId: selectedcolor ? selectedcolor.colorId : '',
         availableQty: selectedcolor ? selectedcolor.total : '',
         cuttingSize: selectedcolor ? selectedcolor.cuttingSize : '',
         repeats: selectedcolor ? selectedcolor.repeats : ''
@@ -981,7 +1002,7 @@ const Schiffli = ({ initialValues }) => {
               container
               spacing={1}
               width="Inherit"
-              sx={{ paddingY: 2, paddingX: 2 }}
+              // sx={{ paddingY: 2, paddingX: 2 }}
             >
               <Grid item xs={12} md={3}>
                 <TextField
@@ -1015,12 +1036,12 @@ const Schiffli = ({ initialValues }) => {
               <Grid item xs={12} md={3}>
                 <TextField
                   fullWidth
-                  select
+                  // select
                   label="Select Fabric"
                   defaultValue=""
                   size="small"
-                  name="fabricId"
-                  value={formData.fabricId}
+                  name="fabric"
+                  value={formData.fabric}
                   onChange={handleChange}
                   required
                   error={!!formErrors.fabricId}
@@ -1032,11 +1053,11 @@ const Schiffli = ({ initialValues }) => {
                     }
                   }}
                 >
-                  {Fabrications.map((option) => (
+                  {/* {Fabrications.map((option) => (
                     <MenuItem key={option.fabricId} value={option.fabricId}>
                       {option.fabric}
                     </MenuItem>
-                  ))}
+                  ))} */}
                 </TextField>
               </Grid>
               <Grid item xs={12} md={3}>
@@ -1070,11 +1091,11 @@ const Schiffli = ({ initialValues }) => {
               <Grid item xs={12} md={3}>
                 <TextField
                   fullWidth
-                  select
+                  // select
                   label="Color"
                   size="small"
-                  name="colorId"
-                  value={formData.colorId}
+                  name="color"
+                  value={formData.color}
                   onChange={handleChange}
                   required
                   error={!!formErrors.colorId}
@@ -1086,11 +1107,11 @@ const Schiffli = ({ initialValues }) => {
                     }
                   }}
                 >
-                  {colors.map((option) => (
+                  {/* {colors.map((option) => (
                     <MenuItem key={option.colorId} value={option.colorId}>
                       {option.color}
                     </MenuItem>
-                  ))}
+                  ))} */}
                 </TextField>
               </Grid>
               <Grid item xs={12} md={1.5}>

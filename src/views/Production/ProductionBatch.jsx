@@ -144,7 +144,8 @@ const ProductionBatch = () => {
       setFormData({
         ...formData,
         collectionId: value,
-        orderNumber: selectedCollection ? selectedCollection.orderNumber : ''
+        orderNumber: selectedCollection ? selectedCollection.orderNumber : '',
+        launchDate: selectedCollection ? selectedCollection.launchDate : ''
         // status: selectedCollection ? selectedCollection.batchStatus : ''
       });
     } else {

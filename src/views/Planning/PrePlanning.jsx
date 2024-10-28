@@ -212,7 +212,12 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
           `http://100.42.177.77:83/api/PrePlanning/GetPrePlanningHeaderByDesignId?designId=${id}`
         );
         console.log(response.data);
-        setBatchList(response.data.result);
+        setBatchList(
+          response.data.result.map((row, index) => ({
+            id: index + 1,
+            ...row
+          }))
+        );
       } catch (error) {
         console.error('Error fetching pre-planning lookup data:', error);
       }
@@ -240,6 +245,17 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     // }
     // setLoading(false);
   }, [formData.designId, formData.planningHeaderId]);
+  useEffect(() => {
+    if (batchList[0]) {
+      setFormData({
+        ...formData,
+        poPcs: batchList[0].poPcs,
+        batchNo: batchList[0].batchNo,
+        planningHeaderId: batchList[0].planningHeaderId
+      });
+      setAccordionExpanded(true);
+    }
+  }, [batchList]);
   const isDyeing =
     formData.planningProcessTypeId === 212 ||
     formData.planningProcessTypeId === 1219;
@@ -417,7 +433,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         total: '',
         designId: value,
         baseColorId: selectedDesign ? selectedDesign.colorId : '',
-        baseColorName: selectedDesign ? selectedDesign.colorName : ''
+        baseColorName: selectedDesign ? selectedDesign.colorName : '',
+        colorId: selectedDesign ? selectedDesign.colorId : ''
       });
     } else if (name === 'batchNo') {
       const selectedBatch = batchList.find((batch) => batch.batchNo === value);
@@ -428,7 +445,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         poPcs: selectedBatch ? selectedBatch.poPcs : '',
 
         cuttingSize: '', // not in api
-        colorId: '',
+        // colorId: '',
         fabricId: '',
         noOfHeads: 0,
         operatingMachineId: 0,
@@ -528,6 +545,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         fabricId: prevFormData.fabricId,
         shrinkage: prevFormData.shrinkage,
         wastage: prevFormData.wastage,
+        uomId: prevFormData.uomId,
 
         componentId: '',
         cuttingSize: '', // not in api
@@ -536,7 +554,6 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         operatingMachineId: 0,
         repeats: 0,
         repeatSize: 0,
-        uomId: '',
         totalFabric: '',
         total: '',
         appId: 1,
@@ -970,6 +987,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                 label="Batch No."
                 name="batchNo"
                 value={formData.batchNo}
+                // defaultValue={batchList?.[0]?.batchNo}
                 onChange={handleChange}
                 size="small"
                 required
@@ -1626,37 +1644,40 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                   }}
                 />
               </Grid>
-              <Grid item xs={12} md={2}>
-                <TextField
-                  label="Repeats in Meter"
-                  fullWidth
-                  size="small"
-                  name="repeatsInMtr"
-                  disabled
-                  value={formData.repeatsInMtr}
-                  onChange={handleChange}
-                  sx={(theme) => ({
-                    ...(formData.repeatsInMtr !== '' && {
-                      '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
-                        backgroundColor: `#c9c9c9 !important`
-                      }
-                    }),
-                    '& .MuiInputBase-input.Mui-disabled': {
-                      WebkitTextFillColor: 'black' // Adjust text color here
-                    },
-                    '& .MuiInputBase-root.Mui-disabled': {
-                      backgroundColor: '#f9f9f9' // Adjust background color here
-                    },
-                    '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-                      {
-                        borderColor: 'gray' // Adjust border color here
+              {formData.planningProcessTypeId === 198 ? (
+                <Grid item xs={12} md={2}>
+                  <TextField
+                    label="Repeats in Meter"
+                    fullWidth
+                    size="small"
+                    name="repeatsInMtr"
+                    disabled
+                    value={formData.repeatsInMtr}
+                    onChange={handleChange}
+                    sx={(theme) => ({
+                      ...(formData.repeatsInMtr !== '' && {
+                        '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input':
+                          {
+                            backgroundColor: `#c9c9c9 !important`
+                          }
+                      }),
+                      '& .MuiInputBase-input.Mui-disabled': {
+                        WebkitTextFillColor: 'black' // Adjust text color here
                       },
-                    '& .MuiInputLabel-root.Mui-disabled': {
-                      color: 'rgba(0, 0, 0, 0.87)' // Darker label color
-                    }
-                  })}
-                />
-              </Grid>
+                      '& .MuiInputBase-root.Mui-disabled': {
+                        backgroundColor: '#f9f9f9' // Adjust background color here
+                      },
+                      '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                        {
+                          borderColor: 'gray' // Adjust border color here
+                        },
+                      '& .MuiInputLabel-root.Mui-disabled': {
+                        color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                      }
+                    })}
+                  />
+                </Grid>
+              ) : null}
               <Grid item xs={12} md={2}>
                 <TextField
                   label="Total"

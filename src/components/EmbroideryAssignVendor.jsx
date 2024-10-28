@@ -93,6 +93,8 @@ const EmbroideryAssignVendor = ({
     solvingAmount: 0,
     // additional:  '',
     additional: [],
+    tax: 0,
+    totalAfterTax: 0,
 
     costPerComponent: 0, //
 

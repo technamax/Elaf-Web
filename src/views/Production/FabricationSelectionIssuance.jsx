@@ -88,7 +88,7 @@ const FabricationSelectionIssuance = () => {
     processTypeId: '',
     // AssignQty: '',
     status: '',
-    startDate: new Date().toISOString(),
+    startDate: new Date().toISOString().slice(0, 10),
     appId: user.appId,
     createdOn: new Date().toISOString(),
     createdBy: user.empId,

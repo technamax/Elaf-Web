@@ -4,6 +4,7 @@ import {
   TextField,
   Grid,
   Card,
+  IconButton,
   CardHeader,
   Divider,
   Typography,
@@ -29,6 +30,9 @@ import {
   useGetDistinctCollectionsQuery,
   useGetSummaryByCollectionQuery
 } from 'api/store/Apis/prePlanningHeaderApi';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import CloseIcon from '@mui/icons-material/Close';
+
 import { useSnackbar } from 'notistack';
 import { useUser } from 'context/User';
 import axios from 'axios';
@@ -223,6 +227,32 @@ const Summary = ({
   const handleClose = () => {
     setOpen(false);
   };
+
+  const [open2, setOpen2] = useState(false);
+  const handleClickOpen2 = async (data) => {
+    console.log('rowdata', data);
+    // try {
+    //   const response = await axios.get(
+    //     `http://100.42.177.77:83/api/StockReceiving/GetStockByStatusList?productionId=${data.productionId}&status=8`
+    //   );
+    //   console.log('response', response);
+    //   const result = response.data.result;
+    //   console.log('API Data Result:', result); // Log to check the data structure
+
+    //   setStockView(
+    //     result.map((row, index) => ({
+    //       id: index + 1,
+    //       ...row
+    //     }))
+    //   );
+    // } catch (error) {
+    //   console.error('Error fetching ITP:', error);
+    // }
+    setOpen2(true);
+  };
+  const handleClose2 = () => {
+    setOpen2(false);
+  };
   const prePlanningColumns = [
     { field: 'designNo', headerName: 'Design No' },
     { field: 'batchNo', headerName: 'Batch No' },
@@ -242,6 +272,30 @@ const Summary = ({
       valueGetter: (params) => {
         return params.toLocaleString();
       }
+    },
+    {
+      field: 'View',
+      headerName: 'View Details',
+
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup variant="text" size="small">
+            {/* <IconButton
+              color="primary"
+              onClick={() => handleClickOpen(params.row)}
+              disabled={params.row.statusId === 8}
+            >
+              <MoveToInboxIcon />
+            </IconButton> */}
+            <IconButton
+              color="primary"
+              onClick={() => handleClickOpen2(params.row)}
+            >
+              <VisibilityOutlinedIcon />
+            </IconButton>
+          </ButtonGroup>
+        </div>
+      )
     }
   ];
 
@@ -570,7 +624,7 @@ const Summary = ({
             />
           </Grid>
 
-          <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
+          <Dialog open={open} onClose={handleClose} maxWidth="xxl" fullWidth>
             {/* <DialogTitle>Details</DialogTitle> */}
             <CardHeader
               className="css-4rfrnx-MuiCardHeader-root"
@@ -641,6 +695,59 @@ const Summary = ({
                       }
                     }}
                   />
+                  <Dialog
+                    open={open2}
+                    onClose={handleClose2}
+                    fullWidth
+                    maxWidth="xl"
+                  >
+                    <DialogTitle
+                      sx={{
+                        backgroundColor: '#A11F23',
+                        color: '#ffffff',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        paddingX: '24px',
+                        paddingY: '4px'
+                      }}
+                    >
+                      <Typography
+                        variant="h4"
+                        component="div"
+                        color="#ffffff"
+                        gutterBottom
+                        fontSize={20}
+                        fontWeight={2}
+                        fontStyle={'normal'}
+                      >
+                        {'PrePlanning Details'}
+                      </Typography>
+                      <IconButton
+                        onClick={handleClose2}
+                        sx={{ color: '#ffffff' }}
+                      >
+                        <CloseIcon />
+                      </IconButton>
+                    </DialogTitle>
+                    <DialogContent>
+                      {/* <DialogContentText id="alert-dialog-slide-description"></DialogContentText> */}
+                      <Grid
+                        container
+                        spacing={1}
+                        width="Inherit"
+                        sx={{ paddingY: 2, paddingX: 2 }}
+                      >
+                        <Grid item xs={12}>
+                          {/* <ReuseableDataGrid
+                    initialRows={stockView}
+                    iColumns={viewColumns}
+                    hideAction
+                  /> */}
+                        </Grid>
+                      </Grid>
+                    </DialogContent>
+                  </Dialog>
 
                   <Divider
                     color="#921e22"

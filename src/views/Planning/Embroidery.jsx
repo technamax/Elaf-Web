@@ -81,6 +81,8 @@ const Embroidery = ({ initialValues }) => {
     planningHeaderId: '',
     componentId: '',
     fabricId: '',
+    fabric: '',
+    color: '',
     vendorId: '',
     poPcs: '', // coming from getcollectionapi
     baseColorId: '', // coming from getcollectionapi
@@ -132,6 +134,8 @@ const Embroidery = ({ initialValues }) => {
       // baseColorId: initialData?.baseColorId || '', // coming from getcollectionapi
       // baseColorName: initialData?.baseColorName || '',
       colorId: initialData?.colorId || '', //from dying screen coming from fabricAPi
+      color: initialData?.colourName || '', //from dying screen coming from fabricAPi
+      fabric: initialData?.fabricName || '', //from dying screen coming from fabricAPi
       availableQty: initialData?.availableQty || '',
       noOfHead: initialData?.noOfHead || '',
       repeats: initialData?.repeats || '',
@@ -193,30 +197,30 @@ const Embroidery = ({ initialValues }) => {
     useGetPrePlanningHeaderByDesignIdQuery(formData.designId, {
       skip: !formData.designId // Skip the query if no collection is selected
     });
-  const { data: fabricData, refetch: refetchFabrics } =
-    useGetFabricByComponentsAndBatchNoQuery(
-      {
-        batchNo: formData.planningHeaderId,
-        componentId: formData.componentId
-      },
-      {
-        skip: !formData.planningHeaderId || !formData.componentId
-      }
-    );
-  const { data: colorData } =
-    useGetFabricColorByComponentsBatchNoAndFabricIdQuery(
-      {
-        batchNo: formData.planningHeaderId,
-        componentId: formData.componentId,
-        fabricId: formData.fabricId
-      },
-      {
-        skip:
-          !formData.planningHeaderId ||
-          !formData.componentId ||
-          !formData.fabricId
-      }
-    );
+  // const { data: fabricData, refetch: refetchFabrics } =
+  //   useGetFabricByComponentsAndBatchNoQuery(
+  //     {
+  //       batchNo: formData.planningHeaderId,
+  //       componentId: formData.componentId
+  //     },
+  //     {
+  //       skip: !formData.planningHeaderId || !formData.componentId
+  //     }
+  //   );
+  // const { data: colorData } =
+  //   useGetFabricColorByComponentsBatchNoAndFabricIdQuery(
+  //     {
+  //       batchNo: formData.planningHeaderId,
+  //       componentId: formData.componentId,
+  //       fabricId: formData.fabricId
+  //     },
+  //     {
+  //       skip:
+  //         !formData.planningHeaderId ||
+  //         !formData.componentId ||
+  //         !formData.fabricId
+  //     }
+  //   );
 
   const { data: embroideryList, refetch: refetchEmbroideryList } =
     useGetEmbroideryListByBatchNoQuery(formData.planningHeaderId, {
@@ -237,10 +241,10 @@ const Embroidery = ({ initialValues }) => {
 
   const [designList, setDesignList] = useState([]);
   const [batchList, setBatchList] = useState([]);
-  const [Fabrications, setFabrications] = useState([]);
+  // const [Fabrications, setFabrications] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [heads, setHeads] = useState([]);
-  const [colors, setColors] = useState([]);
+  // const [colors, setColors] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
   const [components, setComponents] = useState([]);
 
@@ -260,18 +264,29 @@ const Embroidery = ({ initialValues }) => {
     }
   }, [batchData]);
   useEffect(() => {
-    if (fabricData) {
-      refetchFabrics();
-      setFabrications(fabricData.result);
-      // refetchBatches();
+    if (batchList[0]) {
+      setFormData({
+        ...formData,
+        poPcs: batchList[0].poPcs,
+        batchNo: batchList[0].batchNo,
+        planningHeaderId: batchList[0].planningHeaderId
+      });
+      // setAccordionExpanded(true);
     }
-  }, [fabricData, refetchFabrics]);
-  useEffect(() => {
-    if (colorData) {
-      setColors(fabricData.result);
-      // refetchBatches();
-    }
-  }, [colorData]);
+  }, [batchList]);
+  // useEffect(() => {
+  //   if (fabricData) {
+  //     refetchFabrics();
+  //     setFabrications(fabricData.result);
+  //     // refetchBatches();
+  //   }
+  // }, [fabricData, refetchFabrics]);
+  // useEffect(() => {
+  //   if (colorData) {
+  //     setColors(fabricData.result);
+  //     // refetchBatches();
+  //   }
+  // }, [colorData]);
   useEffect(() => {
     if (componentsByBatch) {
       setComponents(componentsByBatch.result);
@@ -533,11 +548,17 @@ const Embroidery = ({ initialValues }) => {
 
         // costPerComponent: '' //
       });
-    } else if (name === 'colorId') {
-      const selectedcolor = colors.find((color) => color.colorId === value);
+    } else if (name === 'componentId') {
+      const selectedcolor = components.find(
+        (color) => color.componentId === value
+      );
       setFormData({
         ...formData,
-        colorId: value,
+        componentId: value,
+        colorId: selectedcolor ? selectedcolor.colorId : '',
+        color: selectedcolor ? selectedcolor.color : '',
+        fabricId: selectedcolor ? selectedcolor.fabricId : '',
+        fabric: selectedcolor ? selectedcolor.fabric : '',
         availableQty: selectedcolor ? selectedcolor.total : '',
         cuttingSize: selectedcolor ? selectedcolor.cuttingSize : '',
         repeats: selectedcolor ? selectedcolor.repeats : '',
@@ -1115,12 +1136,12 @@ const Embroidery = ({ initialValues }) => {
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
-              select
+              // select
               label="Select Fabric"
-              defaultValue=""
+              // defaultValue=""
               size="small"
-              name="fabricId"
-              value={formData.fabricId}
+              name="fabric"
+              value={formData.fabric}
               onChange={handleChange}
               required
               error={!!formErrors.fabricId}
@@ -1131,12 +1152,33 @@ const Embroidery = ({ initialValues }) => {
                   color: 'black'
                 }
               }}
+              disabled
+              sx={(theme) => ({
+                ...(formData.fabricId !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
+                },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
             >
-              {Fabrications.map((option) => (
+              {/* {Fabrications.map((option) => (
                 <MenuItem key={option.fabricId} value={option.fabricId}>
                   {option.fabric}
                 </MenuItem>
-              ))}
+              ))} */}
             </TextField>
           </Grid>
           {/* <Grid item xs={12} md={3}>
@@ -1163,11 +1205,11 @@ const Embroidery = ({ initialValues }) => {
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
-              select
+              // select
               label="Color"
               size="small"
-              name="colorId"
-              value={formData.colorId}
+              name="color"
+              value={formData.color}
               onChange={handleChange}
               required
               error={!!formErrors.colorId}
@@ -1178,12 +1220,33 @@ const Embroidery = ({ initialValues }) => {
                   color: 'black'
                 }
               }}
+              disabled
+              sx={(theme) => ({
+                ...(formData.colorId !== '' && {
+                  '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input': {
+                    backgroundColor: `#c9c9c9 !important`
+                  }
+                }),
+                '& .MuiInputBase-input.Mui-disabled': {
+                  WebkitTextFillColor: 'black' // Adjust text color here
+                },
+                '& .MuiInputBase-root.Mui-disabled': {
+                  backgroundColor: '#f9f9f9' // Adjust background color here
+                },
+                '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                  {
+                    borderColor: 'gray' // Adjust border color here
+                  },
+                '& .MuiInputLabel-root.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                }
+              })}
             >
-              {colors.map((option) => (
+              {/* {colors.map((option) => (
                 <MenuItem key={option.colorId} value={option.colorId}>
                   {option.color}
                 </MenuItem>
-              ))}
+              ))} */}
             </TextField>
           </Grid>
           <Grid item xs={12} md={1.5}>
