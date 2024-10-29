@@ -90,7 +90,7 @@ const DyeingIssuance = ({ rowData }) => {
     issuanceId: 0,
     poId: rowData?.poId || 0,
     productionId: rowData?.productionId || '',
-    issuanceDate: '',
+    issuanceDate: new Date().toISOString().slice(0, 10),
     expectedReturnDate: rowData?.expectedReturnDate || '',
     processTypeId: '',
     processTypeName: '',

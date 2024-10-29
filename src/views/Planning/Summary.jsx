@@ -58,6 +58,14 @@ import { List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
 
+import {
+  PrePlannningDetails,
+  FabricationDetails,
+  DyeingnDetails,
+  EmbroideryDetails,
+  SchiffliDetails,
+  AdditionalProcessDetails
+} from 'components/Preplanning/Summary';
 // assets
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
 import '../../assets/scss/style.scss';
@@ -229,25 +237,12 @@ const Summary = ({
   };
 
   const [open2, setOpen2] = useState(false);
-  const handleClickOpen2 = async (data) => {
+  const [planningHeaderId, setPlanningHeaderId] = useState(null);
+  const [dialog, setDialog] = useState(null);
+  const handleClickOpen2 = async (data, dg) => {
     console.log('rowdata', data);
-    // try {
-    //   const response = await axios.get(
-    //     `http://100.42.177.77:83/api/StockReceiving/GetStockByStatusList?productionId=${data.productionId}&status=8`
-    //   );
-    //   console.log('response', response);
-    //   const result = response.data.result;
-    //   console.log('API Data Result:', result); // Log to check the data structure
-
-    //   setStockView(
-    //     result.map((row, index) => ({
-    //       id: index + 1,
-    //       ...row
-    //     }))
-    //   );
-    // } catch (error) {
-    //   console.error('Error fetching ITP:', error);
-    // }
+    setPlanningHeaderId(data.planningHeaderId);
+    setDialog(dg);
     setOpen2(true);
   };
   const handleClose2 = () => {
@@ -289,7 +284,7 @@ const Summary = ({
             </IconButton> */}
             <IconButton
               color="primary"
-              onClick={() => handleClickOpen2(params.row)}
+              onClick={() => handleClickOpen2(params.row, 1)}
             >
               <VisibilityOutlinedIcon />
             </IconButton>
@@ -316,6 +311,30 @@ const Summary = ({
       valueGetter: (params) => {
         return params.toLocaleString();
       }
+    },
+    {
+      field: 'View',
+      headerName: 'View Details',
+
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup variant="text" size="small">
+            {/* <IconButton
+              color="primary"
+              onClick={() => handleClickOpen(params.row)}
+              disabled={params.row.statusId === 8}
+            >
+              <MoveToInboxIcon />
+            </IconButton> */}
+            <IconButton
+              color="primary"
+              onClick={() => handleClickOpen2(params.row, 2)}
+            >
+              <VisibilityOutlinedIcon />
+            </IconButton>
+          </ButtonGroup>
+        </div>
+      )
     }
   ];
 
@@ -340,6 +359,30 @@ const Summary = ({
       valueGetter: (params) => {
         return params.toLocaleString();
       }
+    },
+    {
+      field: 'View',
+      headerName: 'View Details',
+
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup variant="text" size="small">
+            {/* <IconButton
+              color="primary"
+              onClick={() => handleClickOpen(params.row)}
+              disabled={params.row.statusId === 8}
+            >
+              <MoveToInboxIcon />
+            </IconButton> */}
+            <IconButton
+              color="primary"
+              onClick={() => handleClickOpen2(params.row, 3)}
+            >
+              <VisibilityOutlinedIcon />
+            </IconButton>
+          </ButtonGroup>
+        </div>
+      )
     }
   ];
 
@@ -358,6 +401,30 @@ const Summary = ({
         return params.toLocaleString();
       },
       width: 150
+    },
+    {
+      field: 'View',
+      headerName: 'View Details',
+
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup variant="text" size="small">
+            {/* <IconButton
+              color="primary"
+              onClick={() => handleClickOpen(params.row)}
+              disabled={params.row.statusId === 8}
+            >
+              <MoveToInboxIcon />
+            </IconButton> */}
+            <IconButton
+              color="primary"
+              onClick={() => handleClickOpen2(params.row, 4)}
+            >
+              <VisibilityOutlinedIcon />
+            </IconButton>
+          </ButtonGroup>
+        </div>
+      )
     }
   ];
   const schiffiliColumns = [
@@ -371,14 +438,62 @@ const Summary = ({
     },
     { field: 'totalPcsSum', headerName: 'Total Pcs Sum', width: 150 },
     { field: 'fabricCount', headerName: 'Fabric Count', width: 150 },
-    { field: 'componentCount', headerName: 'Component Count', width: 150 }
+    { field: 'componentCount', headerName: 'Component Count', width: 150 },
+    {
+      field: 'View',
+      headerName: 'View Details',
+
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup variant="text" size="small">
+            {/* <IconButton
+              color="primary"
+              onClick={() => handleClickOpen(params.row)}
+              disabled={params.row.statusId === 8}
+            >
+              <MoveToInboxIcon />
+            </IconButton> */}
+            <IconButton
+              color="primary"
+              onClick={() => handleClickOpen2(params.row, 5)}
+            >
+              <VisibilityOutlinedIcon />
+            </IconButton>
+          </ButtonGroup>
+        </div>
+      )
+    }
   ];
   const additionalProcessColumns = [
     { field: 'designNo', headerName: 'Design No', width: 150 },
     { field: 'batchNo', headerName: 'Batch No', width: 150 },
     { field: 'fabricCount', headerName: 'Fabric Count', width: 150 },
     { field: 'pcsPerComponent', headerName: 'Pcs Per Component', width: 150 },
-    { field: 'assignedQtySum', headerName: 'Assigned Qty Sum', width: 150 }
+    { field: 'assignedQtySum', headerName: 'Assigned Qty Sum', width: 150 },
+    {
+      field: 'View',
+      headerName: 'View Details',
+
+      renderCell: (params) => (
+        <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+          <ButtonGroup variant="text" size="small">
+            {/* <IconButton
+              color="primary"
+              onClick={() => handleClickOpen(params.row)}
+              disabled={params.row.statusId === 8}
+            >
+              <MoveToInboxIcon />
+            </IconButton> */}
+            <IconButton
+              color="primary"
+              onClick={() => handleClickOpen2(params.row, 6)}
+            >
+              <VisibilityOutlinedIcon />
+            </IconButton>
+          </ButtonGroup>
+        </div>
+      )
+    }
   ];
 
   const summaryHeaderColumn = [
@@ -739,11 +854,31 @@ const Summary = ({
                         sx={{ paddingY: 2, paddingX: 2 }}
                       >
                         <Grid item xs={12}>
-                          {/* <ReuseableDataGrid
-                    initialRows={stockView}
-                    iColumns={viewColumns}
-                    hideAction
-                  /> */}
+                          {dialog === 1 ? (
+                            <PrePlannningDetails
+                              planningHeaderId={planningHeaderId}
+                            />
+                          ) : dialog === 2 ? (
+                            <FabricationDetails
+                              planningHeaderId={planningHeaderId}
+                            />
+                          ) : dialog === 3 ? (
+                            <DyeingnDetails
+                              planningHeaderId={planningHeaderId}
+                            />
+                          ) : dialog === 4 ? (
+                            <EmbroideryDetails
+                              planningHeaderId={planningHeaderId}
+                            />
+                          ) : dialog === 5 ? (
+                            <SchiffliDetails
+                              planningHeaderId={planningHeaderId}
+                            />
+                          ) : dialog === 6 ? (
+                            <AdditionalProcessDetails
+                              planningHeaderId={planningHeaderId}
+                            />
+                          ) : null}
                         </Grid>
                       </Grid>
                     </DialogContent>

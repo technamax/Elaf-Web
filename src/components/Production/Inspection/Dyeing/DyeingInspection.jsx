@@ -91,9 +91,14 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
           //   (100 + row.shrinkage + row.wastage)
           // ).toFixed(2);
           const expectedQty = (
-            (row.issuanceQuantity * (100 - row.shrinkage)) /
-            (100 + row.wastage)
+            row.issuanceQuantity *
+            (1 - row.shrinkage / 100) *
+            (1 - row.wastage / 100)
           ).toFixed(2);
+          // (
+          // (row.issuanceQuantity * (100 - row.shrinkage)) /
+          // (100 + row.wastage)
+          // ).toFixed(2);
 
           const shortageQty = Math.max(
             row.receivedQty -
@@ -199,8 +204,9 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
         return (
           Number(
             (
-              (row.issuanceQuantity * (100 - row.shrinkage)) /
-              (100 + row.wastage)
+              row.issuanceQuantity *
+              (1 - row.shrinkage / 100) *
+              (1 - row.wastage / 100)
             ).toFixed(2)
           )
             // .toFixed(2)
@@ -451,8 +457,9 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
         return (
           Number(
             (
-              (row.issuanceQuantity * 100) /
-              (100 + row.shrinkage + row.wastage)
+              row.issuanceQuantity *
+              (1 - row.shrinkage / 100) *
+              (1 - row.wastage / 100)
             ).toFixed(2)
           )
             // .toFixed(2)

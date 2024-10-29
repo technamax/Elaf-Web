@@ -26,6 +26,19 @@ import { useSnackbar } from 'notistack';
 import { useUser } from 'context/User';
 import axios from 'axios';
 import StatusChip from '../../../../components/StatusChip';
+
+import { styled } from '@mui/material/styles';
+const SmallTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiInputBase-input': {
+    fontSize: '0.875rem', // Adjust font size
+    padding: '4px 6px' // Adjust padding
+  },
+  width: 'auto', // Let width adjust automatically
+  height: 'auto', // Let height adjust automatically
+  minWidth: '100px', // Set minimum width to ensure it's usable
+  minHeight: '30px' // Set minimum height to ensure it's usable
+}));
+
 const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
   const { user } = useUser();
   const [formData, setFormData] = useState({
@@ -196,6 +209,32 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
     });
   }, [GRNList, setGRNList]);
   console.log('formData', formData);
+  const handleCellEdit = (params) => {
+    const { id, field, value } = params;
+    setGRNList((prevRows) =>
+      prevRows.map((row) => {
+        if (row.id === id) {
+          const updatedRow = {
+            ...row,
+            [field]: value
+          };
+          if (field === 'bGradeRate') {
+            updatedRow.bGradetotal =
+              updatedRow.gradeBQty * updatedRow.bGradeRate;
+          }
+          return updatedRow;
+        }
+        return row;
+      })
+    );
+  };
+
+  // React.useEffect(() => {
+  //   setFormData({
+  //     ...formData,
+  //     productionDetails: initialRows
+  //   });
+  // }, [GRNList, setGRNList]);
   const columns = [
     {
       field: 'id',
@@ -218,6 +257,17 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
     {
       field: 'colorName',
       headerName: 'Color'
+    },
+    {
+      field: 'assignQuantity',
+      headerName: 'PO Qty',
+      renderCell: (params) => {
+        return (
+          params.row.assignQuantity *
+          (1 - params.row.shrinkage / 100) *
+          (1 - params.row.wastage / 100)
+        ).toFixed(2);
+      }
     },
     {
       field: 'gradeAQty',
@@ -249,7 +299,29 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
       headerName: 'BGrade Rate',
       valueGetter: (params, row) => {
         return params * row.rate;
-      }
+      },
+      renderCell: (params) => (
+        <SmallTextField
+          variant="outlined"
+          size="small"
+          // fullWidth
+          sx={{ mt: 1, width: '50px' }} // Adjust width and height as needed
+          // value={params.row.bGradeRate || ''}
+          defaultValue={params.row.rate * params.row.bGradeRate || ''}
+          onChange={(event) =>
+            handleCellEdit({
+              id: params.id,
+              field: 'bGradeRate',
+              value: Number(event.target.value)
+            })
+          }
+          type="number"
+          // disabled={params.row.quantity === params.row.assignQuantity}
+          InputProps={{
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+          }}
+        />
+      )
     },
     {
       field: 'bGradetotal',

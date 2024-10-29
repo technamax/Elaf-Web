@@ -84,7 +84,7 @@ const DyeingPO = () => {
     wastage: '',
     rate: 0,
     tax: 0,
-    locationId: '',
+    // locationId: '',
     remarks: '',
 
     appId: user.appId,
@@ -359,7 +359,7 @@ const DyeingPO = () => {
           vendorId: '',
           shrinkage: '',
           wastage: '',
-          locationId: '',
+          // locationId: '',
           appId: user.appId,
           createdOn: new Date().toISOString(),
           createdBy: user.empId,
@@ -1175,7 +1175,7 @@ const DyeingPO = () => {
               // helperText={formErrors.collectionName}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          {/* <Grid item xs={12} md={3}>
             <TextField
               fullWidth
               select
@@ -1199,7 +1199,7 @@ const DyeingPO = () => {
                 </MenuItem>
               ))}
             </TextField>
-          </Grid>
+          </Grid> */}
           <Grid item xs={12} md={3}>
             <TextField
               label="Remarks"
