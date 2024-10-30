@@ -86,6 +86,8 @@ const Schiffli = ({ initialValues }) => {
     laserCutRate: 0,
     pcsForLaserCut: 0,
     totalAmount: 0,
+    tax: 0,
+    totalAfterTax: 0,
 
     createdBy: user.empId,
     createdOn: new Date().toISOString(),
@@ -323,7 +325,12 @@ const Schiffli = ({ initialValues }) => {
 
       return (totalAmount / totalPcs).toFixed(2);
     };
+    const calculateTotalAfterTax = () => {
+      const totalAmount = parseFloat(formData.totalAmount) || 0;
 
+      const tax = parseFloat(formData.tax) || 0;
+      return (totalAmount * (1 + tax / 100)).toFixed(2);
+    };
     setFormData((prevData) => ({
       ...prevData,
       costPerComponent: calculateCostPerComponent()
@@ -341,7 +348,8 @@ const Schiffli = ({ initialValues }) => {
 
     setFormData((prevData) => ({
       ...prevData,
-      totalAmount: calculateTotalamount()
+      totalAmount: calculateTotalamount(),
+      totalAfterTax: calculateTotalAfterTax()
     }));
   }, [
     formData.thaanQty,
@@ -353,7 +361,14 @@ const Schiffli = ({ initialValues }) => {
     formData.amountPerYard,
     formData.totalEmbroidry,
     formData.laserCutRate,
-    formData.pcsForLaserCut
+    formData.pcsForLaserCut,
+    formData.tax,
+    formData.totalAfterTax,
+    formData.availableQty,
+    formData.noOfItemPerThaan,
+    formData.thaanQty,
+    formData.operatingMachine,
+    formData.workingHeadId
   ]);
 
   // const handleCheckboxChange = (e) => {
@@ -423,7 +438,9 @@ const Schiffli = ({ initialValues }) => {
         laserCut: false,
         laserCutRate: 0,
         pcsForLaserCut: 0,
-        totalAmount: 0
+        totalAmount: 0,
+        tax: 0,
+        totalAfterTax: 0
 
         // poPcs: selectedCollection ? selectedCollection.poPcs : ''
       });
@@ -461,7 +478,9 @@ const Schiffli = ({ initialValues }) => {
         laserCut: false,
         laserCutRate: 0,
         pcsForLaserCut: 0,
-        totalAmount: 0
+        totalAmount: 0,
+        tax: 0,
+        totalAfterTax: 0
       });
     } else if (name === 'batchNo') {
       const selectedBatch = batchList.find((batch) => batch.batchNo === value);
@@ -492,7 +511,9 @@ const Schiffli = ({ initialValues }) => {
         laserCut: false,
         laserCutRate: 0,
         pcsForLaserCut: 0,
-        totalAmount: 0
+        totalAmount: 0,
+        tax: 0,
+        totalAfterTax: 0
       });
       setAccordionExpanded(true);
       setLoading(false);
@@ -585,6 +606,8 @@ const Schiffli = ({ initialValues }) => {
         laserCutRate: 0,
         pcsForLaserCut: 0,
         totalAmount: 0,
+        tax: 0,
+        totalAfterTax: 0,
         createdOn: new Date().toISOString(),
         createdBy: user.empId,
         lastUpdatedOn: new Date().toISOString(),
@@ -811,6 +834,30 @@ const Schiffli = ({ initialValues }) => {
     {
       field: 'totalAmount',
       headerName: 'Total Amount',
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
+    },
+    {
+      field: 'tax',
+      headerName: 'Tax',
+      renderCell: (params) =>
+        params.row.id === 'TOTAL_SUMMARY' ? (
+          <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
+            {params.value}
+          </span>
+        ) : (
+          params.value
+        )
+    },
+    {
+      field: 'totalAfterTax',
+      headerName: 'Total After Tax',
       renderCell: (params) =>
         params.row.id === 'TOTAL_SUMMARY' ? (
           <span style={{ color: '#a11f23', fontWeight: 'bold' }}>
@@ -1415,11 +1462,46 @@ const Schiffli = ({ initialValues }) => {
               </Grid>
               <Grid item xs={12} md={1.5}>
                 <TextField
-                  label="Cost Per Component"
+                  label="Total Amount"
                   fullWidth
                   size="small"
-                  name="costPerComponent"
-                  value={formData.costPerComponent}
+                  type="number"
+                  name="totalAmount"
+                  value={formData.totalAmount}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Tax "
+                  fullWidth
+                  size="small"
+                  type="number"
+                  name="tax"
+                  value={formData.tax}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} md={1.5}>
+                <TextField
+                  label="Total After Tax "
+                  fullWidth
+                  size="small"
+                  type="totalAfterTax"
+                  name="tax"
+                  value={formData.totalAfterTax}
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: {
@@ -1432,12 +1514,11 @@ const Schiffli = ({ initialValues }) => {
 
               <Grid item xs={12} md={1.5}>
                 <TextField
-                  label="Total Amount"
+                  label="Cost Per Component"
                   fullWidth
                   size="small"
-                  type="number"
-                  name="totalAmount"
-                  value={formData.totalAmount}
+                  name="costPerComponent"
+                  value={formData.costPerComponent}
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: {
