@@ -132,6 +132,8 @@ const EmbroideryAssignVendor = ({
       solvingAmount: initialData?.solvingAmount || 0,
       additional: initialData?.additional || 0,
       costPerComponent: initialData?.costPerComponent || 0,
+      tax: initialData?.tax || 0,
+      totalAfterTax: initialData?.totalAfterTax || 0,
 
       createdOn: initialData?.createdOn || new Date().toISOString(),
       createdBy: initialData?.createdBy || user.empId,
@@ -194,144 +196,6 @@ const EmbroideryAssignVendor = ({
     }));
   };
 
-  // useEffect(() => {
-  //   const calculateTotalPcs = () => {
-  //     const repeats = parseFloat(formData.repeats) || 0;
-  //     const itemsPerRepeat = parseFloat(formData.itemsPerRepeat) || 0;
-  //     return (repeats * itemsPerRepeat).toFixed(2);
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     totalPcs: calculateTotalPcs()
-  //   }));
-  //   const calculateThread = () => {
-  //     const stitches = parseFloat(formData.threadStiches) || 0;
-  //     const rate = parseFloat(formData.threadRate) || 0;
-  //     const heads = parseFloat(formData.noOfHead) || 0;
-  //     const repeats = parseFloat(formData.repeats) || 0;
-  //     return ((stitches / 1000) * (rate * repeats * heads)).toFixed(2);
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     threadAmount: calculateThread()
-  //   }));
-  //   const calculateTilla = () => {
-  //     const stitches = parseFloat(formData.tillaStiches) || 0;
-  //     const rate = parseFloat(formData.tilaRate) || 0;
-  //     const heads = parseFloat(formData.noOfHead) || 0;
-  //     const repeats = parseFloat(formData.repeats) || 0;
-  //     return ((stitches / 1000) * (rate * repeats * heads)).toFixed(2);
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     tilaAmount: calculateTilla()
-  //   }));
-  //   const calculateSequence = () => {
-  //     const stitches = parseFloat(formData.sequence) || 0;
-  //     const rate = parseFloat(formData.sequenceRate) || 0;
-  //     const heads = parseFloat(formData.noOfHead) || 0;
-  //     const repeats = parseFloat(formData.repeats) || 0;
-  //     return ((stitches / 1000) * (rate * repeats * heads)).toFixed(2);
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     sequenceAmount: calculateSequence()
-  //   }));
-  //   const calculateInMeters = () => {
-  //     const repeats = parseFloat(formData.repeats) || 0;
-  //     const noOfHead = parseFloat(formData.noOfHead) || 0;
-  //     const layers = parseFloat(formData.solvingLayers) || 0;
-  //     return (((repeats * noOfHead * 13) / 39.37) * layers).toFixed(2);
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     solvingInMeters: calculateInMeters()
-  //   }));
-  //   const calculateSolvingAmount = () => {
-  //     const solvingInMeters = parseFloat(formData.solvingInMeters) || 0;
-  //     const solvingRate = parseFloat(formData.solvingRate) || 0;
-  //     const layers = parseFloat(formData.solvingLayers) || 0;
-  //     return (solvingInMeters * solvingRate).toFixed(2);
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     solvingAmount: calculateSolvingAmount()
-  //   }));
-  //   const calculateTotalAmount = () => {
-  //     const thread = parseFloat(formData.threadAmount) || 0;
-  //     const tilla = parseFloat(formData.tilaAmount) || 0;
-  //     const sequence = parseFloat(formData.sequenceAmount) || 0;
-  //     const solving = parseFloat(formData.solvingAmount) || 0;
-  //     return (thread + tilla + sequence + solving).toFixed(2);
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     totalAmount: calculateTotalAmount() || 0
-  //   }));
-  //   const calculateCostPerComponent = () => {
-  //     const totalAmount = parseFloat(formData.totalAmount) || 0;
-  //     const totalPcs = parseFloat(formData.totalPcs) || 0;
-
-  //     return (totalAmount / totalPcs).toFixed(2);
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     costPerComponent: calculateCostPerComponent() || 0
-  //   }));
-
-  //   const calculateAssignQuantity = () => {
-  //     const requiredPcs = parseFloat(formData.requiredPcs) || 0;
-  //     const availableQty = parseFloat(formData.availableQty) || 0;
-  //     const totalPcs = parseFloat(formData.totalPcs) || 0;
-
-  //     return ((requiredPcs * availableQty) / totalPcs).toFixed(2);
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     assignedQty: calculateAssignQuantity() || 0
-  //   }));
-
-  //   const calculateRequiredPcs = () => {
-  //     const assignedQty = parseFloat(formData.assignedQty) || 0;
-  //     const availableQty = parseFloat(formData.availableQty) || 0;
-  //     const totalPcs = parseFloat(formData.totalPcs) || 0;
-
-  //     return (assignedQty * (totalPcs / availableQty)).toFixed(2);
-  //   };
-
-  //   setFormData((prevData) => ({
-  //     ...prevData,
-  //     requiredPcs: calculateRequiredPcs() || 0
-  //   }));
-  // }, [
-  //   formData.assignedQty,
-  //   formData.threadAmount,
-  //   formData.totalAmount,
-  //   formData.sequenceAmount,
-  //   formData.solvingAmount,
-  //   formData.repeats,
-  //   formData.tilaAmount,
-  //   formData.itemsPerRepeat,
-  //   formData.threadRate,
-  //   formData.threadStiches,
-  //   formData.noOfHead,
-  //   formData.tilaRate,
-  //   formData.tillaStiches,
-  //   formData.sequenceRate,
-  //   formData.sequence,
-  //   formData.solvingLayers,
-  //   formData.solvingInMeters,
-  //   formData.solvingRate
-  // ]);
   console.log('formData', formData);
 
   const [lastUpdatedField, setLastUpdatedField] = useState(null);
@@ -405,10 +269,16 @@ const EmbroideryAssignVendor = ({
     };
 
     const calculateCostPerComponent = () => {
-      const totalAmount = parseFloat(debouncedFormData.totalAmount) || 0;
+      const totalAfterTax = parseFloat(debouncedFormData.totalAfterTax) || 0;
 
       const requiredPcs = parseFloat(debouncedFormData.requiredPcs) || 0;
-      return (totalAmount / requiredPcs).toFixed(2);
+      return (totalAfterTax / requiredPcs).toFixed(2);
+    };
+    const calculateTotalAfterTax = () => {
+      const totalAmount = parseFloat(debouncedFormData.totalAmount) || 0;
+
+      const tax = parseFloat(debouncedFormData.tax) || 0;
+      return (totalAmount * (1 + tax / 100)).toFixed(2);
     };
     const totalAmount = calculateTotalAmount();
     const costPerComponent = calculateCostPerComponent();
@@ -424,6 +294,7 @@ const EmbroideryAssignVendor = ({
       totalAmount: calculateTotalAmount(),
       // formatNumberWithCommas(totalAmount),
 
+      totalAfterTax: calculateTotalAfterTax(),
       costPerComponent: calculateCostPerComponent()
 
       // formatNumberWithCommas(costPerComponent)
@@ -446,7 +317,10 @@ const EmbroideryAssignVendor = ({
     debouncedFormData.solvingLayers,
     debouncedFormData.solvingInMeters,
     debouncedFormData.solvingRate,
-    debouncedFormData.requiredPcs
+    debouncedFormData.requiredPcs,
+    debouncedFormData.tax,
+    debouncedFormData.totalAfterTax,
+    debouncedFormData.costPerComponent
   ]);
 
   useEffect(() => {
@@ -655,8 +529,9 @@ const EmbroideryAssignVendor = ({
         remainingQty: (initialFormData.availableQty - Quantity).toFixed(2) || 0,
         remainingRepeats: initialFormData.repeats - totalRepeats || '',
 
-        costPerComponent: 0, //
-
+        costPerComponent: 0,
+        tax: 0,
+        totalAfterTax: 0,
         createdOn: new Date().toISOString(),
         createdBy: user.empId,
         lastUpdatedOn: new Date().toISOString(),
@@ -729,6 +604,8 @@ const EmbroideryAssignVendor = ({
     { field: 'solvingAmount', headerName: 'Solving Amount' },
     // { field: 'totalPcs', headerName: 'Total Pcs' },
     { field: 'totalAmount', headerName: 'Total Amount' },
+    { field: 'tax', headerName: 'Tax' },
+    { field: 'totalAfterTax', headerName: 'Total After Tax' },
     { field: 'costPerComponent', headerName: 'Cost Per Component' }
   ];
   // const [showUpperDiv, setShowUpperDiv] = useState(true); // State variable to control visibility
@@ -1684,6 +1561,44 @@ const EmbroideryAssignVendor = ({
               name="totalAmount"
               value={formatNumberWithCommas(formData.totalAmount)}
               onChange={handleChange}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={1} sx={{ mt: 4 }}>
+            <TextField
+              label="Tax"
+              fullWidth
+              // type="number"
+              size="small"
+              name="tax"
+              value={formatNumberWithCommas(formData.tax)}
+              onChange={handleChange}
+              // disabled={!formData.remainingPcs && !formData.remainingQty}
+              InputLabelProps={{
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} md={2} sx={{ mt: 4 }}>
+            <TextField
+              label="Total After Tax"
+              fullWidth
+              // type="number"
+              disabled
+              size="small"
+              name="totalAfterTax"
+              value={formatNumberWithCommas(formData.totalAfterTax)}
+              onChange={handleChange}
+              // disabled={!formData.remainingPcs && !formData.remainingQty}
               InputLabelProps={{
                 sx: {
                   // set the color of the label when not shrinked
