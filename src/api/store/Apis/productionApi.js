@@ -103,6 +103,10 @@ export const productionApi = createApi({
       query: (issuanceId) =>
         `Receiving/GetIssuanceDetailsByIssuanceId?issuanceId=${issuanceId}`
     }),
+    getPendingReceivingByIssuanceId: builder.query({
+      query: (issuanceId) =>
+        `Receiving/GetPendingReceivingByIssuanceId?issuanceId=${issuanceId}`
+    }),
     getReceivingDetailsForInspection: builder.query({
       query: (receivingId) =>
         `Receiving/GetReceivingDetailsForInspection?receivingId=${receivingId}&status=8`
@@ -195,6 +199,7 @@ export const {
   useGetIssuanceDetailByPoIdQuery,
   useGetIssuanceListQuery,
   useGetIssuanceDetailsByIssuanceIdQuery,
+  useGetPendingReceivingByIssuanceIdQuery,
   useGetReceivingDetailsForInspectionQuery,
   useGetInspectionDetailsQuery,
   useGetIssuanceOGPByIdQuery,

@@ -6,6 +6,7 @@ import {
   Box,
   TextField,
   Button,
+  CircularProgress,
   MenuItem,
   FormControl,
   Typography,
@@ -490,6 +491,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
   const handleLock = () => {
     setLock(!lock);
   };
+  // const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     const errors = validateForm();
@@ -497,6 +499,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       setFormErrors(errors);
       return;
     }
+    setLoading(true); // Set loading to true when API call starts
 
     try {
       const cleanedFormData = {
@@ -526,45 +529,41 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
           autoHideDuration: 5000
         });
       }
-      // enqueueSnackbar('Pre Planning saved successfully!', {
-      //   variant: 'success',
-      //   autoHideDuration: 5000
-      // });
-      setFormData((prevFormData) => ({
-        processType: 'MultiHead',
-        planningId: 0,
-        collectionId: prevFormData.collectionId,
-        designId: prevFormData.designId,
-        batchNo: prevFormData.batchNo,
-        planningHeaderId: prevFormData.planningHeaderId,
-        baseColorId: prevFormData.baseColorId, // not in api
-        baseColorName: prevFormData.baseColorName, // not in api
-        noOfDesigns: prevFormData.noOfDesigns, // not in apis
-        noOfColors: prevFormData.noOfColors, // not in api
-        poPcs: prevFormData.poPcs,
+      // setFormData((prevFormData) => ({
+      //   processType: 'MultiHead',
+      //   planningId: 0,
+      //   collectionId: prevFormData.collectionId,
+      //   designId: prevFormData.designId,
+      //   batchNo: prevFormData.batchNo,
+      //   planningHeaderId: prevFormData.planningHeaderId,
+      //   baseColorId: prevFormData.baseColorId, // not in api
+      //   baseColorName: prevFormData.baseColorName, // not in api
+      //   noOfDesigns: prevFormData.noOfDesigns, // not in apis
+      //   noOfColors: prevFormData.noOfColors, // not in api
+      //   poPcs: prevFormData.poPcs,
 
-        fabricId: prevFormData.fabricId,
-        shrinkage: prevFormData.shrinkage,
-        wastage: prevFormData.wastage,
-        uomId: prevFormData.uomId,
+      //   fabricId: prevFormData.fabricId,
+      //   shrinkage: prevFormData.shrinkage,
+      //   wastage: prevFormData.wastage,
+      //   uomId: prevFormData.uomId,
 
-        componentId: '',
-        cuttingSize: '', // not in api
-        colorId: '',
-        noOfHeads: 0,
-        operatingMachineId: 0,
-        repeats: 0,
-        repeatSize: 0,
-        totalFabric: '',
-        total: '',
-        appId: 1,
-        createdOn: new Date().toISOString(),
-        createdBy: user.empId,
-        lastUpdatedOn: new Date().toISOString(),
-        lastUpdatedBy: user.empId,
-        isSchiffili: false,
-        repeatsInMtr: ''
-      }));
+      //   componentId: '',
+      //   cuttingSize: '', // not in api
+      //   colorId: '',
+      //   noOfHeads: 0,
+      //   operatingMachineId: 0,
+      //   repeats: 0,
+      //   repeatSize: 0,
+      //   totalFabric: '',
+      //   total: '',
+      //   appId: 1,
+      //   createdOn: new Date().toISOString(),
+      //   createdBy: user.empId,
+      //   lastUpdatedOn: new Date().toISOString(),
+      //   lastUpdatedBy: user.empId,
+      //   isSchiffili: false,
+      //   repeatsInMtr: ''
+      // }));
 
       refetchPrePlanningList();
 
@@ -575,6 +574,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         variant: 'error',
         autoHideDuration: 5000
       });
+    } finally {
+      setLoading(false); // Reset loading to false when API call completes
     }
   };
   const validateForm = () => {
@@ -1715,13 +1716,25 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
               </Grid>
               {/* ) : null} */}
               <Grid item xs={12} textAlign="right">
-                <Button
+                {/* <Button
                   variant="contained"
                   size="small"
                   onClick={handleSave}
                   disabled={formData.productionStatus === 3}
                 >
                   Save
+                </Button> */}
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleSave}
+                  disabled={loading || formData.productionStatus === 3}
+                >
+                  {loading ? (
+                    <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+                  ) : (
+                    'Save'
+                  )}
                 </Button>
               </Grid>
               {/* </FormControl> */}

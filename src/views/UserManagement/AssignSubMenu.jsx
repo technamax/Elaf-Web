@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Grid, TextField, Button, MenuItem, Divider, Box } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
@@ -8,53 +8,39 @@ import '../../assets/scss/style.scss';
 
 import {
   useGetSubMenuListQuery,
-  useGetMainMenuListQuery
+  useGetMainMenuListQuery,
+  useGetRoleListQuery,
+  useGetSubMenuRoleByRoleIdQuery,
+  useGetSubMenuByRoleIdQuery
 } from 'api/store/Apis/userManagementApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
-
+import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
+import { styled } from '@mui/material/styles';
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
 
 export default function AssignSubMenu() {
+  const [rowSelectionModel, setRowSelectionModel] = useState([]);
+  const apiRef = useGridApiRef();
   const { user } = useUser();
   const [initialData, setInitialData] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [formData, setFormData] = useState({
-    subMenuId: 0,
-    subMenuDesc: '',
-    orderNo: '',
-    enabled: '',
-    link: '',
-    icon: '',
-    mainMenuId: '',
+    subMenuRoleId: 0,
+    roleId: '',
 
     createdOn: new Date().toISOString(),
     createdBy: user.empId,
     lastUpdatedOn: new Date().toISOString(),
     LastUpdatedBy: user.empId
   });
-  const options = [
-    {
-      value: 'Yes',
-      label: 'Yes'
-    },
-    {
-      value: 'No',
-      label: 'No'
-    }
-  ];
-  // console.log('initialData', initialData);
+
   useEffect(() => {
     setFormData({
-      subMenuId: initialData?.subMenuId || 0,
-      subMenuDesc: initialData?.subMenuDesc || '',
-      orderNo: initialData?.orderNo || '',
-      enabled: initialData?.enabled || '',
-      link: initialData?.link || '',
-      icon: initialData?.icon || '',
-      mainMenuId: initialData?.mainMenuId || '',
+      subMenuRoleId: initialData?.subMenuRoleId || 0,
+      roleId: initialData?.roleId || '',
 
       createdOn: initialData?.createdOn || new Date().toISOString(),
       createdBy: initialData?.createdBy || user.empId,
@@ -68,30 +54,50 @@ export default function AssignSubMenu() {
     setAccordionExpanded(!accordionExpanded);
   };
 
-  const { data: subMenuData, refetch } = useGetSubMenuListQuery();
-  const { data: mainMenuData } = useGetMainMenuListQuery();
-  const [mainMenus, setMainMenus] = useState([]);
+  const { data: subMenuRoleData, refetch: refetchsubMenuRoleData } =
+    useGetSubMenuRoleByRoleIdQuery(formData.roleId, {
+      skip: !formData.roleId
+    });
+  const { data: subMenuData, refetch: refetchSubMenuData } =
+    useGetSubMenuByRoleIdQuery(formData.roleId, {
+      skip: !formData.roleId
+    });
+
+  const { data: rolesData, refetch } = useGetRoleListQuery();
+  const [roles, setRoles] = useState([]);
+  const [subMenus, setSubMenus] = useState([]);
 
   useEffect(() => {
     if (subMenuData) {
-      setInitialRows(
+      setSubMenus(
         subMenuData.result.map((row, index) => ({
           id: index,
           ...row
         }))
       );
     }
-  }, [subMenuData, refetch]);
+  }, [subMenuData, refetchSubMenuData]);
+
   useEffect(() => {
-    if (mainMenuData) {
-      setMainMenus(
-        mainMenuData.result.map((row, index) => ({
+    if (rolesData) {
+      setRoles(
+        rolesData.result.map((row, index) => ({
           id: index,
           ...row
         }))
       );
     }
-  }, [mainMenuData, refetch]);
+  }, [rolesData, refetch]);
+  useEffect(() => {
+    if (subMenuRoleData) {
+      setInitialRows(
+        subMenuRoleData.result.map((row, index) => ({
+          id: index,
+          ...row
+        }))
+      );
+    }
+  }, [subMenuRoleData, refetchsubMenuRoleData]);
 
   console.log('initialRows', initialRows);
 
@@ -106,26 +112,23 @@ export default function AssignSubMenu() {
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:83/api/Menu/SaveSubMenu',
+        'http://100.42.177.77:83/api/Users/SaveSubMenuRole',
         formData
       );
 
       console.log('Save response:', response.data);
 
       setFormData((prevFormData) => ({
-        subMenuId: 0,
-        subMenuDesc: '',
-        orderNo: '',
-        enabled: '',
-        link: '',
-        icon: '',
-        mainMenuId: '',
+        roleId: prevFormData.roleId,
+        subMenuRoleId: 0,
         createdOn: new Date().toISOString(),
         createdBy: user.empId,
         lastUpdatedOn: new Date().toISOString(),
         LastUpdatedBy: user.empId
       }));
-
+      refetchsubMenuRoleData();
+      refetchSubMenuData();
+      setRowSelectionModel([]);
       refetch();
       setIsEdit(false);
       // setAccordionExpanded(false);
@@ -134,28 +137,12 @@ export default function AssignSubMenu() {
     }
   };
   console.log('formData', formData);
-  // const Transition = React.forwardRef(function Transition(props, ref) {
-  //   return <Slide direction="up" ref={ref} {...props} />;
-  // });
-  // const [additionalProcessData, setAdditionalProcessData] = useState({});
-  // const [open, setOpen] = React.useState(false);
-  // const handleClickOpen = (data) => {
-  //   setAdditionalProcessData(data);
-  //   setOpen(true);
-  // };
-
-  // const handleClose = () => {
-  //   setOpen(false);
-  //   setAdditionalProcessData({});
-  //   refetchAdditionalProcessList();
-  //   // setDeleteId(null);
-  // };
 
   const columns = [
     {
-      field: 'mainMenuId',
-      headerName: 'Main Menu',
-      flex: 1
+      field: 'subMenuId',
+      headerName: 'SubMenu',
+      flex: 0.5
     },
     {
       field: 'subMenuDesc',
@@ -163,26 +150,73 @@ export default function AssignSubMenu() {
       flex: 1
     },
     {
-      field: 'orderNo',
-      headerName: 'Order No.',
-      flex: 1
-    },
-    {
-      field: 'enabled',
-      headerName: 'Enabled',
-      flex: 1
-    },
-    {
       field: 'link',
       headerName: 'Link',
-      flex: 1
+      flex: 2
     },
     {
       field: 'icon',
       headerName: 'Icon',
+      flex: 2
+    },
+    {
+      field: 'mainMenuId',
+      headerName: 'MainMenu',
+      flex: 0.5
+    },
+    {
+      field: 'mainMenuDesc',
+      headerName: 'Main Menu',
       flex: 1
+    },
+    {
+      field: 'orderNo',
+      headerName: 'Order No.',
+      flex: 0.5
+    },
+    {
+      field: 'enabled',
+      headerName: 'Enabled',
+      flex: 0.5
     }
   ];
+  const [selectedSubMenu, setSelectedSubMenu] = useState([]);
+  const handleRowSelectionModelChange = useCallback(
+    (newRowSelectionModel) => {
+      setRowSelectionModel(newRowSelectionModel);
+      const designsIds = newRowSelectionModel
+        .map((id) => {
+          const rowData = apiRef.current.getRow(id);
+          console.log('rowData', rowData);
+          return rowData ? rowData['subMenuId'] : null; // Adjust the field name to match your data
+        })
+        .filter((id) => id !== null); // Filter out any null values
+      // const poPcsLists = newRowSelectionModel
+      //   .map((id) => {
+      //     const rowData = apiRef.current.getRow(id);
+      //     console.log('rowData', rowData);
+      //     return rowData ? rowData['poPcs'] : null; // Adjust the field name to match your data
+      //   })
+      //   .filter((id) => id !== null); // Filter out any null values
+      // console.log('poPcsLists', poPcsLists);
+
+      setSelectedSubMenu(designsIds);
+    },
+    [apiRef]
+  );
+
+  useEffect(() => {
+    setFormData({
+      ...formData,
+      SubMenuIdList: selectedSubMenu
+      // poPcsList: pcsList
+    });
+  }, [selectedSubMenu]);
+  useEffect(() => {
+    if (apiRef.current) {
+      console.log('API ref is ready:', apiRef.current);
+    }
+  }, [apiRef]);
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -205,22 +239,22 @@ export default function AssignSubMenu() {
             <TextField
               fullWidth
               select
-              label="Main Menu"
-              name="mainMenuId"
-              value={formData.mainMenuId}
+              label="Roles"
+              name="roleId"
+              value={formData.roleId}
               onChange={handleChange}
               size="small"
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             >
-              {mainMenus.map((option) => (
-                <MenuItem key={option.mainMenuId} value={option.mainMenuId}>
-                  {option.mainMenuDesc}
+              {roles.map((option) => (
+                <MenuItem key={option.roleId} value={option.roleId}>
+                  {option.roleName}
                 </MenuItem>
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} md={2}>
+          {/* <Grid item xs={12} md={2}>
             <TextField
               label="Sub Menu"
               fullWidth
@@ -291,8 +325,20 @@ export default function AssignSubMenu() {
               // error={!!formErrors.collectionName}
               // helperText={formErrors.collectionName}
             />
+          </Grid> */}
+          <Grid item xs={12}>
+            <div style={{ height: 400, width: '100%' }}>
+              <DataGrid
+                rows={initialRows}
+                columns={columns}
+                apiRef={apiRef}
+                disableRowSelectionOnClick
+                checkboxSelection
+                onRowSelectionModelChange={handleRowSelectionModelChange}
+                rowSelectionModel={rowSelectionModel}
+              />
+            </div>
           </Grid>
-
           <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
             <Button variant="contained" size="small" onClick={handleSave}>
               Save
@@ -316,7 +362,7 @@ export default function AssignSubMenu() {
         >
           <Grid item xs={12}>
             <ReuseableDataGrid
-              initialRows={initialRows}
+              initialRows={subMenus}
               iColumns={columns}
               disableDelete={true}
               setInitialData={setInitialData}

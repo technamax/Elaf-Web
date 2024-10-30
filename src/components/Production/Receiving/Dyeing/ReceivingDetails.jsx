@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, TextField, Typography, Button, MenuItem } from '@mui/material';
-import { useGetIssuanceDetailsByIssuanceIdQuery } from 'api/store/Apis/productionApi';
+import { useGetPendingReceivingByIssuanceIdQuery } from 'api/store/Apis/productionApi';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import { useSnackbar } from 'notistack';
 import { useUser } from 'context/User';
@@ -35,7 +35,7 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
   const { data: locationsData, refetch: refetchLocationsData } =
     useGetWareHouseLocationsQuery();
   const { data: issuanceDetailsData, refetch: refetchIssuanceDetailsData } =
-    useGetIssuanceDetailsByIssuanceIdQuery(iss.issuanceId, {
+    useGetPendingReceivingByIssuanceIdQuery(iss.issuanceId, {
       skip: !iss.issuanceId
     });
 
@@ -57,14 +57,21 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
       return;
     }
     if (issuanceDetailsData) {
+      // setIssuanceDetails(
+      //   issuanceDetailsData.result
+      //     .filter((row) => row.lastReceivedQty < row.dispatchedQuantity)
+      //     .map((row, index) => ({
+      //       id: index + 1,
+      //       receivedQty: 0,
+      //       ...row
+      //     }))
+      // );
       setIssuanceDetails(
-        issuanceDetailsData.result
-          .filter((row) => row.lastReceivedQty < row.dispatchedQuantity)
-          .map((row, index) => ({
-            id: index + 1,
-            receivedQty: 0,
-            ...row
-          }))
+        issuanceDetailsData.result.map((row, index) => ({
+          id: index + 1,
+          receivedQty: 0,
+          ...row
+        }))
       );
     }
   }, [issuanceDetailsData, refetchIssuanceDetailsData]);

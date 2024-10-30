@@ -122,6 +122,8 @@ const DyeingIssuance = ({ rowData }) => {
   // const [vendorsList, setVendorsList] = useState([]);
   // const [locationsList, setLocationsList] = useState([]);
   const [issuanceList, setIssuanceList] = useState([]);
+  const [locationsList, setLocationsList] = useState([]);
+
   // const [issuanceOGPList, setIssuanceOGPList] = useState([]);
   const [value, setValue] = useState('1');
 
@@ -150,6 +152,8 @@ const DyeingIssuance = ({ rowData }) => {
     useGetIssuanceByPoIdQuery(formData.poId, {
       skip: !formData.poId // Skip the query if no collection is selected
     });
+  const { data: locationsData, refetch: refetchLocationsData } =
+    useGetWareHouseLocationsQuery();
   // const { data: dyeingPoData, refetch: refetchDyeingPoData } =
   //   useGetDyeingPoHeaderListQuery();
   // const { data: locationsData, refetch: refetchLocationsData } =
@@ -236,7 +240,16 @@ const DyeingIssuance = ({ rowData }) => {
       );
     }
   }, [productionBatchData, refetchProductionBatchData]);
-
+  useEffect(() => {
+    if (locationsData) {
+      setLocationsList(
+        locationsData.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+    }
+  }, [locationsData]);
   useEffect(() => {
     if (poDetailsData?.result === null) {
       setPoDetails([]);
@@ -1133,6 +1146,31 @@ const DyeingIssuance = ({ rowData }) => {
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
+              select
+              label="Select Location"
+              name="locationId"
+              value={formData.locationId}
+              onChange={handleChange}
+              size="small"
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            >
+              {locationsList.map((option) => (
+                <MenuItem key={option.locationId} value={option.locationId}>
+                  {option.section +
+                    '.' +
+                    option.aisle +
+                    '.' +
+                    option.rack +
+                    '.' +
+                    option.bin}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          {/* <Grid item xs={12} md={3}>
+            <TextField
+              fullWidth
               disabled
               // select
               label="Select Location"
@@ -1143,7 +1181,7 @@ const DyeingIssuance = ({ rowData }) => {
               // error={!!formErrors.brandId}
               // helperText={formErrors.brandId}
             ></TextField>
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12} md={3}>
             <TextField

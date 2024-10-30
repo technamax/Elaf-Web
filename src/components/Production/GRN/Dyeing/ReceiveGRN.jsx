@@ -258,9 +258,14 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
       field: 'colorName',
       headerName: 'Color'
     },
+
     {
       field: 'assignQuantity',
-      headerName: 'PO Qty',
+      headerName: 'PO Qty'
+    },
+    {
+      field: 'poQty',
+      headerName: 'Expected Qty',
       renderCell: (params) => {
         return (
           params.row.assignQuantity *

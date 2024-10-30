@@ -66,7 +66,7 @@ const AssignVendorFormTable = ({
       // roleName: initialData?.roleName || '',
       startDate: initialData?.startDate || '',
       endDate: initialData?.endDate || '',
-      empId: userData.empId || '',
+      empId: userData.empId,
       isMainRole: initialData?.isMainRole || '',
       enabled: initialData?.enabled || '',
       createdOn: initialData?.createdOn || new Date().toISOString(),
@@ -130,12 +130,12 @@ const AssignVendorFormTable = ({
 
       setFormData((prevFormData) => ({
         userRoleId: 0,
-        userName: userData.userName,
+        userName: prevFormData.userName,
         roleId: '',
         // roleName: '',
         startDate: '',
         endDate: '',
-        empId: userData.empId,
+        empId: prevFormData.empId,
         isMainRole: '',
         enabled: '',
 
