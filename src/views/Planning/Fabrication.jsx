@@ -156,6 +156,17 @@ const Fabrication = ({ initialValues, setInitialValues }) => {
     }
   }, [batchData]);
   useEffect(() => {
+    if (batchList[0]) {
+      setFormData({
+        ...formData,
+        poPcs: batchList[0].poPcs,
+        batchNo: batchList[0].batchNo,
+        planningHeaderId: batchList[0].planningHeaderId
+      });
+      setAccordionExpanded(true);
+    }
+  }, [batchList]);
+  useEffect(() => {
     if (fabricData) {
       setFabrications(fabricData.result);
       // refetchBatches();

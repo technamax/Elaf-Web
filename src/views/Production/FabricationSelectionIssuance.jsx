@@ -152,6 +152,15 @@ const FabricationSelectionIssuance = () => {
       setProcessType(filteredProcessType);
     }
   }, [lookupData]);
+  useEffect(() => {
+    if (processType[0]) {
+      setFormData({
+        ...formData,
+        processTypeId: processType[0].lookUpId
+      });
+      setAccordionExpanded(true);
+    }
+  }, [processType]);
   // const { data: collectionData, refetch } =
   //   useGetCollectionListFromPlanningHeaderQuery();
 
@@ -638,7 +647,7 @@ const FabricationSelectionIssuance = () => {
                   <TextField
                     size="small"
                     type="date"
-                    label="Start Date"
+                    label="Requisation Date"
                     name="startDate"
                     value={formData.startDate}
                     onChange={handleChange}
@@ -662,7 +671,7 @@ const FabricationSelectionIssuance = () => {
                     onClick={handleSave}
                     color="success"
                   >
-                    Start Process
+                    Save
                   </Button>
                 </Grid>
                 <Grid item xs={12} mt={1}>

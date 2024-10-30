@@ -225,10 +225,11 @@ const Summary = ({
   };
   console.log('formData', formData);
 
-  const handleOpen = (planningHeaderId) => {
-    console.log('Selected PlanningHeaderId:', planningHeaderId);
-    fetchSummaryData(planningHeaderId);
+  const handleOpen = (data) => {
+    console.log('Selected rowdata:', data);
+    fetchSummaryData(data.planningHeaderId);
     setOpen(true);
+    setInitialData(data);
     // You can call fetchSummaryData(planningHeaderId) if needed
   };
 
@@ -530,9 +531,7 @@ const Summary = ({
           size="small"
           aria-label="outlined primary button group"
         >
-          <Button onClick={() => handleOpen(params.row.planningHeaderId)}>
-            View
-          </Button>
+          <Button onClick={() => handleOpen(params.row)}>View</Button>
         </ButtonGroup>
       ),
       sortable: false,
@@ -746,7 +745,7 @@ const Summary = ({
               title="Summary Details"
               titleTypographyProps={{ style: { color: 'white' } }}
             />
-            <DialogContent>
+            <DialogContent sx={{ paddingY: '0px' }}>
               {isLoading ? (
                 <Box
                   display="flex"
@@ -758,10 +757,139 @@ const Summary = ({
                 </Box>
               ) : summaryData ? (
                 <>
+                  {' '}
+                  <Grid
+                    container
+                    spacing={1}
+                    width="Inherit"
+                    sx={{
+                      paddingY: 2,
+                      position: 'sticky',
+                      top: 0,
+                      zIndex: 10,
+                      backgroundColor: '#E0E0E0'
+                    }}
+                  >
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="Collection Name"
+                        fullWidth
+                        size="small"
+                        name="collectionName"
+                        value={initialData.collectionName}
+                        // onChange={handleChange}
+                        disabled
+                        InputLabelProps={{
+                          sx: {
+                            // set the color of the label when not shrinked
+                            color: 'black'
+                          }
+                        }}
+                        sx={(theme) => ({
+                          ...(formData.baseColorName !== '' && {
+                            '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input':
+                              {
+                                backgroundColor: `#c9c9c9 !important`
+                              }
+                          }),
+                          '& .MuiInputBase-input.Mui-disabled': {
+                            WebkitTextFillColor: 'black' // Adjust text color here
+                          },
+                          '& .MuiInputBase-root.Mui-disabled': {
+                            backgroundColor: '#f9f9f9' // Adjust background color here
+                          },
+                          '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                            {
+                              // borderColor: 'gray' // Adjust border color here
+                            },
+                          '& .MuiInputLabel-root.Mui-disabled': {
+                            color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                          }
+                        })}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="Design"
+                        fullWidth
+                        size="small"
+                        name="designNo"
+                        value={initialData.designNo}
+                        // onChange={handleChange}
+                        disabled
+                        InputLabelProps={{
+                          sx: {
+                            // set the color of the label when not shrinked
+                            color: 'black'
+                          }
+                        }}
+                        sx={(theme) => ({
+                          ...(formData.baseColorName !== '' && {
+                            '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input':
+                              {
+                                backgroundColor: `#c9c9c9 !important`
+                              }
+                          }),
+                          '& .MuiInputBase-input.Mui-disabled': {
+                            WebkitTextFillColor: 'black' // Adjust text color here
+                          },
+                          '& .MuiInputBase-root.Mui-disabled': {
+                            backgroundColor: '#f9f9f9' // Adjust background color here
+                          },
+                          '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                            {
+                              // borderColor: 'gray' // Adjust border color here
+                            },
+                          '& .MuiInputLabel-root.Mui-disabled': {
+                            color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                          }
+                        })}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                      <TextField
+                        label="Batch"
+                        fullWidth
+                        size="small"
+                        name="batchNo"
+                        value={initialData.batchNo}
+                        // onChange={handleChange}
+                        disabled
+                        InputLabelProps={{
+                          sx: {
+                            // set the color of the label when not shrinked
+                            color: 'black'
+                          }
+                        }}
+                        sx={(theme) => ({
+                          ...(formData.baseColorName !== '' && {
+                            '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input':
+                              {
+                                backgroundColor: `#c9c9c9 !important`
+                              }
+                          }),
+                          '& .MuiInputBase-input.Mui-disabled': {
+                            WebkitTextFillColor: 'black' // Adjust text color here
+                          },
+                          '& .MuiInputBase-root.Mui-disabled': {
+                            backgroundColor: '#f9f9f9' // Adjust background color here
+                          },
+                          '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
+                            {
+                              // borderColor: 'gray' // Adjust border color here
+                            },
+                          '& .MuiInputLabel-root.Mui-disabled': {
+                            color: 'rgba(0, 0, 0, 0.87)' // Darker label color
+                          }
+                        })}
+                      />
+                    </Grid>
+                  </Grid>
                   <Typography
                     variant="h3"
                     gutterBottom
                     sx={{
+                      marginTop: '10px',
                       color: '#9f1d22',
                       // textAlign: 'center',
                       cursor: 'pointer', // To indicate it's clickable
@@ -773,7 +901,6 @@ const Summary = ({
                   >
                     Pre Planning
                   </Typography>
-
                   <DataGrid
                     // classes={{ columnHeaders: 'custom-header' }}
                     rows={prePlanningRows}
@@ -883,7 +1010,6 @@ const Summary = ({
                       </Grid>
                     </DialogContent>
                   </Dialog>
-
                   <Divider
                     color="#921e22"
                     sx={{ height: 3, width: '100%', mb: 1 }}
@@ -903,7 +1029,6 @@ const Summary = ({
                   >
                     Fabrication
                   </Typography>
-
                   <DataGrid
                     rows={fabricationRows}
                     columns={fabricationColumns}
@@ -938,7 +1063,6 @@ const Summary = ({
                       }
                     }}
                   />
-
                   <Divider
                     color="#921e22"
                     sx={{ height: 2, width: '100%', mt: 1, mb: 1 }}
@@ -958,7 +1082,6 @@ const Summary = ({
                   >
                     Dyeing
                   </Typography>
-
                   <DataGrid
                     rows={dyeingPrintingRows}
                     columns={dyeingPrintingColumns}
@@ -993,7 +1116,6 @@ const Summary = ({
                       }
                     }}
                   />
-
                   <Divider
                     color="#921e22"
                     sx={{ height: 2, width: '100%', mb: 1 }}
@@ -1013,7 +1135,6 @@ const Summary = ({
                   >
                     Embroidery
                   </Typography>
-
                   <DataGrid
                     rows={embroideryRows}
                     columns={embroideryColumns}
@@ -1048,12 +1169,10 @@ const Summary = ({
                       }
                     }}
                   />
-
                   <Divider
                     color="#921e22"
                     sx={{ height: 2, width: '100%', mb: 1 }}
                   />
-
                   <Typography
                     variant="h3"
                     gutterBottom
@@ -1122,7 +1241,6 @@ const Summary = ({
                   >
                     Additional Process
                   </Typography>
-
                   <DataGrid
                     rows={additionalProcessRows}
                     columns={additionalProcessColumns}

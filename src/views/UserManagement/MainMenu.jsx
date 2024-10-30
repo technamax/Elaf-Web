@@ -28,6 +28,7 @@ import ReuseableDataGrid from 'components/ReuseableDataGrid';
 import SubMenu from './SubMenu';
 import Roles from './Roles';
 import Users from './Users';
+import AssignSubMenu from './AssignSubMenu';
 
 //////
 import * as React from 'react';
@@ -368,7 +369,10 @@ export default function Application() {
           <TabPanel value="4">
             <Users />
           </TabPanel>
-          <TabPanel value="5">{/* <Assign /> */}</TabPanel>
+          <TabPanel value="5">
+            {' '}
+            <AssignSubMenu />{' '}
+          </TabPanel>
         </TabContext>
       </Box>
     </MainCard>

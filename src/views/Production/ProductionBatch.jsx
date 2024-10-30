@@ -80,23 +80,23 @@ const ProductionBatch = () => {
     setValue(newValue);
   };
   // console.log('initialData', initialData);
-  useEffect(() => {
-    setFormData({
-      productionId: initialData?.productionId || 0,
-      collectionId: initialData?.collectionId || '',
-      orderNumber: initialData?.orderNumber || '',
-      launchDate: initialData?.launchDate || '',
-      // status: initialData?.status || 'InProcess',
-      remarks: initialData?.remarks || '',
-      // productionBatchDetails: initialData?.productionBatchDetails || [],
+  // useEffect(() => {
+  //   setFormData({
+  //     productionId: initialData?.productionId || 0,
+  //     collectionId: initialData?.collectionId || '',
+  //     orderNumber: initialData?.orderNumber || '',
+  //     launchDate: initialData?.launchDate || '',
+  //     // status: initialData?.status || 'InProcess',
+  //     remarks: initialData?.remarks || '',
+  //     // productionBatchDetails: initialData?.productionBatchDetails || [],
 
-      appId: initialData?.appId || user.appId,
-      createdOn: initialData?.createdOn || new Date().toISOString(),
-      createdBy: initialData?.createdBy || user.empId,
-      lastUpdatedOn: new Date().toISOString(),
-      lastUpdatedBy: user.empId
-    });
-  }, [initialData]);
+  //     appId: initialData?.appId || user.appId,
+  //     createdOn: initialData?.createdOn || new Date().toISOString(),
+  //     createdBy: initialData?.createdBy || user.empId,
+  //     lastUpdatedOn: new Date().toISOString(),
+  //     lastUpdatedBy: user.empId
+  //   });
+  // }, [initialData]);
   const [initialRows, setInitialRows] = useState([]);
   const [accordionExpanded, setAccordionExpanded] = useState(false); // Add state variable for accordion
   const handleAccordionToggle = (event, isExpanded) => {
@@ -145,7 +145,9 @@ const ProductionBatch = () => {
         ...formData,
         collectionId: value,
         orderNumber: selectedCollection ? selectedCollection.orderNumber : '',
-        launchDate: selectedCollection ? selectedCollection.launchDate : ''
+        launchDate: selectedCollection
+          ? new Date(selectedCollection.launchDate).toISOString().slice(0, 10)
+          : ''
         // status: selectedCollection ? selectedCollection.batchStatus : ''
       });
     } else {

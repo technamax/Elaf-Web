@@ -4,6 +4,7 @@ import {
   Grid,
   TextField,
   Button,
+  CircularProgress,
   MenuItem,
   Divider,
   Box,
@@ -317,9 +318,80 @@ const DyeingPO = () => {
     }
   };
 
+  // const handleSave = async () => {
+  //   if (rowSelectionModel.length === 0) {
+  //     // Show a snackbar warning if no rows are selected
+  //     enqueueSnackbar('Please select at least one row before saving!', {
+  //       variant: 'warning',
+  //       autoHideDuration: 5000
+  //     });
+  //     return;
+  //   }
+
+  //   console.log('formData', formData);
+  //   try {
+  //     // Make the API call
+  //     const response = await axios.post(
+  //       'http://100.42.177.77:83/api/PO/SavePOHeader',
+  //       { ...formData }
+  //     );
+
+  //     console.log('Save response:', response.data);
+  //     // refetchDyeingPoData();
+  //     // refetchPoHeaderData();
+  //     // Check for success
+  //     if (response.data.success) {
+  //       // Show a success snackbar if the save operation was successful
+  //       enqueueSnackbar('Data saved successfully!', {
+  //         variant: 'success',
+  //         autoHideDuration: 5000
+  //       });
+  //       setSavedRowIds((prev) => new Set([...prev, ...rowSelectionModel]));
+
+  //       // Reset formData and related states
+  //       setFormData({
+  //         // poId: 0,
+  //         // productionId: '',
+  //         ...formData,
+  //         issuanceDate: '',
+  //         expectedReturnDate: '',
+  //         fabricId: '',
+  //         processTypeId: '',
+  //         vendorId: '',
+  //         shrinkage: '',
+  //         wastage: '',
+  //         // locationId: '',
+  //         appId: user.appId,
+  //         createdOn: new Date().toISOString(),
+  //         createdBy: user.empId,
+  //         lastUpdatedOn: new Date().toISOString(),
+  //         lastUpdatedBy: user.empId
+  //       });
+  //       setFabrics([]);
+  //       // refetchDyeingPoData();
+  //       refetchPoHeaderData();
+  //       setRowSelectionModel([]);
+  //       refetchcolumnsData();
+  //       setIsEdit(false);
+  //     } else {
+  //       // Show an error snackbar if the save operation was not successful
+  //       enqueueSnackbar(`Save failed: ${response.data.message}`, {
+  //         variant: 'error',
+  //         autoHideDuration: 5000
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error('Error saving data:', error);
+  //     enqueueSnackbar('Failed to save data. Please try again.', {
+  //       variant: 'error',
+  //       autoHideDuration: 5000
+  //     });
+  //   }
+  // };
+  const [loading, setLoading] = useState(false);
+
   const handleSave = async () => {
     if (rowSelectionModel.length === 0) {
-      // Show a snackbar warning if no rows are selected
       enqueueSnackbar('Please select at least one row before saving!', {
         variant: 'warning',
         autoHideDuration: 5000
@@ -328,29 +400,22 @@ const DyeingPO = () => {
     }
 
     console.log('formData', formData);
+    setLoading(true); // Set loading to true when API call starts
     try {
-      // Make the API call
       const response = await axios.post(
         'http://100.42.177.77:83/api/PO/SavePOHeader',
         { ...formData }
       );
 
       console.log('Save response:', response.data);
-      // refetchDyeingPoData();
-      // refetchPoHeaderData();
-      // Check for success
       if (response.data.success) {
-        // Show a success snackbar if the save operation was successful
         enqueueSnackbar('Data saved successfully!', {
           variant: 'success',
           autoHideDuration: 5000
         });
         setSavedRowIds((prev) => new Set([...prev, ...rowSelectionModel]));
 
-        // Reset formData and related states
         setFormData({
-          // poId: 0,
-          // productionId: '',
           ...formData,
           issuanceDate: '',
           expectedReturnDate: '',
@@ -359,7 +424,6 @@ const DyeingPO = () => {
           vendorId: '',
           shrinkage: '',
           wastage: '',
-          // locationId: '',
           appId: user.appId,
           createdOn: new Date().toISOString(),
           createdBy: user.empId,
@@ -367,13 +431,11 @@ const DyeingPO = () => {
           lastUpdatedBy: user.empId
         });
         setFabrics([]);
-        // refetchDyeingPoData();
         refetchPoHeaderData();
         setRowSelectionModel([]);
         refetchcolumnsData();
         setIsEdit(false);
       } else {
-        // Show an error snackbar if the save operation was not successful
         enqueueSnackbar(`Save failed: ${response.data.message}`, {
           variant: 'error',
           autoHideDuration: 5000
@@ -385,6 +447,8 @@ const DyeingPO = () => {
         variant: 'error',
         autoHideDuration: 5000
       });
+    } finally {
+      setLoading(false); // Reset loading to false when API call completes
     }
   };
 
@@ -1281,7 +1345,7 @@ const DyeingPO = () => {
           </Grid>
 
           <Grid item xs={12} textAlign="right">
-            <Button
+            {/* <Button
               variant="contained"
               size="small"
               onClick={handleSave}
@@ -1290,6 +1354,21 @@ const DyeingPO = () => {
               )}
             >
               Save
+            </Button> */}
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              disabled={
+                loading ||
+                fabrics.every((item) => item.prevoiusPoQty >= item.availableQty)
+              }
+            >
+              {loading ? (
+                <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+              ) : (
+                'Save'
+              )}
             </Button>
           </Grid>
         </Grid>{' '}

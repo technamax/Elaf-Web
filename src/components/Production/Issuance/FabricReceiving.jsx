@@ -287,6 +287,25 @@ const FabricReceiving = () => {
       console.error('Error fetching ITP:', error);
     }
   };
+  useEffect(() => {
+    const fetchItp = async () => {
+      try {
+        const response = await axios.get(
+          'http://100.42.177.77:83/api/StockReceiving/FetchItpByAppIdList?appId=1'
+        );
+
+        setItps(
+          response.data.result.map((row, index) => ({
+            id: index + 1,
+            ...row
+          }))
+        );
+      } catch (error) {
+        console.error('Error fetching ITP:', error);
+      }
+    };
+    fetchItp();
+  }, []);
   const handleStart = async () => {
     // console.log('stockData', stockData);
     try {

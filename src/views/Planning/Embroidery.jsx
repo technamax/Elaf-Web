@@ -666,6 +666,8 @@ const Embroidery = ({ initialValues }) => {
         availableQty: '',
         noOfHead: '',
         repeats: '',
+        fabric: '',
+        color: '',
         cuttingSize: '',
         itemsPerRepeat: '',
         totalPcs: '', //repeat*itemsPerRepeat

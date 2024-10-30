@@ -431,6 +431,7 @@ const ReceivingDetails = ({ iss, handleClose, refetchIssuanceData }) => {
       });
     }
   };
+
   return (
     <div>
       <Grid
