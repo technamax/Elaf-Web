@@ -17,7 +17,6 @@ import { BrowserView, MobileView } from 'react-device-detect';
 import MenuList from './MenuList';
 import LogoSection from '../LogoSection';
 import Chip from 'ui-component/extended/Chip';
-
 import { drawerWidth } from 'store/constant';
 import { CatchingPokemonSharp } from '@mui/icons-material';
 
@@ -57,12 +56,20 @@ const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
     window !== undefined ? () => window.document.body : undefined;
 
   return (
+    // <Box
+    //   component="nav"
+    //   sx={{
+    //     backgroundImage: `url(${texture})`, // Use the imported texture image
+    //     backgroundSize: 'contain',
+    //     flexShrink: { md: 0 },
+    //     width: matchUpMd ? drawerWidth : 'auto'
+    //   }}
+    //   aria-label="mailbox folders"
+    // >
     <Box
       component="nav"
       sx={{
-        backgroundImage:
-          'url("https://cdn11.bigcommerce.com/s-hv21hhsv/images/stencil/700x700/products/38611/284805/2e6462c221260668bf7516fe2121ad54__84353.1704082180.jpg?c=2")',
-        backgroundSize: 'contain',
+        backgroundColor: '#cacaca',
         flexShrink: { md: 0 },
         width: matchUpMd ? drawerWidth : 'auto'
       }}
@@ -79,9 +86,8 @@ const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
             width: drawerWidth,
             background: theme.palette.background.default,
             color: theme.palette.text.white,
-            backgroundColor: 'darkred',
-            backgroundImage:
-              'url("https://cdn11.bigcommerce.com/s-hv21hhsv/images/stencil/700x700/products/38611/284805/2e6462c221260668bf7516fe2121ad54__84353.1704082180.jpg?c=2")',
+            backgroundColor: '#cacaca',
+            // backgroundImage: `url(${texture})`,
             backgroundSize: 'contain',
             position: 'absolute',
             backgroundRepeat: 'repeat-y',
