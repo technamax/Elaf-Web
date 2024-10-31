@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Grid, TextField, Button, MenuItem, Divider, Box } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
+import { useSnackbar } from 'notistack';
 
 import { Card, CardHeader, Avatar } from '@mui/material';
 // import '../../../assets/scss/style.scss';
@@ -39,6 +40,7 @@ const SmallTextField = styled(TextField)(({ theme }) => ({
 }));
 
 const ShrinkageWastageConfiguration = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const [rowSelectionModel, setRowSelectionModel] = useState([]);
   const apiRef = useGridApiRef();
   const { user } = useUser();
@@ -196,6 +198,7 @@ const ShrinkageWastageConfiguration = () => {
       );
 
       console.log('Save response:', response.data);
+      enqueueSnackbar('Data saved successfully!', { variant: 'success' });
 
       setFormData((prevFormData) => ({
         configurationId: 0,
@@ -214,13 +217,17 @@ const ShrinkageWastageConfiguration = () => {
         lastUpdatedOn: new Date().toISOString(),
         LastUpdatedBy: user.empId
       }));
-
       refetchShrinkageWastageData();
+      refetchTermsConditionsData();
+
       setIsEdit(false);
       setCategories([]);
       // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
+      enqueueSnackbar('Failed to save data. Please try again.', {
+        variant: 'error'
+      });
     }
   };
   console.log('formData', formData);
@@ -322,33 +329,6 @@ const ShrinkageWastageConfiguration = () => {
       headerName: 'Fabric'
     },
     {
-      field: 'wastage',
-      headerName: 'Wastage',
-      // flex: 1,
-      width: 'auto',
-
-      renderCell: (params) => (
-        <SmallTextField
-          variant="outlined"
-          size="small"
-          // fullWidth
-          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
-          value={params.row.wastage || ''}
-          onChange={(event) =>
-            handleCellEdit({
-              id: params.id,
-              field: 'wastage',
-              value: Number(event.target.value)
-            })
-          }
-          type="number"
-          InputProps={{
-            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
-          }}
-        />
-      )
-    },
-    {
       field: 'shrikage',
       headerName: 'Shrinkage',
       width: 'auto',
@@ -366,6 +346,33 @@ const ShrinkageWastageConfiguration = () => {
             handleCellEdit({
               id: params.id,
               field: 'shrikage',
+              value: Number(event.target.value)
+            })
+          }
+          type="number"
+          InputProps={{
+            style: { fontSize: '0.875rem' } // Ensure the font size is suitable
+          }}
+        />
+      )
+    },
+    {
+      field: 'wastage',
+      headerName: 'Wastage',
+      // flex: 1,
+      width: 'auto',
+
+      renderCell: (params) => (
+        <SmallTextField
+          variant="outlined"
+          size="small"
+          // fullWidth
+          sx={{ mt: 1, width: '100%' }} // Adjust width and height as needed
+          value={params.row.wastage || ''}
+          onChange={(event) =>
+            handleCellEdit({
+              id: params.id,
+              field: 'wastage',
               value: Number(event.target.value)
             })
           }
