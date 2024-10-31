@@ -139,8 +139,9 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
   const calRows = GRNList.map((row) => {
     const sumGradeBAndCP = row.sumGradeBAndCP ?? 0;
     const wastageOnSumGradeBAndCP = row.wastageOnSumGradeBAndCP ?? 0;
-    const allowedBCP = sumGradeBAndCP * wastageOnSumGradeBAndCP;
-    const wasted = sumGradeBAndCP - allowedBCP;
+    const allowedBCP =
+      row.assignQuantity * (1 - row.shrinkage / 100) * (row.wastage / 100);
+    const wasted = allowedBCP - sumGradeBAndCP;
     const rejected =
       row.sumGradeBAndCP -
       row.sumGradeBAndCP * row.wastageOnSumGradeBAndCP +
@@ -354,7 +355,12 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
       field: 'allowedBCP',
       headerName: 'Allowed B+CP',
       renderCell: (params) => {
-        return <StatusChip label={params.value} status="pastelgreen" />;
+        return (
+          <StatusChip
+            label={params.value.toLocaleString()}
+            status="pastelgreen"
+          />
+        );
       }
     },
     {

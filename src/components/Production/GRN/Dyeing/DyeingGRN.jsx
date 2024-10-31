@@ -70,11 +70,7 @@ const DyeingGRN = () => {
   const [initialRows, setInitialRows] = useState([]);
   const [polist, setPolist] = useState([]);
   const [issId, setIssId] = useState([]);
-  // const [issuanceList, setIssuanceList] = useState([]);
-  // const [receivingList, setReceivingList] = useState([]);
-  // const [triggerSearch, setTriggerSearch] = useState(false);
 
-  // Hook to fetch the data, and it's controlled by triggerSearch state
   const { data, error, isLoading, refetch } = useGetInspectionForGRNHeaderQuery(
     formData.poId,
     {
@@ -83,23 +79,12 @@ const DyeingGRN = () => {
   );
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
     useGetProductionBatchForProcessingQuery();
-  // const { data: poData, refetch: refetchPoData } =
-  //   useGetDyeingPoHeaderListQuery();
+
   const { data: poData, refetch: refetchPoData } =
     useGetDyeingPoHeaderByProductionIdQuery(formData.productionId, {
       skip: !formData.productionId // Skip the query if no collection is selected
     });
-  // const { data: issuanceData, refetch: refetchIssuanceData } =
-  //   useGetIssuanceListQuery(formData.poId, {
-  //     skip: !formData.poId // Skip the query if no collection is selected
-  //   });
-  // const { data: receivingData, refetch: refetchReceivingData } =
-  //   useGetReceivingHeaderQuery(
-  //     { issuanceId: issId, processTypename: 'Dyeing' },
-  //     {
-  //       skip: !issId // Skip the query if no collection is selected
-  //     }
-  //   );
+
   const [productions, setProductions] = useState([]);
   useEffect(() => {
     if (productionBatchData) {
@@ -132,28 +117,8 @@ const DyeingGRN = () => {
       );
     }
   }, [poData, refetchPoData]);
-  // useEffect(() => {
-  //   if (receivingData) {
-  //     setReceivingList(
-  //       receivingData.result.map((row, index) => ({
-  //         id: index + 1,
-  //         ...row
-  //       }))
-  //     );
-  //   }
-  // }, [receivingData, refetchReceivingData]);
 
   console.log('polist', polist);
-  // useEffect(() => {
-  //   if (issuanceData) {
-  //     setIssuanceList(
-  //       issuanceData.result.map((row, index) => ({
-  //         id: index,
-  //         ...row
-  //       }))
-  //     );
-  //   }
-  // }, [issuanceData, refetchIssuanceData]);
 
   console.log('initialRows', initialRows);
 
@@ -168,72 +133,12 @@ const DyeingGRN = () => {
         ...formData,
         poId: value,
         issuanceId: selectedPO ? selectedPO.issuanceId : ''
-        // ogpNumber: selectedPO ? selectedPO.ogpNumber : '',
-        // issuanceName: selectedPO
-        //   ? `ISS-${selectedPO.issuanceId}-${selectedPO.issuanceQuantity}`
-        //   : ''
-        // wastage: selectedPO ? selectedPO.wastage : ''
       });
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
-  // const handleSearch = () => {
-  //   if (formData.issuanceId) {
-  //     // Set the state to trigger the query
-  //     setTriggerSearch(true);
-  //     console.log(`Triggering search for issuanceId: ${formData.issuanceId}`);
-  //   }
-  //   // if (data) {
-  //   //   setInitialRows(
-  //   //     data.result.map((row, index) => ({
-  //   //       id: index + 1,
-  //   //       ...row
-  //   //     }))
-  //   //   );
-  //   // }
-  // };
 
-  // const handleKeyPress = (e) => {
-  //   if (e.key === 'Enter') {
-  //     handleSearch();
-  //   }
-  // };
-  // const handleSearch = async () => {
-  //   console.log('formData', formData);
-  //   try {
-  //     // Make the API call
-  //     const response = await axios.get(
-  //       `http://100.42.177.77:83/api/Receiving/GetIssuanceByPoIdAndOGPNumber?poId=${formData.poId}&issuanceId=${formData.issuanceId}`
-  //     );
-  //     console.log('Save response:', response.data);
-
-  //     if (!response.data.success) {
-  //       enqueueSnackbar(`${response.data.message} !`, {
-  //         variant: 'error',
-  //         autoHideDuration: 5000
-  //       });
-  //       console.log('response.message', response.data.message);
-  //     } else {
-  //       enqueueSnackbar(`${response.data.message} !`, {
-  //         variant: 'success',
-  //         autoHideDuration: 5000
-  //       });
-  //       setInitialRows(
-  //         response.data.result.map((row, index) => ({
-  //           id: index + 1,
-  //           ...row
-  //         }))
-  //       );
-  //     }
-  //   } catch (error) {
-  //     console.error('Error saving data:', error);
-  //     enqueueSnackbar('FAILED: Unable to start Process', {
-  //       variant: 'error',
-  //       autoHideDuration: 5000
-  //     });
-  //   }
-  // };
   console.log('formData', formData);
 
   const [open, setOpen] = React.useState(false);
@@ -281,10 +186,6 @@ const DyeingGRN = () => {
       field: 'issuanceId',
       headerName: 'issuance#'
     },
-    // {
-    //   field: 'ogpNumber',
-    //   headerName: 'OGP#'
-    // },
     {
       field: 'poName',
       headerName: 'PO#'
@@ -320,22 +221,6 @@ const DyeingGRN = () => {
         );
       }
     },
-    // {
-    //   field: 'expectedReturnDate',
-    //   headerName: 'Expected Return Date',
-    //   valueGetter: (params) => {
-    //     const date = new Date(params);
-    //     return date.toLocaleDateString('en-GB', {
-    //       day: 'numeric',
-    //       month: 'short',
-    //       year: '2-digit'
-    //     });
-    //   }
-    // },
-    // {
-    //   field: 'fabricCount',
-    //   headerName: 'Fabrics'
-    // },
     {
       field: 'statusName',
       headerName: 'Status',
@@ -357,13 +242,6 @@ const DyeingGRN = () => {
             >
               Receive
             </Button>
-            {/* <Button
-              size="small"
-              color="primary"
-              onClick={() => handleClickOpen2(params.row)}
-            >
-              IGP
-            </Button> */}
             <Button
               size="small"
               color="primary"
@@ -440,17 +318,10 @@ const DyeingGRN = () => {
               ))}
             </TextField>
           </Grid>
-
-          {/* <Grid item xs={12} md={3} sx={{ mt: 0.5 }}>
-            <Button variant="contained" size="small" onClick={handleSearch}>
-              Search
-            </Button>
-          </Grid> */}
           <Grid item xs={12}>
             <ReuseableDataGrid
               initialRows={initialRows}
               iColumns={columns}
-              // onRowDoubleClick={(params) => setIssId(params.row.issuanceId)}
               hideAction
             />
 
@@ -563,30 +434,6 @@ const DyeingGRN = () => {
           </Grid>
         </Grid>
       </Card>
-      {/* <Card variant="outlined" sx={{ marginTop: 2 }}>
-        <CardHeader
-          className="css-4rfrnx-MuiCardHeader-root"
-          // avatar={
-          // <Avatar src={schiffli} sx={{ background: 'transparent' }} />
-          // }
-          title="View All"
-          titleTypographyProps={{ style: { color: 'white' } }}
-        ></CardHeader>
-        <Grid
-          container
-          spacing={1}
-          width="Inherit"
-          sx={{ paddingY: 2, paddingX: 2 }}
-        >
-          <Grid item xs={12}>
-            <ReuseableDataGrid
-              initialRows={receivingList}
-              iColumns={receivingColumns}
-              hideAction
-            />
-          </Grid>
-        </Grid>
-      </Card> */}
     </Box>
   );
 };
