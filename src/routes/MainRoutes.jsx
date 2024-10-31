@@ -3,6 +3,8 @@ import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 import ProtectedRoute from './ProtectedRoute';
 
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard')));
 const PlanningNewCollection = Loadable(
   lazy(() => import('views/Planning/NewCollection'))
@@ -13,21 +15,21 @@ const PlanningNewDesign = Loadable(
 const PlanningProcess = Loadable(
   lazy(() => import('views/Planning/PlanningProcess'))
 );
-const UserManagementRoles = Loadable(
-  lazy(() => import('views/UserManagement/Roles'))
-);
-const UserManagementApplication = Loadable(
-  lazy(() => import('views/UserManagement/Application'))
-);
+// const UserManagementRoles = Loadable(
+//   lazy(() => import('views/UserManagement/Roles'))
+// );
+// const UserManagementApplication = Loadable(
+//   lazy(() => import('views/UserManagement/Application'))
+// );
 const UserManagementMainMenu = Loadable(
   lazy(() => import('views/UserManagement/MainMenu'))
 );
-const UserManagementSubMenu = Loadable(
-  lazy(() => import('views/UserManagement/SubMenu'))
-);
-const UserManagementUsers = Loadable(
-  lazy(() => import('views/UserManagement/Users'))
-);
+// const UserManagementSubMenu = Loadable(
+//   lazy(() => import('views/UserManagement/SubMenu'))
+// );
+// const UserManagementUsers = Loadable(
+//   lazy(() => import('views/UserManagement/Users'))
+// );
 const PrePlanningCreation = Loadable(
   lazy(() => import('views/Planning/PrePlanningCreation'))
 );
@@ -76,7 +78,7 @@ const WelcomePage = Loadable(lazy(() => import('views/welcome/WelcomePage')));
 
 const MainRoutes = {
   path: '/',
-  element: <MainLayout />,
+  element: <ProtectedRoute element={MainLayout} />,
   children: [
     {
       path: 'dashboard',
@@ -85,26 +87,26 @@ const MainRoutes = {
     {
       path: 'UserManagement',
       children: [
-        {
-          path: 'Role',
-          element: <ProtectedRoute element={UserManagementRoles} />
-        },
-        {
-          path: 'Application',
-          element: <ProtectedRoute element={UserManagementApplication} />
-        },
+        // {
+        //   path: 'Role',
+        //   element: <ProtectedRoute element={UserManagementRoles} />
+        // },
+        // {
+        //   path: 'Application',
+        //   element: <ProtectedRoute element={UserManagementApplication} />
+        // },
         {
           path: 'MainMenu',
           element: <ProtectedRoute element={UserManagementMainMenu} />
-        },
-        {
-          path: 'SubMenu',
-          element: <ProtectedRoute element={UserManagementSubMenu} />
-        },
-        {
-          path: 'Users',
-          element: <ProtectedRoute element={UserManagementUsers} />
         }
+        // {
+        //   path: 'SubMenu',
+        //   element: <ProtectedRoute element={UserManagementSubMenu} />
+        // },
+        // {
+        //   path: 'Users',
+        //   element: <ProtectedRoute element={UserManagementUsers} />
+        // }
       ]
     },
     {
