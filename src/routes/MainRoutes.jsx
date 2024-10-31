@@ -3,6 +3,8 @@ import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 import ProtectedRoute from './ProtectedRoute';
 
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard')));
 const PlanningNewCollection = Loadable(
   lazy(() => import('views/Planning/NewCollection'))
@@ -76,7 +78,7 @@ const WelcomePage = Loadable(lazy(() => import('views/welcome/WelcomePage')));
 
 const MainRoutes = {
   path: '/',
-  element: <MainLayout />,
+  element: <ProtectedRoute element={MainLayout} />,
   children: [
     {
       path: 'dashboard',
