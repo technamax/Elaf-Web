@@ -63,10 +63,11 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
   useEffect(() => {
     const fetchSubMenuLinks = async () => {
       try {
-        const empId = 10014; // Replace this with the actual employee ID as needed
+        const empId = user.empId; // Replace this with the actual employee ID as needed
         const response = await axios.get(
           `http://100.42.177.77:83/api/Menu/GetUserSubMenuByEmpId?empId=${empId}`
         );
+        console.log('GetUserSubMenuByEmpId', response.data.result);
         if (response.data.success) {
           const links = response.data.result.map((item) => item.link);
           setAllowedRoutes((prevRoutes) => [...prevRoutes, ...links]);
@@ -83,10 +84,10 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
 
   const currentPath = window.location.pathname; // Get the current path
 
-  // if (loading) {
-  //   // Optionally render a loading state
-  //   return <div>Loading...</div>;
-  // }
+  if (loading) {
+    // Optionally render a loading state
+    return <div>Loading...</div>;
+  }
 
   if (!isAuthenticated()) {
     // If the user is not authenticated, redirect to the login page

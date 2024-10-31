@@ -15,21 +15,21 @@ const PlanningNewDesign = Loadable(
 const PlanningProcess = Loadable(
   lazy(() => import('views/Planning/PlanningProcess'))
 );
-// const UserManagementRoles = Loadable(
-//   lazy(() => import('views/UserManagement/Roles'))
-// );
-// const UserManagementApplication = Loadable(
-//   lazy(() => import('views/UserManagement/Application'))
-// );
+const UserManagementRoles = Loadable(
+  lazy(() => import('views/UserManagement/Roles'))
+);
+const UserManagementApplication = Loadable(
+  lazy(() => import('views/UserManagement/Application'))
+);
 const UserManagementMainMenu = Loadable(
   lazy(() => import('views/UserManagement/MainMenu'))
 );
-// const UserManagementSubMenu = Loadable(
-//   lazy(() => import('views/UserManagement/SubMenu'))
-// );
-// const UserManagementUsers = Loadable(
-//   lazy(() => import('views/UserManagement/Users'))
-// );
+const UserManagementSubMenu = Loadable(
+  lazy(() => import('views/UserManagement/SubMenu'))
+);
+const UserManagementUsers = Loadable(
+  lazy(() => import('views/UserManagement/Users'))
+);
 const PrePlanningCreation = Loadable(
   lazy(() => import('views/Planning/PrePlanningCreation'))
 );
@@ -87,26 +87,26 @@ const MainRoutes = {
     {
       path: 'UserManagement',
       children: [
-        // {
-        //   path: 'Role',
-        //   element: <ProtectedRoute element={UserManagementRoles} />
-        // },
-        // {
-        //   path: 'Application',
-        //   element: <ProtectedRoute element={UserManagementApplication} />
-        // },
+        {
+          path: 'Role',
+          element: <ProtectedRoute element={UserManagementRoles} />
+        },
+        {
+          path: 'Application',
+          element: <ProtectedRoute element={UserManagementApplication} />
+        },
         {
           path: 'MainMenu',
           element: <ProtectedRoute element={UserManagementMainMenu} />
+        },
+        {
+          path: 'SubMenu',
+          element: <ProtectedRoute element={UserManagementSubMenu} />
+        },
+        {
+          path: 'Users',
+          element: <ProtectedRoute element={UserManagementUsers} />
         }
-        // {
-        //   path: 'SubMenu',
-        //   element: <ProtectedRoute element={UserManagementSubMenu} />
-        // },
-        // {
-        //   path: 'Users',
-        //   element: <ProtectedRoute element={UserManagementUsers} />
-        // }
       ]
     },
     {
