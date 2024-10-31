@@ -301,7 +301,7 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
     },
     {
       field: 'bGradeRate',
-      headerName: 'BGrade Rate',
+      headerName: 'B Grade Rate',
       valueGetter: (params, row) => {
         return params * row.rate;
       },
@@ -330,7 +330,7 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
     },
     {
       field: 'bGradetotal',
-      headerName: 'BGradeTotal',
+      headerName: 'B Grade Total',
       renderCell: (params) => {
         return params.row.bGradetotal.toLocaleString();
       }
@@ -344,7 +344,7 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
     },
     {
       field: 'sumGradeBAndCP',
-      headerName: 'Sum B+CP',
+      headerName: 'Received Wastage',
       renderCell: (params) => {
         return (
           <StatusChip
@@ -356,7 +356,7 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
     },
     {
       field: 'allowedBCP',
-      headerName: 'Allowed B+CP',
+      headerName: 'Allowed Wastage',
       renderCell: (params) => {
         return (
           <StatusChip
@@ -472,11 +472,26 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
   };
   return (
     <div>
+      <Grid container spacing={gridSpacing} marginTop="2px">
+        <Grid item lg={3} md={6} sm={6} xs={12}>
+          <CardSummary></CardSummary>
+        </Grid>
+        <Grid item lg={3} md={6} sm={6} xs={12}>
+          <CardSummary></CardSummary>
+        </Grid>
+        <Grid item lg={3} md={6} sm={6} xs={12}>
+          <CardSummary></CardSummary>
+        </Grid>
+        <Grid item lg={3} md={6} sm={6} xs={12}>
+          <CardSummary></CardSummary>
+        </Grid>
+      </Grid>
       <Grid
         container
         spacing={1}
         width="Inherit"
         sx={{ paddingY: 2, paddingX: 2 }}
+        marginTop="2px"
       >
         <Grid item xs={12} md={3}>
           <TextField
@@ -638,7 +653,7 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
         </Grid>
       </Grid>
       <Grid container spacing={gridSpacing}>
-        <Grid item lg={3} md={6} sm={6} xs={12}>
+        {/* <Grid item lg={3} md={6} sm={6} xs={12}>
           <CardSummary></CardSummary>
         </Grid>
         <Grid item lg={3} md={6} sm={6} xs={12}>
@@ -649,7 +664,7 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
         </Grid>
         <Grid item lg={3} md={6} sm={6} xs={12}>
           <CardSummary></CardSummary>
-        </Grid>
+        </Grid> */}
         <Grid item xs={12} textAlign="right">
           <Button
             variant="contained"
