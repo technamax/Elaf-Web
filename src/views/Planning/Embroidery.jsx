@@ -4,6 +4,7 @@ import {
   Grid,
   TextField,
   Button,
+  CircularProgress,
   MenuItem,
   FormControl,
   Typography,
@@ -72,7 +73,7 @@ const Embroidery = ({ initialValues }) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const [initialData, setInitialData] = useState([]);
-  const [loading, setLoading] = useState(false); // State for loading
+  // const [loading, setLoading] = useState(false); // State for loading
 
   const [formData, setFormData] = useState({
     embroideryId: 0,
@@ -457,7 +458,7 @@ const Embroidery = ({ initialValues }) => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
-      setLoading(true);
+      // setLoading(true);
       setInitialRows([]);
       setIsLoading(true);
       setFormData({
@@ -605,21 +606,21 @@ const Embroidery = ({ initialValues }) => {
       });
 
       setAccordionExpanded(true);
-      setLoading(false);
+      // setLoading(false);
     } else {
       setFormData({ ...formData, [name]: value });
       setFormErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
     }
   };
   const [formErrors, setFormErrors] = useState({});
-
+  const [loading, setLoading] = useState(false);
   const handleSave = async () => {
     // const errors = validateForm();
     // if (Object.keys(errors).length > 0) {
     //   setFormErrors(errors);
     //   return;
     // }
-
+    setLoading(true);
     try {
       const response = await axios.post(
         'http://100.42.177.77:83/api/Embroidery/SaveEmbroidery',
@@ -701,6 +702,8 @@ const Embroidery = ({ initialValues }) => {
         variant: 'error',
         autoHideDuration: 5000
       });
+    } finally {
+      setLoading(false);
     }
   };
   // const validateForm = () => {
@@ -1493,13 +1496,25 @@ const Embroidery = ({ initialValues }) => {
             />
           </Grid>
           <Grid item xs={12} md={4.5} textAlign="right" sx={{ mt: 2 }}>
-            <Button
+            {/* <Button
               variant="contained"
               size="small"
               disabled={formData.productionStatus === 3}
               onClick={handleSave}
             >
               Save
+            </Button> */}
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              disabled={loading || formData.productionStatus === 3}
+            >
+              {loading ? (
+                <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+              ) : (
+                'Save'
+              )}
             </Button>
           </Grid>
         </Grid>

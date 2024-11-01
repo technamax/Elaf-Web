@@ -3,6 +3,7 @@ import {
   Grid,
   TextField,
   Button,
+  CircularProgress,
   Box,
   Divider,
   MenuItem,
@@ -432,6 +433,7 @@ const EmbroideryAssignVendor = ({
   //   // }
   //   return errors;
   // };
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     // const errors = validateForm();
@@ -474,6 +476,7 @@ const EmbroideryAssignVendor = ({
       );
       return;
     }
+    setLoading(true);
     try {
       // Make the API call
       const response = await axios.post(
@@ -549,6 +552,8 @@ const EmbroideryAssignVendor = ({
         variant: 'error',
         autoHideDuration: 5000
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -1628,13 +1633,25 @@ const EmbroideryAssignVendor = ({
           </Grid>
 
           <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-            <Button
+            {/* <Button
               variant="contained"
               size="small"
               onClick={handleSave}
               disabled={productionStatus === 3}
             >
               Save
+            </Button> */}
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              disabled={loading || productionStatus === 3}
+            >
+              {loading ? (
+                <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+              ) : (
+                'Save'
+              )}
             </Button>
           </Grid>
         </Grid>

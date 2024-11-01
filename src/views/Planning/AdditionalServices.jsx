@@ -10,7 +10,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import axios from 'axios';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
+import { Grid, CircularProgress } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
@@ -82,15 +82,15 @@ export default function AdditionalServices({ initialValues }) {
     useGetDistinctCollectionsQuery(formData.collectionId, {
       skip: !formData.collectionId // Skip the query if no collection is selected
     });
-  useEffect(() => {
-    // setSelectedCollectionId(initialValues.collectionId);
-    setFormData({
-      ...formData,
-      collectionId: initialValues?.collectionId || ''
-      // planningHeaderId: initialValues?.planningHeaderId || '',
-      // batchNo: initialValues?.batchNo || ''
-    });
-  }, [setFormData]);
+  // useEffect(() => {
+  //   // setSelectedCollectionId(initialValues.collectionId);
+  //   setFormData({
+  //     ...formData,
+  //     collectionId: initialValues?.collectionId || ''
+  //     // planningHeaderId: initialValues?.planningHeaderId || '',
+  //     // batchNo: initialValues?.batchNo || ''
+  //   });
+  // }, [setFormData]);
   useEffect(() => {
     if (batchData) {
       setBatchList(batchData);
@@ -180,19 +180,21 @@ export default function AdditionalServices({ initialValues }) {
     formData.totalAmount,
     formData.costperPiece
   ]);
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
+    setLoading(true);
     try {
       const response = await axios.post(
         'http://100.42.177.77:83/api/AdditionalServices/SaveAdditionalServices',
         formData
       );
       console.log('Form data saved:', response.data);
-      setFormData({
+      setFormData((prevFormData) => ({
         // ...formData,
         additionalServiceId: 0,
 
-        collectionId: '',
+        collectionId: prevFormData.collectionId,
         serviceTypeId: '', // Reset to the passed serviceTypeId
         serviceListId: '',
         vendorId: '',
@@ -202,10 +204,14 @@ export default function AdditionalServices({ initialValues }) {
         rate: '',
         totalAmount: '',
         costperPiece: ''
-      });
+      }));
+      //refetxch
+      fetchDataInternal();
       if (onSaveSuccess) onSaveSuccess(); // Call the success handler to refresh data
     } catch (error) {
       console.error('Error saving data:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -677,7 +683,7 @@ export default function AdditionalServices({ initialValues }) {
             />
           </Grid>
           <Grid item md={12} width="inherit" paddingX={1} textAlign="right">
-            <Button
+            {/* <Button
               variant="contained"
               color="primary"
               size="small"
@@ -685,6 +691,18 @@ export default function AdditionalServices({ initialValues }) {
               onClick={handleSave}
             >
               Save
+            </Button> */}
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              disabled={loading || formData.productionStatus === 3}
+            >
+              {loading ? (
+                <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+              ) : (
+                'Save'
+              )}
             </Button>
           </Grid>
         </Grid>

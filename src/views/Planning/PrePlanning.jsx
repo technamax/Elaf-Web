@@ -27,7 +27,10 @@ import LoopOutlinedIcon from '@mui/icons-material/LoopOutlined';
 
 import { useGetCollectionFromPlanningHeaderQuery } from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetDesignFromPlanningHeaderByCollectionIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
-import { useGetPrePlanningByPlanningHeaderIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
+import {
+  useGetPrePlanningByPlanningHeaderIdQuery,
+  useGetPrePlanningHeaderByDesignIdQuery
+} from 'api/store/Apis/prePlanningHeaderApi';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 
 import { Card, CardHeader, Avatar } from '@mui/material';
@@ -49,6 +52,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
   const { user } = useUser();
   console.log('user', user);
   const [isLoading, setIsLoading] = useState(true);
+  const [lock, setLock] = useState(false);
 
   const [initialData, setInitialData] = useState([]);
   const [initialRows, setInitialRows] = useState([]);
@@ -137,7 +141,10 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     useGetDesignFromPlanningHeaderByCollectionIdQuery(selectedCollectionId, {
       skip: !selectedCollectionId // Skip the query if no collection is selected
     });
-
+  const { data: batchData, refetch: refetchBatches } =
+    useGetPrePlanningHeaderByDesignIdQuery(formData.designId, {
+      skip: !formData.designId // Skip the query if no collection is selected
+    });
   const { data: prePlanningList, refetch: refetchPrePlanningList } =
     useGetPrePlanningByPlanningHeaderIdQuery(formData.planningHeaderId, {
       skip: !formData.planningHeaderId // Skip the query if no collection is selected
@@ -153,6 +160,12 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       setCollectionList(collectionData.result);
     }
   }, [collectionData]);
+  useEffect(() => {
+    if (batchData) {
+      setBatchList(batchData.result);
+      // refetchBatches();
+    }
+  }, [batchData]);
   useEffect(() => {
     if (designData) {
       setDesignList(designData.result);
@@ -207,46 +220,46 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     }
   }, [lookupData]);
 
-  useEffect(() => {
-    const GetPrePlanningHeaderByDesignId = async (id) => {
-      try {
-        const response = await axios.get(
-          `http://100.42.177.77:83/api/PrePlanning/GetPrePlanningHeaderByDesignId?designId=${id}`
-        );
-        console.log(response.data);
-        setBatchList(
-          response.data.result.map((row, index) => ({
-            id: index + 1,
-            ...row
-          }))
-        );
-      } catch (error) {
-        console.error('Error fetching pre-planning lookup data:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const GetPrePlanningHeaderByDesignId = async (id) => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://100.42.177.77:83/api/PrePlanning/GetPrePlanningHeaderByDesignId?designId=${id}`
+  //       );
+  //       console.log(response.data);
+  //       setBatchList(
+  //         response.data.result.map((row, index) => ({
+  //           id: index + 1,
+  //           ...row
+  //         }))
+  //       );
+  //     } catch (error) {
+  //       console.error('Error fetching pre-planning lookup data:', error);
+  //     }
+  //   };
 
-    // const GetPrePlanningByPlanningHeaderId = async (id) => {
-    //   // setLoading(true);
-    //   try {
-    //     const response = await axios.get(
-    //       `http://100.42.177.77:83/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
-    //     );
-    //     console.log('GetPrePlanningByPlanningHeaderI', response.data.result);
-    //     setInitialRows(
-    //       response.data.result.map((item, index) => ({ ...item, id: index }))
-    //     );
-    //   } catch (error) {
-    //     console.error('Error fetching pre-planning lookup data:', error);
-    //   }
-    // };
-    if (formData.designId) {
-      GetPrePlanningHeaderByDesignId(formData.designId);
-    }
-    // if (formData.designId) {
-    //   GetPrePlanningByPlanningHeaderId(formData.planningHeaderId);
-    // }
-    // setLoading(false);
-  }, [formData.designId, formData.planningHeaderId]);
+  //   // const GetPrePlanningByPlanningHeaderId = async (id) => {
+  //   //   // setLoading(true);
+  //   //   try {
+  //   //     const response = await axios.get(
+  //   //       `http://100.42.177.77:83/api/PrePlanning/GetPrePlanningByPlanningHeaderId?planningHeaderId=${id}`
+  //   //     );
+  //   //     console.log('GetPrePlanningByPlanningHeaderI', response.data.result);
+  //   //     setInitialRows(
+  //   //       response.data.result.map((item, index) => ({ ...item, id: index }))
+  //   //     );
+  //   //   } catch (error) {
+  //   //     console.error('Error fetching pre-planning lookup data:', error);
+  //   //   }
+  //   // };
+  //   if (formData.designId) {
+  //     GetPrePlanningHeaderByDesignId(formData.designId);
+  //   }
+  //   // if (formData.designId) {
+  //   //   GetPrePlanningByPlanningHeaderId(formData.planningHeaderId);
+  //   // }
+  //   // setLoading(false);
+  // }, [formData.designId, formData.planningHeaderId]);
   useEffect(() => {
     if (batchList[0]) {
       setFormData({
@@ -381,7 +394,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       const selectedCollection = collectionList.find(
         (collection) => collection.collectionId === parseInt(value)
       );
-      setLoading(true);
+      // setLoading(true);
       setInitialRows([]);
       setIsLoading(true);
       setSelectedCollectionId(value);
@@ -415,6 +428,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       );
       setInitialRows([]);
       setIsLoading(true);
+      setLock(false);
       setFormData({
         ...formData,
         processType: 'MultiHead',
@@ -463,7 +477,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         planningHeaderId: selectedBatch ? selectedBatch.planningHeaderId : ''
       });
       setAccordionExpanded(true);
-      setLoading(false);
+      // setLoading(false);
     } else if (name === 'planningProcessTypeId') {
       const selectedProcess = processType.find(
         (batch) => batch.lookUpId === value
@@ -480,14 +494,13 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         operatingMachineId: 0
       });
       setAccordionExpanded(true);
-      setLoading(false);
+      // setLoading(false);
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
   // console.log('noOfDesigns', formData.noOfDesigns); colorId
   const [formErrors, setFormErrors] = useState({});
-  const [lock, setLock] = useState(false);
   const handleLock = () => {
     setLock(!lock);
   };
@@ -529,41 +542,42 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
           autoHideDuration: 5000
         });
       }
-      // setFormData((prevFormData) => ({
-      //   processType: 'MultiHead',
-      //   planningId: 0,
-      //   collectionId: prevFormData.collectionId,
-      //   designId: prevFormData.designId,
-      //   batchNo: prevFormData.batchNo,
-      //   planningHeaderId: prevFormData.planningHeaderId,
-      //   baseColorId: prevFormData.baseColorId, // not in api
-      //   baseColorName: prevFormData.baseColorName, // not in api
-      //   noOfDesigns: prevFormData.noOfDesigns, // not in apis
-      //   noOfColors: prevFormData.noOfColors, // not in api
-      //   poPcs: prevFormData.poPcs,
+      setFormData((prevFormData) => ({
+        processType: 'MultiHead',
+        planningId: 0,
+        collectionId: prevFormData.collectionId,
+        designId: prevFormData.designId,
+        batchNo: prevFormData.batchNo,
+        planningHeaderId: prevFormData.planningHeaderId,
+        baseColorId: prevFormData.baseColorId, // not in api
+        baseColorName: prevFormData.baseColorName, // not in api
+        noOfDesigns: prevFormData.noOfDesigns, // not in apis
+        noOfColors: prevFormData.noOfColors, // not in api
+        poPcs: prevFormData.poPcs,
 
-      //   fabricId: prevFormData.fabricId,
-      //   shrinkage: prevFormData.shrinkage,
-      //   wastage: prevFormData.wastage,
-      //   uomId: prevFormData.uomId,
+        fabricId: prevFormData.fabricId,
+        shrinkage: prevFormData.shrinkage,
+        wastage: prevFormData.wastage,
+        uomId: prevFormData.uomId,
 
-      //   componentId: '',
-      //   cuttingSize: '', // not in api
-      //   colorId: '',
-      //   noOfHeads: 0,
-      //   operatingMachineId: 0,
-      //   repeats: 0,
-      //   repeatSize: 0,
-      //   totalFabric: '',
-      //   total: '',
-      //   appId: 1,
-      //   createdOn: new Date().toISOString(),
-      //   createdBy: user.empId,
-      //   lastUpdatedOn: new Date().toISOString(),
-      //   lastUpdatedBy: user.empId,
-      //   isSchiffili: false,
-      //   repeatsInMtr: ''
-      // }));
+        componentId: '',
+        cuttingSize: '', // not in api
+        colorId: prevFormData.baseColorId,
+        color: prevFormData.baseColorName,
+        noOfHeads: 0,
+        operatingMachineId: 0,
+        repeats: 0,
+        repeatSize: 0,
+        totalFabric: '',
+        total: '',
+        appId: 1,
+        createdOn: new Date().toISOString(),
+        createdBy: user.empId,
+        lastUpdatedOn: new Date().toISOString(),
+        lastUpdatedBy: user.empId,
+        isSchiffili: false,
+        repeatsInMtr: ''
+      }));
 
       refetchPrePlanningList();
 
@@ -609,6 +623,9 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     }
     if (!formData.wastage) {
       errors.wastage = 'wastage is required';
+    }
+    if (!formData.planningProcessTypeId) {
+      errors.planningProcessTypeId = 'ProcessType is required';
     }
     return errors;
   };
@@ -1348,6 +1365,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                   name="planningProcessTypeId"
                   value={formData.planningProcessTypeId}
                   onChange={handleChange}
+                  error={!!formErrors.planningProcessTypeId}
+                  helperText={formErrors.planningProcessTypeId}
                   size="small"
                   required
                   InputLabelProps={{

@@ -591,6 +591,7 @@ const Summary = ({
     })) || [];
   const CustomFooter = () => <div />;
   const apiRef = useGridApiRef();
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     if (selectedRows.length === 0) {
@@ -605,7 +606,7 @@ const Summary = ({
       createdBy: user.empId,
       batchStatus: 3
     };
-
+    setLoading(true);
     try {
       const response = await axios.post(
         'http://100.42.177.77:83/api/PrePlanning/FinalizePrePlanningBatch',
@@ -627,6 +628,8 @@ const Summary = ({
     } catch (error) {
       console.error('Failed to save data', error);
       enqueueSnackbar('Failed to save data', { variant: 'error' });
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -695,13 +698,27 @@ const Summary = ({
             </TextField>
           </Grid>
           <Grid item xs={4} textAlign="right" sx={{ mt: 1 }}>
-            <Button
+            {/* <Button
               variant="contained"
               size="small"
               onClick={handleSave}
               color="success"
             >
               Finalize
+            </Button> */}
+
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              color="success"
+              disabled={loading}
+            >
+              {loading ? (
+                <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+              ) : (
+                'Finalize'
+              )}
             </Button>
           </Grid>
         </Grid>

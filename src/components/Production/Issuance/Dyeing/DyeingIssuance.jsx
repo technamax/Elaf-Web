@@ -909,13 +909,21 @@ const DyeingIssuance = ({ rowData }) => {
             >
               Generate OGP
             </Button>
-            <Button
-              size="small"
-              color="primary"
-              onClick={() => handleViewOGP(params.row)}
+            <div
+              hidden={
+                user.roleId === 1 ||
+                user.roleId === 1012 ||
+                user.roleId === 1007
+              }
             >
-              View OGP
-            </Button>
+              <Button
+                size="small"
+                color="primary"
+                onClick={() => handleViewOGP(params.row)}
+              >
+                View OGP
+              </Button>{' '}
+            </div>
             <Button
               size="small"
               color="primary"
@@ -1342,16 +1350,24 @@ const DyeingIssuance = ({ rowData }) => {
                       }
                     })}
                   />
-                  <Tab
-                    icon={<AssignmentOutlinedIcon />}
-                    label="OGP"
-                    value="2"
-                    sx={(theme) => ({
-                      '& .MuiTouchRipple-child': {
-                        backgroundColor: `${theme.palette.primary.main} !important`
-                      }
-                    })}
-                  />
+                  <div
+                    hidden={
+                      user.roleId === 1 ||
+                      user.roleId === 1012 ||
+                      user.roleId === 1007
+                    }
+                  >
+                    <Tab
+                      icon={<AssignmentOutlinedIcon />}
+                      label="OGP"
+                      value="2"
+                      sx={(theme) => ({
+                        '& .MuiTouchRipple-child': {
+                          backgroundColor: `${theme.palette.primary.main} !important`
+                        }
+                      })}
+                    />
+                  </div>
                 </TabList>
               </Box>
               <TabPanel value="1">

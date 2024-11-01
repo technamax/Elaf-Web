@@ -4,6 +4,7 @@ import {
   Grid,
   TextField,
   Button,
+  CircularProgress,
   MenuItem,
   FormControl,
   Typography,
@@ -98,7 +99,7 @@ const Fabrication = ({ initialValues, setInitialValues }) => {
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded);
   };
-  const [loading, setLoading] = useState(false); // State for loading
+  // const [loading, setLoading] = useState(false); // State for loading
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   console.log(collectionData);
@@ -273,7 +274,7 @@ const Fabrication = ({ initialValues, setInitialValues }) => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
-      setLoading(true);
+      // setLoading(true);
       setInitialRows([]);
       setIsLoading(true);
 
@@ -341,7 +342,7 @@ const Fabrication = ({ initialValues, setInitialValues }) => {
         poPcs: selectedBatch ? selectedBatch.poPcs : ''
       });
       setAccordionExpanded(true);
-      setLoading(false);
+      // setLoading(false);
     } else if (name === 'fabricId') {
       const selectedFabric = Fabrications.find(
         (fabric) => fabric.fabricId === value
@@ -519,6 +520,7 @@ const Fabrication = ({ initialValues, setInitialValues }) => {
       }
     }
   ];
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     const errors = validateForm();
@@ -526,7 +528,7 @@ const Fabrication = ({ initialValues, setInitialValues }) => {
       setFormErrors(errors);
       return;
     }
-
+    setLoading(true);
     try {
       // Make the API call
       const response = await axios.post(
@@ -585,6 +587,8 @@ const Fabrication = ({ initialValues, setInitialValues }) => {
         variant: 'error',
         autoHideDuration: 5000
       });
+    } finally {
+      setLoading(false);
     }
   };
   const validateForm = () => {
@@ -992,13 +996,25 @@ const Fabrication = ({ initialValues, setInitialValues }) => {
                 />
               </Grid>
               <Grid item xs={12} textAlign="right">
-                <Button
+                {/* <Button
                   variant="contained"
                   size="small"
                   onClick={handleSave}
                   disabled={formData.productionStatus === 3}
                 >
                   Save
+                </Button> */}
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleSave}
+                  disabled={loading || formData.productionStatus === 3}
+                >
+                  {loading ? (
+                    <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+                  ) : (
+                    'Save'
+                  )}
                 </Button>
               </Grid>
             </Grid>

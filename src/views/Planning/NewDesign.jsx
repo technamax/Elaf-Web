@@ -6,6 +6,7 @@ import { SnackbarProvider, useSnackbar } from 'notistack';
 
 import {
   Button,
+  CircularProgress,
   MenuItem,
   FormControl,
   Typography,
@@ -268,6 +269,8 @@ const NewDesign = () => {
     const { name, value } = e.target;
     setSearchData({ ...searchData, [name]: value });
   };
+  const [loading, setLoading] = useState(false);
+
   const handleSave = async () => {
     console.log(formData);
     // Check if the design number already exists
@@ -283,6 +286,7 @@ const NewDesign = () => {
       });
       return; // Exit without saving
     }
+    setLoading(true);
     try {
       const response = await axios.post(
         'http://100.42.177.77:83/api/DesignRegistration/SaveDesign',
@@ -316,6 +320,8 @@ const NewDesign = () => {
         variant: 'error',
         autoHideDuration: 5000
       });
+    } finally {
+      setLoading(false);
     }
   };
   console.log('searchData', searchData);
@@ -607,9 +613,21 @@ const NewDesign = () => {
                   </TextField>
                 </Grid>
                 <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-                  <Button variant="contained" size="small" onClick={handleSave}>
+                  {/* <Button variant="contained" size="small" onClick={handleSave}>
                     Save
-                  </Button>{' '}
+                  </Button> */}
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={handleSave}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+                    ) : (
+                      'Save'
+                    )}
+                  </Button>
                 </Grid>
               </Grid>
               {/* </FormControl> */}

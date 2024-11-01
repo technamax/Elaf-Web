@@ -4,6 +4,7 @@ import {
   Grid,
   TextField,
   Button,
+  CircularProgress,
   MenuItem,
   FormControl,
   Typography,
@@ -137,7 +138,7 @@ const Schiffli = ({ initialValues }) => {
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded);
   };
-  const [loading, setLoading] = useState(false); // State for loading
+  // const [loading, setLoading] = useState(false); // State for loading
 
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
@@ -404,7 +405,7 @@ const Schiffli = ({ initialValues }) => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
-      setLoading(true);
+      // setLoading(true);
       setInitialRows([]);
       setIsLoading(true);
       setFormData({
@@ -516,7 +517,7 @@ const Schiffli = ({ initialValues }) => {
         totalAfterTax: 0
       });
       setAccordionExpanded(true);
-      setLoading(false);
+      // setLoading(false);
     } else if (name === 'componentId') {
       const selectedcolor = components.find(
         (component) => component.componentId === value
@@ -530,6 +531,12 @@ const Schiffli = ({ initialValues }) => {
         colorId: selectedcolor ? selectedcolor.colorId : '',
         availableQty: selectedcolor ? selectedcolor.total : '',
         cuttingSize: selectedcolor ? selectedcolor.cuttingSize : '',
+        operatingMachineId: selectedcolor
+          ? selectedcolor.operatingMachineId
+          : '',
+        operatingMachine: selectedcolor
+          ? selectedcolor.operatingMachineName
+          : '',
         repeats: selectedcolor ? selectedcolor.repeats : ''
       });
     } else if (name === 'operatingMachineId') {
@@ -547,6 +554,7 @@ const Schiffli = ({ initialValues }) => {
   };
   console.log('colors', colors);
   const [formErrors, setFormErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     const errors = validateForm();
@@ -554,7 +562,7 @@ const Schiffli = ({ initialValues }) => {
       setFormErrors(errors);
       return;
     }
-
+    setLoading(true);
     try {
       // Make the API call
       const response = await axios.post(
@@ -587,8 +595,10 @@ const Schiffli = ({ initialValues }) => {
         componentId: '',
         poPcs: prevFormData.poPcs,
         fabricId: '',
+        fabric: '',
         vendorId: '',
         colorId: '', // from dying screen coming from fabricAPI
+        color: '', // from dying screen coming from fabricAPI
         availableQty: '',
         thaanQty: 0,
         operatingMachineId: 0,
@@ -623,6 +633,8 @@ const Schiffli = ({ initialValues }) => {
         variant: 'error',
         autoHideDuration: 5000
       });
+    } finally {
+      setLoading(false);
     }
   };
   const validateForm = () => {
@@ -1580,13 +1592,25 @@ const Schiffli = ({ initialValues }) => {
                 </Grid>
               ) : null}
               <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-                <Button
+                {/* <Button
                   variant="contained"
                   size="small"
                   onClick={handleSave}
                   disabled={formData.productionStatus === 3}
                 >
                   Save
+                </Button> */}
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleSave}
+                  disabled={loading || formData.productionStatus === 3}
+                >
+                  {loading ? (
+                    <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+                  ) : (
+                    'Save'
+                  )}
                 </Button>
               </Grid>
             </Grid>

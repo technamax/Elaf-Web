@@ -1,6 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Grid, TextField, Button, MenuItem, Divider, Box } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Button,
+  CircularProgress,
+  MenuItem,
+  Divider,
+  Box
+} from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 
 import { Card, CardHeader, Avatar } from '@mui/material';
@@ -106,9 +114,11 @@ export default function AssignSubMenu() {
 
     setFormData({ ...formData, [name]: value });
   };
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     console.log('formData', formData);
+    setLoading(true);
     try {
       // Make the API call
       const response = await axios.post(
@@ -134,6 +144,8 @@ export default function AssignSubMenu() {
       // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
+    } finally {
+      setLoading(false);
     }
   };
   console.log('formData', formData);
@@ -340,8 +352,21 @@ export default function AssignSubMenu() {
             </div>
           </Grid>
           <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-            <Button variant="contained" size="small" onClick={handleSave}>
+            {/* <Button variant="contained" size="small" onClick={handleSave}>
               Save
+            </Button> */}
+
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              disabled={loading}
+            >
+              {loading ? (
+                <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+              ) : (
+                'Save'
+              )}
             </Button>
           </Grid>
         </Grid>{' '}
@@ -364,6 +389,7 @@ export default function AssignSubMenu() {
             <ReuseableDataGrid
               initialRows={subMenus}
               iColumns={columns}
+              hideAction
               disableDelete={true}
               setInitialData={setInitialData}
               setIsEdit={setIsEdit}

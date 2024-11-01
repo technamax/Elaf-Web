@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField, Button, Box, Divider, MenuItem } from '@mui/material';
+import {
+  Grid,
+  TextField,
+  Button,
+  CircularProgress,
+  Box,
+  Divider,
+  MenuItem
+} from '@mui/material';
 import ReuseableDataGrid from './ReuseableDataGrid';
 import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
 import { useGetAdditionalProcessDetailsByAdditionalProcessIdQuery } from 'api/store/Apis/prePlanningHeaderApi';
@@ -177,6 +185,7 @@ const AssignVendorFormTable = ({
     // formData.poPcs,
     // formData.pcsPerComponent
   ]);
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     console.log(formData);
@@ -192,7 +201,7 @@ const AssignVendorFormTable = ({
       );
       return;
     }
-
+    setLoading(true);
     try {
       // Make the API call
       const response = await axios.post(
@@ -245,6 +254,8 @@ const AssignVendorFormTable = ({
         variant: 'error',
         autoHideDuration: 5000
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -843,7 +854,7 @@ const AssignVendorFormTable = ({
           />
         </Grid>
         <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-          <Button
+          {/* <Button
             variant="contained"
             size="small"
             onClick={handleSave}
@@ -852,6 +863,22 @@ const AssignVendorFormTable = ({
             }
           >
             Save
+          </Button> */}
+          <Button
+            variant="contained"
+            size="small"
+            onClick={handleSave}
+            disabled={
+              loading ||
+              !formData.remainingPcsPerComponent ||
+              productionStatus === 3
+            }
+          >
+            {loading ? (
+              <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+            ) : (
+              'Save'
+            )}
           </Button>
         </Grid>
       </Grid>

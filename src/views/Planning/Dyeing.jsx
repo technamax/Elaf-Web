@@ -6,6 +6,7 @@ import {
   Grid,
   TextField,
   Button,
+  CircularProgress,
   MenuItem,
   FormControl,
   Typography,
@@ -134,13 +135,15 @@ const Dyeing = ({ initialValues }) => {
     });
   }, [initialData]);
   const { enqueueSnackbar } = useSnackbar();
-  const [loading, setLoading] = useState(false); // State for loading
+  // const [loading, setLoading] = useState(false); // State for loading
 
   console.log('Dyeing form data to send', formData);
   const { data: collectionData } = useGetCollectionFromPlanningHeaderQuery();
   const [selectedCollectionId, setSelectedCollectionId] = useState('');
   useEffect(() => {
-    setSelectedCollectionId(initialValues.collectionId);
+    if (initialValues.collectionId) {
+      setSelectedCollectionId(initialValues.collectionId);
+    }
     // setFormData({
     //   ...formData,
     //   designId: initialValues?.designId || '',
@@ -277,7 +280,7 @@ const Dyeing = ({ initialValues }) => {
         (collection) => collection.collectionId === parseInt(value)
       );
       setSelectedCollectionId(value);
-      setLoading(true);
+      // setLoading(true);
       setInitialRows([]);
       setIsLoading(true);
 
@@ -374,7 +377,7 @@ const Dyeing = ({ initialValues }) => {
         // TotalIncludingGst: ''
       });
       setAccordionExpanded(true);
-      setLoading(false);
+      // setLoading(false);
 
       // Fetch data from API when batchNo changes
     } else if (name === 'fabricId') {
@@ -462,6 +465,7 @@ const Dyeing = ({ initialValues }) => {
     formData.UnitRatePerPo
   ]);
   const [formErrors, setFormErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     // const errors = validateForm();
@@ -469,7 +473,7 @@ const Dyeing = ({ initialValues }) => {
     //   setFormErrors(errors);
     //   return;
     // }
-
+    setLoading(true);
     try {
       const response = await axios.post(
         'http://100.42.177.77:83/api/DyeingPrinting/SaveDyeingPrinting',
@@ -532,6 +536,8 @@ const Dyeing = ({ initialValues }) => {
         autoHideDuration: 5000
       });
       // Handle error (e.g., show an error message)
+    } finally {
+      setLoading(false);
     }
   };
   const validateForm = () => {
@@ -1222,7 +1228,7 @@ const Dyeing = ({ initialValues }) => {
             />
           </Grid> */}
           <Grid item xs={12} md={9} sx={{ marginTop: 2 }} textAlign="right">
-            <Button
+            {/* <Button
               variant="contained"
               color="primary"
               size="small"
@@ -1230,6 +1236,18 @@ const Dyeing = ({ initialValues }) => {
               onClick={handleSave}
             >
               Save
+            </Button> */}
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              disabled={loading || formData.productionStatus === 3}
+            >
+              {loading ? (
+                <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+              ) : (
+                'Save'
+              )}
             </Button>
           </Grid>
         </Grid>

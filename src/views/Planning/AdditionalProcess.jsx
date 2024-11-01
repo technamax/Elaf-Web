@@ -4,6 +4,7 @@ import {
   Grid,
   TextField,
   Button,
+  CircularProgress,
   MenuItem,
   FormControl,
   Typography,
@@ -77,8 +78,9 @@ const AdditionalProcess = ({ initialValues }) => {
     batchNo: '',
     componentId: '',
     colorId: '',
-    fabricId: '',
+    color: '',
     // vendorId: '', /////////////checkapi
+    fabric: '',
     uomId: '',
     baseColorName: '',
     poPcs: '',
@@ -373,14 +375,32 @@ const AdditionalProcess = ({ initialValues }) => {
         LastUpdatedBy: user.empId
       });
       setAccordionExpanded(true);
+    } else if (name === 'componentId') {
+      const selectedcolor = components.find(
+        (component) => component.componentId === value
+      );
+      setFormData({
+        ...formData,
+        componentId: value,
+        fabricId: selectedcolor ? selectedcolor.fabricId : '',
+        fabric: selectedcolor ? selectedcolor.fabric : '',
+        color: selectedcolor ? selectedcolor.color : '',
+        colorId: selectedcolor ? selectedcolor.colorId : '',
+        // availableQty: selectedcolor ? selectedcolor.total : '',
+        // cuttingSize: selectedcolor ? selectedcolor.cuttingSize : '',
+        uomId: selectedcolor ? selectedcolor.uomId : ''
+        // repeats: selectedcolor ? selectedcolor.repeats : ''
+      });
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
   console.log('colors', colors);
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     console.log('formData', formData);
+    setLoading(true);
     try {
       // Make the API call
       const response = await axios.post(
@@ -411,7 +431,9 @@ const AdditionalProcess = ({ initialValues }) => {
         poPcs: prevFormData.poPcs,
         componentId: '',
         colorId: '',
+        color: '',
         fabricId: '',
+        fabric: '',
         uomId: '',
         // baseColorName: '',
         pcsPerComponent: '',
@@ -431,6 +453,8 @@ const AdditionalProcess = ({ initialValues }) => {
         variant: 'error',
         autoHideDuration: 5000
       });
+    } finally {
+      setLoading(false);
     }
   };
   console.log('formData', formData);
@@ -732,12 +756,12 @@ const AdditionalProcess = ({ initialValues }) => {
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
-              select
+              // select
               label="Select Fabric"
               defaultValue=""
               size="small"
-              name="fabricId"
-              value={formData.fabricId}
+              name="fabric"
+              value={formData.fabric}
               onChange={handleChange}
               InputLabelProps={{
                 sx: {
@@ -746,11 +770,11 @@ const AdditionalProcess = ({ initialValues }) => {
                 }
               }}
             >
-              {Fabrications.map((option) => (
+              {/* {Fabrications.map((option) => (
                 <MenuItem key={option.fabricId} value={option.fabricId}>
                   {option.fabric}
                 </MenuItem>
-              ))}
+              ))} */}
             </TextField>
           </Grid>
           {/* <Grid item xs={12} md={3}>
@@ -775,11 +799,11 @@ const AdditionalProcess = ({ initialValues }) => {
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
-              select
+              // select
               label="Color"
               size="small"
-              name="colorId"
-              value={formData.colorId}
+              name="color"
+              value={formData.color}
               onChange={handleChange}
               InputLabelProps={{
                 sx: {
@@ -788,11 +812,11 @@ const AdditionalProcess = ({ initialValues }) => {
                 }
               }}
             >
-              {colors.map((option) => (
+              {/* {colors.map((option) => (
                 <MenuItem key={option.colorId} value={option.colorId}>
                   {option.color}
                 </MenuItem>
-              ))}
+              ))} */}
             </TextField>
           </Grid>
           <Grid item xs={12} md={1.5}>
@@ -904,13 +928,25 @@ const AdditionalProcess = ({ initialValues }) => {
           </Grid>
 
           <Grid item xs={12} textAlign="right" sx={{ mt: 0 }}>
-            <Button
+            {/* <Button
               variant="contained"
               size="small"
               onClick={handleSave}
               disabled={formData.productionStatus === 3}
             >
               Save
+            </Button> */}
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              disabled={loading || formData.productionStatus === 3}
+            >
+              {loading ? (
+                <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+              ) : (
+                'Save'
+              )}
             </Button>
           </Grid>
         </Grid>

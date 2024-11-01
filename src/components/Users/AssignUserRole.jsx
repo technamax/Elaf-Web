@@ -3,6 +3,7 @@ import {
   Grid,
   TextField,
   Button,
+  CircularProgress,
   Box,
   Divider,
   MenuItem,
@@ -116,9 +117,11 @@ const AssignVendorFormTable = ({
 
     setFormData({ ...formData, [name]: value });
   };
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     console.log('formData', formData);
+    setLoading(true);
     try {
       // Make the API call
       const response = await axios.post(
@@ -150,6 +153,8 @@ const AssignVendorFormTable = ({
       // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
+    } finally {
+      setLoading(false);
     }
   };
   console.log('formData', formData);
@@ -351,8 +356,20 @@ const AssignVendorFormTable = ({
           </Grid>
 
           <Grid item xs={12} textAlign="right" sx={{}}>
-            <Button variant="contained" size="small" onClick={handleSave}>
+            {/* <Button variant="contained" size="small" onClick={handleSave}>
               Save
+            </Button> */}
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              disabled={loading}
+            >
+              {loading ? (
+                <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+              ) : (
+                'Save'
+              )}
             </Button>
           </Grid>
         </Grid>{' '}

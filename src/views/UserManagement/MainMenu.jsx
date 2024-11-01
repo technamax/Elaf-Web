@@ -4,6 +4,7 @@ import {
   Grid,
   TextField,
   Button,
+  CircularProgress,
   MenuItem,
   Divider,
   Box,
@@ -106,9 +107,11 @@ export default function Application() {
 
     setFormData({ ...formData, [name]: value });
   };
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     console.log('formData', formData);
+    setLoading(true);
     try {
       // Make the API call
       const response = await axios.post(
@@ -137,6 +140,8 @@ export default function Application() {
       // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
+    } finally {
+      setLoading(false);
     }
   };
   console.log('formData', formData);
@@ -328,8 +333,21 @@ export default function Application() {
                 </Grid>
 
                 <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-                  <Button variant="contained" size="small" onClick={handleSave}>
+                  {/* <Button variant="contained" size="small" onClick={handleSave}>
                     Save
+                  </Button> */}
+
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={handleSave}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+                    ) : (
+                      'Save'
+                    )}
                   </Button>
                 </Grid>
               </Grid>{' '}

@@ -3,6 +3,7 @@ import {
   Grid,
   TextField,
   Button,
+  CircularProgress,
   Box,
   Divider,
   MenuItem,
@@ -213,6 +214,8 @@ const DyeingPrintingAssignVendor = ({
     formData.unitRatePerPo
   ]);
   console.log('formData', formData);
+  const [loading, setLoading] = useState(false);
+
   const handleSave = async () => {
     // const errors = validateForm();
     // if (Object.keys(errors).length > 0) {
@@ -220,7 +223,7 @@ const DyeingPrintingAssignVendor = ({
     //   return;
     // }
     console.log(formData);
-
+    setLoading(true);
     try {
       // Make the API call
       if (formData.assignedQty > formData.remainingQty) {
@@ -273,6 +276,8 @@ const DyeingPrintingAssignVendor = ({
       // setAccordionExpanded(false);
     } catch (error) {
       console.error('Error saving data:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -845,13 +850,25 @@ const DyeingPrintingAssignVendor = ({
           </Grid>
 
           <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-            <Button
+            {/* <Button
               variant="contained"
               size="small"
               onClick={handleSave}
               disabled={productionStatus === 3}
             >
               Save
+            </Button> */}
+            <Button
+              variant="contained"
+              size="small"
+              onClick={handleSave}
+              disabled={loading || productionStatus === 3}
+            >
+              {loading ? (
+                <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+              ) : (
+                'Save'
+              )}
             </Button>
           </Grid>
         </Grid>

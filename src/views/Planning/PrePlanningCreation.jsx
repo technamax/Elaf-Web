@@ -318,6 +318,7 @@ const PrePlanningCreation = () => {
         poPcs: '',
         batchNo: ''
       });
+      refetchbatchData();
       // await refetchCollection();
       // await fetchData();
     } catch (error) {
