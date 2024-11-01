@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import {
   Button,
+  CircularProgress,
   MenuItem,
   FormControl,
   Typography,
@@ -484,6 +485,7 @@ const NewCollection = () => {
     }
     return errors;
   };
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
     console.log(formData);
@@ -504,7 +506,7 @@ const NewCollection = () => {
       });
       return; // Exit without saving
     }
-
+    setLoading(true);
     try {
       const response = await axios.post(
         'http://100.42.177.77:83/api/CollectionRegistration/SaveCollection',
@@ -541,6 +543,8 @@ const NewCollection = () => {
         variant: 'error',
         autoHideDuration: 5000
       });
+    } finally {
+      setLoading(false);
     }
   };
   const [searchResult, setSearchResult] = useState([]);
@@ -922,12 +926,24 @@ const NewCollection = () => {
                   </Grid>
 
                   <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
-                    <Button
+                    {/* <Button
                       variant="contained"
                       size="small"
                       onClick={handleSave}
                     >
                       Save
+                    </Button> */}
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={handleSave}
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+                      ) : (
+                        'Save'
+                      )}
                     </Button>
                   </Grid>
                   {/* <Grid item sm={12}>

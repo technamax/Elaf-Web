@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import {
   Button,
+  CircularProgress,
   MenuItem,
   Typography,
   Grid,
@@ -191,6 +192,7 @@ const PrePlanningCreation = () => {
       );
     }
   };
+
   const designsColumns = [
     {
       field: 'id',
@@ -294,8 +296,10 @@ const PrePlanningCreation = () => {
       setFormData({ ...formData, [name]: value });
     }
   };
+  const [loading, setLoading] = useState(false);
 
   const handleSave = async () => {
+    setLoading(true);
     try {
       const response = await axios.post(
         'http://100.42.177.77:83/api/PrePlanning/SavePrePlanningHeader',
@@ -322,6 +326,8 @@ const PrePlanningCreation = () => {
         variant: 'error',
         autoHideDuration: 5000
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -393,20 +399,7 @@ const PrePlanningCreation = () => {
         })
         .filter((id) => id !== null); // Filter out any null values
       console.log('poPcsLists', poPcsLists);
-      // const designs = poPcsLists.map((planningHeaderId) => ({
-      //   prodctionDetId: 0,
-      //   productionId: 0,
-      //   planningHeaderId: planningHeaderId,
-      //   createdOn: new Date().toISOString(),
-      //   createdBy: user.empId,
-      //   lastUpdatedBy: user.empId,
-      //   lastUpdatedOn: new Date().toISOString()
-      // }));
-      // setFormData({
-      //   ...formData,
-      //   designIdList: designsIds,
-      //   poPcsList: poPcsLists
-      // });
+
       setSelectedDesigns(designsIds);
       setPcsList(poPcsLists);
     },
@@ -414,12 +407,24 @@ const PrePlanningCreation = () => {
   );
 
   useEffect(() => {
-    setFormData({
-      ...formData,
-      designIdList: selectedDesigns,
-      poPcsList: pcsList
+    const updatedPoPcs = rowSelectionModel.map((id) => {
+      const rowData = apiRef.current.getRow(id);
+      return rowData && rowData['poPcs'] !== undefined ? rowData['poPcs'] : 0;
     });
-  }, [selectedDesigns]);
+    setPcsList(updatedPoPcs);
+    setFormData((prevData) => ({
+      ...prevData,
+      designIdList: selectedDesigns,
+      poPcsList: updatedPoPcs
+    }));
+  }, [designList, selectedDesigns, rowSelectionModel]);
+  // useEffect(() => {
+  //   setFormData({
+  //     ...formData,
+  //     designIdList: selectedDesigns,
+  // poPcsList: pcsList
+  //   });
+  // }, [selectedDesigns, pcsList]);
   useEffect(() => {
     if (apiRef.current) {
       console.log('API ref is ready:', apiRef.current);
@@ -590,8 +595,20 @@ const PrePlanningCreation = () => {
                   textAlign="right"
                   sx={{ marginBottom: 2 }}
                 >
-                  <Button variant="contained" size="small" onClick={handleSave}>
+                  {/* <Button variant="contained" size="small" onClick={handleSave}>
                     Save
+                  </Button> */}
+                  <Button
+                    variant="contained"
+                    size="small"
+                    onClick={handleSave}
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <CircularProgress sx={{ color: '#ffffff' }} size={24} />
+                    ) : (
+                      'Save'
+                    )}
                   </Button>
                 </Grid>
                 <Divider
