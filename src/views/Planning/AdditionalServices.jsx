@@ -186,7 +186,7 @@ export default function AdditionalServices({ initialValues }) {
     setLoading(true);
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/AdditionalServices/SaveAdditionalServices',
+        'http://100.42.177.77:86/api/AdditionalServices/SaveAdditionalServices',
         formData
       );
       console.log('Form data saved:', response.data);
@@ -219,7 +219,7 @@ export default function AdditionalServices({ initialValues }) {
     const getCollectionFromPlanningHeader = async () => {
       try {
         const response = await axios.get(
-          'http://100.42.177.77:83/api/PrePlanning/GetCollectionListFromPlanningHeader'
+          'http://100.42.177.77:86/api/PrePlanning/GetCollectionListFromPlanningHeader'
         );
         console.log('GetCollectionFromPlanningHeader', response);
         setPlannedCollection(response.data.result);
@@ -234,7 +234,7 @@ export default function AdditionalServices({ initialValues }) {
   const fetchDataInternal = useCallback(async () => {
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/AdditionalServices/GetAdditionalServicesListByCollectionId?collectionId=${formData.collectionId}`
+        `http://100.42.177.77:86/api/AdditionalServices/GetAdditionalServicesListByCollectionId?collectionId=${formData.collectionId}`
       );
 
       // Assuming response.data.result should always be an array
@@ -396,7 +396,7 @@ export default function AdditionalServices({ initialValues }) {
     // { field: 'lastUpdatedBy', headerName: 'Last Updated By' },
     // { field: 'lastUpdatedOn', headerName: 'Last Updated On' },
   ];
-  const deleteApi = `http://100.42.177.77:83/api/AdditionalServices/DeleteAdditionalProcess?servicesId=`;
+  const deleteApi = `http://100.42.177.77:86/api/AdditionalServices/DeleteAdditionalProcess?servicesId=`;
   return (
     <>
       {/* <div className="CardHeader"> */}

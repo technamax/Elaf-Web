@@ -209,7 +209,7 @@ const OGPView = ({ po, handleClose, refetchIssuanceData, issId }) => {
   const handleOgp = async () => {
     try {
       const response = await axios.post(
-        `http://100.42.177.77:83/api/Issuance/GenerateOGP`,
+        `http://100.42.177.77:86/api/Issuance/GenerateOGP`,
         formData
       );
       refetchIssuanceData();

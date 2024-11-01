@@ -623,7 +623,7 @@ const Embroidery = ({ initialValues }) => {
     setLoading(true);
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/Embroidery/SaveEmbroidery',
+        'http://100.42.177.77:86/api/Embroidery/SaveEmbroidery',
         {
           ...formData,
           threadAdditional: formData.threadAdditional.join(', ')
@@ -987,7 +987,7 @@ const Embroidery = ({ initialValues }) => {
       )
     }
   ];
-  const deleteApi = `http://100.42.177.77:83/api/Embroidery/DeleteEmbroideryById?embroideryId=`;
+  const deleteApi = `http://100.42.177.77:86/api/Embroidery/DeleteEmbroideryById?embroideryId=`;
 
   return (
     <>

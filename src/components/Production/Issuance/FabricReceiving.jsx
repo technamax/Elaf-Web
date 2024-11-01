@@ -274,7 +274,7 @@ const FabricReceiving = () => {
   const handleFetchITP = async () => {
     try {
       const response = await axios.get(
-        'http://100.42.177.77:83/api/StockReceiving/FetchItpByAppIdList?appId=1'
+        'http://100.42.177.77:86/api/StockReceiving/FetchItpByAppIdList?appId=1'
       );
 
       setItps(
@@ -291,7 +291,7 @@ const FabricReceiving = () => {
     const fetchItp = async () => {
       try {
         const response = await axios.get(
-          'http://100.42.177.77:83/api/StockReceiving/FetchItpByAppIdList?appId=1'
+          'http://100.42.177.77:86/api/StockReceiving/FetchItpByAppIdList?appId=1'
         );
 
         setItps(
@@ -310,7 +310,7 @@ const FabricReceiving = () => {
     // console.log('stockData', stockData);
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/StockReceiving/SaveStockReceivingHeader',
+        'http://100.42.177.77:86/api/StockReceiving/SaveStockReceivingHeader',
         formData
       );
       console.log('Save response:', response.data);
@@ -358,7 +358,7 @@ const FabricReceiving = () => {
     setStockId(data.stockId);
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/Production/GetProductionFabricDetailByProductionHeaderId?productionHeaderId=${data.productionHeaderId}&status=2`
+        `http://100.42.177.77:86/api/Production/GetProductionFabricDetailByProductionHeaderId?productionHeaderId=${data.productionHeaderId}&status=2`
       );
 
       setFabrics(
@@ -376,7 +376,7 @@ const FabricReceiving = () => {
     console.log('rowdata', data);
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/StockReceiving/GetStockByStatusList?productionId=${data.productionId}&status=8`
+        `http://100.42.177.77:86/api/StockReceiving/GetStockByStatusList?productionId=${data.productionId}&status=8`
       );
       console.log('response', response);
       const result = response.data.result;
@@ -521,7 +521,7 @@ const FabricReceiving = () => {
   //   console.log('addForm', addForm);
   //   try {
   //     const response = await axios.post(
-  //       'http://100.42.177.77:83/api/ITP/SaveStockReceiving',
+  //       'http://100.42.177.77:86/api/ITP/SaveStockReceiving',
   //       addForm
   //     );
   //     console.log('Save response:', response.data);

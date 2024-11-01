@@ -81,7 +81,7 @@ export default function AddAdditionalServices({
   const handleSave = async () => {
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/AdditionalServices/SaveAdditionalServices',
+        'http://100.42.177.77:86/api/AdditionalServices/SaveAdditionalServices',
         formData
       );
       console.log('Form data saved:', response.data);
@@ -109,7 +109,7 @@ export default function AddAdditionalServices({
     const getCollectionFromPlanningHeader = async () => {
       try {
         const response = await axios.get(
-          'http://100.42.177.77:83/api/CollectionRegistration/GetCollectionList?appId=1'
+          'http://100.42.177.77:86/api/CollectionRegistration/GetCollectionList?appId=1'
         );
         console.log('GetCollectionFromPlanningHeader', response);
         setPlannedCollection(response.data.result);

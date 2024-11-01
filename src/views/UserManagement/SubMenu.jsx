@@ -116,7 +116,7 @@ export default function SubMenu() {
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:83/api/Menu/SaveSubMenu',
+        'http://100.42.177.77:86/api/Menu/SaveSubMenu',
         formData
       );
 

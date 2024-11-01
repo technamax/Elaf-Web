@@ -65,7 +65,7 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
       try {
         const empId = user.empId; // Replace this with the actual employee ID as needed
         const response = await axios.get(
-          `http://100.42.177.77:83/api/Menu/GetUserSubMenuByEmpId?empId=${empId}`
+          `http://100.42.177.77:86/api/Menu/GetUserSubMenuByEmpId?empId=${empId}`
         );
         console.log('GetUserSubMenuByEmpId', response.data.result);
         if (response.data.success) {

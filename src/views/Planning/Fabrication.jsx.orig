@@ -579,7 +579,7 @@ const Fabrication = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:83/api/Fabrication/SaveFabrication',
+        'http://100.42.177.77:86/api/Fabrication/SaveFabrication',
         formData
       );
 
@@ -614,7 +614,7 @@ const Fabrication = () => {
   };
 
   console.log('formData', formData);
-  const editAPi = `http://100.42.177.77:83/api/Fabrication/SaveFabrication`;
+  const editAPi = `http://100.42.177.77:86/api/Fabrication/SaveFabrication`;
   const deleteApi = ``;
 >>>>>>> 6f0089e3e6a1cee96730bc41f1ba0cb084cdf4de
   return (

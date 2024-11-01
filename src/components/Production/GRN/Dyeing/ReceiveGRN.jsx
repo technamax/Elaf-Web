@@ -437,7 +437,7 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
   const handleSave = async () => {
     try {
       const response = await axios.post(
-        `http://100.42.177.77:83/api/GRN/SaveGRN`,
+        `http://100.42.177.77:86/api/GRN/SaveGRN`,
         {
           ...formData,
           grnDetailsList: formData.grnDetailsList.map((row) => ({

@@ -172,7 +172,7 @@ const AssignTerms = ({ vId, handleClose }) => {
 
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/PO/AssignTermToDyeingPo',
+        'http://100.42.177.77:86/api/PO/AssignTermToDyeingPo',
         formData
       );
 

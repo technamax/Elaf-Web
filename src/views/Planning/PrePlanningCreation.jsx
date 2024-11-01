@@ -130,7 +130,7 @@ const PrePlanningCreation = () => {
   //   try {
   //     if (formData.plannedDesignedId) {
   //       const response = await axios.get(
-  //         `http://100.42.177.77:83/api/PrePlanning/GetPlanningHeaderListByDesignId?designId=${formData.plannedDesignedId}`
+  //         `http://100.42.177.77:86/api/PrePlanning/GetPlanningHeaderListByDesignId?designId=${formData.plannedDesignedId}`
   //       );
   //       const rowsWithId = response.data.result.map((row, index) => ({
   //         ...row,
@@ -302,7 +302,7 @@ const PrePlanningCreation = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/PrePlanning/SavePrePlanningHeader',
+        'http://100.42.177.77:86/api/PrePlanning/SavePrePlanningHeader',
         formData
       );
       enqueueSnackbar('Planning Batch saved successfully!', {
@@ -337,7 +337,7 @@ const PrePlanningCreation = () => {
   //     if (formData.collectionId) {
   //       try {
   //         const response = await axios.get(
-  //           `http://100.42.177.77:83/api/DesignRegistration/GetDesignListByCollectionId?CollectionId=${formData.collectionId}`
+  //           `http://100.42.177.77:86/api/DesignRegistration/GetDesignListByCollectionId?CollectionId=${formData.collectionId}`
   //         );
   //         setDesignOptions(response.data.result);
   //       } catch (error) {
@@ -352,7 +352,7 @@ const PrePlanningCreation = () => {
     const GetCollectionFromPlanningHeader = async () => {
       try {
         const response = await axios.get(
-          'http://100.42.177.77:83/api/PrePlanning/GetCollectionListFromPlanningHeader'
+          'http://100.42.177.77:86/api/PrePlanning/GetCollectionListFromPlanningHeader'
         );
         setPlannedCollection(response.data.result);
       } catch (error) {
@@ -367,7 +367,7 @@ const PrePlanningCreation = () => {
       if (formData.plannedCollectionId) {
         try {
           const response = await axios.get(
-            `http://100.42.177.77:83/api/PrePlanning/GetDesignFromPlanningHeaderByCollectionId?collectionid=${formData.plannedCollectionId}`
+            `http://100.42.177.77:86/api/PrePlanning/GetDesignFromPlanningHeaderByCollectionId?collectionid=${formData.plannedCollectionId}`
           );
           setPlannedDesign(response.data.result);
         } catch (error) {
@@ -434,7 +434,7 @@ const PrePlanningCreation = () => {
 
   // console.log('selectedDesigns:', selectedDesigns);
 
-  const deleteApi = `http://100.42.177.77:83/api/PrePlanning/DeletePlanningHeaderIdByPlanningId?planningHeaderId=`;
+  const deleteApi = `http://100.42.177.77:86/api/PrePlanning/DeletePlanningHeaderIdByPlanningId?planningHeaderId=`;
   return (
     <MainCard
       style={{

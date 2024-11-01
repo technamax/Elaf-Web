@@ -306,7 +306,7 @@ const EmbroideryPO = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:83/api/PO/SaveEmbroideryPO',
+        'http://100.42.177.77:86/api/PO/SaveEmbroideryPO',
         { ...formData }
       );
 

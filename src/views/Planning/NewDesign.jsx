@@ -83,7 +83,7 @@ const NewDesign = () => {
     const fetchColors = async () => {
       try {
         const response = await axios.get(
-          ' http://100.42.177.77:83/api/Common/GetLookUpByDomain?lookupDomain=COLOURS'
+          ' http://100.42.177.77:86/api/Common/GetLookUpByDomain?lookupDomain=COLOURS'
         );
         const data = response.data.result;
 
@@ -289,7 +289,7 @@ const NewDesign = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/DesignRegistration/SaveDesign',
+        'http://100.42.177.77:86/api/DesignRegistration/SaveDesign',
         formData
       );
       enqueueSnackbar('Design saved successfully!', {
@@ -325,13 +325,13 @@ const NewDesign = () => {
     }
   };
   console.log('searchData', searchData);
-  const deleteApi = `http://100.42.177.77:83/api/DesignRegistration/DeleteDesignById?designId=`;
-  // const editAPi = 'http://100.42.177.77:83/api/DesignRegistration/SaveDesign';
+  const deleteApi = `http://100.42.177.77:86/api/DesignRegistration/DeleteDesignById?designId=`;
+  // const editAPi = 'http://100.42.177.77:86/api/DesignRegistration/SaveDesign';
   const [searchResult, setSearchResult] = useState([]);
   const handleSearch = async () => {
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/DesignRegistration/GetDesignListByDateOfPlanning?appId=1&startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}`
+        `http://100.42.177.77:86/api/DesignRegistration/GetDesignListByDateOfPlanning?appId=1&startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}`
       );
       enqueueSnackbar('Design Search successfully!', {
         variant: 'success',

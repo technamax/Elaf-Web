@@ -509,7 +509,7 @@ const NewCollection = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        'http://100.42.177.77:83/api/CollectionRegistration/SaveCollection',
+        'http://100.42.177.77:86/api/CollectionRegistration/SaveCollection',
         formData
       );
       enqueueSnackbar('Collection saved successfully!', {
@@ -551,7 +551,7 @@ const NewCollection = () => {
   const handleSearch = async () => {
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/CollectionRegistration/GetCollectionListByPlanningDate?startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}&appId=1`
+        `http://100.42.177.77:86/api/CollectionRegistration/GetCollectionListByPlanningDate?startDate=${searchData.searchPlanningDateFrom}&endDate=${searchData.searchPlanningDateTo}&appId=1`
       );
       enqueueSnackbar('Collection Search successfully!', {
         variant: 'success',
@@ -577,9 +577,9 @@ const NewCollection = () => {
 
   console.log('searchData', searchData);
   const deleteApi =
-    'http://100.42.177.77:83/api/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
+    'http://100.42.177.77:86/api/CollectionRegistration/DeleteCollectionByCollectionId?collectionId=';
   // const editAPi =
-  //   'http://100.42.177.77:83/api/CollectionRegistration/SaveCollection';
+  //   'http://100.42.177.77:86/api/CollectionRegistration/SaveCollection';
   const handleReset = () => {
     setFormData({
       collectionId: 0,

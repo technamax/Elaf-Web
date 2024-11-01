@@ -205,7 +205,7 @@ const AssignVendorFormTable = ({
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:83/api/AdditionalProcess/SaveAdditionalProcessDetails',
+        'http://100.42.177.77:86/api/AdditionalProcess/SaveAdditionalProcessDetails',
         formData
       );
 
@@ -299,7 +299,7 @@ const AssignVendorFormTable = ({
     }
   ];
 
-  const deleteApi = `http://100.42.177.77:83/api/AdditionalProcess/DeleteAdditionalProcessDetails?apdId=`;
+  const deleteApi = `http://100.42.177.77:86/api/AdditionalProcess/DeleteAdditionalProcessDetails?apdId=`;
   return (
     <Box
       noValidate

@@ -248,7 +248,7 @@ const FabricationSelectionIssuance = () => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/Production/GetFabricForProductionByCollectionId?appId=${appId}&productionId=${productionId}`
+        `http://100.42.177.77:86/api/Production/GetFabricForProductionByCollectionId?appId=${appId}&productionId=${productionId}`
       );
       //in 449 url this api doesnt exist
       if (response.data.success) {
@@ -455,7 +455,7 @@ const FabricationSelectionIssuance = () => {
       console.log('Initial Rows:', initialRows); // Debugging line
 
       const response = await axios.post(
-        'http://100.42.177.77:83/api/Production/StartProductionProcess',
+        'http://100.42.177.77:86/api/Production/StartProductionProcess',
         formData
       );
 
