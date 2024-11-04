@@ -1512,7 +1512,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
               </Grid>
               <Grid item xs={12} md={2}>
                 <TextField
-                  label="Cutting Size"
+                  label="Cutting Size (Inches)"
                   fullWidth
                   size="small"
                   name="cuttingSize"
