@@ -9,7 +9,7 @@ import axios from 'axios';
 import AnimateButton from 'ui-component/extended/AnimateButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import { IconButton } from '@mui/material';
-import { Visibility } from '@mui/icons-material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import { useUser } from 'context/User';
@@ -132,7 +132,7 @@ const AuthLogin = ({ ...others }) => {
                   onClick={handleClickShowPassword}
                   onMouseDown={handleMouseDownPassword}
                 >
-                  {/* {showPassword ? <VisibilityOff /> : <Visibility />} */}
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
             )

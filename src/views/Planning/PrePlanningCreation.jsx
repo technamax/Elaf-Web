@@ -319,6 +319,8 @@ const PrePlanningCreation = () => {
         batchNo: ''
       });
       refetchbatchData();
+      refetchCollection();
+      refetchDesignData();
       // await refetchCollection();
       // await fetchData();
     } catch (error) {

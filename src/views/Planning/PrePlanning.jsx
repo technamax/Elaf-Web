@@ -82,7 +82,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     shrinkage: '',
     wastage: '',
     poPcs: '',
-
+    ups: 1,
     planningProcessTypeId: '',
     total: '',
     appId: 1,
@@ -206,6 +206,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
   console.log('colors:', colors);
   console.log('uoms:', uoms);
   console.log('heads:', heads);
+  console.log('OPERATINGMACHINE:', operatingMachineList);
   console.log('lookupData', lookupData);
   useEffect(() => {
     if (lookupData) {
@@ -249,6 +250,19 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
   }, [initialValues]);
 
   useEffect(() => {
+    const calculateRepeatSizeforSchiffli = () => {
+      const selectedHead = operatingMachineList?.find(
+        (head) => head.lookUpId === formData.operatingMachineId
+      );
+      console.log('selected operating head', selectedHead);
+      const operatingMachineValue = selectedHead
+        ? parseFloat(selectedHead.lookUpName) || 0
+        : 0;
+      const repeatSize = (operatingMachineValue * 39.37).toFixed(2);
+      console.log('Calculated Repeat Size for Schiffili:', repeatSize);
+      return repeatSize;
+    };
+
     const calculateRepeatSize = () => {
       const selectedHead = heads?.find(
         (head) => head.lookUpId === formData.noOfHeads
@@ -257,16 +271,23 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       const noOfHeadsValue = selectedHead
         ? parseFloat(selectedHead.lookUpName) || 0
         : 0;
-      return (noOfHeadsValue * 13).toFixed(2);
-      console.log('Calculated Repeat Size:', repeatSize);
+
+      // Check for planning process type name
+      if (formData.planningProcessTypeName === 'Schiffili') {
+        return calculateRepeatSizeforSchiffli(); // Use Schiffili calculation
+      } else {
+        const repeatSize = (noOfHeadsValue * 13).toFixed(2); // Original calculation
+        console.log('Calculated Repeat Size:', repeatSize);
+        return repeatSize;
+      }
     };
 
     const repeatSize = calculateRepeatSize();
-    console.log('Calculated Repeat Size:', repeatSize);
+    console.log('Final Calculated Repeat Size:', repeatSize);
 
     setFormData((prevData) => ({
       ...prevData,
-      repeatSize
+      repeatSize: calculateRepeatSize()
     }));
 
     const calculatePcsPerComponent = () => {
@@ -281,12 +302,13 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     const calculateNoOfRepeats = () => {
       const poPcs = parseFloat(formData.poPcs) || 0;
       const pcsPerComponent = parseFloat(formData.pcsPerComponent) || 0;
+      const ups = parseFloat(formData.ups) || 0;
 
       if (pcsPerComponent === 0) {
         return 0;
       }
 
-      const result = poPcs / pcsPerComponent;
+      const result = poPcs / pcsPerComponent / ups;
 
       // Use Math.ceil if result has a decimal part, otherwise Math.floor
       return result % 1 === 0 ? Math.floor(result) : Math.ceil(result);
@@ -302,7 +324,46 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     const calculateTotalFabric = () => {
       const repeats = parseFloat(formData.repeats) || 0;
       const repeatSize = parseFloat(formData.repeatSize) || 0;
-      const totalFabric = (repeats * repeatSize).toFixed(2);
+      const ups = parseFloat(formData.ups);
+      const selectedHead = heads?.find(
+        (head) => head.lookUpId === formData.noOfHeads
+      );
+
+      const noOfHeadsValue = selectedHead
+        ? parseFloat(selectedHead.lookUpName) || 0
+        : 0;
+
+      const noOfRepeats = repeats.toFixed(2);
+
+      // Determine the multiplier based on noOfHeadsValue
+      let multiplier = 0;
+      switch (noOfHeadsValue) {
+        case 8:
+          multiplier = 3;
+          break;
+        case 24:
+          multiplier = 8.25;
+          break;
+        case 28:
+          multiplier = 9.5;
+          break;
+        case 32:
+          multiplier = 11;
+          break;
+        default:
+          multiplier = 1; // Default multiplier if no match is found
+      }
+
+      // Declare totalFabric outside of the if-else blocks
+      let totalFabric;
+
+      // Calculate totalFabric based on planningProcessTypeName
+      if (formData.planningProcessTypeName === 'Schiffili') {
+        totalFabric = (noOfRepeats * 21).toFixed(2);
+      } else {
+        totalFabric = (parseFloat(noOfRepeats) * multiplier).toFixed(2);
+      }
+
       return parseFloat(totalFabric).toLocaleString();
     };
 
@@ -359,6 +420,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     formData.cuttingSize,
     formData.repeats,
     formData.noOfHeads,
+    formData.noOfRepeats,
     formData.repeatSize,
     formData.totalFabric,
     formData.shrinkage,
@@ -366,7 +428,11 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     formData.repeatsInMtr,
     formData.isSchiffili,
     formData.pcsPerComponent,
-    isDyeing
+    formData.ups,
+    formData.operatingMachineId,
+    isDyeing,
+    operatingMachineList,
+    heads
   ]);
 
   const calculateTotalFabric = (data) => {
@@ -519,7 +585,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         total: parseFloat(formData.total.replace(/,/g, ''))
       };
       const response = await axios.post(
-        'http://100.42.177.77:86/api/PrePlanning/SavePrePlanning',
+        'http://100.42.177.77:83/api/PrePlanning/SavePrePlanning',
         cleanedFormData
       );
       console.log('Data saved successfully:', response.data);
@@ -916,7 +982,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
   };
   console.log('batchList:', batchList);
 
-  const deleteApi = `http://100.42.177.77:86/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
+  const deleteApi = `http://100.42.177.77:83/api/PrePlanning/DeletePreplanningByPlanningId?PlanningId=`;
   const handleAccordionToggle = (event, isExpanded) => {
     setAccordionExpanded(!accordionExpanded); // Toggle accordion state based on the icon click
   };
@@ -1569,11 +1635,16 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                     // error={!!formErrors.noOfHeads}
                     // helperText={formErrors.noOfHeads}
                   >
-                    {heads.map((option) => (
-                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                        {option.lookUpName}
-                      </MenuItem>
-                    ))}
+                    {Array.from(heads) // Create a new array
+                      .sort(
+                        (a, b) =>
+                          parseInt(a.lookUpName) - parseInt(b.lookUpName)
+                      ) // Sort in ascending order
+                      .map((option) => (
+                        <MenuItem key={option.lookUpId} value={option.lookUpId}>
+                          {option.lookUpName}
+                        </MenuItem>
+                      ))}
                   </TextField>
                 )}
               </Grid>
@@ -1619,7 +1690,26 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                   }}
                 />
               </Grid>
-
+              <Grid item xs={12} md={2}>
+                <TextField
+                  label="Ups"
+                  fullWidth
+                  size="small"
+                  name="ups"
+                  type="number"
+                  value={formData.ups}
+                  onChange={handleChange}
+                  // error={!!formErrors.repeats}
+                  // helperText={formErrors.repeats}
+                  disabled={isDyeing}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
+                />
+              </Grid>
               <Grid item xs={12} md={2}>
                 <TextField
                   label="No. of Repeats"
@@ -1632,27 +1722,6 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                   // error={!!formErrors.repeats}
                   // helperText={formErrors.repeats}
                   required
-                  disabled={isDyeing}
-                  InputLabelProps={{
-                    sx: {
-                      // set the color of the label when not shrinked
-                      color: 'black'
-                    }
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={2}>
-                <TextField
-                  label="Ups"
-                  fullWidth
-                  size="small"
-                  name="ups"
-                  type="number"
-                  value={formData.ups}
-                  onChange={handleChange}
-                  // error={!!formErrors.repeats}
-                  // helperText={formErrors.repeats}
                   disabled={isDyeing}
                   InputLabelProps={{
                     sx: {
@@ -1679,40 +1748,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                   }}
                 />
               </Grid>
-              {formData.planningProcessTypeId === 198 ? (
-                <Grid item xs={12} md={2}>
-                  <TextField
-                    label="Repeats in Meter"
-                    fullWidth
-                    size="small"
-                    name="repeatsInMtr"
-                    disabled
-                    value={formData.repeatsInMtr}
-                    onChange={handleChange}
-                    sx={(theme) => ({
-                      ...(formData.repeatsInMtr !== '' && {
-                        '.css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input':
-                          {
-                            backgroundColor: `#c9c9c9 !important`
-                          }
-                      }),
-                      '& .MuiInputBase-input.Mui-disabled': {
-                        WebkitTextFillColor: 'black' // Adjust text color here
-                      },
-                      '& .MuiInputBase-root.Mui-disabled': {
-                        backgroundColor: '#f9f9f9' // Adjust background color here
-                      },
-                      '& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline':
-                        {
-                          borderColor: 'gray' // Adjust border color here
-                        },
-                      '& .MuiInputLabel-root.Mui-disabled': {
-                        color: 'rgba(0, 0, 0, 0.87)' // Darker label color
-                      }
-                    })}
-                  />
-                </Grid>
-              ) : null}
+
               <Grid item xs={12} md={2}>
                 <TextField
                   label="Total"

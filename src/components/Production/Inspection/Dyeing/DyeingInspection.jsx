@@ -703,6 +703,38 @@ const DyeingInspection = ({ rData, handleClose, refetch }) => {
               columns={columns}
               apiRef={apiRef}
               disableRowSelectionOnClick
+              sx={{
+                // overflow: 'auto', // Ensure scrolling is not affected by styles
+                '& .MuiDataGrid-root': {
+                  overflow: 'auto'
+                },
+
+                /////////////////
+                '--DataGrid-rowBorderColor': 'rgb(255 255 255)',
+                '& .css-1kyxv1r-MuiDataGrid-root': {
+                  color: 'white',
+                  backgroundColor: '#323232'
+                },
+                '& .MuiDataGrid-container--top [role=row]': {
+                  color: 'white',
+                  backgroundColor: '#323232'
+                },
+                '& .MuiDataGrid-columnSeparator': {
+                  color: 'white'
+                },
+                '& .MuiDataGrid-iconButtonContainer': {
+                  color: 'white'
+                },
+                '& .MuiDataGrid-sortIcon': {
+                  color: 'white'
+                },
+                '& .css-ptiqhd-MuiSvgIcon-root ': { color: 'white' },
+                '& .MuiDataGrid-row': {
+                  '&.total-summary-row': {
+                    backgroundColor: 'darkgray'
+                  }
+                }
+              }}
               // checkboxSelection
               // onRowSelectionModelChange={handleRowSelectionModelChange}
               // rowSelectionModel={rowSelectionModel}

@@ -518,7 +518,7 @@ const Dyeing = ({ initialValues }) => {
         // TotalIncludingGst: '',
         // createdBy: 0,
         poPcs: prevFormData.poPcs,
-        baseColorName: '',
+        baseColorName: prevFormData.baseColorName,
         createdOn: new Date().toISOString(),
         createdBy: user.empId,
         lastUpdatedOn: new Date().toISOString(),

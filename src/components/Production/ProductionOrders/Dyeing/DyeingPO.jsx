@@ -238,6 +238,9 @@ const DyeingPO = () => {
   const pQuantity = fabrics
     .reduce((sum, row) => sum + (row.prevoiusPoQty ?? 0), 0)
     .toFixed(2);
+  const pxQty = fabrics
+    .reduce((sum, row) => sum + (row.pxQty ?? 0), 0)
+    .toFixed(2);
   useEffect(() => {
     setFormData((prevFormData) => ({
       ...formData,
@@ -251,7 +254,7 @@ const DyeingPO = () => {
       ...formData,
       overallQty: Quantity,
       remainingQuantity:
-        (prevFormData.overallQty - pQuantity - assignedQuantity).toFixed(2) || 0
+        (prevFormData.pxQty - pQuantity - assignedQuantity).toFixed(2) || 0
     }));
   }, [setFabrics, fabrics]);
   console.log('initialRows', initialRows);
