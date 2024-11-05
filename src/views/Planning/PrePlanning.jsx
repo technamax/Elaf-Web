@@ -1568,7 +1568,11 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
               </Grid>
               <Grid item xs={12} md={2}>
                 <TextField
-                  label="Cutting Size (Inches)"
+                  label={
+                    [212, 1219].includes(formData.planningProcessTypeId)
+                      ? 'Cutting Size (Meters)'
+                      : 'Cutting Size (Inches)'
+                  }
                   fullWidth
                   size="small"
                   name="cuttingSize"
@@ -1580,7 +1584,6 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                   helperText={formErrors.cuttingSize}
                   InputLabelProps={{
                     sx: {
-                      // set the color of the label when not shrinked
                       color: 'black'
                     }
                   }}
