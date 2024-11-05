@@ -157,7 +157,7 @@ const ProfileSection = (username) => {
 
     try {
       const response = await axios.get(
-        `http://100.42.177.77:83/api/Common/SaveLookUp?lookupDomain=${formData.lookUpDomain}&LookUpName=${formData.lookUpName}&appId=1`
+        `http://100.42.177.77:86/api/Common/SaveLookUp?lookupDomain=${formData.lookUpDomain}&LookUpName=${formData.lookUpName}&appId=1`
       );
 
       if (response.data.success) {
@@ -230,7 +230,7 @@ const ProfileSection = (username) => {
     const GetLookUpDomains = async () => {
       try {
         const response = await axios.get(
-          `http://100.42.177.77:83/api/Common/GetLookUpDomains?appId=1`
+          `http://100.42.177.77:86/api/Common/GetLookUpDomains?appId=1`
         );
         console.log('Fetched lookup domains:', response.data.result);
         setLookupDomains(response.data.result); // Set the state
