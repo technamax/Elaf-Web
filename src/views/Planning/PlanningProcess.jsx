@@ -337,20 +337,8 @@ export default function PlanningProcess() {
                   value={conversionData.outputValue}
                   onChange={handleConversionChange}
                   type="number"
-                  // InputProps={{
-                  //   readOnly: true
-                  // }}
                 />
               </Grid>
-              {/* <Grid item sm={12} textAlign="right">
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={handleConvert}
-                >
-                  Convert
-                </Button>
-              </Grid> */}
             </Grid>
           </Popover>
           <Popover

@@ -118,17 +118,13 @@ const MainLayout = () => {
 
       <AppBar
         className=".css-h4y409-MuiList-root "
-        // enableColorOnDark
+        enableColorOnDark
         position="absolute"
         color="transparent"
-        // To change Appbar Color/
         elevation={0}
         sx={{
           bgcolor: theme.palette.background.error,
-          // backgroundImage:
-          // 'url("https://cdn11.bigcommerce.com/s-hv21hhsv/images/stencil/700x700/products/38611/284805/2e6462c221260668bf7516fe2121ad54__84353.1704082180.jpg?c=2")',
-          // backgroundSize: 'contain',
-          // backgroundRepeat: 'repeat-y',
+
           transition: leftDrawerOpened
             ? theme.transitions.create('width')
             : 'none'

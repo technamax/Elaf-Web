@@ -1,4 +1,6 @@
 /* eslint-disable prettier/prettier */
+import * as React from 'react';
+
 import { useState, useRef, useEffect } from 'react';
 
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +11,7 @@ import { useUser } from '../../../../context/User';
 import { useTheme } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-// import Card from '@mui/material/Card';
+import { Button, Popover, Grid, TextField, MenuItem } from '@mui/material'; // import Card from '@mui/material/Card';
 // import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
@@ -33,6 +35,9 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
 import Elogo from 'assets/images/ELogo.png';
+import { useGetLookUpListQuery } from 'api/store/Apis/lookupApi';
+import { SnackbarProvider, useSnackbar } from 'notistack';
+import convert from 'convert-units';
 
 // assets
 import {
@@ -46,6 +51,48 @@ import {
 
 const ProfileSection = (username) => {
   const theme = useTheme();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [convertAnchorEl, setConvertAnchorEl] = React.useState(null);
+  const [lookupDomains, setLookupDomains] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
+  const { data: lookupData, refetch } = useGetLookUpListQuery();
+  const [formData, setFormData] = useState({
+    lookUpId: '',
+    lookUpName: '',
+    lookUpDomain: '',
+    lookUpCategory: '',
+    enabled: '',
+    createdOn: new Date().toISOString()
+  });
+  const [conversionData, setConversionData] = useState({
+    fromUnit: 'm',
+    toUnit: 'cm',
+    inputValue: '',
+    outputValue: ''
+  });
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleConvertClick = (event) => {
+    setConvertAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+    setConvertAnchorEl(null);
+    setConversionData({
+      fromUnit: 'm',
+      toUnit: 'cm',
+      inputValue: '',
+      outputValue: ''
+    });
+  };
+  const handleClose1 = () => {
+    setAnchorEl(null);
+  };
+
   const customization = useSelector((state) => state.customization);
   const navigate = useNavigate();
   console.log(username);
@@ -57,9 +104,6 @@ const ProfileSection = (username) => {
   const [open, setOpen] = useState(false);
   const { user, setUser } = useUser();
 
-  /**
-   * anchorRef is used on different componets and specifying one type leads to other components throwing an error
-   * */
   const anchorRef = useRef(null);
 
   const handleLogout = () => {
@@ -99,8 +143,247 @@ const ProfileSection = (username) => {
     prevOpen.current = open;
   }, [open]);
 
+  const handleSave = async () => {
+    if (!formData.lookUpDomain || !formData.lookUpName) {
+      enqueueSnackbar('Please fill in all required fields.', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        `http://100.42.177.77:83/api/Common/SaveLookUp?lookupDomain=${formData.lookUpDomain}&LookUpName=${formData.lookUpName}&appId=1`
+      );
+      enqueueSnackbar('Lookup saved successfully!', {
+        variant: 'success',
+        autoHideDuration: 5000
+      });
+      setFormData({
+        lookUpId: '',
+        lookUpName: '',
+        lookUpDomain: '',
+        lookUpCategory: '',
+        enabled: '',
+        createdOn: new Date().toISOString()
+      });
+      refetch();
+      return response.data;
+    } catch (error) {
+      enqueueSnackbar('Error saving data. Please try again.', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+      throw error;
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleConversionChange = (e) => {
+    const { name, value } = e.target;
+    setConversionData((prevData) => {
+      const newData = { ...prevData, [name]: value };
+      const direction = name === 'inputValue' ? 'L2R' : 'R2L';
+
+      if (direction === 'L2R') {
+        newData.outputValue = convert(value)
+          .from(newData.fromUnit)
+          .to(newData.toUnit);
+      } else {
+        newData.inputValue = convert(value)
+          .from(newData.toUnit)
+          .to(newData.fromUnit);
+      }
+
+      return newData;
+    });
+  };
+
+  useEffect(() => {
+    const GetLookUpDomains = async () => {
+      try {
+        const response = await axios.get(
+          `http://100.42.177.77:83/api/Common/GetLookUpDomains?appId=${1}`
+        );
+        setLookupDomains(response.data.result);
+      } catch (error) {
+        console.error('Error fetching design options:', error);
+      }
+    };
+    GetLookUpDomains();
+  }, []);
+
+  const open1 = Boolean(anchorEl);
+  const convertOpen = Boolean(convertAnchorEl);
+  const id = open ? 'simple-popover' : undefined;
+  const convertId = convertOpen ? 'convert-popover' : undefined;
   return (
     <>
+      {/* left chip */}
+
+      <Button
+        aria-describedby={id}
+        variant="outlined"
+        size="small"
+        onClick={handleClick}
+        sx={{ marginRight: '8px' }}
+      >
+        +Lookup
+      </Button>
+      {/* <Button
+        aria-describedby={convertId}
+        variant="outlined"
+        size="small"
+        onClick={handleConvertClick}
+      >
+        Convertor
+      </Button> */}
+      {/* <Popover
+        id={convertId}
+        open={convertOpen}
+        anchorEl={convertAnchorEl}
+        onClose={handlePopoverClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right'
+        }}
+        sx={{
+          '.MuiPopover-paper': {
+            width: '300px',
+            padding: '16px'
+          }
+        }}
+      >
+        <Grid container spacing={2}>
+          <Grid item sm={6}>
+            <TextField
+              fullWidth
+              select
+              label="From"
+              size="small"
+              name="fromUnit"
+              value={conversionData.fromUnit}
+              onChange={handleConversionChange}
+            >
+              {convert()
+                .possibilities('length')
+                .map((unit) => (
+                  <MenuItem key={unit} value={unit}>
+                    {unit}
+                  </MenuItem>
+                ))}
+            </TextField>
+          </Grid>
+          <Grid item sm={6}>
+            <TextField
+              fullWidth
+              select
+              label="To"
+              size="small"
+              name="toUnit"
+              value={conversionData.toUnit}
+              onChange={handleConversionChange}
+            >
+              {convert()
+                .possibilities('length')
+                .map((unit) => (
+                  <MenuItem key={unit} value={unit}>
+                    {unit}
+                  </MenuItem>
+                ))}
+            </TextField>
+          </Grid>
+          <Grid item sm={12}>
+            <TextField
+              fullWidth
+              label={conversionData.fromUnit}
+              size="small"
+              name="inputValue"
+              value={conversionData.inputValue}
+              onChange={handleConversionChange}
+              type="number"
+            />
+          </Grid>
+          <Grid item sm={12}>
+            <TextField
+              fullWidth
+              label={conversionData.toUnit}
+              size="small"
+              name="outputValue"
+              value={conversionData.outputValue}
+              onChange={handleConversionChange}
+              type="number"
+            />
+          </Grid>
+        </Grid>
+      </Popover> */}
+      <Popover
+        id="mouse-over-popover"
+        open={open1}
+        anchorEl={anchorEl}
+        onClose={handlePopoverClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right'
+        }}
+        sx={{
+          '.MuiPopover-paper': {
+            width: '300px',
+            padding: '16px'
+          }
+        }}
+      >
+        <Grid container spacing={3} width="Inherit">
+          <Grid item sm={12}>
+            <TextField
+              fullWidth
+              select
+              label="Select Lookup"
+              size="small"
+              value={formData.lookUpDomain}
+              name="lookUpDomain"
+              onChange={handleChange}
+            >
+              {lookupDomains.map((domain) => (
+                <MenuItem key={domain.lookUpDomain} value={domain.lookUpDomain}>
+                  {domain.lookUpDomain}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item sm={12}>
+            <TextField
+              fullWidth
+              label="Add Lookup Description"
+              value={formData.lookUpName}
+              onChange={handleChange}
+              name="lookUpName"
+              size="small"
+            />
+          </Grid>
+          <Grid item sm={3} textAlign="right">
+            <Button variant="contained" size="small" onClick={handleSave}>
+              Save
+            </Button>
+          </Grid>
+        </Grid>
+      </Popover>
+      {/* right chip */}
       <Chip
         sx={{
           height: '48px',
