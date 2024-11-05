@@ -302,12 +302,13 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
     const calculateNoOfRepeats = () => {
       const poPcs = parseFloat(formData.poPcs) || 0;
       const pcsPerComponent = parseFloat(formData.pcsPerComponent) || 0;
+      const ups = parseFloat(formData.ups) || 0;
 
       if (pcsPerComponent === 0) {
         return 0;
       }
 
-      const result = poPcs / pcsPerComponent;
+      const result = poPcs / pcsPerComponent / ups;
 
       // Use Math.ceil if result has a decimal part, otherwise Math.floor
       return result % 1 === 0 ? Math.floor(result) : Math.ceil(result);
@@ -332,7 +333,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         ? parseFloat(selectedHead.lookUpName) || 0
         : 0;
 
-      const noOfRepeats = (repeats / ups).toFixed(2);
+      const noOfRepeats = repeats.toFixed(2);
 
       // Determine the multiplier based on noOfHeadsValue
       let multiplier = 0;
@@ -1689,7 +1690,26 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                   }}
                 />
               </Grid>
-
+              <Grid item xs={12} md={2}>
+                <TextField
+                  label="Ups"
+                  fullWidth
+                  size="small"
+                  name="ups"
+                  type="number"
+                  value={formData.ups}
+                  onChange={handleChange}
+                  // error={!!formErrors.repeats}
+                  // helperText={formErrors.repeats}
+                  disabled={isDyeing}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
+                />
+              </Grid>
               <Grid item xs={12} md={2}>
                 <TextField
                   label="No. of Repeats"
@@ -1702,27 +1722,6 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                   // error={!!formErrors.repeats}
                   // helperText={formErrors.repeats}
                   required
-                  disabled={isDyeing}
-                  InputLabelProps={{
-                    sx: {
-                      // set the color of the label when not shrinked
-                      color: 'black'
-                    }
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={2}>
-                <TextField
-                  label="Ups"
-                  fullWidth
-                  size="small"
-                  name="ups"
-                  type="number"
-                  value={formData.ups}
-                  onChange={handleChange}
-                  // error={!!formErrors.repeats}
-                  // helperText={formErrors.repeats}
                   disabled={isDyeing}
                   InputLabelProps={{
                     sx: {
