@@ -30,6 +30,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 // third-party
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import axios from 'axios'; // Make sure this line is added
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -50,6 +51,8 @@ import {
 // ==============================|| PROFILE MENU ||============================== //
 
 const ProfileSection = (username) => {
+  console.log('ProfileSection rendered'); // Log to check if component is mounting
+
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [convertAnchorEl, setConvertAnchorEl] = React.useState(null);
@@ -59,7 +62,7 @@ const ProfileSection = (username) => {
   const [formData, setFormData] = useState({
     lookUpId: '',
     lookUpName: '',
-    lookUpDomain: '',
+    lookUpDomain: lookupDomains.length > 0 ? lookupDomains[0].lookUpDomain : '', // Set default value
     lookUpCategory: '',
     enabled: '',
     createdOn: new Date().toISOString()
@@ -178,14 +181,12 @@ const ProfileSection = (username) => {
       throw error;
     }
   };
-
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
-
   const handleConversionChange = (e) => {
     const { name, value } = e.target;
     setConversionData((prevData) => {
@@ -210,15 +211,23 @@ const ProfileSection = (username) => {
     const GetLookUpDomains = async () => {
       try {
         const response = await axios.get(
-          `http://100.42.177.77:83/api/Common/GetLookUpDomains?appId=${1}`
+          `http://100.42.177.77:83/api/Common/GetLookUpDomains?appId=1`
         );
-        setLookupDomains(response.data.result);
+        console.log('Fetched lookup domains:', response.data.result);
+        setLookupDomains(response.data.result); // Set the state
       } catch (error) {
-        console.error('Error fetching design options:', error);
+        console.error('Error fetching lookup domains:', error);
       }
     };
+
     GetLookUpDomains();
   }, []);
+
+  // useEffect(() => {
+  //   if (lookupData && lookupData.result) {
+  //     setLookupDomains(lookupData.result); // Update the state with the result
+  //   }
+  // }, [lookupData]);
 
   const open1 = Boolean(anchorEl);
   const convertOpen = Boolean(convertAnchorEl);
@@ -237,15 +246,15 @@ const ProfileSection = (username) => {
       >
         +Lookup
       </Button>
-      {/* <Button
+      <Button
         aria-describedby={convertId}
         variant="outlined"
         size="small"
         onClick={handleConvertClick}
       >
         Convertor
-      </Button> */}
-      {/* <Popover
+      </Button>
+      <Popover
         id={convertId}
         open={convertOpen}
         anchorEl={convertAnchorEl}
@@ -327,7 +336,7 @@ const ProfileSection = (username) => {
             />
           </Grid>
         </Grid>
-      </Popover> */}
+      </Popover>
       <Popover
         id="mouse-over-popover"
         open={open1}
@@ -359,11 +368,19 @@ const ProfileSection = (username) => {
               name="lookUpDomain"
               onChange={handleChange}
             >
-              {lookupDomains.map((domain) => (
-                <MenuItem key={domain.lookUpDomain} value={domain.lookUpDomain}>
-                  {domain.lookUpDomain}
-                </MenuItem>
-              ))}
+              {/* Conditionally render the MenuItems if lookupDomains is available */}
+              {lookupDomains.length > 0 ? (
+                lookupDomains.map((domain) => (
+                  <MenuItem
+                    key={domain.lookUpDomain}
+                    value={domain.lookUpDomain}
+                  >
+                    {domain.lookUpDomain}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled>No domains available</MenuItem> // Show a fallback message if no data
+              )}
             </TextField>
           </Grid>
           <Grid item sm={12}>

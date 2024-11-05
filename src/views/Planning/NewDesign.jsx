@@ -17,7 +17,8 @@ import {
   Tab,
   Card,
   CardHeader,
-  IconButton
+  IconButton,
+  Autocomplete
 } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import SearchIcon from '@mui/icons-material/Search';
@@ -434,18 +435,8 @@ const NewDesign = () => {
                 width="Inherit"
                 sx={{ paddingY: 2, paddingX: 2 }}
               >
-                {/* <Grid item xs={9} md={9}>
-                  <Typography variant="h3" gutterBottom>
-                    Create New Design
-                  </Typography>
-                </Grid> */}
-                {/* <Grid item xs={3} md={3} textAlign="right">
-                <Button variant="contained" size="small" onClick={handleSave}>
-                  Save
-                </Button>
-              </Grid> */}
                 <Grid item xs={12} md={4}>
-                  <TextField
+                  {/* <TextField
                     fullWidth
                     select
                     label="Select Collection"
@@ -468,7 +459,43 @@ const NewDesign = () => {
                         {option.collectionName}
                       </MenuItem>
                     ))}
-                  </TextField>
+                  </TextField> */}
+                  <Autocomplete
+                    value={
+                      formData.collectionId
+                        ? collectionList.find(
+                            (option) =>
+                              option.collectionId === formData.collectionId
+                          )
+                        : null
+                    }
+                    onChange={(event, newValue) =>
+                      handleChange({
+                        target: {
+                          name: 'collectionId',
+                          value: newValue ? newValue.collectionId : null
+                        }
+                      })
+                    }
+                    options={collectionList}
+                    getOptionLabel={(option) => option.collectionName} // Label to display
+                    isOptionEqualToValue={(option, value) =>
+                      option.collectionId === value?.collectionId
+                    } // Ensure options match
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Select Collection"
+                        size="small"
+                        InputLabelProps={{
+                          sx: {
+                            color: 'black' // Set the color of the label when not shrunk
+                          }
+                        }}
+                      />
+                    )}
+                    fullWidth
+                  />
                 </Grid>
                 <Grid item xs={12} md={4}>
                   <TextField

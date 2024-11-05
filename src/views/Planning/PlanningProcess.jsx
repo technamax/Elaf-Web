@@ -179,19 +179,6 @@ export default function PlanningProcess() {
     });
   };
 
-  // const handleConversionChange = (e) => {
-  //   setConversionData({
-  //     ...conversionData,
-  //     [e.target.name]: e.target.value
-  //   });
-  // };
-
-  // const handleConvert = () => {
-  //   const outputValue = convert(conversionData.inputValue)
-  //     .from(conversionData.fromUnit)
-  //     .to(conversionData.toUnit);
-  //   setConversionData({ ...conversionData, outputValue });
-  // };
   const handleConversionChange = (e) => {
     const { name, value } = e.target;
     setConversionData((prevData) => {
@@ -240,7 +227,7 @@ export default function PlanningProcess() {
           </Typography>
           {/* <TextField fullWidth size="small"></TextField> */}
         </Grid>
-        <Grid item sm={6} textAlign="right">
+        {/* <Grid item sm={6} textAlign="right">
           <Button
             aria-describedby={id}
             variant="outlined"
@@ -399,7 +386,7 @@ export default function PlanningProcess() {
               </Grid>
             </Grid>
           </Popover>
-        </Grid>
+        </Grid> */}
       </Grid>
 
       <Stepper activeStep={activeStep}>
