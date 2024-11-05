@@ -159,28 +159,47 @@ const ProfileSection = (username) => {
       const response = await axios.get(
         `http://100.42.177.77:83/api/Common/SaveLookUp?lookupDomain=${formData.lookUpDomain}&LookUpName=${formData.lookUpName}&appId=1`
       );
-      enqueueSnackbar('Lookup saved successfully!', {
-        variant: 'success',
-        autoHideDuration: 5000
-      });
-      setFormData({
-        lookUpId: '',
-        lookUpName: '',
-        lookUpDomain: '',
-        lookUpCategory: '',
-        enabled: '',
-        createdOn: new Date().toISOString()
-      });
-      refetch();
-      return response.data;
+
+      if (response.data.success) {
+        // If save was successful
+        enqueueSnackbar(response.data.message || 'Lookup saved successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+
+        // Reset form data
+        setFormData({
+          lookUpId: '',
+          lookUpName: '',
+          lookUpDomain: '',
+          lookUpCategory: '',
+          enabled: '',
+          createdOn: new Date().toISOString()
+        });
+
+        refetch(); // Refetch lookup data
+        return response.data;
+      } else {
+        // If duplicate lookup name was detected
+        enqueueSnackbar(
+          response.data.message || 'This lookup name already exists.',
+          {
+            variant: 'error',
+            autoHideDuration: 5000
+          }
+        );
+      }
     } catch (error) {
+      // Handle unexpected errors
       enqueueSnackbar('Error saving data. Please try again.', {
         variant: 'error',
         autoHideDuration: 5000
       });
+      console.error('Save error:', error); // Log error for debugging
       throw error;
     }
   };
+
   const handleChange = (e) => {
     setFormData({
       ...formData,

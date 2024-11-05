@@ -616,28 +616,48 @@ const NewDesign = () => {
                   />
                 </Grid>
                 <Grid item xs={12} md={4}>
-                  <TextField
+                  <Autocomplete
                     fullWidth
-                    select
-                    label="Color"
-                    size="small"
-                    name="colorId"
-                    value={formData.colorId}
-                    onChange={handleChange}
-                    disabled={!formData.collectionId}
-                    InputLabelProps={{
-                      sx: {
-                        // set the color of the label when not shrinked
-                        color: 'black'
-                      }
+                    options={colors}
+                    getOptionLabel={(option) => option.lookUpName}
+                    value={
+                      colors.find(
+                        (color) => color.lookUpId === formData.colorId
+                      ) || null
+                    }
+                    onChange={(event, newValue) => {
+                      handleChange({
+                        target: {
+                          name: 'colorId',
+                          value: newValue ? newValue.lookUpId : ''
+                        }
+                      });
                     }}
-                  >
-                    {colors.map((option) => (
-                      <MenuItem key={option.lookUpId} value={option.lookUpId}>
-                        {option.lookUpName}
-                      </MenuItem>
-                    ))}
-                  </TextField>
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Color"
+                        size="small"
+                        value={formData.colorId}
+                        name="colorId"
+                        required
+                        InputLabelProps={{
+                          sx: {
+                            // set the color of the label when not shrinked
+                            color: 'black'
+                          }
+                        }}
+                        sx={{
+                          '& input': {
+                            backgroundColor: 'white' // Setting white background for the input field inside Autocomplete
+                          }
+                        }}
+                      />
+                    )}
+                    PaperComponent={({ children }) => (
+                      <div style={{ backgroundColor: 'white' }}>{children}</div>
+                    )}
+                  />
                 </Grid>
                 <Grid item xs={12} textAlign="right" sx={{ mt: 2 }}>
                   {/* <Button variant="contained" size="small" onClick={handleSave}>
