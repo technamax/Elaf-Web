@@ -139,11 +139,11 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
   };
 
   const calRows = GRNList.map((row) => {
-    const sumGradeBAndCP = row.sumGradeBAndCP ?? 0;
+    const sumGradeBAndCP = row.gradeBQty + row.gradeCPQty ?? 0;
     const wastageOnSumGradeBAndCP = row.wastageOnSumGradeBAndCP ?? 0;
     const allowedBCP =
       row.assignQuantity * (1 - row.shrinkage / 100) * (row.wastage / 100);
-    const wasted = sumGradeBAndCP === 0 ? 0 : allowedBCP - sumGradeBAndCP;
+    const wasted = sumGradeBAndCP === 0 ? 0 : sumGradeBAndCP - allowedBCP;
     const rejected = wasted + row.rejectedQty;
 
     return {
@@ -158,10 +158,11 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
       // rejectedQty: rejected,
       bGradetotal:
         (row.gradeBQty ?? 0) * (row.rate ?? 0) * (row.bGradeRate ?? 0),
-      sumGradeBAndCP: sumGradeBAndCP,
-      wastageOnSumGradeBAndCP: wastageOnSumGradeBAndCP,
-      allowedBCP: allowedBCP,
-      wasted: wasted
+      sumGradeBAndCP,
+      wastageOnSumGradeBAndCP,
+      allowedBCP,
+      wasted,
+      rejected
     };
   });
 
@@ -249,16 +250,10 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
       field: 'fabricName',
       headerName: 'Fabric'
     },
-
-    // {
-    //   field: 'baseColor',
-    //   headerName: 'Base Color'
-    // },
     {
       field: 'colorName',
       headerName: 'Color'
     },
-
     {
       field: 'assignQuantity',
       headerName: 'PO Qty'
@@ -346,12 +341,7 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
       field: 'sumGradeBAndCP',
       headerName: 'Received Wastage',
       renderCell: (params) => {
-        return (
-          <StatusChip
-            label={params.value + params.row.gradeBQty + params.row.gradeCPQty}
-            status="lightgreen"
-          />
-        );
+        return <StatusChip label={params.value} status="lightgreen" />;
       }
     },
     {
@@ -378,31 +368,7 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
       field: 'rejectedQty',
       headerName: 'Rejected',
       renderCell: (params) => {
-        // const chipColor = 'error.dark';
-        // if (params.value === 0) {
-        //   return;
-        // } else {
         return (
-          // <Chip
-          //   label={params.value}
-          //   sx={{
-          //     backgroundColor:
-          //       chipColor === 'primary' || chipColor === 'default'
-          //         ? undefined
-          //         : chipColor,
-          //     color:
-          //       chipColor === 'primary' || chipColor === 'default'
-          //         ? undefined
-          //         : 'white'
-          //   }}
-          //   color={
-          //     chipColor === 'primary'
-          //       ? 'primary'
-          //       : chipColor === 'default'
-          //         ? 'default'
-          //         : undefined
-          //   }
-          // />
           <Chip
             label={params.value.toLocaleString()}
             sx={{
@@ -415,6 +381,21 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
       }
     },
     {
+      field: 'rejected',
+      headerName: 'Total Rejected',
+      renderCell: (params) => {
+        return (
+          <Chip
+            label={params.value.toLocaleString()}
+            sx={{
+              backgroundColor: '#FF0000', // Set to red
+              color: '#FFFFFF' // White text for visibility
+            }}
+          />
+        );
+      }
+    },
+    {
       field: 'remarks',
       headerName: 'Remarks'
     },
@@ -424,16 +405,7 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
     }
   ];
   console.log('grnlist', { grn: formData.grnDetailsList });
-  console.log('updated rejectedQty', {
-    ...formData,
-    grnDetailsList: formData.grnDetailsList?.map((row) => ({
-      ...row,
-      rejectedQty:
-        row.sumGradeBAndCP -
-        row.sumGradeBAndCP * row.wastageOnSumGradeBAndCP +
-        row.rejectedQty
-    }))
-  });
+
   const handleSave = async () => {
     try {
       const response = await axios.post(
@@ -442,7 +414,8 @@ const ReceiveGRN = ({ iss, handleClose, refetchData }) => {
           ...formData,
           grnDetailsList: formData.grnDetailsList.map((row) => ({
             ...row,
-            rejectedQty: wasted + row.rejectedQty
+            rejectedQty: row.rejected,
+            wastedQty: row.wasted
           }))
         }
       );

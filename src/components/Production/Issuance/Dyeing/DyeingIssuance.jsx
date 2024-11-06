@@ -390,24 +390,7 @@ const DyeingIssuance = ({ rowData }) => {
   };
   console.log('handleDisabled', handleDisabled());
   const handleSave = async () => {
-    // if (
-    //   !formData.issuanceTransactionDetails ||
-    //   formData.issuanceTransactionDetails.length === 0
-    // ) {
-    //   enqueueSnackbar('Please select at least one row before saving.', {
-    //     variant: 'warning'
-    //   });
-    //   return;
-    // }
-
-    // if (rowSelectionModel.length !== poDetails.length) {
-    //   enqueueSnackbar('Please select all rows before saving.', {
-    //     variant: 'warning'
-    //   });
-    //   return;
-    // }
     if (rowSelectionModel.length === 0) {
-      // Show a snackbar warning if no rows are selected
       enqueueSnackbar('Please select at least one row before saving!', {
         variant: 'warning',
         autoHideDuration: 5000
@@ -415,10 +398,17 @@ const DyeingIssuance = ({ rowData }) => {
       return;
     }
 
+    if (poHeaderData.stockInHandQty === 0) {
+      enqueueSnackbar('Stock in hand is 0, cannot save!', {
+        variant: 'warning',
+        autoHideDuration: 5000
+      });
+      return;
+    }
     for (let po of poDetails) {
       if (po.issuanceQuantity > po.remaining) {
         enqueueSnackbar(
-          'Error:Iissuance quantity cannot be greater than remaining quantity!',
+          'Error:Issuance quantity cannot be greater than remaining quantity!',
           {
             variant: 'error',
             autoHideDuration: 5000
@@ -430,6 +420,15 @@ const DyeingIssuance = ({ rowData }) => {
 
     console.log('formData', formData);
     try {
+      if (formData.stockInHandQty === 0) {
+        enqueueSnackbar(
+          'Stock in hand is 0, please verify data before saving!',
+          {
+            variant: 'warning'
+          }
+        );
+        return;
+      }
       // Make the API call
       const response = await axios.post(
         'http://100.42.177.77:83/api/Issuance/IssuanceToVendor',
@@ -584,12 +583,12 @@ const DyeingIssuance = ({ rowData }) => {
       field: 'quantity',
       headerName: 'Total Qty',
       valueGetter: (params) => {
-        return params.toLocaleString();
+        return params?.toLocaleString();
       },
       renderCell: (params) => {
         return (
           <StatusChip
-            label={params.row.quantity.toLocaleString()}
+            label={params.row.quantity?.toLocaleString()}
             status="Completed"
           />
         );
@@ -599,12 +598,12 @@ const DyeingIssuance = ({ rowData }) => {
       field: 'assignQuantity',
       headerName: 'Assigned Quantity',
       valueGetter: (params) => {
-        return params.toLocaleString();
+        return params?.toLocaleString();
       },
       renderCell: (params) => {
         return (
           <StatusChip
-            label={params.row.quantity.toLocaleString()}
+            label={params.row.quantity?.toLocaleString()}
             status="Issued"
           />
         );
@@ -622,7 +621,7 @@ const DyeingIssuance = ({ rowData }) => {
       headerName: 'Remaining Qty',
       valueGetter: (params, row) => {
         const remainingQty = row.quantity - row.assignQuantity;
-        return remainingQty.toLocaleString();
+        return remainingQty?.toLocaleString();
       },
       renderCell: (params) => {
         const remainingQty = params.row.quantity - params.row.assignQuantity;
@@ -630,7 +629,7 @@ const DyeingIssuance = ({ rowData }) => {
 
         return (
           <Chip
-            label={remainingQty.toLocaleString()}
+            label={remainingQty?.toLocaleString()}
             sx={{
               backgroundColor: '#FF0000', // Set to red
               color: '#FFFFFF' // White text for visibility
@@ -805,7 +804,7 @@ const DyeingIssuance = ({ rowData }) => {
       renderCell: (params) => {
         return (
           <StatusChip
-            label={params.row.issuanceQuantity.toLocaleString()}
+            label={params.row.issuanceQuantity?.toLocaleString()}
             status="Received"
           />
         );
@@ -817,7 +816,7 @@ const DyeingIssuance = ({ rowData }) => {
       renderCell: (params) => {
         return (
           <StatusChip
-            label={params.row.dispatchedQuantity.toLocaleString()}
+            label={params.row.dispatchedQuantity?.toLocaleString()}
             status="Issued"
           />
         );
@@ -835,7 +834,7 @@ const DyeingIssuance = ({ rowData }) => {
       headerName: 'Remaining Qty',
       valueGetter: (params, row) => {
         const remainingQty = row.issuanceQuantity - row.dispatchedQuantity;
-        return remainingQty.toLocaleString();
+        return remainingQty?.toLocaleString();
       },
       renderCell: (params) => {
         const remainingQty =
@@ -844,7 +843,7 @@ const DyeingIssuance = ({ rowData }) => {
 
         return (
           <Chip
-            label={remainingQty.toLocaleString()}
+            label={remainingQty?.toLocaleString()}
             sx={{
               backgroundColor: '#FF0000', // Set to red
               color: '#FFFFFF' // White text for visibility

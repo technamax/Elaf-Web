@@ -224,6 +224,13 @@ const DyeingRTV = () => {
       }
     },
     {
+      field: 'wastedQty',
+      headerName: 'Wasted',
+      renderCell: (params) => {
+        return <StatusChip label={params.row.wastedQty} status="Rejected" />;
+      }
+    },
+    {
       field: 'rejectionReason',
       headerName: 'Reason'
     },
