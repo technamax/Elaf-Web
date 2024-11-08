@@ -16,7 +16,7 @@ import {
   useGetDyeingPoListQuery,
   useGetDyeingPoHeaderByProductionIdQuery,
   useGetProductionBatchForProcessingQuery,
-  useGetReceivingHeaderQuery
+  useGetReceivingHeaderForInspectionQuery
 } from 'api/store/Apis/productionApi';
 // import { useUser } from 'context/User';
 import DyeingInspection from '../../components/Production/Inspection/Dyeing/DyeingInspection';
@@ -92,7 +92,7 @@ const Inspection = () => {
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
     useGetProductionBatchForProcessingQuery();
   const { data: receivingData, refetch: refetchReceivingData } =
-    useGetReceivingHeaderQuery(
+    useGetReceivingHeaderForInspectionQuery(
       {
         poId: formData.poId,
         status: 8,

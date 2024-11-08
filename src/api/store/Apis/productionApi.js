@@ -126,6 +126,10 @@ export const productionApi = createApi({
       query: ({ poId, processTypename, status }) =>
         `Receiving/GetReceivingHeader?poId=${poId}&processTypename=${processTypename}&status=${status}`
     }),
+    getReceivingHeaderForInspection: builder.query({
+      query: ({ poId, processTypename, status }) =>
+        `Receiving/GetReceivingHeaderForInspection?poId=${poId}&processTypename=${processTypename}&status=${status}`
+    }),
     viewReceivings: builder.query({
       query: ({ issuanceId, processTypename }) =>
         `Receiving/ViewReceivings?issuanceId=${issuanceId}&processTypename=${processTypename}`
@@ -205,6 +209,7 @@ export const {
   useGetIssuanceOGPByIdQuery,
   useGetDyeingPoListQuery,
   useGetReceivingHeaderQuery,
+  useGetReceivingHeaderForInspectionQuery,
   useViewReceivingsQuery,
   useGetInspectionForGRNHeaderQuery,
   useGetInspectionForGRNDetailbyInspectionIdQuery,
