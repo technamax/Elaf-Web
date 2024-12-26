@@ -477,7 +477,7 @@ const ReceivingFromBX = () => {
     },
 
     {
-      field: 'productName',
+      field: 'longName',
       headerName: 'Product Name'
       // flex: 1
     },
@@ -751,6 +751,20 @@ const ReceivingFromBX = () => {
                   </Grid> */}
                   <Grid item xs={12} md={4}>
                     <TextField
+                      label="Issuance Name"
+                      fullWidth
+                      size="small"
+                      name="issuanceName"
+                      onChange={handleChange}
+                      value={formData.issuanceName}
+                      required
+                      disabled
+                      // error={!!formErrors.collectionName}
+                      // helperText={formErrors.collectionName}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={4}>
+                    <TextField
                       size="small"
                       // type="date"
                       label="Issuance Date"
@@ -770,20 +784,7 @@ const ReceivingFromBX = () => {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      label="Receiving Date"
-                      fullWidth
-                      size="small"
-                      name="issuanceName"
-                      onChange={handleChange}
-                      value={formData.issuanceName}
-                      required
-                      disabled
-                      // error={!!formErrors.collectionName}
-                      // helperText={formErrors.collectionName}
-                    />
-                  </Grid>
+
                   <Grid item xs={12}>
                     <ReuseableDataGrid
                       initialRows={bxStockList}
