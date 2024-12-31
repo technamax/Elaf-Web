@@ -228,7 +228,7 @@ const POGeneration = () => {
           <TabPanel value="2">
             <EmbroideryPO />
           </TabPanel>
-          <TabPanel value="3">{/* <AssignTermsAndConditions /> */}</TabPanel>
+          <TabPanel value="3">{/* <AssignTermsAndConditions /> */}Assign Termns and Conditions</TabPanel>
           <TabPanel value="4">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="5">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="6">
