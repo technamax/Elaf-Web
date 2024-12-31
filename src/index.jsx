@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 // third party
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
+import store from './api/store/store';
+import { UserProvider } from 'context/User';
 
 // project imports
 import App from './App';
@@ -27,16 +29,27 @@ import '@fontsource/poppins/700.css';
 // style + assets
 import 'assets/scss/style.scss';
 import reportWebVitals from 'reportWebVitals';
+import './App.css';
+import './index.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import '../src/assets/scss/style.scss';
+// import 'style.scss';
+
+import { SnackbarProvider } from 'notistack';
 
 const container = document.getElementById('root');
 const root = createRoot(container); // createRoot(container!) if you use TypeScript
-const store = configureStore({ reducer });
+// const store = configureStore({ reducer });
 
 // ==============================|| REACT DOM RENDER  ||============================== //
 
 root.render(
   <Provider store={store}>
-    <App />
+    <SnackbarProvider>
+      <UserProvider>
+        <App />
+      </UserProvider>
+    </SnackbarProvider>
   </Provider>
 );
 

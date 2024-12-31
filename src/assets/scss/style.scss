@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 // color variants
 @import 'themes-vars.module.scss';
 
@@ -33,7 +37,87 @@
     right: 0;
   }
 }
+// .css-12le6h4-MuiFormLabel-root-MuiInputLabel-root {
+//   color: #1e00ff !important;
+// }
+// .css-4a5t8g-MuiInputBase-input-MuiOutlinedInput-input.Mui-disabled {
+//   background-color: lightblue;
+//   opacity: 1;
+//   -webkit-text-fill-color: rgba(0, 0, 0, 0.38);
+// }
+.css-18tlfgm-MuiPaper-root-MuiPopover-paper-MuiMenu-paper,
+.css-be6mqq-MuiAutocomplete-listbox,
+.css-19adtlf {
+  background-color: #ffffff !important;
+}
+// .css-3eek4p-MuiDataGrid-main {
+//   background-color: #ffffff !important;
+// }
+.CardHeader {
+  margin-bottom: 10px !important;
+  border-radius: 7px !important;
+  width: auto !important;
+  max-height: 80vh !important; /* Removed responsive design as it's not supported in CSS */
+  overflow: auto !important;
+  padding: 5px !important;
+}
 
+.css-5d09g1-MuiPaper-root-MuiAccordion-root.Mui-expanded {
+  margin: 0px;
+}
+.css-1f773le-MuiButtonBase-root-MuiAccordionSummary-root.Mui-expanded {
+  min-height: 40px;
+}
+//appbar
+.css-kvip5o-MuiToolbar-root {
+  min-height: 0px;
+  padding: 0px;
+}
+.css-h4y409-MuiList-root {
+  padding-top: 0px;
+}
+.bi-menu-down::before {
+  color: #d12d33;
+}
+.css-138lma6-MuiPaper-root-MuiCard-root {
+  border-width: 1px;
+  border-style: dotted;
+
+  box-shadow: 5px 5px rgb(218, 101, 101);
+}
+
+.css-9d4wr9 {
+  margin-left: 0;
+  width: calc(100% - 260px);
+  border-style: dashed;
+  border-color: black;
+  border-width: 2.5px;
+}
+.css-1gr4mqk {
+  margin-top: 55px;
+}
+//dropdown arrow
+// .css-sgoict-MuiCardHeader-action {
+//   margin-top: -18px !important;
+// }
+//menuiconsize
+// .css-1ips9rb-MuiListItemIcon-root {
+//   font-size: large !important;
+// }
+//cardheader icon size
+.css-1pqm26d-MuiAvatar-img {
+  width: 80%;
+  height: 80%;
+}
+.css-1gr4mqk,
+.css-38c5y6 {
+  background-color: #ffffff;
+  margin-left: 0;
+  width: calc(100% - 260px);
+  border-style: dashed;
+  border-color: black;
+  border-width: 2.5px;
+}
 .scrollbar-container.ps,
 .scrollbar-container > .ps {
   &.ps--active-y > .ps__rail-y {
@@ -124,5 +208,11 @@
   }
   75% {
     transform: translateX(10px);
+  }
+}
+@media print {
+  .printableComponent {
+    margin-top: 1in;
+    margin-bottom: 1in;
   }
 }

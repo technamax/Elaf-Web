@@ -1,17 +1,15 @@
 import { Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
 // material-ui
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
+import { useState, useEffect } from 'react';
 // project imports
 import { CssBaseline, styled, useTheme } from '@mui/material';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import Customization from '../Customization';
 import Breadcrumbs from 'ui-component/extended/Breadcrumbs';
 import { SET_MENU } from 'store/actions';
 import { drawerWidth } from 'store/constant';
@@ -19,7 +17,9 @@ import { drawerWidth } from 'store/constant';
 // assets
 import { IconChevronRight } from '@tabler/icons-react';
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' && prop !== 'theme' })(({ theme, open }) => ({
+const Main = styled('main', {
+  shouldForwardProp: (prop) => prop !== 'open' && prop !== 'theme'
+})(({ theme, open }) => ({
   ...theme.typography.mainContent,
   borderBottomLeftRadius: 0,
   borderBottomRightRadius: 0,
@@ -49,33 +49,85 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' && pr
     width: `calc(100% - ${drawerWidth}px)`,
     padding: '16px',
     marginRight: '10px'
+  },
+
+  '&::-webkit-scrollbar': {
+    width: '0px' /* Hide scrollbar width */,
+    height: '0px' /* Hide scrollbar height */
   }
 }));
 
 // ==============================|| MAIN LAYOUT ||============================== //
 
 const MainLayout = () => {
+  // const empId = '10014';
+  // const token =
+  // 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYmYiOjE3MTY1Mjg5MzYsImV4cCI6MTcxNjYxNTMzNiwiaWF0IjoxNzE2NTI4OTM2fQ.Ku5x42gHE3JXLqHQVQaV_Qoh-lK2lc5LnBfdshPGPiU';
+  const empId = localStorage.getItem('empId');
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
   // Handle left drawer
+  const matchDownSm = useMediaQuery(theme.breakpoints.down('sm'));
+
   const leftDrawerOpened = useSelector((state) => state.customization.opened);
   const dispatch = useDispatch();
   const handleLeftDrawerToggle = () => {
     dispatch({ type: SET_MENU, opened: !leftDrawerOpened });
   };
+  // const [empId, setEmpId] = useState('');
+  const [token, setToken] = useState('');
+  console.log(empId, token);
 
+  useEffect(() => {
+    const storedEmpId = localStorage.getItem('empId');
+    const authToken = localStorage.getItem('authToken');
+
+    if (authToken) {
+      setToken(authToken);
+      console.log('Retrieved authToken:', authToken); // Log the token for debugging
+    } else {
+      console.error('No authToken found in localStorage');
+    }
+
+    // if (storedEmpId) {
+    //   setEmpId(storedEmpId);
+    //   console.log('Retrieved empId:', storedEmpId); // Log the empId for debugging
+    // } else {
+    //   console.error('No empId found in localStorage');
+    // }
+  }, []);
+  console.log(token);
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        // transform: !matchDownMd ? 'scale(0.8)' : 'none',
+        // transformOrigin: 'top left',
+        width: !matchDownMd ? '100%' : '100%',
+        height: !matchDownMd ? '100%' : '100%',
+        overflow: 'hidden',
+        '&::-webkit-scrollbar': {
+          display: 'none'
+        },
+        '-ms-overflow-style': 'none' /* IE and Edge */,
+        'scrollbar-width': 'none' /* Firefox */
+      }}
+    >
       <CssBaseline />
       {/* header */}
+
       <AppBar
+        className=".css-h4y409-MuiList-root "
         enableColorOnDark
-        position="fixed"
-        color="inherit"
+        position="absolute"
+        color="transparent"
         elevation={0}
         sx={{
-          bgcolor: theme.palette.background.default,
-          transition: leftDrawerOpened ? theme.transitions.create('width') : 'none'
+          bgcolor: theme.palette.background.error,
+
+          transition: leftDrawerOpened
+            ? theme.transitions.create('width')
+            : 'none'
         }}
       >
         <Toolbar>
@@ -84,17 +136,28 @@ const MainLayout = () => {
       </AppBar>
 
       {/* drawer */}
-      <Sidebar drawerOpen={!matchDownMd ? leftDrawerOpened : !leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
-
+      <Sidebar
+        drawerOpen={!matchDownMd ? leftDrawerOpened : !leftDrawerOpened}
+        drawerToggle={handleLeftDrawerToggle}
+        empId={empId}
+        token={token}
+      />
       {/* main content */}
       <Main theme={theme} open={leftDrawerOpened}>
         {/* breadcrumb */}
-        <Breadcrumbs separator={IconChevronRight} navigation={navigation} icon title rightAlign />
+        <Breadcrumbs
+          separator={IconChevronRight}
+          navigation={navigation}
+          icon
+          title
+          rightAlign
+        />
         <Outlet />
       </Main>
-      <Customization />
+      {/* <Customization /> */}
     </Box>
   );
 };
+/////////////////////////////////////
 
 export default MainLayout;

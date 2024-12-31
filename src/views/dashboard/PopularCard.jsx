@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 // material-ui
 import Avatar from '@mui/material/Avatar';
@@ -23,10 +23,35 @@ import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
 import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
-
+import { useGetPlanningDashboardByYearQuery } from '../../api/store/Apis/dashboardApi';
+import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 // ==============================|| DASHBOARD DEFAULT - POPULAR CARD ||============================== //
 
 const PopularCard = ({ isLoading }) => {
+  const { data: dashboardData } = useGetPlanningDashboardByYearQuery();
+
+  const [costOfDying, setCostOfDying] = useState(null);
+  const [costOfPrinting, setCostOfPrinting] = useState(null);
+  const [embroidery, setEmbroidery] = useState(null);
+  const [costOfSchiffili, setCostOfSchiffili] = useState(null);
+
+  useEffect(() => {
+    if (
+      dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0
+    ) {
+      setCostOfDying(dashboardData.result[0].costOfDying.toLocaleString());
+      setCostOfPrinting(
+        dashboardData.result[0].costOfPrinting.toLocaleString()
+      );
+      setEmbroidery(dashboardData.result[0].costOfEmbroidery.toLocaleString());
+      setCostOfSchiffili(
+        dashboardData.result[0].costOfSchiffili.toLocaleString()
+      );
+    }
+  }, [dashboardData]);
+
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -46,9 +71,13 @@ const PopularCard = ({ isLoading }) => {
           <CardContent>
             <Grid container spacing={gridSpacing}>
               <Grid item xs={12}>
-                <Grid container alignContent="center" justifyContent="space-between">
+                <Grid
+                  container
+                  alignContent="center"
+                  justifyContent="space-between"
+                >
                   <Grid item>
-                    <Typography variant="h4">Popular Stocks</Typography>
+                    <Typography variant="h4">Planning Processes</Typography>
                   </Grid>
                   <Grid item>
                     <MoreHorizOutlinedIcon
@@ -85,22 +114,30 @@ const PopularCard = ({ isLoading }) => {
                 </Grid>
               </Grid>
               <Grid item xs={12} sx={{ pt: '16px !important' }}>
-                <BajajAreaChartCard />
+                {/* <BajajAreaChartCard /> */}
               </Grid>
               <Grid item xs={12}>
                 <Grid container direction="column">
                   <Grid item>
-                    <Grid container alignItems="center" justifyContent="space-between">
+                    <Grid
+                      container
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
                       <Grid item>
                         <Typography variant="subtitle1" color="inherit">
-                          Bajaj Finery
+                          Dyeing Cost
                         </Typography>
                       </Grid>
                       <Grid item>
-                        <Grid container alignItems="center" justifyContent="space-between">
+                        <Grid
+                          container
+                          alignItems="center"
+                          justifyContent="space-between"
+                        >
                           <Grid item>
                             <Typography variant="subtitle1" color="inherit">
-                              $1839.00
+                              {costOfDying}
                             </Typography>
                           </Grid>
                           <Grid item>
@@ -115,33 +152,47 @@ const PopularCard = ({ isLoading }) => {
                                 ml: 2
                               }}
                             >
-                              <KeyboardArrowUpOutlinedIcon fontSize="small" color="inherit" />
+                              <PriceCheckIcon
+                                fontSize="small"
+                                color="inherit"
+                              />
                             </Avatar>
                           </Grid>
                         </Grid>
                       </Grid>
                     </Grid>
                   </Grid>
-                  <Grid item>
-                    <Typography variant="subtitle2" sx={{ color: 'success.dark' }}>
+                  {/* <Grid item>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ color: 'success.dark' }}
+                    >
                       10% Profit
                     </Typography>
-                  </Grid>
+                  </Grid> */}
                 </Grid>
                 <Divider sx={{ my: 1.5 }} />
                 <Grid container direction="column">
                   <Grid item>
-                    <Grid container alignItems="center" justifyContent="space-between">
+                    <Grid
+                      container
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
                       <Grid item>
                         <Typography variant="subtitle1" color="inherit">
-                          TTML
+                          Printing Cost
                         </Typography>
                       </Grid>
                       <Grid item>
-                        <Grid container alignItems="center" justifyContent="space-between">
+                        <Grid
+                          container
+                          alignItems="center"
+                          justifyContent="space-between"
+                        >
                           <Grid item>
                             <Typography variant="subtitle1" color="inherit">
-                              $100.00
+                              {costOfPrinting}
                             </Typography>
                           </Grid>
                           <Grid item>
@@ -151,12 +202,15 @@ const PopularCard = ({ isLoading }) => {
                                 width: 16,
                                 height: 16,
                                 borderRadius: '5px',
-                                bgcolor: 'orange.light',
-                                color: 'orange.dark',
+                                bgcolor: 'success.light',
+                                color: 'success.dark',
                                 marginLeft: 1.875
                               }}
                             >
-                              <KeyboardArrowDownOutlinedIcon fontSize="small" color="inherit" />
+                              <PriceCheckIcon
+                                fontSize="small"
+                                color="inherit"
+                              />
                             </Avatar>
                           </Grid>
                         </Grid>
@@ -164,25 +218,36 @@ const PopularCard = ({ isLoading }) => {
                     </Grid>
                   </Grid>
                   <Grid item>
-                    <Typography variant="subtitle2" sx={{ color: 'orange.dark' }}>
+                    {/* <Typography
+                      variant="subtitle2"
+                      sx={{ color: 'orange.dark' }}
+                    >
                       10% loss
-                    </Typography>
+                    </Typography> */}
                   </Grid>
                 </Grid>
                 <Divider sx={{ my: 1.5 }} />
                 <Grid container direction="column">
                   <Grid item>
-                    <Grid container alignItems="center" justifyContent="space-between">
+                    <Grid
+                      container
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
                       <Grid item>
                         <Typography variant="subtitle1" color="inherit">
-                          Reliance
+                          Embroidery Cost
                         </Typography>
                       </Grid>
                       <Grid item>
-                        <Grid container alignItems="center" justifyContent="space-between">
+                        <Grid
+                          container
+                          alignItems="center"
+                          justifyContent="space-between"
+                        >
                           <Grid item>
                             <Typography variant="subtitle1" color="inherit">
-                              $200.00
+                              {embroidery}
                             </Typography>
                           </Grid>
                           <Grid item>
@@ -194,10 +259,13 @@ const PopularCard = ({ isLoading }) => {
                                 borderRadius: '5px',
                                 bgcolor: 'success.light',
                                 color: 'success.dark',
-                                ml: 2
+                                marginLeft: 1.875
                               }}
                             >
-                              <KeyboardArrowUpOutlinedIcon fontSize="small" color="inherit" />
+                              <PriceCheckIcon
+                                fontSize="small"
+                                color="inherit"
+                              />
                             </Avatar>
                           </Grid>
                         </Grid>
@@ -205,25 +273,36 @@ const PopularCard = ({ isLoading }) => {
                     </Grid>
                   </Grid>
                   <Grid item>
-                    <Typography variant="subtitle2" sx={{ color: 'success.dark' }}>
+                    {/* <Typography
+                      variant="subtitle2"
+                      sx={{ color: 'success.dark' }}
+                    >
                       10% Profit
-                    </Typography>
+                    </Typography> */}
                   </Grid>
                 </Grid>
                 <Divider sx={{ my: 1.5 }} />
                 <Grid container direction="column">
                   <Grid item>
-                    <Grid container alignItems="center" justifyContent="space-between">
+                    <Grid
+                      container
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
                       <Grid item>
                         <Typography variant="subtitle1" color="inherit">
-                          TTML
+                          Schiffli Cost
                         </Typography>
                       </Grid>
                       <Grid item>
-                        <Grid container alignItems="center" justifyContent="space-between">
+                        <Grid
+                          container
+                          alignItems="center"
+                          justifyContent="space-between"
+                        >
                           <Grid item>
                             <Typography variant="subtitle1" color="inherit">
-                              $189.00
+                              {costOfSchiffili}
                             </Typography>
                           </Grid>
                           <Grid item>
@@ -233,12 +312,15 @@ const PopularCard = ({ isLoading }) => {
                                 width: 16,
                                 height: 16,
                                 borderRadius: '5px',
-                                bgcolor: 'orange.light',
-                                color: 'orange.dark',
-                                ml: 2
+                                bgcolor: 'success.light',
+                                color: 'success.dark',
+                                marginLeft: 1.875
                               }}
                             >
-                              <KeyboardArrowDownOutlinedIcon fontSize="small" color="inherit" />
+                              <PriceCheckIcon
+                                fontSize="small"
+                                color="inherit"
+                              />
                             </Avatar>
                           </Grid>
                         </Grid>
@@ -246,61 +328,34 @@ const PopularCard = ({ isLoading }) => {
                     </Grid>
                   </Grid>
                   <Grid item>
-                    <Typography variant="subtitle2" sx={{ color: 'orange.dark' }}>
+                    {/* <Typography
+                      variant="subtitle2"
+                      sx={{ color: 'orange.dark' }}
+                    >
                       10% loss
-                    </Typography>
+                    </Typography> */}
                   </Grid>
                 </Grid>
                 <Divider sx={{ my: 1.5 }} />
                 <Grid container direction="column">
                   <Grid item>
-                    <Grid container alignItems="center" justifyContent="space-between">
-                      <Grid item>
+                    <Grid
+                      container
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
+                      {/* <Grid item>
                         <Typography variant="subtitle1" color="inherit">
                           Stolon
                         </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Grid container alignItems="center" justifyContent="space-between">
-                          <Grid item>
-                            <Typography variant="subtitle1" color="inherit">
-                              $189.00
-                            </Typography>
-                          </Grid>
-                          <Grid item>
-                            <Avatar
-                              variant="rounded"
-                              sx={{
-                                width: 16,
-                                height: 16,
-                                borderRadius: '5px',
-                                bgcolor: 'orange.light',
-                                color: 'orange.dark',
-                                ml: 2
-                              }}
-                            >
-                              <KeyboardArrowDownOutlinedIcon fontSize="small" color="inherit" />
-                            </Avatar>
-                          </Grid>
-                        </Grid>
-                      </Grid>
+                      </Grid> */}
+                      <Grid item></Grid>
                     </Grid>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="subtitle2" sx={{ color: 'orange.dark' }}>
-                      10% loss
-                    </Typography>
                   </Grid>
                 </Grid>
               </Grid>
             </Grid>
           </CardContent>
-          <CardActions sx={{ p: 1.25, pt: 0, justifyContent: 'center' }}>
-            <Button size="small" disableElevation>
-              View All
-              <ChevronRightOutlinedIcon />
-            </Button>
-          </CardActions>
         </MainCard>
       )}
     </>

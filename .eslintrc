@@ -1,4 +1,4 @@
-{
+// {
   "root": true,
   "env": {
     "browser": true,
@@ -68,7 +68,7 @@
       }
     ],
     "no-unused-vars": [
-      "error",
+      "warn",
       {
         "ignoreRestSiblings": false
       }
@@ -77,13 +77,13 @@
       "warn",
       {
         "bracketSpacing": true,
-        "printWidth": 140,
+        "printWidth": 80,
         "singleQuote": true,
         "trailingComma": "none",
-        "tabWidth": 4,
+        "tabWidth": 2,
         "useTabs": false,
         "endOfLine": "auto"
       }
     ]
   }
-}
+// }

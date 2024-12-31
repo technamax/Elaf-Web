@@ -10,12 +10,15 @@ import TotalOrderLineChartCard from './TotalOrderLineChartCard';
 import TotalIncomeDarkCard from './TotalIncomeDarkCard';
 import TotalIncomeLightCard from './TotalIncomeLightCard';
 import TotalGrowthBarChart from './TotalGrowthBarChart';
-
+import Box from '@mui/material/Box';
 import { gridSpacing } from 'store/constant';
-
+import DyeingData from './DyeingData';
 // assets
 import StorefrontTwoToneIcon from '@mui/icons-material/StorefrontTwoTone';
-
+import { padding } from '@mui/system';
+import EmbroideryData from './EmbrioderyData';
+import PrintingData from './PrintingData';
+import SchiffliData from './SchiffliData';
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
 const Dashboard = () => {
@@ -40,6 +43,7 @@ const Dashboard = () => {
               <Grid item sm={6} xs={12} md={6} lg={12}>
                 <TotalIncomeDarkCard isLoading={isLoading} />
               </Grid>
+
               <Grid item sm={6} xs={12} md={6} lg={12}>
                 <TotalIncomeLightCard
                   {...{
@@ -59,9 +63,25 @@ const Dashboard = () => {
           <Grid item xs={12} md={8}>
             <TotalGrowthBarChart isLoading={isLoading} />
           </Grid>
+
           <Grid item xs={12} md={4}>
             <PopularCard isLoading={isLoading} />
           </Grid>
+
+          {/* <Grid item xs={12} md={4}>
+            <Box mb={2}>
+              <EmbroideryData isLoading={isLoading} />
+            </Box>
+            <Box mb={2}>
+              <DyeingData isLoading={isLoading} />
+            </Box>
+            <Box mb={2}>
+              <PrintingData isLoading={isLoading} />
+            </Box>
+            <Box mb={2}>
+              <SchiffliData isLoading={isLoading} />
+            </Box>
+          </Grid> */}
         </Grid>
       </Grid>
     </Grid>

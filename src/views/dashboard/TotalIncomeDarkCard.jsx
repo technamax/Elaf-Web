@@ -1,15 +1,20 @@
 import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
 
 // material-ui
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ListItemText from '@mui/material/ListItemText';
+import Grid from '@mui/material/Grid';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-
+import styled from '@emotion/styled';
+// project imports
+// import MainCard from 'ui-component/cards/MainCard';
+import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
+import { useGetPlanningDashboardByYearQuery } from '../../api/store/Apis/dashboardApi';
+import { List, ListItem, ListItemAvatar, ListItemText } from '@mui/material';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
@@ -19,7 +24,7 @@ import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
 
 // styles
 const CardWrapper = styled(MainCard)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.dark,
+  backgroundColor: theme.palette.primary.main,
   color: theme.palette.primary.light,
   overflow: 'hidden',
   position: 'relative',
@@ -28,7 +33,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: `linear-gradient(210.04deg, ${theme.palette.primary[200]} -50.94%, rgba(144, 202, 249, 0) 83.49%)`,
+    background: `linear-gradient(210.04deg, ${theme.palette.grey[400]} -50.94%, rgba(144, 202, 249, 0) 83.49%)`,
     borderRadius: '50%',
     top: -30,
     right: -180
@@ -38,7 +43,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: `linear-gradient(140.9deg, ${theme.palette.primary[200]} -14.02%, rgba(144, 202, 249, 0) 77.58%)`,
+    background: `linear-gradient(140.9deg, ${theme.palette.grey[400]} -14.02%, rgba(144, 202, 249, 0) 77.58%)`,
     borderRadius: '50%',
     top: -160,
     right: -130
@@ -49,6 +54,21 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 const TotalIncomeDarkCard = ({ isLoading }) => {
   const theme = useTheme();
+  const { data: dashboardData } = useGetPlanningDashboardByYearQuery();
+
+  const [totalFabricInMeter, setTotalFabricInMeter] = useState(null);
+  useEffect(() => {
+    if (
+      dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0
+    ) {
+      setTotalFabricInMeter(dashboardData.result[0].totalFabricInMeter);
+    }
+  }, [dashboardData]);
+  const formattedTotalFabricInMeter = totalFabricInMeter
+    ? new Intl.NumberFormat().format(totalFabricInMeter)
+    : null;
 
   return (
     <>
@@ -65,8 +85,8 @@ const TotalIncomeDarkCard = ({ isLoading }) => {
                     sx={{
                       ...theme.typography.commonAvatar,
                       ...theme.typography.largeAvatar,
-                      bgcolor: 'primary.800',
-                      color: '#fff'
+                      bgcolor: theme.palette.grey[400],
+                      color: 'secondary.dark'
                     }}
                   >
                     <TableChartOutlinedIcon fontSize="inherit" />
@@ -76,12 +96,15 @@ const TotalIncomeDarkCard = ({ isLoading }) => {
                   sx={{ py: 0, my: 0.45 }}
                   primary={
                     <Typography variant="h4" sx={{ color: '#fff' }}>
-                      $203k
+                      {formattedTotalFabricInMeter}
                     </Typography>
                   }
                   secondary={
-                    <Typography variant="subtitle2" sx={{ color: 'primary.light', mt: 0.25 }}>
-                      Total Income
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ color: 'primary.light', mt: 0.25 }}
+                    >
+                      Total Fabric in Meters
                     </Typography>
                   }
                 />

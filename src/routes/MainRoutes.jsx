@@ -1,89 +1,233 @@
 import { lazy } from 'react';
-
-// project imports
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
+import ProtectedRoute from './ProtectedRoute';
 
-// dashboard routing
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard')));
+const PlanningNewCollection = Loadable(
+  lazy(() => import('views/Planning/NewCollection'))
+);
+const PlanningNewDesign = Loadable(
+  lazy(() => import('views/Planning/NewDesign'))
+);
+const PlanningProcess = Loadable(
+  lazy(() => import('views/Planning/PlanningProcess'))
+);
+const UserManagementRoles = Loadable(
+  lazy(() => import('views/UserManagement/Roles'))
+);
+const UserManagementApplication = Loadable(
+  lazy(() => import('views/UserManagement/Application'))
+);
+const UserManagementMainMenu = Loadable(
+  lazy(() => import('views/UserManagement/MainMenu'))
+);
+const UserManagementSubMenu = Loadable(
+  lazy(() => import('views/UserManagement/SubMenu'))
+);
+const UserManagementUsers = Loadable(
+  lazy(() => import('views/UserManagement/Users'))
+);
+const PrePlanningCreation = Loadable(
+  lazy(() => import('views/Planning/PrePlanningCreation'))
+);
+const TermsandConditions = Loadable(
+  lazy(() => import('views/Configuration/TermsandConditions'))
+);
+const ProductionBatch = Loadable(
+  lazy(() => import('views/Production/ProductionBatch'))
+);
+const FabricationSelectionIssuance = Loadable(
+  lazy(() => import('views/Production/FabricationSelectionIssuance'))
+);
+const Inspection = Loadable(lazy(() => import('views/Production/Inspection')));
 
-// utilities routing
-const UtilsTypography = Loadable(lazy(() => import('views/utilities/Typography')));
-const UtilsColor = Loadable(lazy(() => import('views/utilities/Color')));
-const UtilsShadow = Loadable(lazy(() => import('views/utilities/Shadow')));
-// const UtilsMaterialIcons = Loadable(lazy(() => import('views/utilities/MaterialIcons')));
-// const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons')));
+const GRN = Loadable(lazy(() => import('views/Production/GRN')));
 
-// sample page routing
+const ReceivingFromBX = Loadable(
+  lazy(() => import('views/Production/ReceivingFromBX'))
+);
+const Receiving = Loadable(lazy(() => import('views/Production/Receiving')));
+const Issuance = Loadable(lazy(() => import('views/Production/Issuance')));
+const RTV = Loadable(lazy(() => import('views/Production/RTV')));
+// const EmbroideryIssuance = Loadable(
+//   lazy(() => import('views/Production/EmbroideryIssuance'))
+// );
+// const SchiffiliIssuance = Loadable(
+//   lazy(() => import('views/Production/SchiffiliIssuance'))
+// );
+// const AdditionalProcessIssuance = Loadable(
+//   lazy(() => import('views/Production/AdditionalProcessIssuance'))
+// );
+const ProductionReceiving = Loadable(
+  lazy(() => import('views/Production/ProductionReceiving'))
+);
+const ShrinkageWastageConfiguration = Loadable(
+  lazy(() => import('views/Configuration/ShrinkageWastageConfiguration'))
+);
+const POGeneration = Loadable(
+  lazy(() => import('views/Production/POGeneration'))
+);
+
+const Reports = Loadable(lazy(() => import('views/DetailedReports/Reports')));
+
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
-
-// ==============================|| MAIN ROUTING ||============================== //
+const WelcomePage = Loadable(lazy(() => import('views/welcome/WelcomePage')));
 
 const MainRoutes = {
   path: '/',
-  element: <MainLayout />,
+  element: <ProtectedRoute element={MainLayout} />,
   children: [
     {
-      path: '/',
-      element: <DashboardDefault />
-    },
-    {
       path: 'dashboard',
+      element: <ProtectedRoute element={DashboardDefault} />
+    },
+    {
+      path: 'UserManagement',
       children: [
         {
-          path: 'default',
-          element: <DashboardDefault />
+          path: 'Role',
+          element: <ProtectedRoute element={UserManagementRoles} />
+        },
+        {
+          path: 'Application',
+          element: <ProtectedRoute element={UserManagementApplication} />
+        },
+        {
+          path: 'MainMenu',
+          element: <ProtectedRoute element={UserManagementMainMenu} />
+        },
+        {
+          path: 'SubMenu',
+          element: <ProtectedRoute element={UserManagementSubMenu} />
+        },
+        {
+          path: 'Users',
+          element: <ProtectedRoute element={UserManagementUsers} />
         }
       ]
     },
     {
-      path: 'utils',
+      path: 'Planning',
       children: [
         {
-          path: 'util-typography',
-          element: <UtilsTypography />
+          path: 'NewCollection',
+          element: <ProtectedRoute element={PlanningNewCollection} />
+        },
+        {
+          path: 'NewDesign',
+          element: <ProtectedRoute element={PlanningNewDesign} />
+        },
+        {
+          path: 'PlanningProcess',
+          element: <ProtectedRoute element={PlanningProcess} />
+        },
+        {
+          path: 'PrePlanningCreation',
+          element: <ProtectedRoute element={PrePlanningCreation} />
         }
       ]
     },
     {
-      path: 'utils',
+      path: 'Production',
       children: [
         {
-          path: 'util-color',
-          element: <UtilsColor />
+          path: 'ProductionBatch',
+          element: <ProtectedRoute element={ProductionBatch} />
+        },
+        {
+          path: 'ReceivingFromBX',
+          element: <ProtectedRoute element={ReceivingFromBX} />
+        },
+        {
+          path: 'Receiving',
+          element: <ProtectedRoute element={Receiving} />
+        },
+        {
+          path: 'FabricationSelectionIssuance',
+          element: <ProtectedRoute element={FabricationSelectionIssuance} />
+        },
+        {
+          path: 'Issuance',
+          element: <ProtectedRoute element={Issuance} />
+        },
+        // {
+        //   path: 'EmbroideryIssuance',
+        //   element: <ProtectedRoute element={EmbroideryIssuance} />
+        // },
+        // {
+        //   path: 'SchiffiliIssuance',
+        //   element: <ProtectedRoute element={SchiffiliIssuance} />
+        // },
+        // {
+        //   path: 'AdditionalProcessIssuance',
+        //   element: <ProtectedRoute element={AdditionalProcessIssuance} />
+        // },
+        {
+          path: 'ProductionReceiving',
+          element: <ProtectedRoute element={ProductionReceiving} />
+        },
+        {
+          path: 'POGeneration',
+          element: <ProtectedRoute element={POGeneration} />
+        },
+        {
+          path: 'Inspection',
+          element: <ProtectedRoute element={Inspection} />
+        },
+        {
+          path: 'GRN',
+          element: <ProtectedRoute element={GRN} />
+        },
+        {
+          path: 'RTV',
+          element: <ProtectedRoute element={RTV} />
         }
       ]
     },
     {
-      path: 'utils',
+      path: 'Configuration',
       children: [
         {
-          path: 'util-shadow',
-          element: <UtilsShadow />
+          path: 'ShrinkageWastageConfiguration',
+          element: <ProtectedRoute element={ShrinkageWastageConfiguration} />
+        },
+        {
+          path: 'TermsandConditions',
+          element: <ProtectedRoute element={TermsandConditions} />
         }
+        // {
+        //   path: 'ProductionBatch',
+        //   element: <ProtectedRoute element={ProductionBatch} />
+        // },
       ]
     },
-    // {
-    //   path: 'icons',
-    //   children: [
-    //     {
-    //       path: 'tabler-icons',
-    //       element: <UtilsTablerIcons />
-    //     }
-    //   ]
-    // },
-    // {
-    //   path: 'icons',
-    //   children: [
-    //     {
-    //       path: 'material-icons',
-    //       element: <UtilsMaterialIcons />
-    //     }
-    //   ]
-    // },
+    {
+      path: 'DetailedReports',
+      children: [
+        {
+          path: 'Reports',
+          element: <ProtectedRoute element={Reports} />
+        },
+        {
+          path: 'TermsandConditions',
+          element: <ProtectedRoute element={TermsandConditions} />
+        }
+        // {
+        //   path: 'ProductionBatch',
+        //   element: <ProtectedRoute element={ProductionBatch} />
+        // },
+      ]
+    },
     {
       path: 'sample-page',
-      element: <SamplePage />
+      element: <ProtectedRoute element={SamplePage} />
+    },
+    {
+      path: 'welcome',
+      element: <ProtectedRoute element={WelcomePage} />
     }
   ]
 };

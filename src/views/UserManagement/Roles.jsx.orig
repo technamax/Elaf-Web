@@ -1,0 +1,27 @@
+import React from 'react';
+import AddRole from 'components/Roles/addRole';
+import Divider from '@mui/material/Divider';
+import AddRoleTable from 'components/Roles/addroleTable';
+<<<<<<< HEAD
+
+
+export default function Application(fetchData) {
+=======
+
+
+export default function Application() {
+>>>>>>> 09a8ccdc80a067b0d72a22fbbb1a932a25adbd27
+  return (
+    <>
+      <AddRole />
+      <Divider />
+<<<<<<< HEAD
+      <AddRoleTable
+       fetchData={fetchData} />
+=======
+      <AddRoleTable />
+>>>>>>> 09a8ccdc80a067b0d72a22fbbb1a932a25adbd27
+    </>
+  );
+}
+

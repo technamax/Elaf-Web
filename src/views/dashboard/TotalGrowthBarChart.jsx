@@ -1,47 +1,30 @@
 import PropTypes from 'prop-types';
-import React from 'react';
-
-// material-ui
+import React, { useEffect, useState, useMemo } from 'react';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-
-// third-party
 import ApexCharts from 'apexcharts';
 import Chart from 'react-apexcharts';
-
-// project imports
 import SkeletonTotalGrowthBarChart from 'ui-component/cards/Skeleton/TotalGrowthBarChart';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
-
-// chart data
 import chartData from './chart-data/total-growth-bar-chart';
 
 const status = [
-  {
-    value: 'today',
-    label: 'Today'
-  },
-  {
-    value: 'month',
-    label: 'This Month'
-  },
-  {
-    value: 'year',
-    label: 'This Year'
-  }
+  { value: 'today', label: 'Today' },
+  { value: 'month', label: 'This Month' },
+  { value: 'year', label: 'This Year' }
 ];
 
-// ==============================|| DASHBOARD DEFAULT - TOTAL GROWTH BAR CHART ||============================== //
-
 const TotalGrowthBarChart = ({ isLoading }) => {
-  const [value, setValue] = React.useState('today');
+  const [value, setValue] = useState('today');
+  const [fabricData, setFabricData] = useState([]);
+
   const theme = useTheme();
 
-  const { primary } = theme.palette.text;
+  const primary = theme.palette.primary.main;
   const divider = theme.palette.divider;
   const grey500 = theme.palette.grey[500];
 
@@ -50,34 +33,71 @@ const TotalGrowthBarChart = ({ isLoading }) => {
   const secondaryMain = theme.palette.secondary.main;
   const secondaryLight = theme.palette.secondary.light;
 
-  React.useEffect(() => {
-    const newChartData = {
-      ...chartData.options,
-      colors: [primary200, primaryDark, secondaryMain, secondaryLight],
-      xaxis: {
-        labels: {
-          style: {
-            colors: [primary, primary, primary, primary, primary, primary, primary, primary, primary, primary, primary, primary]
-          }
-        }
-      },
-      yaxis: {
-        labels: {
-          style: {
-            colors: [primary]
-          }
-        }
-      },
-      grid: { borderColor: divider },
-      tooltip: { theme: 'light' },
-      legend: { labels: { colors: grey500 } }
+  useEffect(() => {
+    const fetchFabricData = async () => {
+      try {
+        const response = await fetch(
+          'http://100.42.177.77:83/api/Dashboard/GetFabricUsedByYear?year=2024'
+        );
+        const data = await response.json();
+        setFabricData(data.result);
+      } catch (error) {
+        console.error('Error fetching fabric data:', error);
+      }
     };
 
-    // do not load chart when loading
-    if (!isLoading) {
-      ApexCharts.exec(`bar-chart`, 'updateOptions', newChartData);
+    fetchFabricData();
+  }, []);
+
+  const memoizedChartData = useMemo(() => {
+    const fabricNames = fabricData.map((item) => item.fabricName);
+    const fabricQuantities = fabricData.map((item) => item.fabricQuantity);
+    const totalCosts = fabricData.map((item) => item.total);
+
+    return {
+      ...chartData,
+      options: {
+        ...chartData.options,
+        colors: ['#a31f23', '#e0e0e0'],
+        xaxis: {
+          categories: fabricNames,
+          labels: {
+            style: {
+              colors: '#000000' // Black color for x-axis labels
+            }
+          }
+        },
+        yaxis: {
+          labels: {
+            style: {
+              colors: '#000000' // Black color for x-axis labels
+            }
+          }
+        },
+        grid: { borderColor: divider },
+        tooltip: {
+          theme: 'light',
+          y: {
+            formatter: (value, { dataPointIndex }) =>
+              `${value} meters - Rs ${totalCosts[dataPointIndex].toLocaleString()}`
+          }
+        },
+        legend: { labels: { colors: grey500 } }
+      },
+      series: [
+        {
+          name: 'Quantity',
+          data: fabricQuantities
+        }
+      ]
+    };
+  }, [fabricData, primary, divider, grey500]);
+
+  useEffect(() => {
+    if (!isLoading && fabricData.length) {
+      ApexCharts.exec('bar-chart', 'updateOptions', memoizedChartData.options);
     }
-  }, [primary200, primaryDark, secondaryMain, secondaryLight, primary, divider, isLoading, grey500]);
+  }, [memoizedChartData, isLoading]);
 
   return (
     <>
@@ -87,19 +107,25 @@ const TotalGrowthBarChart = ({ isLoading }) => {
         <MainCard>
           <Grid container spacing={gridSpacing}>
             <Grid item xs={12}>
-              <Grid container alignItems="center" justifyContent="space-between">
+              <Grid
+                container
+                alignItems="center"
+                justifyContent="space-between"
+              >
                 <Grid item>
                   <Grid container direction="column" spacing={1}>
                     <Grid item>
-                      <Typography variant="subtitle2">Total Growth</Typography>
-                    </Grid>
-                    <Grid item>
-                      <Typography variant="h3">$2,324.00</Typography>
+                      <Typography variant="subtitle2">Total Fabric</Typography>
                     </Grid>
                   </Grid>
                 </Grid>
                 <Grid item>
-                  <TextField id="standard-select-currency" select value={value} onChange={(e) => setValue(e.target.value)}>
+                  <TextField
+                    id="standard-select-currency"
+                    select
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                  >
                     {status.map((option) => (
                       <MenuItem key={option.value} value={option.value}>
                         {option.label}
@@ -118,7 +144,12 @@ const TotalGrowthBarChart = ({ isLoading }) => {
                 }
               }}
             >
-              <Chart {...chartData} />
+              <Chart
+                options={memoizedChartData.options}
+                series={memoizedChartData.series}
+                type="bar"
+                height={350}
+              />
             </Grid>
           </Grid>
         </MainCard>

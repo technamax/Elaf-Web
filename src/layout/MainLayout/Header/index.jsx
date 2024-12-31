@@ -18,6 +18,9 @@ import { IconMenu2 } from '@tabler/icons-react';
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
 const Header = ({ handleLeftDrawerToggle }) => {
+  // const empId = '10014';
+  // const token =
+  //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJuYmYiOjE3MTYyMDY5NjAsImV4cCI6MTcxNjI5MzM2MCwiaWF0IjoxNzE2MjA2OTYwfQ.mjJ73RGAN9r-jn8tu17XMqsOCwySNAxQ-5dyxcxgYqI';
   const theme = useTheme();
 
   return (
@@ -26,13 +29,17 @@ const Header = ({ handleLeftDrawerToggle }) => {
       <Box
         sx={{
           width: 228,
+
           display: 'flex',
           [theme.breakpoints.down('md')]: {
             width: 'auto'
           }
         }}
       >
-        <Box component="span" sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
+        <Box
+          component="span"
+          sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}
+        >
           <LogoSection />
         </Box>
         <ButtonBase sx={{ borderRadius: '8px', overflow: 'hidden' }}>
@@ -58,12 +65,12 @@ const Header = ({ handleLeftDrawerToggle }) => {
       </Box>
 
       {/* header search */}
-      <SearchSection />
+      {/* <SearchSection /> */}
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ flexGrow: 1 }} />
 
       {/* notification & profile */}
-      <NotificationSection />
+      {/* <NotificationSection /> */}
       <ProfileSection />
     </>
   );

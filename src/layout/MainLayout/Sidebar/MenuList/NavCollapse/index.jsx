@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux'; // Add this import
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -25,7 +27,8 @@ const NavCollapse = ({ menu, level }) => {
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const matchesSM = useMediaQuery(theme.breakpoints.down('lg'));
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(null);
 
@@ -33,7 +36,7 @@ const NavCollapse = ({ menu, level }) => {
     setOpen(!open);
     setSelected(!selected ? menu.id : null);
     if (menu?.id !== 'authentication') {
-      navigate(menu.children[0]?.url);
+      //   navigate(menu.children[0]?.url);
     }
   };
 
@@ -84,7 +87,11 @@ const NavCollapse = ({ menu, level }) => {
 
   const Icon = menu.icon;
   const menuIcon = menu.icon ? (
-    <Icon strokeWidth={1.5} size="1.3rem" style={{ marginTop: 'auto', marginBottom: 'auto' }} />
+    <Icon
+      strokeWidth={1.5}
+      size="1.3rem"
+      style={{ marginTop: 'auto', marginBottom: 'auto' }}
+    />
   ) : (
     <FiberManualRecordIcon
       sx={{
@@ -109,25 +116,44 @@ const NavCollapse = ({ menu, level }) => {
         selected={selected === menu.id}
         onClick={handleClick}
       >
-        <ListItemIcon sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 36 }}>{menuIcon}</ListItemIcon>
+        <ListItemIcon sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 36 }}>
+          {menuIcon}
+        </ListItemIcon>
         <ListItemText
           primary={
-            <Typography variant={selected === menu.id ? 'h5' : 'body1'} color="inherit" sx={{ my: 'auto' }}>
+            <Typography
+              variant={selected === menu.id ? 'h5' : 'body1'}
+              color="inherit"
+              sx={{ my: 'auto' }}
+            >
               {menu.title}
             </Typography>
           }
           secondary={
             menu.caption && (
-              <Typography variant="caption" sx={{ ...theme.typography.subMenuCaption }} display="block" gutterBottom>
+              <Typography
+                variant="caption"
+                sx={{ ...theme.typography.subMenuCaption }}
+                display="block"
+                gutterBottom
+              >
                 {menu.caption}
               </Typography>
             )
           }
         />
         {open ? (
-          <IconChevronUp stroke={1.5} size="1rem" style={{ marginTop: 'auto', marginBottom: 'auto' }} />
+          <IconChevronUp
+            stroke={1.5}
+            size="small"
+            style={{ marginTop: 'auto', marginBottom: 'auto' }}
+          />
         ) : (
-          <IconChevronDown stroke={1.5} size="1rem" style={{ marginTop: 'auto', marginBottom: 'auto' }} />
+          <IconChevronDown
+            stroke={1.5}
+            size="small"
+            style={{ marginTop: 'auto', marginBottom: 'auto' }}
+          />
         )}
       </ListItemButton>
       <Collapse in={open} timeout="auto" unmountOnExit>

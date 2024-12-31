@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
@@ -9,6 +10,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
+import { useGetPlanningDashboardByYearQuery } from '../../api/store/Apis/dashboardApi';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -16,6 +18,8 @@ import TotalIncomeCard from 'ui-component/cards/Skeleton/TotalIncomeCard';
 
 // styles
 const CardWrapper = styled(MainCard)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.primary.light,
   overflow: 'hidden',
   position: 'relative',
   '&:after': {
@@ -23,7 +27,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: `linear-gradient(210.04deg, ${theme.palette.warning.dark} -50.94%, rgba(144, 202, 249, 0) 83.49%)`,
+    background: `linear-gradient(210.04deg, ${theme.palette.grey[400]} -50.94%, rgba(144, 202, 249, 0) 83.49%)`,
     borderRadius: '50%',
     top: -30,
     right: -180
@@ -33,7 +37,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     position: 'absolute',
     width: 210,
     height: 210,
-    background: `linear-gradient(140.9deg, ${theme.palette.warning.dark} -14.02%, rgba(144, 202, 249, 0) 70.50%)`,
+    background: `linear-gradient(140.9deg, ${theme.palette.grey[400]} -14.02%, rgba(144, 202, 249, 0) 70.50%)`,
     borderRadius: '50%',
     top: -160,
     right: -130
@@ -44,7 +48,20 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 const TotalIncomeLightCard = ({ isLoading, total, icon, label }) => {
   const theme = useTheme();
-
+  const { data: dashboardData } = useGetPlanningDashboardByYearQuery();
+  const [costOfFabric, setCostOfFabric] = useState(null);
+  useEffect(() => {
+    if (
+      dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0
+    ) {
+      setCostOfFabric(dashboardData.result[0].costOfFabric);
+    }
+  }, [dashboardData]);
+  const formattedcostOfFabric = costOfFabric
+    ? new Intl.NumberFormat().format(costOfFabric)
+    : null;
   return (
     <>
       {isLoading ? (
@@ -60,8 +77,8 @@ const TotalIncomeLightCard = ({ isLoading, total, icon, label }) => {
                     sx={{
                       ...theme.typography.commonAvatar,
                       ...theme.typography.largeAvatar,
-                      bgcolor: 'warning.light',
-                      color: label === 'Meeting attends' ? 'error.dark' : 'warning.dark'
+                      bgcolor: theme.palette.grey[400],
+                      color: 'secondary.dark'
                     }}
                   >
                     {icon}
@@ -69,10 +86,17 @@ const TotalIncomeLightCard = ({ isLoading, total, icon, label }) => {
                 </ListItemAvatar>
                 <ListItemText
                   sx={{ py: 0, mt: 0.45, mb: 0.45 }}
-                  primary={<Typography variant="h4">${total}k</Typography>}
+                  primary={
+                    <Typography variant="h4" sx={{ color: '#fff' }}>
+                      Rs{formattedcostOfFabric}
+                    </Typography>
+                  }
                   secondary={
-                    <Typography variant="subtitle2" sx={{ color: 'grey.500', mt: 0.5 }}>
-                      {label}
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ color: '#fff', mt: 0.5 }}
+                    >
+                      Total Cost of Fabric
                     </Typography>
                   }
                 />

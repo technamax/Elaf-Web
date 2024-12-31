@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import SkeletonEarningCard from 'ui-component/cards/Skeleton/EarningCard';
-
+import CollectionsIcon from '@mui/icons-material/Collections';
 // assets
 import EarningIcon from 'assets/images/icons/earning.svg';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -22,14 +22,25 @@ import GetAppTwoToneIcon from '@mui/icons-material/GetAppOutlined';
 import FileCopyTwoToneIcon from '@mui/icons-material/FileCopyOutlined';
 import PictureAsPdfTwoToneIcon from '@mui/icons-material/PictureAsPdfOutlined';
 import ArchiveTwoToneIcon from '@mui/icons-material/ArchiveOutlined';
-
+import { useGetPlanningDashboardByYearQuery } from '../../api/store/Apis/dashboardApi';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 // ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
 
 const EarningCard = ({ isLoading }) => {
   const theme = useTheme();
 
   const [anchorEl, setAnchorEl] = React.useState(null);
-
+  const { data: dashboardData } = useGetPlanningDashboardByYearQuery();
+  const [totalCollection, setTotalCollection] = useState(null);
+  useEffect(() => {
+    if (
+      dashboardData &&
+      dashboardData.result &&
+      dashboardData.result.length > 0
+    ) {
+      setTotalCollection(dashboardData.result[0].totalCollection);
+    }
+  }, [dashboardData]);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -47,7 +58,7 @@ const EarningCard = ({ isLoading }) => {
           border={false}
           content={false}
           sx={{
-            bgcolor: 'secondary.dark',
+            bgcolor: 'primary.main',
             color: '#fff',
             overflow: 'hidden',
             position: 'relative',
@@ -56,7 +67,7 @@ const EarningCard = ({ isLoading }) => {
               position: 'absolute',
               width: 210,
               height: 210,
-              background: theme.palette.secondary[800],
+              background: theme.palette.grey[400],
               borderRadius: '50%',
               top: { xs: -105, sm: -85 },
               right: { xs: -140, sm: -95 }
@@ -66,7 +77,7 @@ const EarningCard = ({ isLoading }) => {
               position: 'absolute',
               width: 210,
               height: 210,
-              background: theme.palette.secondary[800],
+              background: theme.palette.grey[400],
               borderRadius: '50%',
               top: { xs: -155, sm: -125 },
               right: { xs: -70, sm: -15 },
@@ -84,20 +95,26 @@ const EarningCard = ({ isLoading }) => {
                       sx={{
                         ...theme.typography.commonAvatar,
                         ...theme.typography.largeAvatar,
-                        bgcolor: 'secondary.800',
+                        bgcolor: theme.palette.grey[400],
+                        color: 'secondary.dark',
                         mt: 1
                       }}
                     >
-                      <img src={EarningIcon} alt="Notification" />
+                      <i
+                        class="bi bi-bag-check-fill
+"
+                      ></i>
+                      {/* <CollectionsIcon /> */}
+                      {/* <img src={EarningIcon} alt="Notification" /> */}
                     </Avatar>
                   </Grid>
                   <Grid item>
-                    <Avatar
+                    {/* <Avatar
                       variant="rounded"
                       sx={{
                         ...theme.typography.commonAvatar,
                         ...theme.typography.mediumAvatar,
-                        bgcolor: 'secondary.dark',
+                        bgcolor: 'secondary.800',
                         color: 'secondary.200',
                         zIndex: 1
                       }}
@@ -106,7 +123,7 @@ const EarningCard = ({ isLoading }) => {
                       onClick={handleClick}
                     >
                       <MoreHorizIcon fontSize="inherit" />
-                    </Avatar>
+                    </Avatar> */}
                     <Menu
                       id="menu-earning-card"
                       anchorEl={anchorEl}
@@ -123,7 +140,7 @@ const EarningCard = ({ isLoading }) => {
                         horizontal: 'right'
                       }}
                     >
-                      <MenuItem onClick={handleClose}>
+                      {/* <MenuItem onClick={handleClose}>
                         <GetAppTwoToneIcon sx={{ mr: 1.75 }} /> Import Card
                       </MenuItem>
                       <MenuItem onClick={handleClose}>
@@ -134,7 +151,7 @@ const EarningCard = ({ isLoading }) => {
                       </MenuItem>
                       <MenuItem onClick={handleClose}>
                         <ArchiveTwoToneIcon sx={{ mr: 1.75 }} /> Archive File
-                      </MenuItem>
+                      </MenuItem> */}
                     </Menu>
                   </Grid>
                 </Grid>
@@ -142,7 +159,17 @@ const EarningCard = ({ isLoading }) => {
               <Grid item>
                 <Grid container alignItems="center">
                   <Grid item>
-                    <Typography sx={{ fontSize: '2.125rem', fontWeight: 500, mr: 1, mt: 1.75, mb: 0.75 }}>$500.00</Typography>
+                    <Typography
+                      sx={{
+                        fontSize: '2.125rem',
+                        fontWeight: 500,
+                        mr: 1,
+                        mt: 1.75,
+                        mb: 0.75
+                      }}
+                    >
+                      {totalCollection}
+                    </Typography>
                   </Grid>
                   <Grid item>
                     <Avatar
@@ -153,7 +180,10 @@ const EarningCard = ({ isLoading }) => {
                         color: 'secondary.dark'
                       }}
                     >
-                      <ArrowUpwardIcon fontSize="inherit" sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }} />
+                      <ArrowUpwardIcon
+                        fontSize="inherit"
+                        sx={{ transform: 'rotate3d(1, 1, 1, 45deg)' }}
+                      />
                     </Avatar>
                   </Grid>
                 </Grid>
@@ -163,10 +193,10 @@ const EarningCard = ({ isLoading }) => {
                   sx={{
                     fontSize: '1rem',
                     fontWeight: 500,
-                    color: 'secondary.200'
+                    color: 'primary.light'
                   }}
                 >
-                  Total Earning
+                  Total Collecions
                 </Typography>
               </Grid>
             </Grid>

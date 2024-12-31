@@ -1,0 +1,25 @@
+import React from 'react';
+import Divider from '@mui/material/Divider';
+import AddUsers from 'components/Users/addUsers';
+import AddUsersTable from 'components/Users/addusersTable';
+
+<<<<<<< HEAD
+export default function Application(fetchData) {
+=======
+export default function Application() {
+>>>>>>> 09a8ccdc80a067b0d72a22fbbb1a932a25adbd27
+  return (
+    <>
+      <AddUsers />
+      <Divider />
+<<<<<<< HEAD
+      <AddUsersTable
+      fetchData={fetchData}
+
+      />
+=======
+      <AddUsersTable />
+>>>>>>> 09a8ccdc80a067b0d72a22fbbb1a932a25adbd27
+    </>
+  );
+}

@@ -18,7 +18,11 @@ import PopupState, { bindPopper, bindToggle } from 'material-ui-popup-state';
 import Transitions from 'ui-component/extended/Transitions';
 
 // assets
-import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons-react';
+import {
+  IconAdjustmentsHorizontal,
+  IconSearch,
+  IconX
+} from '@tabler/icons-react';
 
 const HeaderAvatar = forwardRef(({ children, ...others }, ref) => {
   const theme = useTheme();
@@ -90,7 +94,10 @@ const MobileSearch = ({ value, setValue, popupState }) => {
         </InputAdornment>
       }
       aria-describedby="search-helper-text"
-      inputProps={{ 'aria-label': 'weight', sx: { bgcolor: 'transparent', pl: 0.5 } }}
+      inputProps={{
+        'aria-label': 'weight',
+        sx: { bgcolor: 'transparent', pl: 0.5 }
+      }}
       sx={{ width: '100%', ml: 0.5, px: 2, bgcolor: 'background.paper' }}
     />
   );
@@ -121,16 +128,39 @@ const SearchSection = () => {
               <Popper
                 {...bindPopper(popupState)}
                 transition
-                sx={{ zIndex: 1100, width: '99%', top: '-55px !important', px: { xs: 1.25, sm: 1.5 } }}
+                sx={{
+                  zIndex: 1100,
+                  width: '99%',
+                  top: '-55px !important',
+                  px: { xs: 1.25, sm: 1.5 }
+                }}
               >
                 {({ TransitionProps }) => (
                   <>
-                    <Transitions type="zoom" {...TransitionProps} sx={{ transformOrigin: 'center left' }}>
-                      <Card sx={{ bgcolor: 'background.default', border: 0, boxShadow: 'none' }}>
+                    <Transitions
+                      type="zoom"
+                      {...TransitionProps}
+                      sx={{ transformOrigin: 'center left' }}
+                    >
+                      <Card
+                        sx={{
+                          bgcolor: 'background.default',
+                          border: 0,
+                          boxShadow: 'none'
+                        }}
+                      >
                         <Box sx={{ p: 2 }}>
-                          <Grid container alignItems="center" justifyContent="space-between">
+                          <Grid
+                            container
+                            alignItems="center"
+                            justifyContent="space-between"
+                          >
                             <Grid item xs>
-                              <MobileSearch value={value} setValue={setValue} popupState={popupState} />
+                              <MobileSearch
+                                value={value}
+                                setValue={setValue}
+                                popupState={popupState}
+                              />
                             </Grid>
                           </Grid>
                         </Box>
@@ -162,7 +192,10 @@ const SearchSection = () => {
             </InputAdornment>
           }
           aria-describedby="search-helper-text"
-          inputProps={{ 'aria-label': 'weight', sx: { bgcolor: 'transparent', pl: 0.5 } }}
+          inputProps={{
+            'aria-label': 'weight',
+            sx: { bgcolor: 'transparent', pl: 0.5 }
+          }}
           sx={{ width: { md: 250, lg: 434 }, ml: 2, px: 2 }}
         />
       </Box>

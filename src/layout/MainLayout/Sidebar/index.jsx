@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import PropTypes from 'prop-types';
 
 // material-ui
@@ -12,25 +13,24 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { BrowserView, MobileView } from 'react-device-detect';
 
 // project imports
-import MenuCard from './MenuCard';
+// import MenuCard from './MenuCard';
 import MenuList from './MenuList';
 import LogoSection from '../LogoSection';
 import Chip from 'ui-component/extended/Chip';
-
 import { drawerWidth } from 'store/constant';
+import { CatchingPokemonSharp } from '@mui/icons-material';
 
 // ==============================|| SIDEBAR DRAWER ||============================== //
-
-const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
+const Sidebar = ({ drawerOpen, drawerToggle, window, empId, token }) => {
   const theme = useTheme();
   const matchUpMd = useMediaQuery(theme.breakpoints.up('md'));
-
+  console.log(token);
   const drawer = (
     <>
       <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-        <Box sx={{ display: 'flex', p: 2, mx: 'auto' }}>
-          <LogoSection />
-        </Box>
+        {/* <Box sx={{ display: 'flex', p: 2, mx: 'auto' }}> */}
+        <LogoSection />
+        {/* </Box> */}
       </Box>
       <BrowserView>
         <PerfectScrollbar
@@ -41,32 +41,43 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
             paddingRight: '16px'
           }}
         >
-          <MenuList />
-          <MenuCard />
-          <Stack direction="row" justifyContent="center" sx={{ mb: 2 }}>
-            <Chip label={import.meta.env.VITE_APP_VERSION} disabled chipcolor="secondary" size="small" sx={{ cursor: 'pointer' }} />
-          </Stack>
+          <MenuList empId={empId} token={token} />
         </PerfectScrollbar>
       </BrowserView>
       <MobileView>
         <Box sx={{ px: 2 }}>
-          <MenuList />
-          <MenuCard />
-          <Stack direction="row" justifyContent="center" sx={{ mb: 2 }}>
-            <Chip label={import.meta.env.VITE_APP_VERSION} disabled chipcolor="secondary" size="small" sx={{ cursor: 'pointer' }} />
-          </Stack>
+          <MenuList empId={empId} token={token} />
         </Box>
       </MobileView>
     </>
   );
 
-  const container = window !== undefined ? () => window.document.body : undefined;
+  const container =
+    window !== undefined ? () => window.document.body : undefined;
 
   return (
-    <Box component="nav" sx={{ flexShrink: { md: 0 }, width: matchUpMd ? drawerWidth : 'auto' }} aria-label="mailbox folders">
+    // <Box
+    //   component="nav"
+    //   sx={{
+    //     backgroundImage: `url(${texture})`, // Use the imported texture image
+    //     backgroundSize: 'contain',
+    //     flexShrink: { md: 0 },
+    //     width: matchUpMd ? drawerWidth : 'auto'
+    //   }}
+    //   aria-label="mailbox folders"
+    // >
+    <Box
+      component="nav"
+      sx={{
+        backgroundColor: '#cacaca',
+        flexShrink: { md: 0 },
+        width: matchUpMd ? drawerWidth : 'auto'
+      }}
+      aria-label="mailbox folders"
+    >
       <Drawer
         container={container}
-        variant={matchUpMd ? 'persistent' : 'temporary'}
+        variant="persistent"
         anchor="left"
         open={drawerOpen}
         onClose={drawerToggle}
@@ -74,10 +85,19 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             background: theme.palette.background.default,
-            color: theme.palette.text.primary,
+            color: theme.palette.text.white,
+            backgroundColor: '#cacaca',
+            // backgroundImage: `url(${texture})`,
+            backgroundSize: 'contain',
+            position: 'absolute',
+            backgroundRepeat: 'repeat-y',
+            height: '100%',
+            borderRadius: '17px',
+
             borderRight: 'none',
-            [theme.breakpoints.up('md')]: {
-              top: '88px'
+
+            [theme.breakpoints.up('xs')]: {
+              top: '84px'
             }
           }
         }}
@@ -93,7 +113,9 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
 Sidebar.propTypes = {
   drawerOpen: PropTypes.bool,
   drawerToggle: PropTypes.func,
-  window: PropTypes.object
+  window: PropTypes.object,
+  empId: PropTypes.string.isRequired,
+  token: PropTypes.string.isRequired
 };
 
 export default Sidebar;
