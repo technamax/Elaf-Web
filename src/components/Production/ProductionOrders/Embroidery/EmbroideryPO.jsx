@@ -52,6 +52,7 @@ import { useUser } from 'context/User';
 import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
 import { style, width } from '@mui/system';
+import { FilePresent } from '@mui/icons-material';
 const SmallTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-input': {
     fontSize: '0.875rem', // Adjust font size
@@ -91,7 +92,7 @@ const EmbroideryPO = () => {
     // tax: 0,
     locationId: '',
     remarks: '',
-
+    poPieces: '',
     appId: user.appId,
     createdOn: new Date().toISOString(),
     createdBy: user.empId,
@@ -288,7 +289,19 @@ const EmbroideryPO = () => {
     //     wastage: ''
     //   });
     // } else {
-    setFormData({ ...formData, [name]: value });
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+    if (name === "planningHeaderId") {
+      setFormData({
+        ...formData,
+        [name]: value,
+        poPieces: designsList.filter(design=>{ return design.planningHeaderId === formData.planningHeaderId}),
+      })
+    }
+
+    console.log("ABcdef", designsList)
     // }
   };
 
@@ -306,7 +319,7 @@ const EmbroideryPO = () => {
     try {
       // Make the API call
       const response = await axios.post(
-        'http://100.42.177.77:83/api/PO/SaveEmbroideryPO',
+        'http://100.42.177.77:83/api/PO/SaveCentralizedPO',
         { ...formData }
       );
 
@@ -401,6 +414,10 @@ const EmbroideryPO = () => {
       field: 'id',
       headerName: 'Sr#'
     },
+    // {
+    //   field: 'componentName',
+    //   headerName: 'Component Name',
+    // },
     {
       field: 'poIdName',
       headerName: 'PO ID'
@@ -777,7 +794,7 @@ const EmbroideryPO = () => {
   React.useEffect(() => {
     setFormData({
       ...formData,
-      embroideryPoDetailsList: componentsList
+      centralizedPODetails: componentsList
     });
   }, [componentsList, setComponentsLists]);
   console.log('formData', formData);
@@ -790,7 +807,7 @@ const EmbroideryPO = () => {
     },
     {
       field: 'componentName',
-      headerName: 'Component'
+      headerName: 'Components'
     },
     {
       field: 'fabricName',
@@ -801,20 +818,35 @@ const EmbroideryPO = () => {
       headerName: 'Color'
     },
     {
-      field: 'totalPcs',
-      headerName: 'Total PCS',
+      field: 'requiredPcs',
+      headerName: 'Required PCS',
       valueGetter: (params) => {
         return params.toLocaleString();
       }
     },
-
+    {
+      field: 'assignedQty',
+      headerName: 'Planned Qty'
+    },
     {
       field: 'repeats',
-      headerName: 'Repeats'
+      headerName: 'Planned Rpt'
     },
     {
       field: 'noOfHeadsName',
-      headerName: 'No Of Headers'
+      headerName: 'Heads'
+    },
+    // {
+    //   field: '',
+    //   headerName: 'Stitches'
+    // },
+    // {
+    //   field: '',
+    //   headerName: 'Stitches'
+    // },
+    {
+      field: 'totalAmount',
+      headerName: 'Total'
     },
     {
       field: 'cuttingSize',
@@ -822,7 +854,15 @@ const EmbroideryPO = () => {
     },
     {
       field: 'itemsPerRepeat',
-      headerName: 'items PerRepeat'
+      headerName: 'Pcs PerRepeat'
+    },
+    {
+      field: '',
+      headerName: 'Actions'
+    },
+    {
+      field: 'status',
+      headerName: 'Status'
     },
     // {
     //   field: 'lastReceivedQty',
@@ -997,8 +1037,8 @@ const EmbroideryPO = () => {
               value={formData.productionId}
               onChange={handleChange}
               size="small"
-              // error={!!formErrors.brandId}
-              // helperText={formErrors.brandId}
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
             >
               {productions.map((option) => (
                 <MenuItem key={option.productionId} value={option.productionId}>
@@ -1016,8 +1056,8 @@ const EmbroideryPO = () => {
               value={formData.planningHeaderId}
               onChange={handleChange}
               size="small"
-              // error={!!formErrors.brandId}
-              // helperText={formErrors.brandId}
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
             >
               {designsList.map((option) => (
                 <MenuItem
@@ -1038,8 +1078,8 @@ const EmbroideryPO = () => {
               value={formData.processTypeId}
               onChange={handleChange}
               size="small"
-              // error={!!formErrors.brandId}
-              // helperText={formErrors.brandId}
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
             >
               {processTypes.map((option) => (
                 <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -1052,7 +1092,7 @@ const EmbroideryPO = () => {
             <TextField
               size="small"
               type="date"
-              label="PO Date"
+              label="Issuance Date"
               name="issuanceDate"
               value={formData.issuanceDate}
               onChange={handleChange}
@@ -1116,8 +1156,8 @@ const EmbroideryPO = () => {
               value={formData.vendorId}
               onChange={handleChange}
               size="small"
-              // error={!!formErrors.brandId}
-              // helperText={formErrors.brandId}
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
             >
               {vendorsList.map((option) => (
                 <MenuItem key={option.lookUpId} value={option.lookUpId}>
@@ -1125,6 +1165,26 @@ const EmbroideryPO = () => {
                 </MenuItem>
               ))}
             </TextField>
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <TextField
+              size="small"
+              type="number"
+              label="PO Pieces"
+              name="poPieces"
+              onChange={handleChange}
+              value={formData.poPieces[0]?.poPcs}
+              fullWidth
+              // error={!!formErrors.expectedReturnDate}
+              // helperText={formErrors.expectedReturnDate}
+              InputLabelProps={{
+                shrink: true,
+                sx: {
+                  // set the color of the label when not shrinked
+                  color: 'black'
+                }
+              }}
+            />
           </Grid>
           {/* <Grid item xs={12} md={1.5}>
             <TextField
@@ -1195,8 +1255,8 @@ const EmbroideryPO = () => {
               value={formData.locationId}
               onChange={handleChange}
               size="small"
-              // error={!!formErrors.brandId}
-              // helperText={formErrors.brandId}
+            // error={!!formErrors.brandId}
+            // helperText={formErrors.brandId}
             >
               {locationsList.map((option) => (
                 <MenuItem key={option.locationId} value={option.locationId}>
@@ -1220,9 +1280,9 @@ const EmbroideryPO = () => {
               onChange={handleChange}
               value={formData.remarks}
               required
-              // disabled={isEdit}
-              // error={!!formErrors.collectionName}
-              // helperText={formErrors.collectionName}
+            // disabled={isEdit}
+            // error={!!formErrors.collectionName}
+            // helperText={formErrors.collectionName}
             />
           </Grid>
           {/* <Grid item xs={12} textAlign="right">
@@ -1263,9 +1323,9 @@ const EmbroideryPO = () => {
                 columns={componentsColumns}
                 apiRef={apiRef}
                 disableRowSelectionOnClick
-                // checkboxSelection
-                // onRowSelectionModelChange={handleRowSelectionModelChange}
-                // rowSelectionModel={rowSelectionModel}
+              // checkboxSelection
+              // onRowSelectionModelChange={handleRowSelectionModelChange}
+              // rowSelectionModel={rowSelectionModel}
               />
               {/* <DataGrid
                 rows={fabrics}
@@ -1289,9 +1349,9 @@ const EmbroideryPO = () => {
               variant="contained"
               size="small"
               onClick={handleSave}
-              // disabled={fabrics.every(
-              //   (item) => item.prevoiusPoQty >= item.availableQty
-              // )}
+            // disabled={fabrics.every(
+            //   (item) => item.prevoiusPoQty >= item.availableQty
+            // )}
             >
               Save
             </Button>
@@ -1310,7 +1370,7 @@ const EmbroideryPO = () => {
           container
           spacing={2}
           width="Inherit"
-          // sx={{ paddingY: 2, paddingX: 2 }}
+        // sx={{ paddingY: 2, paddingX: 2 }}
         >
           <Grid item xs={12}>
             <ReuseableDataGrid
