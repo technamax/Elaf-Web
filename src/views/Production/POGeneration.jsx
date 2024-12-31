@@ -37,6 +37,7 @@ import EmbroideryPO from 'components/Production/ProductionOrders/Embroidery/Embr
 //////
 import * as React from 'react';
 import { useUser } from 'context/User';
+import CollapsibleDataGrid from 'components/Production/ProductionOrders/Schiffli/SchiffliPO';
 
 const POGeneration = () => {
   const { user } = useUser();
@@ -228,6 +229,7 @@ const POGeneration = () => {
           <TabPanel value="2">
             <EmbroideryPO />
           </TabPanel>
+          <TabPanel value="3">{<CollapsibleDataGrid />}</TabPanel>
           <TabPanel value="3">{/* <AssignTermsAndConditions /> */}Assign Termns and Conditions</TabPanel>
           <TabPanel value="4">{/* <AssignTermsAndConditions /> */}</TabPanel>
           <TabPanel value="5">{/* <AssignTermsAndConditions /> */}</TabPanel>
