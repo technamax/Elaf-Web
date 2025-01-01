@@ -6,10 +6,14 @@ export const embrioderyPOApi = createApi({
   endpoints: (builder) => ({
     getCentralizedPOHeaderPoId: builder.query({
         query: (productionId) => `PO/GetCentralizedPOHeaderPoId?productionId=${productionId}`
+      }),
+      getEmbroiderySavedComponents: builder.query({
+        query: ({productionId,planningHeaderId}) => `PO/GetEmbroiderySavedComponents?productionId=${productionId}&planningHeaderId=${planningHeaderId}`
       })
   })
 });
 
 export const {
   useGetCentralizedPOHeaderPoIdQuery,
+  useGetEmbroiderySavedComponentsQuery
   } = embrioderyPOApi;

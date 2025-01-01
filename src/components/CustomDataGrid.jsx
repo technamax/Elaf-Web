@@ -94,7 +94,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { FormControlLabel, Switch } from '@mui/material';
 
-const EditableDataGrid = ({ columns, rows, setRows, processRowUpdate, handleSelectoinModelChange }) => {
+const EditableDataGrid = ({ columns, rows, setRows, processRowUpdate, handleSelectoinModelChange, isRowSelectable }) => {
   const [rowModesModel, setRowModesModel] = useState({});
 
   useEffect(() => {
@@ -159,6 +159,7 @@ const EditableDataGrid = ({ columns, rows, setRows, processRowUpdate, handleSele
       editMode="row"
       checkboxSelection
       onRowSelectionModelChange={handleSelectoinModelChange}
+      isRowSelectable={isRowSelectable}
     />
   );
 };

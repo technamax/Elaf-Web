@@ -40,7 +40,7 @@ import {
   useGetProductionBatchDetailsByProductionidQuery,
 
 } from 'api/store/Apis/productionApi';
-import { useGetCentralizedPOHeaderPoIdQuery } from 'api/store/Apis/embrioderyPOApi';
+import { useGetCentralizedPOHeaderPoIdQuery, useGetEmbroiderySavedComponentsQuery } from 'api/store/Apis/embrioderyPOApi';
 import {
   useGetWareHouseLocationsQuery,
   useGetLookUpListQuery
@@ -139,6 +139,17 @@ const EmbroideryPO = () => {
       formData.productionId,
       {
         skip: !formData.productionId // Skip the query if no collection is selected
+      }
+    );
+  const { data: embroiderySavedComponents, refetch: refetchEmbroiderySavedComponents } =
+    useGetEmbroiderySavedComponentsQuery(
+      {
+        productionId: formData.productionId,
+        planningHeaderId: formData.planningHeaderId
+      },
+      {
+        skip: !formData.productionId,
+
       }
     );
   const { data: productionBatchData, refetch: refetchProductionBatchData } =
@@ -424,6 +435,18 @@ const EmbroideryPO = () => {
       });
     }
   };
+
+
+  useEffect(() => {
+    console.log("Embriodery Components", embroiderySavedComponents);
+  }, [componentsList]);
+
+  const selectableRows = (params) => {
+    return !embroiderySavedComponents?.result?.some((row) => {
+      return row.componentId === params.row.componentId && row.planningHeaderId === params.row.planningHeaderId;
+    });
+  };
+  
 
   console.log('formData', formData);
   const [open, setOpen] = React.useState(false);
@@ -1376,6 +1399,7 @@ const EmbroideryPO = () => {
                 setRows={setComponentsLists}
                 processRowUpdate={handleCellUpdate}
                 handleSelectoinModelChange={handleSelectoinModelChange}
+                isRowSelectable={selectableRows}
               />
             </div>
           </Grid>
