@@ -5,6 +5,7 @@ import { designApi } from './Apis/designApi';
 import { lookupApi } from './Apis/lookupApi';
 import { prePlanningHeaderApi } from './Apis/prePlanningHeaderApi';
 import { userManagementApi } from './Apis/userManagementApi';
+import { embrioderyPOApi } from './Apis/embrioderyPOApi';
 import { dashboardApi } from './Apis/dashboardApi';
 import { productionApi } from './Apis/productionApi';
 import { termsAndConditionsApi } from './Apis/termsAndConditionsApi';
@@ -24,6 +25,7 @@ const store = configureStore({
       .concat(productionApi.middleware)
       .concat(termsAndConditionsApi.middleware)
       .concat(poApi.middleware)
+      .concat(embrioderyPOApi.middleware)
 });
 
 export default store;

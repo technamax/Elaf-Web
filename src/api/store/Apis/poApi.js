@@ -6,7 +6,7 @@ export const poApi = createApi({
   endpoints: (builder) => ({
     getEmboideryComponentsByDesignId: builder.query({
       query: (planningHeaderId) =>
-        `PO/GetEmboideryComponentsByDesignId?planningHeaderId=${planningHeaderId}`
+        `PO/GetEmbroideryComponentsByDesignId?planningHeaderId=${planningHeaderId}`
     })
     // getPlanningHeaderListByCollectionId: builder.query({
     //   query: (collectionId) =>

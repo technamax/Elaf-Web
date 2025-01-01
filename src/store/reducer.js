@@ -10,6 +10,7 @@ import { userManagementApi } from 'api/store/Apis/userManagementApi';
 import { dashboardApi } from 'api/store/Apis/dashboardApi';
 import { productionApi } from 'api/store/Apis/productionApi';
 import { termsAndConditionsApi } from 'api/store/Apis/termsAndConditionsApi';
+import { embrioderyPOApi } from 'api/store/Apis/embrioderyPOApi';
 import { poApi } from 'api/store/Apis/poApi';
 
 // ==============================|| COMBINE REDUCER ||============================== //
@@ -24,7 +25,8 @@ const rootReducer = combineReducers({
   [dashboardApi.reducerPath]: dashboardApi.reducer,
   [productionApi.reducerPath]: productionApi.reducer,
   [poApi.reducerPath]: poApi.reducer,
-  [termsAndConditionsApi.reducerPath]: termsAndConditionsApi.reducer
+  [termsAndConditionsApi.reducerPath]: termsAndConditionsApi.reducer,
+  [embrioderyPOApi.reducerPath]: embrioderyPOApi.reducer
 });
 
 export default rootReducer;

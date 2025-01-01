@@ -14,8 +14,12 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
-  Chip
+  Chip,
 } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
 import SSRSReport from 'views/DetailedReports/Reports';
 import MainCard from 'ui-component/cards/MainCard';
@@ -33,26 +37,36 @@ import {
   useGetDyeingPoHeaderListQuery,
   useDyeingPoAssignTermDetailsByPoIdQuery,
   useGetDyeingPoHeaderbyProductionIdAndStatusQuery,
-  useGetProductionBatchDetailsByProductionidQuery
+  useGetProductionBatchDetailsByProductionidQuery,
+
 } from 'api/store/Apis/productionApi';
+import { useGetCentralizedPOHeaderPoIdQuery } from 'api/store/Apis/embrioderyPOApi';
 import {
   useGetWareHouseLocationsQuery,
   useGetLookUpListQuery
 } from 'api/store/Apis/lookupApi';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import ReuseableDataGrid from 'components/ReuseableDataGrid';
+import CustomDataGrid from 'components/CustomDataGrid';
 import { useSnackbar } from 'notistack';
 // import AssignTerms from './AssignTerms';
 import AssignTerms from '../Dyeing/AssignTerms';
 import POView from '../Dyeing/POView';
-// import POView from './POView';
-//////
+
 import * as React from 'react';
 import { useUser } from 'context/User';
-import { DataGrid, useGridApiRef } from '@mui/x-data-grid';
+import {
+  DataGrid, useGridApiRef, GridRowModes,
+  GridToolbarContainer,
+  GridActionsCellItem,
+  GridRowEditStopReasons,
+} from '@mui/x-data-grid';
 import { styled } from '@mui/material/styles';
-import { style, width } from '@mui/system';
-import { FilePresent } from '@mui/icons-material';
+
+
+
+
+
 const SmallTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputBase-input': {
     fontSize: '0.875rem', // Adjust font size
@@ -106,9 +120,23 @@ const EmbroideryPO = () => {
   const [designsList, setDesignsList] = useState([]);
   const [vendorsList, setVendorsList] = useState([]);
   const [locationsList, setLocationsList] = useState([]);
+  const [embrioderyPOHeaderTC, setEmbrioderyPOHeaderTC] = useState([]);
+  const [selectedDesigns, setSelectedDesigns] = useState([]);
+
+
+
+
+
   const { data: poHeaderData, refetch: refetchPoHeaderData } =
     useGetDyeingPoHeaderbyProductionIdAndStatusQuery(
       { productionId: formData.productionId, status: 7 },
+      {
+        skip: !formData.productionId // Skip the query if no collection is selected
+      }
+    );
+  const { data: embrioderyPOHeader, refetch: refetchEmbrioderyPOHeader } =
+    useGetCentralizedPOHeaderPoIdQuery(
+      formData.productionId,
       {
         skip: !formData.productionId // Skip the query if no collection is selected
       }
@@ -162,17 +190,17 @@ const EmbroideryPO = () => {
       );
     }
   }, [lookUpData]);
-  useEffect(() => {
-    if (poHeaderData) {
-      refetchPoHeaderData();
-      setInitialRows(
-        poHeaderData.result.map((row, index) => ({
-          id: index + 1,
-          ...row
-        }))
-      );
-    }
-  }, [poHeaderData, refetchPoHeaderData]);
+  // useEffect(() => {
+  //   if (poHeaderData) {
+  //     refetchPoHeaderData();
+  //     setInitialRows(
+  //       poHeaderData.result.map((row, index) => ({
+  //         id: index + 1,
+  //         ...row
+  //       }))
+  //     );
+  //   }
+  // }, [poHeaderData, refetchPoHeaderData]);
   useEffect(() => {
     if (designsData) {
       setDesignsList(
@@ -192,6 +220,8 @@ const EmbroideryPO = () => {
         }))
       );
     }
+    console.log("Collection Data", productionBatchData);
+    console.log("designsData", designsData);
   }, [componentsData, refetchComponentsData]);
   useEffect(() => {
     if (columnsData) {
@@ -203,6 +233,18 @@ const EmbroideryPO = () => {
       );
     }
   }, [columnsData, refetchcolumnsData]);
+  useEffect(() => {
+    if (embrioderyPOHeader) {
+      setInitialRows(
+        embrioderyPOHeader.result.map((row, index) => ({
+          id: index + 1,
+          ...row
+        }))
+      );
+      console.log('sdfasdxase', initialRows);
+      console.log("sdfasdxase", formData.productionId);
+    }
+  }, [embrioderyPOHeader, refetchEmbrioderyPOHeader]);
   // useEffect(() => {
   //   if (vendorsData) {
   //     setVendorsList(
@@ -233,6 +275,13 @@ const EmbroideryPO = () => {
       );
     }
   }, [productionBatchData, refetchProductionBatchData]);
+
+  const handleSelectoinModelChange = (ids) => {
+    const selectedIDs = new Set(ids);
+    setSelectedDesigns(componentsList.filter((row) =>
+      selectedIDs.has(row.id)
+    ));
+  }
 
   const Quantity = fabrics
     .reduce((sum, row) => sum + (row.availableQty ?? 0), 0)
@@ -297,7 +346,7 @@ const EmbroideryPO = () => {
       setFormData({
         ...formData,
         [name]: value,
-        poPieces: designsList.filter(design=>{ return design.planningHeaderId === formData.planningHeaderId}),
+        poPieces: designsList.filter(design => { return design.planningHeaderId === formData.planningHeaderId }),
       })
     }
 
@@ -419,16 +468,16 @@ const EmbroideryPO = () => {
     //   headerName: 'Component Name',
     // },
     {
-      field: 'poIdName',
-      headerName: 'PO ID'
+      field: 'poId',
+      headerName: 'PO NO'
     },
     {
       field: 'collectionName',
       headerName: 'Collection Name'
     },
     {
-      field: 'fabricName',
-      headerName: 'Fabric Name'
+      field: 'designNo',
+      headerName: 'Design'
     },
     {
       field: 'vendorName',
@@ -469,10 +518,6 @@ const EmbroideryPO = () => {
           year: '2-digit'
         });
       }
-    },
-    {
-      field: 'fabricCount',
-      headerName: 'Fabrics'
     },
     {
       field: 'statusName',
@@ -752,6 +797,16 @@ const EmbroideryPO = () => {
   // React.useEffect(() => {
   //   fetchData();
   // });
+
+  const handleCellUpdate = (newRow) => {
+    console.log('Editing cell:', newRow); // Debugging line
+    console.log('before', componentsList);
+
+    setComponentsLists(componentsList.map((row) => row.id === newRow.id ? { ...newRow } : { ...row }));
+    console.log('componentsList', componentsList);
+    return newRow;
+  };
+
   const handleCellEdit = (params) => {
     const { id, field, value } = params;
     console.log('Editing cell:', params); // Debugging line
@@ -850,19 +905,16 @@ const EmbroideryPO = () => {
     },
     {
       field: 'cuttingSize',
-      headerName: 'Cutting Size'
+      headerName: 'Cutting Size',
+      editable: true,
     },
     {
       field: 'itemsPerRepeat',
       headerName: 'Pcs PerRepeat'
     },
     {
-      field: '',
-      headerName: 'Actions'
-    },
-    {
       field: 'status',
-      headerName: 'Status'
+      headerName: 'Status',
     },
     // {
     //   field: 'lastReceivedQty',
@@ -958,10 +1010,10 @@ const EmbroideryPO = () => {
   ];
 
   const fetchData = () => {
-    apiRef.current.autosizeColumns({
-      includeHeaders: true,
-      includeOutliers: true
-    });
+    // apiRef.current.autosizeColumns({
+    //   includeHeaders: true,
+    //   includeOutliers: true
+    // });
   };
   React.useEffect(() => {
     fetchData();
@@ -1318,29 +1370,13 @@ const EmbroideryPO = () => {
           </Grid> */}
           <Grid item xs={12}>
             <div style={{ height: 400, width: '100%' }}>
-              <DataGrid
+              <CustomDataGrid
                 rows={componentsList}
                 columns={componentsColumns}
-                apiRef={apiRef}
-                disableRowSelectionOnClick
-              // checkboxSelection
-              // onRowSelectionModelChange={handleRowSelectionModelChange}
-              // rowSelectionModel={rowSelectionModel}
+                setRows={setComponentsLists}
+                processRowUpdate={handleCellUpdate}
+                handleSelectoinModelChange={handleSelectoinModelChange}
               />
-              {/* <DataGrid
-                rows={fabrics}
-                columns={designsColumns}
-                pageSize={10} // Adjust based on your needs
-                apiRef={apiRef}
-                disableRowSelectionOnClick
-                checkboxSelection
-                isRowSelectable={(params) =>
-                  params.row.prevoiusPoQty < params.row.availableQty &&
-                  params.row.prevoiusPoQty !== params.row.availableQty
-                }
-                onRowSelectionModelChange={handleRowSelectionModelChange}
-                rowSelectionModel={rowSelectionModel}
-              /> */}
             </div>
           </Grid>
 
@@ -1376,8 +1412,7 @@ const EmbroideryPO = () => {
             <ReuseableDataGrid
               initialRows={initialRows}
               iColumns={columns}
-              pageSize={10} // Adjust based on your needs
-              // setInitialData={setInitialData}
+              pageSize={10}
               hideAction
             />
             <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
