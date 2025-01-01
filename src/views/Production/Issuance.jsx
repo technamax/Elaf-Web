@@ -23,7 +23,7 @@ const Issuance = () => {
   console.log('rowData', rowData);
   console.log('tab', tab);
 
-  const [value, setValue] = useState('1');
+  const [value, setValue] = useState('2');
 
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
