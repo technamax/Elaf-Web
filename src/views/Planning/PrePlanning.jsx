@@ -296,7 +296,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       if (cuttingSize === 0) {
         return 0;
       }
-      return Math.floor(repeatSize / cuttingSize);
+      // return Math.floor(repeatSize / cuttingSize);
+      return (repeatSize / cuttingSize).toFixed(2); // Adjust the number of decimal points as needed
     };
 
     const calculateNoOfRepeats = () => {
