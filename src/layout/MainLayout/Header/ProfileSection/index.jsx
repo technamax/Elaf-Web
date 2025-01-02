@@ -51,7 +51,7 @@ import {
 // ==============================|| PROFILE MENU ||============================== //
 
 const ProfileSection = (username) => {
-  console.log('ProfileSection rendered'); // Log to check if component is mounting
+  // console.log('ProfileSection rendered'); // Log to check if component is mounting
 
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -98,7 +98,7 @@ const ProfileSection = (username) => {
 
   const customization = useSelector((state) => state.customization);
   const navigate = useNavigate();
-  console.log(username);
+  // console.log(username);
   //   const [sdm, setSdm] = useState(true);
   // const [value, setValue] = useState('');
   //   const [notification, setNotification] = useState(false);
@@ -110,7 +110,7 @@ const ProfileSection = (username) => {
   const anchorRef = useRef(null);
 
   const handleLogout = () => {
-    console.log('Logout');
+    // console.log('Logout');
     localStorage.removeItem('authToken');
     localStorage.removeItem('empId');
     localStorage.removeItem('isLoggedIn');
@@ -232,7 +232,7 @@ const ProfileSection = (username) => {
         const response = await axios.get(
           `http://100.42.177.77:83/api/Common/GetLookUpDomains?appId=1`
         );
-        console.log('Fetched lookup domains:', response.data.result);
+        // console.log('Fetched lookup domains:', response.data.result);
         setLookupDomains(response.data.result); // Set the state
       } catch (error) {
         console.error('Error fetching lookup domains:', error);

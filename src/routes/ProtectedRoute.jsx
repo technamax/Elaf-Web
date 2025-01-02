@@ -67,7 +67,7 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
         const response = await axios.get(
           `http://100.42.177.77:83/api/Menu/GetUserSubMenuByEmpId?empId=${empId}`
         );
-        console.log('GetUserSubMenuByEmpId', response.data.result);
+        // console.log('GetUserSubMenuByEmpId', response.data.result);
         if (response.data.success) {
           const links = response.data.result.map((item) => item.link);
           setAllowedRoutes((prevRoutes) => [...prevRoutes, ...links]);
@@ -99,8 +99,8 @@ const ProtectedRoute = ({ element: Component, ...rest }) => {
     return <Navigate to="/access-denied" />;
   }
 
-  console.log('user[protectedroute', user);
-  console.log('allowedRoutes userprotectedroute', allowedRoutes);
+  // console.log('user[protectedroute', user);
+  // console.log('allowedRoutes userprotectedroute', allowedRoutes);
 
   // If authenticated and route is allowed, render the component
   return <Component {...rest} />;

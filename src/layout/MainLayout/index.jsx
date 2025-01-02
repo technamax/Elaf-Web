@@ -76,7 +76,7 @@ const MainLayout = () => {
   };
   // const [empId, setEmpId] = useState('');
   const [token, setToken] = useState('');
-  console.log(empId, token);
+  // console.log(empId, token);
 
   useEffect(() => {
     const storedEmpId = localStorage.getItem('empId');
@@ -84,7 +84,7 @@ const MainLayout = () => {
 
     if (authToken) {
       setToken(authToken);
-      console.log('Retrieved authToken:', authToken); // Log the token for debugging
+      // console.log('Retrieved authToken:', authToken); // Log the token for debugging
     } else {
       console.error('No authToken found in localStorage');
     }
@@ -96,7 +96,7 @@ const MainLayout = () => {
     //   console.error('No empId found in localStorage');
     // }
   }, []);
-  console.log(token);
+  // console.log(token);
   return (
     <Box
       sx={{

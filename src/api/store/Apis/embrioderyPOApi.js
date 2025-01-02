@@ -9,15 +9,20 @@ export const embrioderyPOApi = createApi({
         `PO/GetCentralizedPOHeaderPoId?productionId=${productionId}`
     }),
     getCentralizedPOHeaderListForIssuance: builder.query({
-      query: () => `Issuance/GetCentralizedPOHeaderListForIssuance`
+      query: (processTypeId) =>
+        `Issuance/GetCentralizedPOHeaderListForIssuance?processTypeId=${processTypeId}`
     }),
     getEmbroideryPOListforIssuanceByProductionId: builder.query({
-      query: (productionId) =>
-        `Issuance/GetEmbroideryPOListforIssuanceByProductionId?productionId=${productionId}`
+      query: ({ productionId, processTypeId }) =>
+        `Issuance/GetEmbroideryPOListforIssuanceByProductionId?productionId=${productionId}&processTypeId=${processTypeId}`
     }),
     getEmbroideryDesignListforIssuanceByPoId: builder.query({
-      query: (poId) =>
-        `Issuance/GetEmbroideryDesignListforIssuanceByPoId?poId=${poId}`
+      query: ({ poId, processTypeId }) =>
+        `Issuance/GetEmbroideryDesignListforIssuanceByPoId?poId=${poId}&processTypeId=${processTypeId}`
+    }),
+    getEmbroideryPODetailsByPlanningHeaderId: builder.query({
+      query: ({ planningHeaderId, processTypeId }) =>
+        `Issuance/GetEmbroideryPODetailsByPlanningHeaderId?planningHeaderId=${planningHeaderId}&processTypeId=${processTypeId}`
     })
   })
 });
@@ -26,5 +31,6 @@ export const {
   useGetCentralizedPOHeaderPoIdQuery,
   useGetCentralizedPOHeaderListForIssuanceQuery,
   useGetEmbroideryPOListforIssuanceByProductionIdQuery,
-  useGetEmbroideryDesignListforIssuanceByPoIdQuery
+  useGetEmbroideryDesignListforIssuanceByPoIdQuery,
+  useGetEmbroideryPODetailsByPlanningHeaderIdQuery
 } = embrioderyPOApi;

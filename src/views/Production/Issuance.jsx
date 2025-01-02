@@ -20,14 +20,14 @@ const Issuance = () => {
   const rowData = location.state?.data;
   const tab = location.state?.tab?.toString(); // Convert tab to string
 
-  console.log('rowData', rowData);
-  console.log('tab', tab);
+  // console.log('rowData', rowData);
+  // console.log('tab', tab);
 
   const [value, setValue] = useState('2');
 
   const handleChangeTabs = (event, newValue) => {
     setValue(newValue);
-    console.log('value', value);
+    // console.log('value', value);
   };
 
   useEffect(() => {
