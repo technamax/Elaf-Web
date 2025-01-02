@@ -389,6 +389,12 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       const repeatsInMtr = parseFloat(formData.repeatsInMtr) || 0;
       return (repeatsInMtr * repeats).toFixed(2);
     };
+    const calculateEstimatedPieces = () => {
+      const pcsPerComponent = parseFloat(formData.pcsPerComponent) || 0;
+      const ups = parseFloat(formData.ups) || 0;
+      const repeats = parseFloat(formData.repeats) || 0;
+      return (pcsPerComponent * ups * repeats).toFixed(2);
+    };
 
     let totalFabricValue = 0;
 
@@ -407,7 +413,8 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
       repeats: calculateNoOfRepeats(),
       totalFabric: totalFabricValue.toLocaleString(),
       total: calculateTotal(totalFabricValue),
-      repeatsInMtr: calculateSizeinMeter()
+      repeatsInMtr: calculateSizeinMeter(),
+      estimatedPieces: calculateEstimatedPieces()
     }));
 
     if (!isDyeing && formData.isSchiffili) {
@@ -586,7 +593,7 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
         total: parseFloat(formData.total.replace(/,/g, ''))
       };
       const response = await axios.post(
-        'http://100.42.177.77:86/api/PrePlanning/SavePrePlanning',
+        'http://100.42.177.77:83/api/PrePlanning/SavePrePlanning',
         cleanedFormData
       );
       console.log('Data saved successfully:', response.data);
@@ -1761,6 +1768,23 @@ const PrePlanning = ({ setInitialValues, initialValues }) => {
                   size="small"
                   name="total"
                   value={formData.total}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    sx: {
+                      // set the color of the label when not shrinked
+                      color: 'black'
+                    }
+                  }}
+                />
+              </Grid>
+              <Grid item xs={12} md={2}>
+                <TextField
+                  label="Estimated Pieces"
+                  fullWidth
+                  // type="number"
+                  size="small"
+                  name="estimatedPieces"
+                  value={formData.estimatedPieces}
                   onChange={handleChange}
                   InputLabelProps={{
                     sx: {
