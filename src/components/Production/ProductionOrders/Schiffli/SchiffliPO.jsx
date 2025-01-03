@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import {
 
+import {
   Box,
   Card,
   CardHeader,
@@ -8,7 +8,9 @@ import {
   TextField,
   MenuItem,
   Divider,
+  Button,
 } from '@mui/material';
+
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { DataGrid } from '@mui/x-data-grid';
 import { useUser } from 'context/User';
@@ -20,12 +22,16 @@ import {
   useGetProductionBatchDetailsByProductionidQuery,
   useGetProductionBatchForProcessingQuery
 } from 'api/store/Apis/productionApi';
+import CustomizedDataGrid from 'components/CustomizedDataGrid';
+import axios from 'axios';
+import { useSnackbar } from 'notistack';
+
 
 
 
 const shiffliColumns = [
   {
-    field: '',
+    field: 'componentName',
     headerName: 'Components',
   },
   {
@@ -33,7 +39,7 @@ const shiffliColumns = [
     headerName: 'Fabric',
   },
   {
-    field: '',
+    field: 'colorName',
     headerName: 'Color',
   },
   {
@@ -45,24 +51,24 @@ const shiffliColumns = [
     headerName: 'TotalQuantity',
   },
   {
-    field: '',
-    headerName: 'Planned Rpt',
+    field: 'thaanQty',
+    headerName: 'Thaan Quantity',
+  },
+  {
+    field: 'noOfItemPerThaan',
+    header: 'Item Per Thaan'
   },
   {
     field: 'operatingMachineName',
     headerName: 'Operating',
   },
   {
-    field: '',
+    field: 'workingHeadName',
     headerName: 'Working Heads',
   },
   {
     field: 'cuttingSize',
     headerName: 'Cutting Size',
-  },
-  {
-    field: '',
-    headerName: 'Items Per Repeat',
   },
   {
     field: 'Actions',
@@ -78,6 +84,7 @@ const shiffliColumns = [
 const ShiffliPO = () => {
 
   const { user } = useUser();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [productions, setProductions] = useState([]);
   const [processTypes, setProcessTypes] = useState([]);
@@ -97,6 +104,7 @@ const ShiffliPO = () => {
     vendorId: '',
     locationId: '',
     remarks: '',
+    centralizedPODetails: shiffliComponents,
     poPieces: '',
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -131,7 +139,7 @@ const ShiffliPO = () => {
     if (lookUpData) {
       setProcessTypes(
         lookUpData.result[0].productionProcessList
-          .filter((item) => item.lookUpId === 1225 || item.lookUpId === 1226)
+          .filter((item) => item.lookUpId === 1226)
           .map((row, index) => ({
             id: index,
             ...row
@@ -205,6 +213,46 @@ const ShiffliPO = () => {
   };
 
   const isRowSelected = (id) => selectedRows.includes(id);
+
+  const handleSave = async () => {
+    try {
+      const response = await axios.post(
+        'http://100.42.177.77:83/api/PO/SaveCentralizedPO',
+        { ...formData }
+      );
+      console.log('Save response:', response.data);
+      if (response.data.success) {
+        enqueueSnackbar('Data saved successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+        setFormData({
+          poId: 0,
+          productionId: '',
+          planningHeaderId: '',
+          issuanceDate: new Date().toISOString().slice(0, 10),
+          expectedReturnDate: '',
+          processTypeId: '',
+          vendorId: '',
+          locationId: '',
+          remarks: '',
+          poPieces: '',
+          appId: user.appId,
+          createdOn: new Date().toISOString(),
+          createdBy: user.empId,
+          lastUpdatedOn: new Date().toISOString(),
+          LastUpdatedBy: user.empId
+        });
+      }
+    }
+    catch (error) {
+      console.error('Error saving data:', error);
+      enqueueSnackbar('Failed to save data. Please try again.', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+    }
+  }
 
   return (
 
@@ -411,6 +459,14 @@ const ShiffliPO = () => {
               />
             </Box>
           </Grid>
+          <Grid item xs={12} textAlign="right">
+            <Button
+              variant="contained"
+              onClick={handleSave}
+            >
+              Generate PO
+            </Button>
+          </Grid>
         </Grid>
       </Card>
       <Divider color="#cc8587" sx={{ height: 1, width: '100%', mt: 2 }} />
@@ -427,8 +483,15 @@ const ShiffliPO = () => {
           width="Inherit"
         // sx={{ paddingY: 2, paddingX: 2 }}
         >
+
           <Grid item xs={12}>
-            
+            <CustomizedDataGrid
+              rows={shiffliComponents}
+              columns={shiffliColumns}
+              getActions={() => (<div>Actions</div>)}
+              checkboxSelection={true}
+              setSelectedRows={setSelectedRows}
+            />
           </Grid>
         </Grid>
       </Card>
