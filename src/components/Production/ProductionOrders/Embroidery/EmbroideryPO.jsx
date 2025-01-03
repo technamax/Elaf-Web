@@ -872,11 +872,9 @@ const EmbroideryPO = () => {
   React.useEffect(() => {
     setFormData({
       ...formData,
-      centralizedPODetails: componentsList
+      centralizedPODetails: selectedDesigns
     });
-  }, [componentsList, setComponentsLists]);
-  console.log('formData', formData);
-  console.log('componentsList', componentsList);
+  }, [selectedDesigns]);
 
   const componentsColumns = [
     {
@@ -1399,7 +1397,7 @@ const EmbroideryPO = () => {
                 setRows={setComponentsLists}
                 processRowUpdate={handleCellUpdate}
                 handleSelectoinModelChange={handleSelectoinModelChange}
-                isRowSelectable={selectableRows}
+                // isRowSelectable={selectableRows}
               />
             </div>
           </Grid>
@@ -1409,6 +1407,7 @@ const EmbroideryPO = () => {
               variant="contained"
               size="small"
               onClick={handleSave}
+              disabled = { selectedDesigns.length === 0 || (!formData.planningHeaderId && formData.productionId==='' || formData.productionId===undefined) }
             // disabled={fabrics.every(
             //   (item) => item.prevoiusPoQty >= item.availableQty
             // )}
