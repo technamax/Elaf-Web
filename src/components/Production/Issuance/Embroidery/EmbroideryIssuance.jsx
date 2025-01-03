@@ -74,13 +74,13 @@ function Row(props) {
         <TableCell align="right">{row.protein}</TableCell> */}
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+        <TableCell style={{ padding: 0 }} align="left" colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
+            {/* <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
                 Components
-              </Typography>
-              {/* <Table size="small" aria-label="purchases">
+              </Typography> */}
+            {/* <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
                     <TableCell>vendorName</TableCell>
@@ -106,12 +106,12 @@ function Row(props) {
                   ))}
                 </TableBody>
               </Table> */}
-              <ReusableTable
-                setSelectedRows={setSelectedRows}
-                rows={data}
-                headCells={headCells}
-              />
-            </Box>
+            <ReusableTable
+              setSelectedRows={setSelectedRows}
+              rows={data}
+              headCells={headCells}
+            />
+            {/* </Box> */}
           </Collapse>
         </TableCell>
       </TableRow>
@@ -531,7 +531,7 @@ const EmbroideryIssuance = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell />
-                    <TableCell>Fabric</TableCell>
+                    <TableCell>Fabrics</TableCell>
                     {/* <TableCell>id</TableCell>
                     <TableCell>sacele</TableCell> */}
                   </TableRow>
