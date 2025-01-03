@@ -15,12 +15,13 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Paper
+  Paper,
+  Button
 } from '@mui/material';
 // import * as React from 'react';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-
+import axios from 'axios';
 import { useUser } from 'context/User';
 import {
   useGetCentralizedPOHeaderListForIssuanceQuery,
@@ -37,11 +38,19 @@ import ReusableTable from './ReusableTable';
 
 function Row(props) {
   const headCells = [
-    { id: 'name', numeric: false, label: 'Name' },
-    { id: 'age', numeric: true, label: 'Age' },
-    { id: 'job', numeric: false, label: 'Job' }
+    { id: 'id', numeric: false, label: 'Sr#' },
+    { id: 'componentName', numeric: false, label: 'Component' },
+    { id: 'fabricName', numeric: false, label: 'Fabric' },
+    { id: 'colorName', numeric: true, label: 'Color' },
+    { id: 'totalPcs', numeric: true, label: 'Total Pcs' },
+    { id: 'availableQty', numeric: true, label: 'Total Quantity' },
+    { id: 'repeats', numeric: true, label: 'PO Repeats' },
+    { id: 'assignRpt', numeric: true, label: 'Assign Repeats' }, // Removed trailing space
+    { id: 'noOfHeadName', numeric: true, label: 'No Of Head' },
+    { id: 'cuttingSize', numeric: true, label: 'Cutting Size' },
+    { id: 'itemsPerRepeat', numeric: true, label: 'Items Per Repeat' }
   ];
-  const { row, data } = props;
+  const { row, data, setSelectedRows } = props;
   const [open, setOpen] = React.useState(false);
   console.log('issuanceTransactionDesignDetails', data);
   return (
@@ -97,7 +106,11 @@ function Row(props) {
                   ))}
                 </TableBody>
               </Table> */}
-              <ReusableTable rows={data} headCells={headCells} />
+              <ReusableTable
+                setSelectedRows={setSelectedRows}
+                rows={data}
+                headCells={headCells}
+              />
             </Box>
           </Collapse>
         </TableCell>
@@ -112,13 +125,20 @@ const EmbroideryIssuance = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(false);
+  const [selectedRows, setSelectedRows] = useState([]);
+  console.log('selectedRows', selectedRows);
   const [formData, setFormData] = useState({
+    issuanceId: 0,
     productionId: '',
     poId: '',
     planningHeaderId: '',
+    productionHeaderId: '',
+    processTypeId: 1225,
     issuanceDate: new Date().toISOString().slice(0, 10),
     expectedReturnDate: '',
     vendorId: '',
+    fabricId: null,
+    remarks: '',
     locationId: '',
     appId: user.appId,
     createdOn: new Date().toISOString(),
@@ -186,9 +206,31 @@ const EmbroideryIssuance = () => {
   // );
 
   console.log('result', result);
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData({ ...formData, [name]: value });
+  //   setErrors((prev) => ({ ...prev, [name]: '' }));
+  // };
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+    // If the selected field is 'poId', set the corresponding 'productionHeaderId'
+    if (name === 'poId') {
+      const selectedPo = poData?.result?.find((po) => po.poId === value);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+        productionHeaderId: selectedPo ? selectedPo.productionHeaderId : '' // Set the productionHeaderId based on selected poId
+      }));
+    } else {
+      // For other fields, just update the form data as usual
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value
+      }));
+    }
+
+    // Clear the errors for the field being edited
     setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
@@ -223,6 +265,90 @@ const EmbroideryIssuance = () => {
     //   setErrorMessages({ startDate: '', endDate: '', alertTypes: '' });
     // }, 3000);
     return isValid;
+  };
+  const handleSave = async () => {
+    // if (rowSelectionModel.length === 0) {
+    //   // Show a snackbar warning if no rows are selected
+    //   enqueueSnackbar('Please select at least one row before saving!', {
+    //     variant: 'warning',
+    //     autoHideDuration: 5000
+    //   });
+    //   return;
+    // }
+
+    console.log('formData', {
+      ...formData,
+      IssuanceTransactionDesignDetails: selectedRows.map((row) => ({
+        ...row,
+        issuanceDesignDetId: 0,
+        plannedRpt: row.repeats
+      }))
+    });
+    try {
+      // Make the API call
+      const response = await axios.post(
+        'http://100.42.177.77:83/api/Issuance/SaveIssuance',
+        {
+          ...formData,
+          IssuanceTransactionDesignDetails: selectedRows.map((row) => ({
+            ...row,
+            issuanceDesignDetId: 0,
+            plannedRpt: row.repeats
+          }))
+        }
+      );
+
+      console.log('Save response:', response.data);
+      // refetchDyeingPoData();
+      // refetchPoHeaderData();
+      // Check for success
+      if (response.data.success) {
+        // Show a success snackbar if the save operation was successful
+        enqueueSnackbar('Data saved successfully!', {
+          variant: 'success',
+          autoHideDuration: 5000
+        });
+        // setSavedRowIds((prev) => new Set([...prev, ...rowSelectionModel]));
+
+        // Reset formData and related states
+        setFormData({
+          // poId: 0,
+          // productionId: '',
+          ...formData,
+          issuanceDate: '',
+          expectedReturnDate: '',
+          // fabricId: '',
+          processTypeId: '',
+          vendorId: '',
+          // shrinkage: '',
+          // wastage: '',
+          locationId: '',
+          appId: user.appId,
+          createdOn: new Date().toISOString(),
+          createdBy: user.empId,
+          lastUpdatedOn: new Date().toISOString(),
+          lastUpdatedBy: user.empId
+        });
+        // setFabrics([]);
+        // refetchDyeingPoData();
+        // refetchPoHeaderData();
+        // setRowSelectionModel([]);
+        // refetchcolumnsData();
+        // setIsEdit(false);
+      } else {
+        // Show an error snackbar if the save operation was not successful
+        enqueueSnackbar(`Save failed: ${response.data.message}`, {
+          variant: 'error',
+          autoHideDuration: 5000
+        });
+      }
+    } catch (error) {
+      console.error('Error saving data:', error);
+      enqueueSnackbar('Failed to save data. Please try again.', {
+        variant: 'error',
+        autoHideDuration: 5000
+      });
+    }
   };
 
   return (
@@ -379,6 +505,24 @@ const EmbroideryIssuance = () => {
               ))}
             </TextField>
           </Grid>
+          <Grid item xs={12} md={4}>
+            <TextField
+              fullWidth
+              // select
+              label="Remarks"
+              name="remarks"
+              value={formData.remarks}
+              onChange={handleChange}
+              size="small"
+              // error={!!formErrors.brandId}
+              // helperText={formErrors.brandId}
+            ></TextField>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Button variant="contained" onClick={handleSave} color="primary">
+              Save
+            </Button>
+          </Grid>
         </Grid>
         <Grid container justifyContent="center" sx={{ paddingY: 2 }}>
           <Grid item xs={12}>
@@ -400,6 +544,7 @@ const EmbroideryIssuance = () => {
                     <Row
                       key={row.fabricName} // Ensure `fabricName` is unique for the key
                       row={row}
+                      setSelectedRows={setSelectedRows}
                       data={row.issuanceTransactionDesignDetails.map(
                         (row, index) => ({ id: index + 1, ...row })
                       )} // Use row's property here

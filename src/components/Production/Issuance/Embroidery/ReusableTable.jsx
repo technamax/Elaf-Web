@@ -10,7 +10,8 @@ import {
   TableRow,
   TableSortLabel,
   Paper,
-  Checkbox
+  Checkbox,
+  TextField
 } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 
@@ -89,15 +90,21 @@ function EnhancedTableHead(props) {
 //     PropTypes.shape({
 //       id: PropTypes.string.isRequired,
 //       numeric: PropTypes.bool,
-//       label: PropTypes.string.isRequired,
+//       label: PropTypes.string.isRequired
 //     })
-//   ).isRequired,
+//   ).isRequired
 // };
 
-export default function ReusableTable({ rows, headCells }) {
+export default function ReusableTable({ rows, headCells, setSelectedRows }) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState(headCells[0].id);
   const [selected, setSelected] = React.useState([]);
+  const [assignRpt, setAssignRpt] = React.useState(
+    rows.reduce(
+      (acc, row) => ({ ...acc, [row.id || row[headCells[0].id]]: '' }),
+      {}
+    )
+  );
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -109,9 +116,15 @@ export default function ReusableTable({ rows, headCells }) {
     if (event.target.checked) {
       const newSelected = rows.map((n) => n.id || n[headCells[0].id]);
       setSelected(newSelected);
+      const updatedRows = rows.map((row) => ({
+        ...row,
+        assignRpt: assignRpt[row.id || row[headCells[0].id]]
+      }));
+      setSelectedRows(updatedRows);
       return;
     }
     setSelected([]);
+    setSelectedRows([]);
   };
 
   const handleClick = (event, id) => {
@@ -131,6 +144,31 @@ export default function ReusableTable({ rows, headCells }) {
       );
     }
     setSelected(newSelected);
+
+    const updatedRows = rows
+      .filter((row) => newSelected.includes(row.id || row[headCells[0].id]))
+      .map((row) => ({
+        ...row,
+        assignRpt: assignRpt[row.id || row[headCells[0].id]]
+      }));
+
+    setSelectedRows(updatedRows);
+  };
+
+  const handleAssignRepeatsChange = (id, value) => {
+    setAssignRpt((prev) => ({ ...prev, [id]: value }));
+
+    // Update selected rows with the new assignRpt value
+    const updatedRows = rows
+      .filter((row) => selected.includes(row.id || row[headCells[0].id]))
+      .map((row) => ({
+        ...row,
+        assignRpt:
+          id === (row.id || row[headCells[0].id])
+            ? value
+            : assignRpt[row.id || row[headCells[0].id]]
+      }));
+    setSelectedRows(updatedRows);
   };
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
@@ -186,7 +224,23 @@ export default function ReusableTable({ rows, headCells }) {
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                       >
-                        {row[headCell.id]}
+                        {headCell.id === 'assignRpt' ? (
+                          <TextField
+                            variant="outlined"
+                            size="small"
+                            value={
+                              assignRpt[row.id || row[headCells[0].id]] || ''
+                            }
+                            onChange={(e) =>
+                              handleAssignRepeatsChange(
+                                row.id || row[headCells[0].id],
+                                e.target.value
+                              )
+                            }
+                          />
+                        ) : (
+                          row[headCell.id]
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -200,13 +254,147 @@ export default function ReusableTable({ rows, headCells }) {
   );
 }
 
+// export default function ReusableTable({ rows, headCells, setSelectedRows }) {
+//   const [order, setOrder] = React.useState('asc');
+//   const [orderBy, setOrderBy] = React.useState(headCells[0].id);
+//   const [selected, setSelected] = React.useState([]);
+//   const [assignRpt, setAssignRpt] = React.useState(
+//     rows.reduce(
+//       (acc, row) => ({ ...acc, [row.id || row[headCells[0].id]]: '' }),
+//       {}
+//     )
+//   );
+
+//   const handleRequestSort = (event, property) => {
+//     const isAsc = orderBy === property && order === 'asc';
+//     setOrder(isAsc ? 'desc' : 'asc');
+//     setOrderBy(property);
+//   };
+
+//   const handleSelectAllClick = (event) => {
+//     if (event.target.checked) {
+//       const newSelected = rows.map((n) => n.id || n[headCells[0].id]);
+//       setSelected(newSelected);
+//       return;
+//     }
+//     setSelected([]);
+//   };
+
+//   const handleClick = (event, id) => {
+//     const selectedIndex = selected.indexOf(id);
+//     let newSelected = [];
+
+//     if (selectedIndex === -1) {
+//       newSelected = newSelected.concat(selected, id);
+//     } else if (selectedIndex === 0) {
+//       newSelected = newSelected.concat(selected.slice(1));
+//     } else if (selectedIndex === selected.length - 1) {
+//       newSelected = newSelected.concat(selected.slice(0, -1));
+//     } else if (selectedIndex > 0) {
+//       newSelected = newSelected.concat(
+//         selected.slice(0, selectedIndex),
+//         selected.slice(selectedIndex + 1)
+//       );
+//     }
+//     setSelected(newSelected);
+//   };
+
+//   const handleAssignRepeatsChange = (id, value) => {
+//     setAssignRpt((prev) => ({ ...prev, [id]: value }));
+//   };
+
+//   const isSelected = (id) => selected.indexOf(id) !== -1;
+
+//   const sortedRows = React.useMemo(
+//     () => [...rows].sort(getComparator(order, orderBy)),
+//     [order, orderBy, rows]
+//   );
+
+//   return (
+//     <Box sx={{ width: '100%' }}>
+//       <Paper sx={{ width: '100%', mb: 2 }}>
+//         <TableContainer>
+//           <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle">
+//             <EnhancedTableHead
+//               numSelected={selected.length}
+//               order={order}
+//               orderBy={orderBy}
+//               onSelectAllClick={handleSelectAllClick}
+//               onRequestSort={handleRequestSort}
+//               rowCount={rows.length}
+//               headCells={headCells}
+//             />
+//             <TableBody>
+//               {sortedRows.map((row, index) => {
+//                 const isItemSelected = isSelected(
+//                   row.id || row[headCells[0].id]
+//                 );
+//                 const labelId = `enhanced-table-checkbox-${index}`;
+
+//                 return (
+//                   <TableRow
+//                     hover
+//                     onClick={(event) =>
+//                       handleClick(event, row.id || row[headCells[0].id])
+//                     }
+//                     role="checkbox"
+//                     aria-checked={isItemSelected}
+//                     tabIndex={-1}
+//                     key={row.id || row[headCells[0].id]}
+//                     selected={isItemSelected}
+//                     sx={{ cursor: 'pointer' }}
+//                   >
+//                     <TableCell padding="checkbox">
+//                       <Checkbox
+//                         color="primary"
+//                         checked={isItemSelected}
+//                         inputProps={{ 'aria-labelledby': labelId }}
+//                         // style={{ minWidth: '100px', maxWidth: '300px' }}
+//                       />
+//                     </TableCell>
+//                     {headCells.map((headCell) => (
+//                       <TableCell
+//                         key={headCell.id}
+//                         align={headCell.numeric ? 'right' : 'left'}
+//                       >
+//                         {headCell.id === 'assignRpt' ? (
+//                           <TextField
+//                             variant="outlined"
+//                             size="small"
+//                             value={
+//                               assignRpt[row.id || row[headCells[0].id]] ||
+//                               ''
+//                             }
+//                             onChange={(e) =>
+//                               handleAssignRepeatsChange(
+//                                 row.id || row[headCells[0].id],
+//                                 e.target.value
+//                               )
+//                             }
+//                           />
+//                         ) : (
+//                           row[headCell.id]
+//                         )}
+//                       </TableCell>
+//                     ))}
+//                   </TableRow>
+//                 );
+//               })}
+//             </TableBody>
+//           </Table>
+//         </TableContainer>
+//       </Paper>
+//     </Box>
+//   );
+// }
+
 // ReusableTable.propTypes = {
 //   rows: PropTypes.arrayOf(PropTypes.object).isRequired,
 //   headCells: PropTypes.arrayOf(
 //     PropTypes.shape({
 //       id: PropTypes.string.isRequired,
 //       numeric: PropTypes.bool,
-//       label: PropTypes.string.isRequired,
+//       label: PropTypes.string.isRequired
 //     })
-//   ).isRequired,
+//   ).isRequired
 // };
